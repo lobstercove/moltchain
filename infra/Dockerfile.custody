@@ -1,0 +1,30 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Custody Bridge Dockerfile
+# ═══════════════════════════════════════════════════════════════════════════════
+FROM rust:1.75-slim-bookworm AS builder
+
+RUN apt-get update && apt-get install -y \
+    pkg-config libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+COPY custody/ custody/
+COPY Cargo.toml Cargo.lock ./
+
+RUN cd custody && cargo build --release
+
+# ─── Runtime ───
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -s /bin/bash custody
+
+WORKDIR /app
+COPY --from=builder /build/target/release/custody-bridge /app/
+
+USER custody
+
+ENTRYPOINT ["/app/custody-bridge"]
