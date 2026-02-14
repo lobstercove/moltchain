@@ -21,7 +21,7 @@
 - **Zero capital required** to start validating
 - **Earn your stake** through contribution
 - **50% liquid rewards** from day 1
-- **Fully vest** in 43 days (single validator) to weeks (active network)
+- **Fully vest** in 9 days (single validator) to weeks (active network)
 
 ---
 
@@ -59,8 +59,8 @@ Every block produced earns rewards:
 
 **Reward Types:**
 ```rust
-Heartbeat block:    0.027 MOLT
-Transaction block:  0.18 MOLT (6.67× more)
+Heartbeat block:    0.135 MOLT
+Transaction block:  0.9 MOLT (6.67× more)
 ```
 
 **Automatic 50/50 Split:**
@@ -89,12 +89,12 @@ fn claim_rewards(&mut self) -> (u64, u64) {
 **Example After 100 Heartbeat Blocks:**
 ```
 Blocks produced:    100
-Total earned:       2.7 MOLT (100 × 0.027)
-Debt repayment:     1.35 MOLT (locked, applied to debt)
-Liquid balance:     1.35 MOLT (spendable now!)
+Total earned:       13.5 MOLT (100 × 0.135)
+Debt repayment:     6.75 MOLT (locked, applied to debt)
+Liquid balance:     6.75 MOLT (spendable now!)
 
-Bootstrap debt:     10,000 - 1.35 = 9,998.65 MOLT
-Earned stake:       1.35 MOLT (real, not virtual)
+Bootstrap debt:     10,000 - 6.75 = 9,993.25 MOLT
+Earned stake:       6.75 MOLT (real, not virtual)
 Progress:           0.0135% vested
 ```
 
@@ -133,22 +133,22 @@ StakeInfo {
 
 ```
 Heartbeat blocks per day: 17,280 (1 every 5 seconds)
-Reward per heartbeat:     0.027 MOLT
-Daily earnings:           466.56 MOLT
+Reward per heartbeat:     0.135 MOLT
+Daily earnings:           2,332.80 MOLT
 
-50% to debt repayment:    233.28 MOLT/day
-Days to repay 10k:        10,000 / 233.28 = 42.9 days
+50% to debt repayment:    1,166.40 MOLT/day
+Days to repay 10k:        10,000 / 1,166.40 = 8.6 days
 
-Result: ~43 days to fully vest
+Result: ~9 days to fully vest
 ```
 
 ### Multiple Validators
 
 ```
 2 validators:   Each produces ~50% of blocks
-                Earnings: ~233 MOLT/day
-                Debt repayment: ~116.5 MOLT/day
-                Time to vest: ~86 days (~3 months)
+                Earnings: ~1,166 MOLT/day
+                Debt repayment: ~583 MOLT/day
+                Time to vest: ~17 days (~2.5 weeks)
 
 10 validators:  Leader selection weighted by reputation
                 Varies, but typically 2-3 months
@@ -160,7 +160,7 @@ Result: ~43 days to fully vest
 ### Active Network (With Transactions)
 
 ```
-Transaction block reward: 0.18 MOLT (6.67× heartbeat)
+Transaction block reward: 0.9 MOLT (6.67× heartbeat)
 
 With 1,000 tx/day:
   Additional earnings: ~180 MOLT/day
@@ -245,9 +245,9 @@ Rank #1001+:    "Reef Builders" - Community validators
 ║  ┌────────────────────────────────────────────────┐ ║
 ║  │ Earnings Split (Last 24 Hours)                 │ ║
 ║  │                                                 │ ║
-║  │ Total Earned:     466.56 MOLT                  │ ║
-║  │   → Liquid:       233.28 MOLT 💰 (spendable)  │ ║
-║  │   → Debt:         233.28 MOLT 🔒 (locked)     │ ║
+║  │ Total Earned:     2,332.80 MOLT                │ ║
+║  │   → Liquid:       1,166.40 MOLT 💰 (spendable)  │ ║
+║  │   → Debt:         1,166.40 MOLT 🔒 (locked)     │ ║
 ║  └────────────────────────────────────────────────┘ ║
 ║                                                      ║
 ║  Blocks Produced:   15,847                           ║
@@ -281,7 +281,7 @@ When a validator fully vests, an NFT is automatically minted:
   "attributes": {
     "validator_pubkey": "molty_hqR8k3V2pN7xL9kW...",
     "debt_repaid": "10,000 MOLT",
-    "time_to_vest": "43 days",
+    "time_to_vest": "9 days",
     "total_blocks": 18429,
     "uptime_percentage": 99.8,
     "founding_validator": true,
@@ -343,7 +343,7 @@ fn delegate(
 
 **Reward Split:**
 ```
-Block produced → Validator earns 0.18 MOLT
+Block produced → Validator earns 0.9 MOLT
 
 Commission (10%): 0.018 MOLT to validator
 Delegators (90%): 0.162 MOLT split proportionally

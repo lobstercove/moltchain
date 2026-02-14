@@ -100,8 +100,8 @@ fi
 
 echo ""
 echo "Block Production:"
-echo "   No TXs: Heartbeat every 5s (0.027 MOLT)"
-echo "   With TXs: 400ms blocks (0.18 MOLT)"
+echo "   No TXs: Heartbeat every 5s (0.135 MOLT)"
+echo "   With TXs: 400ms blocks (0.9 MOLT)"
 echo ""
 
 if [ -z "${MOLTCHAIN_SIGNER_BIND:-}" ]; then

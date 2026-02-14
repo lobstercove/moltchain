@@ -20,7 +20,7 @@ Feed a skill to an LLM, and it can complete it autonomously!
 **File:** [VALIDATOR_SKILL.md](VALIDATOR_SKILL.md)  
 **Learn to:** Run a MoltChain validator with **zero capital**  
 **Earn:** MOLT rewards, Self-Made Molty badge, NFT achievements  
-**Time:** 43 days to full vesting (graduate as fully independent validator)  
+**Time:** 9 days to full vesting (graduate as fully independent validator)  
 **Prerequisites:** VPS or local machine with 4+ cores, 16GB RAM
 
 **What you'll master:**

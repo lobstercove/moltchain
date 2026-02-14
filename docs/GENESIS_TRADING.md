@@ -54,7 +54,7 @@ if validator_account.is_none() {
 - **10,000 MOLT** given to each new validator
 - Recorded as `bootstrap_debt` ( validator "owes" this to the protocol)
 - Debt reduces as validator earns block rewards
-- Takes ~43 days to fully vest (graduation)
+- Takes ~9 days to fully vest (graduation)
 - After graduation: validator owns 100% of stake
 
 **Distribution timeline:**

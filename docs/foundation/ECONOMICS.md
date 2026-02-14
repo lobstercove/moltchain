@@ -181,7 +181,7 @@ MoltChain implements **two distinct staking mechanisms** to support both validat
 Initial Capital Required: 0 MOLT (zero barrier to entry)
 Bootstrap Grant: 10,000 MOLT (automatic on validator startup)
 Bootstrap Mechanism: Debt-based vesting
-Vesting Timeline: ~43 days of active validation (earning 0.18 MOLT/block avg)
+Vesting Timeline: ~9 days of active validation (earning 0.9 MOLT/block avg)
 Graduation: When bootstrap_debt reaches 0 (fully repaid through rewards)
 ```
 
@@ -228,7 +228,7 @@ Validator "Alice":
   Total stake: 50,000 MOLT
   Commission: 10%
 
-Block reward: 0.18 MOLT
+Block reward: 0.9 MOLT
   Alice keeps: 0.018 MOLT (10%)
   Delegators: 0.162 MOLT (90%, split proportionally)
     - Bob (20K): 0.081 MOLT (50% of delegation)

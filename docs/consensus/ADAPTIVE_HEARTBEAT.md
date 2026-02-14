@@ -28,8 +28,8 @@ Result: ~17,280 heartbeat blocks/day when idle, full speed when active
 
 | Block Type | Reward | Purpose |
 |------------|--------|---------|
-| **Transaction Block** | 0.18 MOLT | Processing real work |
-| **Heartbeat Block** | 0.027 MOLT | Proving liveness |
+| **Transaction Block** | 0.9 MOLT | Processing real work |
+| **Heartbeat Block** | 0.135 MOLT | Proving liveness |
 
 **Daily Emission Target:** ~20,000 MOLT/day
 - Sustains 150M MOLT allocation for 20.6 years ✓
@@ -119,7 +119,7 @@ Wait for genesis creation and "Validator is READY"
 **Expected Output When Idle:**
 ```
 💓 HEARTBEAT 1 | hash: abc12345 | txs: 0 | parent: def67890 | rep: 100
-💰 Heartbeat reward: 0.027 MOLT earned (liveness)
+💰 Heartbeat reward: 0.135 MOLT earned (liveness)
 ```
 
 **Expected Output With Transactions:**
@@ -181,8 +181,8 @@ curl -X POST http://localhost:8899/request \
    - Log shows "📦 BLOCK" with tx count
 
 3. **Validator Earnings:**
-   - Heartbeat: 0.027 MOLT
-   - Transaction: 0.18 MOLT
+   - Heartbeat: 0.135 MOLT
+   - Transaction: 0.9 MOLT
    - Balance increases correctly
 
 4. **Network Sync:**
@@ -240,7 +240,7 @@ This implementation embodies MoltChain's **Proof of Contribution** philosophy:
 
 3. **Reward Verification:**
    - Check validator balances after 100 blocks
-   - Verify math: (heartbeat % × 0.027) + (tx % × 0.18)
+   - Verify math: (heartbeat % × 0.135) + (tx % × 0.9)
 
 4. **Network Stress:**
    - Stop V2, confirm V1+V3 continue
