@@ -108,6 +108,30 @@ if [ -z "${MOLTCHAIN_SIGNER_BIND:-}" ]; then
   export MOLTCHAIN_SIGNER_BIND="0.0.0.0:${SIGNER_PORT}"
 fi
 
+# Collect extra flags (e.g. --dev-mode, --import-key /path)
+EXTRA_FLAGS=""
+for arg in "$@"; do
+    case "$arg" in
+        --dev-mode)
+            EXTRA_FLAGS="$EXTRA_FLAGS --dev-mode"
+            echo "⚠️  DEV MODE: Machine fingerprint bypassed (SHA-256 of pubkey)"
+            ;;
+        --import-key)
+            # Next arg is the path, handled by shift below
+            ;;
+    esac
+done
+# Handle --import-key <path>
+for i in $(seq 1 $#); do
+    if [ "${!i}" = "--import-key" ]; then
+        next=$((i+1))
+        if [ -n "${!next:-}" ]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --import-key ${!next}"
+            echo "📦 Importing keypair from: ${!next}"
+        fi
+    fi
+done
+
 BIN_PATH="${REPO_ROOT}/target/release/moltchain-validator"
 if [ -x "$BIN_PATH" ]; then
   exec "$BIN_PATH" \
@@ -116,7 +140,7 @@ if [ -x "$BIN_PATH" ]; then
     --ws-port "$WS_PORT" \
     --p2p-port "$P2P_PORT" \
     --db-path "$DB_PATH" \
-    $BOOTSTRAP
+    $BOOTSTRAP $EXTRA_FLAGS
 else
   echo "Release binary not found at $BIN_PATH"
   echo "Building with cargo..."
@@ -126,5 +150,5 @@ else
     --ws-port "$WS_PORT" \
     --p2p-port "$P2P_PORT" \
     --db-path "$DB_PATH" \
-    $BOOTSTRAP
+    $BOOTSTRAP $EXTRA_FLAGS
 fi
