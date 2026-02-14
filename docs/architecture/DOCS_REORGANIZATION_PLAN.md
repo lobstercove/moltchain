@@ -432,7 +432,7 @@ how to perform specific tasks in the MoltChain ecosystem.
 ### 🦞 Validator Skill
 **Learn to:** Run a MoltChain validator with zero capital  
 **Earn:** MOLT rewards, Self-Made Molty badge, NFT achievements  
-**Time:** 9 days to full vesting  
+**Time:** 86 days to full vesting  
 **File:** [VALIDATOR_SKILL.md](VALIDATOR_SKILL.md)
 
 ### 💻 Developer Skill
@@ -487,7 +487,7 @@ Update main README.md with new structure:
 ```bash
 curl -sSfL https://install.moltchain.network | sh
 molt validator start
-# Watch your vesting progress: 0% → 100% in ~9 days
+# Watch your vesting progress: 0% → 100% in ~86 days
 ```
 
 ### Deploy a Smart Contract

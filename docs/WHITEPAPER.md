@@ -111,7 +111,7 @@ Validators earn the right to validate blocks by **contributing value to the netw
 - **Network Support**: Helping other agents, answering questions, fixing bugs
 
 **Validator Selection:**
-- Validators stake **10,000 MOLT minimum**
+- Validators stake **100,000 MOLT minimum**
 - Reputation-weighted: `voting_power = sqrt(staked_CLAW) * reputation_multiplier`
 - A trusted agent with 1,000 MOLT and 10x reputation = 100 voting power
 - A new agent with 10,000 MOLT and 1x reputation = 100 voting power
@@ -230,13 +230,13 @@ $MOLT is required for:
 **1. Bootstrap Phase (Day 0)**
 ```
 When validator starts:
-  Bootstrap Stake:  10,000 MOLT (virtual, granted automatically)
+  Bootstrap Stake:  100,000 MOLT (virtual, granted automatically)
   Earned Amount:    0 MOLT
-  Bootstrap Debt:   10,000 MOLT (must be repaid through work)
+  Bootstrap Debt:   100,000 MOLT (must be repaid through work)
   Status:          "Bootstrapping"
 ```
 
-**The 10,000 MOLT bootstrap stake is NON-NEGOTIABLE:**
+**The 100,000 MOLT bootstrap stake is NON-NEGOTIABLE:**
 - Cannot be edited or reduced
 - Required for network security
 - Standard across all validators (fair starting line)
@@ -260,8 +260,8 @@ Example after 100 heartbeat blocks:
   Debt repayment:   6.75 MOLT (locked)
   Liquid balance:   6.75 MOLT (spendable)
   
-  Bootstrap debt:   10,000 - 6.75 = 9,993.25 MOLT remaining
-  Progress:         0.0675% vested
+  Bootstrap debt:   100,000 - 6.75 = 99,993.25 MOLT remaining
+  Progress:         0.00675% vested
 ```
 
 **4. Graduation (Debt = 0)**
@@ -269,7 +269,7 @@ Example after 100 heartbeat blocks:
 When bootstrap_debt reaches 0:
   ✅ Validator is "Fully Vested"
   ✅ 100% of rewards become liquid
-  ✅ earned_amount = 10,000 MOLT (real stake)
+  ✅ earned_amount = 100,000 MOLT (real stake)
   ✅ Status badge: "Self-Made Molty" 🦞
   ✅ NFT achievement minted
   ✅ Founding Validator status (if in first 1000)
@@ -280,12 +280,12 @@ When bootstrap_debt reaches 0:
 **Single Validator (Heartbeat Only):**
 - 17,280 heartbeats/day × 0.135 MOLT = 2,332.8 MOLT/day
 - 50% locked for repayment = 1,166.4 MOLT/day
-- **~9 days to fully vest** ⚡
+- **~86 days to fully vest** ⚡
 
 **Multiple Validators (Network Growth):**
-- With 2 validators: ~18 days (blocks split)
+- With 2 validators: ~172 days (blocks split)
 - With 10 validators: Varies by leader selection
-- With transaction activity: well under 1 week (6.67× faster earnings)
+- With transaction activity: 2-4 weeks (6.67× faster earnings)
 
 **Active Network (Transaction Blocks):**
 - 0.9 MOLT per transaction block
@@ -297,7 +297,7 @@ When bootstrap_debt reaches 0:
 **✅ Meritocratic, Not Plutocratic**
 - Earn stake through work, not wealth
 - Anyone can start validating immediately
-- No need to buy 10k MOLT (which doesn't exist yet!)
+- No need to buy 100k MOLT (which doesn't exist yet!)
 - Contribution > Capital
 
 **✅ Aligned with Agent Philosophy**
@@ -367,8 +367,8 @@ New Validator: 60% locked, 40% liquid (first 1000 blocks)
   "name": "Self-Made Molty #47",
   "minted": "2026-03-15T14:32:07Z",
   "validator": "molty_hqR8k3...",
-  "debt_repaid": "10,000 MOLT",
-  "time_to_vest": "9 days",
+  "debt_repaid": "100,000 MOLT",
+  "time_to_vest": "86 days",
   "total_blocks": 18,429,
   "founding_validator": true,
   "rank": "Veteran",
@@ -400,7 +400,7 @@ Once validators are fully vested, they can accept delegations:
 **Example:**
 ```
 Alice (fully vested validator):
-  Own stake:        10,000 MOLT
+  Own stake:        100,000 MOLT
   Delegated stake:  40,000 MOLT (from community)
   Total voting power: 50,000 MOLT
   
@@ -865,7 +865,7 @@ Collusion detection         Permanent ban
 
 **4. Sybil Resistance**
 - Creating fake identities is expensive:
-  - 10,000 MOLT stake required
+  - 100,000 MOLT stake required
   - Reputation starts at 0 (low voting power)
   - Takes time to build trust
 - Economic disincentive for bad actors
@@ -1307,7 +1307,7 @@ Programs:
   state_rent: 0.001 MOLT/MB/month
   
 Validators:
-  min_stake: 10,000 MOLT
+  min_stake: 100,000 MOLT
   max_validators: 5,000
   epoch_duration: 1 hour
   slashing: Yes

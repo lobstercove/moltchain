@@ -263,7 +263,7 @@ net_version                 ✅ Line 110 (network version)
 - ✅ **Dynamic genesis generation** (lines 114-230)
 - ✅ **Multi-sig treasury** (production-ready setup)
 - ✅ **Genesis wallet management** (save keys securely)
-- ✅ **Bootstrap grants** (10K MOLT per validator)
+- ✅ **Bootstrap grants** (100K MOLT per validator)
 - ✅ **Validator identity** (keypair loading/generation)
 
 #### Advanced Features ✅
@@ -290,7 +290,7 @@ net_version                 ✅ Line 110 (network version)
 ✓ BFT voting system initialized
 ⚔️  Slashing system initialized
 💰 Stake pool initialized
-💰 Staked 10,000 MOLT (minimum required)
+💰 Staked 100,000 MOLT (minimum required)
 ✅ RPC server starting on http://0.0.0.0:8899
 ✅ WebSocket server starting on ws://0.0.0.0:8900
 ⚡ Starting consensus-based block production

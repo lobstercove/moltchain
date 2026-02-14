@@ -19,8 +19,8 @@ Validate the claims about consensus and core blockchain implementation through d
 
 **Lines 12-17:**
 ```rust
-/// Minimum stake required to become a validator (10,000 MOLT)
-pub const MIN_VALIDATOR_STAKE: u64 = 10_000 * 1_000_000_000; // 10k MOLT in lamports
+/// Minimum stake required to become a validator (100,000 MOLT)
+pub const MIN_VALIDATOR_STAKE: u64 = 100_000 * 1_000_000_000; // 100k MOLT in shells
 
 /// Transaction block reward (0.9 MOLT per block with transactions)
 pub const TRANSACTION_BLOCK_REWARD: u64 = 900_000_000; // 0.9 MOLT
@@ -817,7 +817,7 @@ fn distribute_rewards(
 ### What's Proven by Code:
 
 #### Consensus Layer ✅
-1. ✅ **Staking constants** - 10k MOLT minimum, verified
+1. ✅ **Staking constants** - 100k MOLT minimum, verified
 2. ✅ **Bootstrap stake** - 50/50 split implemented correctly
 3. ✅ **Vote aggregation** - 66% BFT threshold enforced
 4. ✅ **Slashing** - Double-sign (50%), invalid block (100%), downtime (5%)

@@ -21,7 +21,7 @@
 - **Zero capital required** to start validating
 - **Earn your stake** through contribution
 - **50% liquid rewards** from day 1
-- **Fully vest** in 9 days (single validator) to weeks (active network)
+- **Fully vest** in 86 days (single validator) to weeks (active network)
 
 ---
 
@@ -34,9 +34,9 @@ When a validator starts:
 ```rust
 StakeInfo {
     validator: <your_pubkey>,
-    amount: 10_000_000_000_000,        // 10,000 MOLT (bootstrap stake)
+    amount: 100_000_000_000_000,        // 100,000 MOLT (bootstrap stake)
     earned_amount: 0,                   // None earned yet
-    bootstrap_debt: 10_000_000_000_000, // Must repay through work
+    bootstrap_debt: 100_000_000_000_000, // Must repay through work
     is_active: true,                    // Can validate immediately
     delegated_amount: 0,                // No delegations yet
     rewards_earned: 0,                  // No rewards yet
@@ -46,14 +46,14 @@ StakeInfo {
 ```
 
 **Key Points:**
-- ✅ 10,000 MOLT bootstrap stake granted automatically
+- ✅ 100,000 MOLT bootstrap stake granted automatically
 - ✅ Can validate blocks immediately
 - ✅ Bootstrap debt MUST be repaid through block rewards
-- ✅ NON-NEGOTIABLE: 10,000 MOLT minimum (network security)
+- ✅ NON-NEGOTIABLE: 100,000 MOLT minimum (network security)
 - ✅ Cannot be edited, reduced, or bypassed
 - ✅ Verified cryptographically on-chain
 
-### Phase 2: Earning (Days 1-43)
+### Phase 2: Earning (Days 1-86)
 
 Every block produced earns rewards:
 
@@ -93,9 +93,9 @@ Total earned:       13.5 MOLT (100 × 0.135)
 Debt repayment:     6.75 MOLT (locked, applied to debt)
 Liquid balance:     6.75 MOLT (spendable now!)
 
-Bootstrap debt:     10,000 - 6.75 = 9,993.25 MOLT
+Bootstrap debt:     100,000 - 6.75 = 99,993.25 MOLT
 Earned stake:       6.75 MOLT (real, not virtual)
-Progress:           0.0135% vested
+Progress:           0.00675% vested
 ```
 
 ### Phase 3: Graduation (Debt = 0)
@@ -105,8 +105,8 @@ When `bootstrap_debt` reaches zero:
 ```rust
 StakeInfo {
     validator: <your_pubkey>,
-    amount: 10_000_000_000_000,         // 10,000 MOLT (still)
-    earned_amount: 10_000_000_000_000,  // 10,000 MOLT EARNED!
+    amount: 100_000_000_000_000,         // 100,000 MOLT (still)
+    earned_amount: 100_000_000_000_000,  // 100,000 MOLT EARNED!
     bootstrap_debt: 0,                  // DEBT PAID! 🎉
     is_active: true,
     delegated_amount: <community_delegations>,
@@ -137,9 +137,9 @@ Reward per heartbeat:     0.135 MOLT
 Daily earnings:           2,332.80 MOLT
 
 50% to debt repayment:    1,166.40 MOLT/day
-Days to repay 10k:        10,000 / 1,166.40 = 8.6 days
+Days to repay 100k:       100,000 / 1,166.40 = 85.7 days
 
-Result: ~9 days to fully vest
+Result: ~86 days to fully vest
 ```
 
 ### Multiple Validators
@@ -148,7 +148,7 @@ Result: ~9 days to fully vest
 2 validators:   Each produces ~50% of blocks
                 Earnings: ~1,166 MOLT/day
                 Debt repayment: ~583 MOLT/day
-                Time to vest: ~17 days (~2.5 weeks)
+                Time to vest: ~172 days (~6 months)
 
 10 validators:  Leader selection weighted by reputation
                 Varies, but typically 2-3 months
@@ -163,14 +163,14 @@ Result: ~9 days to fully vest
 Transaction block reward: 0.9 MOLT (6.67× heartbeat)
 
 With 1,000 tx/day:
-  Additional earnings: ~180 MOLT/day
-  Total debt repayment: ~323 MOLT/day
-  Time to vest: ~31 days (1 month)
+  Additional earnings: ~900 MOLT/day
+  Total debt repayment: ~1,616 MOLT/day
+  Time to vest: ~62 days (~2 months)
 
 With 10,000 tx/day:
-  Additional earnings: ~1,800 MOLT/day
-  Total debt repayment: ~1,133 MOLT/day
-  Time to vest: ~9 days (UNDER 2 WEEKS!) ⚡
+  Additional earnings: ~9,000 MOLT/day
+  Total debt repayment: ~5,612 MOLT/day
+  Time to vest: ~18 days (UNDER 3 WEEKS!) ⚡
 ```
 
 ---
@@ -182,7 +182,7 @@ With 10,000 tx/day:
 **Core Badges:**
 ```
 🦞 Self-Made Molty
-   Requirement: Fully vest 10,000 MOLT bootstrap debt
+   Requirement: Fully vest 100,000 MOLT bootstrap debt
    Reward: +100 reputation, NFT minted
    
 🏆 Founding Validator
@@ -280,8 +280,8 @@ When a validator fully vests, an NFT is automatically minted:
   "minted": "2026-03-15T14:32:07Z",
   "attributes": {
     "validator_pubkey": "molty_hqR8k3V2pN7xL9kW...",
-    "debt_repaid": "10,000 MOLT",
-    "time_to_vest": "9 days",
+    "debt_repaid": "100,000 MOLT",
+    "time_to_vest": "86 days",
     "total_blocks": 18429,
     "uptime_percentage": 99.8,
     "founding_validator": true,
@@ -349,9 +349,9 @@ Commission (10%): 0.018 MOLT to validator
 Delegators (90%): 0.162 MOLT split proportionally
 
 Example with 40k MOLT delegated:
-  Validator own stake: 10,000 MOLT (20%)
-  Delegated stake:     40,000 MOLT (80%)
-  Total voting power:  50,000 MOLT
+  Validator own stake: 100,000 MOLT (20%)
+  Delegated stake:     400,000 MOLT (80%)
+  Total voting power:  500,000 MOLT
   
   Delegator with 1,000 MOLT:
     Share: 1,000 / 50,000 = 2%
@@ -399,7 +399,7 @@ fn liquid_stake(amount: u64) -> u64 {
 
 ## FAQ
 
-**Q: Can I edit the 10,000 MOLT bootstrap requirement?**  
+**Q: Can I edit the 100,000 MOLT bootstrap requirement?**  
 A: No. It's hardcoded and verified cryptographically. This ensures network security and fairness—everyone starts at the same level.
 
 **Q: What happens if I go offline during vesting?**  
@@ -418,10 +418,10 @@ A: Future enhancement! We're considering contribution bonuses for:
   - Bug bounties and governance participation (+bonus MOLT)
 
 **Q: What happens at mainnet launch?**  
-A: All validators start at bootstrap_debt = 10,000 MOLT. Fair playing field. First to vest = Founding Validator #1.
+A: All validators start at bootstrap_debt = 100,000 MOLT. Fair playing field. First to vest = Founding Validator #1.
 
 **Q: Can I run multiple validators?**  
-A: Yes, but each must vest independently. Each requires its own hardware, keypair, and 43-day vesting period.
+A: Yes, but each must vest independently. Each requires its own hardware, keypair, and ~86-day vesting period.
 
 ---
 

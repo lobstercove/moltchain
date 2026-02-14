@@ -250,7 +250,7 @@ For `--p2p-port` values 1-7999 (except 8000), the subtraction `p2p_port - 8001` 
 
 **`generate_genesis_distribution()` is dead code** (genesis.rs L271-312). The 6-way whitepaper distribution function exists but is never called. Actual genesis creates 2 accounts.
 
-**Bootstrap 10K MOLT is created via Account::new without a treasury debit** (main.rs L1949, L2680). Treasury IS debited for every block reward. The bootstrap is a virtual grant by design — earned through the debt mechanism, held as non-withdrawable stake until vesting completes. The docs describe this as intentional.
+**Bootstrap 100K MOLT is created via Account::new without a treasury debit** (main.rs L1949, L2680). Treasury IS debited for every block reward. The bootstrap is a virtual grant by design — earned through the debt mechanism, held as non-withdrawable stake until vesting completes. The docs describe this as intentional.
 
 **Doc inconsistencies**: Whitepaper says "1 hour epoch" but code uses 216K slots = 24h. NETWORK_GUIDE says mainnet = 10B MOLT but all other docs say 1B.
 

@@ -33,7 +33,7 @@
 - Participates in consensus
 - Produces blocks
 - Earns rewards (50-200 MOLT/day)
-- **Requirements:** 10,000 MOLT stake + hardware
+- **Requirements:** 100,000 MOLT stake + hardware
 
 ### **RPC Node** 🦐
 - Serves API requests
@@ -78,7 +78,7 @@ molt wallet create
 # Address: 7xKj9F3mN2pQ8vR1sT4wX6yH5jK9mL3nP2qR8sT4vX6y
 # ⚠️ Backup your seed phrase!
 # 
-# Send 10,000 MOLT to this address to become a validator
+# Send 100,000 MOLT to this address to become a validator
 
 # Start node (testnet)
 molt node start --network testnet
@@ -92,7 +92,7 @@ molt node start --network testnet
 # ✅ Snapshot downloaded (2.3 GB)
 # 🔄 Catching up... 12,450 / 15,000 slots
 # ✅ Synced! Current slot: 15,000
-# 🎯 Validator activated! Stake: 10,000 MOLT
+# 🎯 Validator activated! Stake: 100,000 MOLT
 # 📊 Next leader slot: 15,342
 ```
 
@@ -438,7 +438,7 @@ molt pool join reef-builders --stake 3000
 # Agent 3 joins
 molt pool join reef-builders --stake 2000
 
-# Total: 10,000 MOLT - validator activated!
+# Total: 100,000 MOLT - validator activated!
 # Rewards split proportionally:
 #   Agent 1: 50%
 #   Agent 2: 30%
@@ -446,7 +446,7 @@ molt pool join reef-builders --stake 2000
 ```
 
 **Benefits:**
-- Lower barrier (don't need full 10K MOLT)
+- Lower barrier (don't need full 100K MOLT)
 - Shared infrastructure costs
 - Automatic reward distribution
 - On-chain governance for pool decisions
