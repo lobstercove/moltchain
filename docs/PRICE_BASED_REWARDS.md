@@ -6,8 +6,8 @@ Similar to transaction fees, validator rewards need to adjust based on $MOLT pri
 
 **Current rewards (fixed MOLT):**
 ```
-Transaction block: 0.18 MOLT
-Heartbeat block: 0.027 MOLT
+Transaction block: 0.9 MOLT
+Heartbeat block: 0.135 MOLT
 ```
 
 **Problem scenarios:**
@@ -26,13 +26,13 @@ Heartbeat block: 0.027 MOLT
 
 pub struct RewardConfig {
     /// Base reward in MOLT (at reference price)
-    pub base_transaction_reward: u64,     // 180_000_000 shells (0.18 MOLT)
-    pub base_heartbeat_reward: u64,       // 27_000_000 shells (0.027 MOLT)
+    pub base_transaction_reward: u64,     // 900_000_000 shells (0.9 MOLT)
+    pub base_heartbeat_reward: u64,       // 135_000_000 shells (0.135 MOLT)
     
     /// Price adjustment parameters
     pub reference_price_usd: f64,         // 1.00 USD (initial target)
-    pub target_reward_usd: f64,           // 0.18 USD per TX block
-    pub target_heartbeat_usd: f64,        // 0.027 USD per heartbeat
+    pub target_reward_usd: f64,           // 0.90 USD per TX block
+    pub target_heartbeat_usd: f64,        // 0.135 USD per heartbeat
     
     /// Adjustment bounds
     pub max_adjustment_multiplier: f64,   // 10x max (prevent extreme swings)
@@ -51,11 +51,11 @@ pub struct RewardConfig {
 impl RewardConfig {
     pub fn new() -> Self {
         RewardConfig {
-            base_transaction_reward: 180_000_000,
-            base_heartbeat_reward: 27_000_000,
+            base_transaction_reward: 900_000_000,
+            base_heartbeat_reward: 135_000_000,
             reference_price_usd: 1.0,
-            target_reward_usd: 0.18,
-            target_heartbeat_usd: 0.027,
+            target_reward_usd: 0.90,
+            target_heartbeat_usd: 0.135,
             max_adjustment_multiplier: 10.0,
             min_adjustment_multiplier: 0.1,
             adjustment_frequency_slots: 216_000,
@@ -73,7 +73,7 @@ impl RewardConfig {
         // Formula: adjusted = base * (reference_price / current_price)
         // Example: $MOLT = $0.01, reference = $1.00
         // Multiplier = 1.00 / 0.01 = 100x
-        // 0.18 MOLT * 100 = 18 MOLT ($0.18 USD worth)
+        // 0.9 MOLT * 100 = 18 MOLT ($0.18 USD worth)
         
         let multiplier = (self.reference_price_usd / molt_price_usd)
             .max(self.min_adjustment_multiplier)
@@ -228,15 +228,15 @@ let reward = stake_pool.distribute_block_reward_with_price(
 
 **Phase 1: Fixed Rewards (CURRENT - LIVE)**
 ```rust
-const TRANSACTION_BLOCK_REWARD: u64 = 180_000_000; // 0.18 MOLT
-const HEARTBEAT_BLOCK_REWARD: u64 = 27_000_000;    // 0.027 MOLT
+const TRANSACTION_BLOCK_REWARD: u64 = 900_000_000; // 0.9 MOLT
+const HEARTBEAT_BLOCK_REWARD: u64 = 135_000_000;    // 0.135 MOLT
 // No price adjustment
 ```
 
 **Phase 2: Price-Adjusted Rewards (IMPLEMENT NOW)**
 ```rust
 RewardConfig {
-    base: 0.18 MOLT,
+    base: 0.9 MOLT,
     reference_price: $1.00,
     current_multiplier: (reference / actual_price),
     bounds: [0.1x, 10x],
@@ -256,7 +256,7 @@ RewardConfig {
 
 ### Scenario 1: Low Price ($MOLT = $0.01)
 ```
-Base reward: 0.18 MOLT
+Base reward: 0.9 MOLT
 Reference price: $1.00
 Current price: $0.01
 Multiplier: 1.00 / 0.01 = 100x
@@ -269,7 +269,7 @@ Result: Validator earns same $0.18 USD worth
 
 ### Scenario 2: High Price ($MOLT = $100)
 ```
-Base reward: 0.18 MOLT
+Base reward: 0.9 MOLT
 Reference price: $1.00
 Current price: $100
 Multiplier: 1.00 / 100 = 0.01x
@@ -282,7 +282,7 @@ Result: Validator earns same $0.18 USD worth
 
 ### Scenario 3: Extreme Price ($MOLT = $10,000)
 ```
-Base reward: 0.18 MOLT
+Base reward: 0.9 MOLT
 Reference price: $1.00
 Current price: $10,000
 Calculated multiplier: 1.00 / 10,000 = 0.0001x
@@ -310,11 +310,11 @@ Note: Governance would update reference_price in this scenario
 
 **Comparison to Fixed Rewards:**
 ```
-$MOLT Price | Fixed (0.18 MOLT) | Adjusted (target $0.18 USD)
+$MOLT Price | Fixed (0.9 MOLT) | Adjusted (target $0.18 USD)
 ---------   | ------------------| --------------------------
 $0.01       | $0.0018/block     | 18 MOLT = $0.18/block ✓
 $0.10       | $0.018/block      | 1.8 MOLT = $0.18/block ✓
-$1.00       | $0.18/block ok    | 0.18 MOLT = $0.18/block ✓
+$1.00       | $0.18/block ok    | 0.9 MOLT = $0.18/block ✓
 $10.00      | $1.80/block $$    | 0.018 MOLT = $0.18/block ✓
 $100.00     | $18/block $$$     | 0.0018 MOLT = $0.18/block ✓
 ```

@@ -334,8 +334,8 @@ We're not trying to be Solana 2.0. We're building for a completely different use
 **Week 1-6 - Earn Your Stake:**
 ```
 Every block produced:
-  → Heartbeat: +0.027 MOLT
-  → Transaction: +0.18 MOLT
+  → Heartbeat: +0.135 MOLT
+  → Transaction: +0.9 MOLT
   
   Split automatically:
     50% → Liquid balance (spend it!)
@@ -368,7 +368,7 @@ Dashboard shows:
 2. **Commitment** (Prove through work):
    - Maintain >95% uptime
    - Produce honest blocks
-   - Contribute 43 days (~6 weeks) to fully vest
+   - Contribute 9 days (~1.5 weeks) to fully vest
    - Build reputation through reliability
 
 3. **Capital** (NONE):

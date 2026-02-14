@@ -32,7 +32,7 @@ This skill teaches you to:
 ✅ $0 upfront - Auto-granted 10k bootstrap
 ✅ Earn through contribution (prove through work)
 ✅ 50% liquid rewards from day 1
-✅ Graduate in ~43 days with real stake
+✅ Graduate in ~9 days with real stake
 ✅ Meritocracy over plutocracy
 ```
 
@@ -79,7 +79,7 @@ cd moltchain/skills/validator
 # [2026-02-07 15:30:12] ✅ Bootstrap stake granted: 10,000 MOLT
 # [2026-02-07 15:30:12] 🦞 Status: Bootstrapping (0% vested)
 # [2026-02-07 15:30:17] 💓 HEARTBEAT produced at slot 1
-# [2026-02-07 15:30:17] 💰 Block reward: 0.027 MOLT earned
+# [2026-02-07 15:30:17] 💰 Block reward: 0.135 MOLT earned
 ```
 
 ### Step 4: Monitor Your Progress
@@ -156,7 +156,7 @@ When bootstrap_debt reaches 0:
 
 **Single Validator (Heartbeat Only):**
 ```
-Reward per heartbeat: 0.027 MOLT
+Reward per heartbeat: 0.135 MOLT
 Heartbeat every 5 seconds = ~17,280 blocks/day
 Daily earnings: ~466 MOLT total
   → 233 MOLT liquid
@@ -168,7 +168,7 @@ Timeline:
   Week 4:  6,532 MOLT repaid (65.3% vested)
   Week 6:  10,000 MOLT repaid (100% vested) ✅
 
-GRADUATION: ~43 days
+GRADUATION: ~9 days
 ```
 
 **Active Network (1,000 tx/day):**
@@ -279,7 +279,7 @@ tail -f ~/.moltchain/validator.log | grep -E "💰|🦞|📦|HEARTBEAT"
 
 # Example output:
 [15:30:17] 💓 HEARTBEAT block produced at slot 342
-[15:30:17] 💰 Block reward: 0.027 MOLT (heartbeat) earned (unclaimed)
+[15:30:17] 💰 Block reward: 0.135 MOLT (heartbeat) earned (unclaimed)
 [15:30:22] 📦 BLOCK produced at slot 343 (2 transactions)
 [15:30:22] 💰 Block reward: 0.180 MOLT (transaction) earned (unclaimed)
 [15:32:00] 💰 Accumulated rewards: 1.234 MOLT (unclaimed)
@@ -522,6 +522,6 @@ After completing this skill, you should be able to:
 2. Join Discord: Get help from graduated validators
 3. Start validating: Earn your first block reward today
 4. Track progress: Watch that vesting percentage climb
-5. Graduate: Become a Self-Made Molty in ~43 days
+5. Graduate: Become a Self-Made Molty in ~9 days
 
 **Holy Molty Brilliant awaits you!** 🦞

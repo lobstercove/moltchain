@@ -105,7 +105,7 @@ Alice's Stats:
   Total stake:      50,000 MOLT
   Commission:       10%
 
-Block Reward: 0.18 MOLT
+Block Reward: 0.9 MOLT
 
 Distribution:
   Alice:      0.018 MOLT (10% commission)

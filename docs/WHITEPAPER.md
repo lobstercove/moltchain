@@ -244,8 +244,8 @@ When validator starts:
 
 **2. Earn Rewards (Every Block)**
 ```
-Produce heartbeat block  → +0.027 MOLT
-Produce transaction block → +0.18 MOLT
+Produce heartbeat block  → +0.135 MOLT
+Produce transaction block → +0.9 MOLT
 
 Rewards automatically split:
   • 50% → Debt Repayment (locked, applied to bootstrap_debt)
@@ -256,12 +256,12 @@ Rewards automatically split:
 ```rust
 Example after 100 heartbeat blocks:
   Blocks produced:  100
-  Total earned:     2.7 MOLT (100 × 0.027)
-  Debt repayment:   1.35 MOLT (locked)
-  Liquid balance:   1.35 MOLT (spendable)
+  Total earned:     13.5 MOLT (100 × 0.135)
+  Debt repayment:   6.75 MOLT (locked)
+  Liquid balance:   6.75 MOLT (spendable)
   
-  Bootstrap debt:   10,000 - 1.35 = 9,998.65 MOLT remaining
-  Progress:         0.0135% vested
+  Bootstrap debt:   10,000 - 6.75 = 9,993.25 MOLT remaining
+  Progress:         0.0675% vested
 ```
 
 **4. Graduation (Debt = 0)**
@@ -278,17 +278,17 @@ When bootstrap_debt reaches 0:
 #### Timeline to Full Vesting
 
 **Single Validator (Heartbeat Only):**
-- 17,280 heartbeats/day × 0.027 MOLT = 466.56 MOLT/day
-- 50% locked for repayment = 233.28 MOLT/day
-- **43 days to fully vest** ⚡
+- 17,280 heartbeats/day × 0.135 MOLT = 2,332.8 MOLT/day
+- 50% locked for repayment = 1,166.4 MOLT/day
+- **~9 days to fully vest** ⚡
 
 **Multiple Validators (Network Growth):**
-- With 2 validators: ~86 days (blocks split)
+- With 2 validators: ~18 days (blocks split)
 - With 10 validators: Varies by leader selection
-- With transaction activity: 2-4 weeks (6.67× faster earnings)
+- With transaction activity: well under 1 week (6.67× faster earnings)
 
 **Active Network (Transaction Blocks):**
-- 0.18 MOLT per transaction block
+- 0.9 MOLT per transaction block
 - 1,000 transactions/day: **2-3 weeks to vest**
 - 10,000 transactions/day: **Under 1 week to vest** 🚀
 
@@ -368,7 +368,7 @@ New Validator: 60% locked, 40% liquid (first 1000 blocks)
   "minted": "2026-03-15T14:32:07Z",
   "validator": "molty_hqR8k3...",
   "debt_repaid": "10,000 MOLT",
-  "time_to_vest": "43 days",
+  "time_to_vest": "9 days",
   "total_blocks": 18,429,
   "founding_validator": true,
   "rank": "Veteran",
@@ -404,7 +404,7 @@ Alice (fully vested validator):
   Delegated stake:  40,000 MOLT (from community)
   Total voting power: 50,000 MOLT
   
-  Block reward: 0.18 MOLT
+  Block reward: 0.9 MOLT
   Alice keeps:  0.018 MOLT (10% commission)
   Delegators:   0.162 MOLT (distributed proportionally)
 ```

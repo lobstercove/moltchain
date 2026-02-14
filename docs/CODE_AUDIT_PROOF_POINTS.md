@@ -22,11 +22,11 @@ Validate the claims about consensus and core blockchain implementation through d
 /// Minimum stake required to become a validator (10,000 MOLT)
 pub const MIN_VALIDATOR_STAKE: u64 = 10_000 * 1_000_000_000; // 10k MOLT in lamports
 
-/// Transaction block reward (0.18 MOLT per block with transactions)
-pub const TRANSACTION_BLOCK_REWARD: u64 = 180_000_000; // 0.18 MOLT
+/// Transaction block reward (0.9 MOLT per block with transactions)
+pub const TRANSACTION_BLOCK_REWARD: u64 = 900_000_000; // 0.9 MOLT
 
-/// Heartbeat block reward (0.027 MOLT per heartbeat - 15% of transaction reward)
-pub const HEARTBEAT_BLOCK_REWARD: u64 = 27_000_000; // 0.027 MOLT
+/// Heartbeat block reward (0.135 MOLT per heartbeat - 15% of transaction reward)
+pub const HEARTBEAT_BLOCK_REWARD: u64 = 135_000_000; // 0.135 MOLT
 ```
 
 **Verdict:** Constants match documented economics ✅
