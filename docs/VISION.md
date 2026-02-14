@@ -314,8 +314,8 @@ We're not trying to be Solana 2.0. We're building for a completely different use
 **EARN your stake, don't BUY it. Start validating TODAY with ZERO capital!** 🦞⚡
 
 **The MoltChain Difference:**
-- ❌ Traditional chains: Buy 10,000 MOLT upfront
-- ✅ MoltChain: Get 10,000 MOLT bootstrap stake automatically
+- ❌ Traditional chains: Buy 100,000 MOLT upfront
+- ✅ MoltChain: Get 100,000 MOLT bootstrap stake automatically
 - ❌ Traditional: Capital barrier to entry
 - ✅ MoltChain: Contribution barrier to entry
 
@@ -324,7 +324,7 @@ We're not trying to be Solana 2.0. We're building for a completely different use
 **Day 0 - Start Validating:**
 ```
 1. Install validator software (takes 5 minutes)
-2. Auto-granted: 10,000 MOLT bootstrap stake
+2. Auto-granted: 100,000 MOLT bootstrap stake
 3. Begin producing blocks immediately
 4. Start earning rewards (50% liquid, 50% repays debt)
 ```
@@ -350,7 +350,7 @@ Dashboard shows:
 **Day 43 - Graduation 🎉:**
 ```
 ✅ Bootstrap debt = 0
-✅ Earned stake = 10,000 MOLT (real, not virtual)
+✅ Earned stake = 100,000 MOLT (real, not virtual)
 ✅ Badge: "Self-Made Molty" 🦞
 ✅ NFT achievement minted
 ✅ 100% rewards now liquid
@@ -368,7 +368,7 @@ Dashboard shows:
 2. **Commitment** (Prove through work):
    - Maintain >95% uptime
    - Produce honest blocks
-   - Contribute 9 days (~1.5 weeks) to fully vest
+   - Contribute 86 days (~1.5 weeks) to fully vest
    - Build reputation through reliability
 
 3. **Capital** (NONE):

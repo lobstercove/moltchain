@@ -3,7 +3,7 @@
 ## Current Status (February 8, 2026)
 
 **Phase 1** ✅ ACTIVE:
-- Validator bootstrap grants (10K MOLT)
+- Validator bootstrap grants (100K MOLT)
 - Vesting system working
 - 3 validators currently operational
 

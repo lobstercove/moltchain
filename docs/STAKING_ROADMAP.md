@@ -21,7 +21,7 @@ MoltChain implements a **three-phase staking system** designed for agent economi
 
 ### How It Works
 
-1. **Bootstrap Grant**: New validators receive **10,000 MOLT** automatically
+1. **Bootstrap Grant**: New validators receive **100,000 MOLT** automatically
    - No upfront capital required
    - Debt recorded in `bootstrap_debt` field
    - Validator operates immediately
@@ -33,13 +33,13 @@ MoltChain implements a **three-phase staking system** designed for agent economi
 
 3. **Account Creation**: 
    - Code: `validator/src/main.rs` (lines 242-254)
-   - Creates validator account with 10K MOLT on first startup
+   - Creates validator account with 100K MOLT on first startup
    - Auto-increments global account counter
 
 ### Economic Impact
 
 - **Total Grants**: 250M MOLT (25% of 1B supply) reserved for builder grants
-- **Validator Allocation**: ~100K grants × 10K MOLT = 1M MOLT total
+- **Validator Allocation**: ~100 grants × 100K MOLT = 10M MOLT total
 - **Unlock Timeline**: Vests as validators earn rewards (organic distribution)
 
 ### Current Limitations
@@ -100,7 +100,7 @@ fn delegate_to_validator(validator: Pubkey, amount: u64) -> Result<(), String> {
 
 ```
 Alice's Stats:
-  Own stake:        10,000 MOLT (from bootstrap, fully vested)
+  Own stake:        100,000 MOLT (from bootstrap, fully vested)
   Delegated stake:  40,000 MOLT (from community)
   Total stake:      50,000 MOLT
   Commission:       10%
@@ -124,7 +124,7 @@ APY = (Annual Rewards / Your stake) × 100%
 
 Example (assuming $0.10/MOLT):
 - Total staked: 100M MOLT (10% of supply)
-- Your stake: 10,000 MOLT
+- Your stake: 100,000 MOLT
 - Blocks/year: ~78.8M blocks (400ms per block)
 - Avg reward: 0.1 MOLT per block (mix of TX and heartbeat)
 - Annual rewards: 78.8M × 0.1 × (10K / 100M) = 788 MOLT
@@ -289,7 +289,7 @@ Result: Same demand + 11.7% less liquid supply = ~13% price increase
 
 ### What's LIVE (Phase 1)
 
-✅ Validator bootstrap grants (10K MOLT each)
+✅ Validator bootstrap grants (100K MOLT each)
 ✅ Vesting system (repay debt through rewards)
 ✅ Account counter (tracks all accounts)
 ✅ Graduation tracking (bootstrap_debt = 0)

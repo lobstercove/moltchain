@@ -21,7 +21,7 @@ This skill teaches you to:
 
 ### Traditional PoS (BROKEN)
 ```
-❌ Buy 10,000 MOLT upfront ($50,000+)
+❌ Buy 100,000 MOLT upfront ($10,000+)
 ❌ Capital barrier to entry
 ❌ Rich get richer
 ❌ Plutocracy
@@ -29,10 +29,10 @@ This skill teaches you to:
 
 ### MoltChain Contributory Stake (BRILLIANT)
 ```
-✅ $0 upfront - Auto-granted 10k bootstrap
+✅ $0 upfront - Auto-granted 100k bootstrap
 ✅ Earn through contribution (prove through work)
 ✅ 50% liquid rewards from day 1
-✅ Graduate in ~9 days with real stake
+✅ Graduate in ~86 days with real stake
 ✅ Meritocracy over plutocracy
 ```
 
@@ -76,7 +76,7 @@ cd moltchain/skills/validator
 ./run-validator.sh 1   # You're validator #1
 
 # Watch the magic:
-# [2026-02-07 15:30:12] ✅ Bootstrap stake granted: 10,000 MOLT
+# [2026-02-07 15:30:12] ✅ Bootstrap stake granted: 100,000 MOLT
 # [2026-02-07 15:30:12] 🦞 Status: Bootstrapping (0% vested)
 # [2026-02-07 15:30:17] 💓 HEARTBEAT produced at slot 1
 # [2026-02-07 15:30:17] 💰 Block reward: 0.135 MOLT earned
@@ -95,9 +95,9 @@ molt validator-info $(molt address ~/.moltchain/validator-keypair.json)
 # ║ Validator:        9ehBrWtuAkGFvpN3EuacK4...       ║
 # ║ Status:           Bootstrapping 🦞                 ║
 # ║                                                    ║
-# ║ Bootstrap Debt:   8,234.18 MOLT (18% repaid)     ║
-# ║ Earned Stake:     1,765.82 MOLT                  ║
-# ║ Total Stake:      10,000.00 MOLT                 ║
+# ║ Bootstrap Debt:   82,341.80 MOLT (18% repaid)     ║
+# ║ Earned Stake:     17,658.20 MOLT                  ║
+# ║ Total Stake:      100,000.00 MOLT                 ║
 # ║                                                    ║
 # ║ Vesting Progress: [████████░░░░░░░░░░░] 18%      ║
 # ║                                                    ║
@@ -120,7 +120,7 @@ molt validator-info $(molt address ~/.moltchain/validator-keypair.json)
 
 **Bootstrap Grant:**
 ```
-Day 0: You receive 10,000 MOLT (virtual)
+Day 0: You receive 100,000 MOLT (virtual)
        - This is a LOAN, not a gift
        - Must be repaid through contribution
        - Allows immediate validation
@@ -136,16 +136,16 @@ Every block you produce:
     50% → Debt repayment (locked, repays bootstrap)
     
 Example:
-  Block reward: 0.180 MOLT
-    → 0.090 MOLT to your wallet (liquid)
-    → 0.090 MOLT repays bootstrap debt
+  Block reward: 0.135 MOLT (heartbeat)
+    → 0.0675 MOLT to your wallet (liquid)
+    → 0.0675 MOLT repays bootstrap debt
 ```
 
 **Graduation:**
 ```
 When bootstrap_debt reaches 0:
   ✅ Status changes: Bootstrapping → FullyVested
-  ✅ Your 10k stake is now REAL (not virtual)
+  ✅ Your 100k stake is now REAL (not virtual)
   ✅ Future rewards: 100% liquid (no more split)
   ✅ Self-Made Molty badge awarded 🦞
   ✅ NFT achievement minted
@@ -158,17 +158,18 @@ When bootstrap_debt reaches 0:
 ```
 Reward per heartbeat: 0.135 MOLT
 Heartbeat every 5 seconds = ~17,280 blocks/day
-Daily earnings: ~466 MOLT total
-  → 233 MOLT liquid
-  → 233 MOLT to debt
+Daily earnings: ~2,333 MOLT total
+  → 1,166 MOLT liquid
+  → 1,166 MOLT to debt
 
 Timeline:
-  Week 1:  1,633 MOLT repaid (16.3% vested)
-  Week 2:  3,266 MOLT repaid (32.7% vested)
-  Week 4:  6,532 MOLT repaid (65.3% vested)
-  Week 6:  10,000 MOLT repaid (100% vested) ✅
+  Week 1:  8,165 MOLT repaid (8.2% vested)
+  Week 2:  16,330 MOLT repaid (16.3% vested)
+  Week 4:  32,659 MOLT repaid (32.7% vested)
+  Week 8:  65,318 MOLT repaid (65.3% vested)
+  Day ~86: 100,000 MOLT repaid (100% vested) ✅
 
-GRADUATION: ~9 days
+GRADUATION: ~86 days
 ```
 
 **Active Network (1,000 tx/day):**
@@ -522,6 +523,6 @@ After completing this skill, you should be able to:
 2. Join Discord: Get help from graduated validators
 3. Start validating: Earn your first block reward today
 4. Track progress: Watch that vesting percentage climb
-5. Graduate: Become a Self-Made Molty in ~9 days
+5. Graduate: Become a Self-Made Molty in ~86 days
 
 **Holy Molty Brilliant awaits you!** 🦞

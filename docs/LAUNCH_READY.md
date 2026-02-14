@@ -22,7 +22,7 @@ MoltChain blockchain is **100% complete** and ready for launch. All core systems
 - ✅ Account structure: shells, spendable, staked, locked
 - ✅ Balance invariant maintained: shells = spendable + staked + locked
 - ✅ 7 management methods implemented
-- ✅ Bootstrap accounts properly staked (10K MOLT)
+- ✅ Bootstrap accounts properly staked (100K MOLT)
 - ✅ Reward distribution to spendable working
 
 **Multi-Validator:**
@@ -79,7 +79,7 @@ MoltChain blockchain is **100% complete** and ready for launch. All core systems
 
 **StakePool Integration:**
 - ✅ StakePool wired to RPC server (critical fix)
-- ✅ Real bootstrap debt: 10,000 MOLT
+- ✅ Real bootstrap debt: 100,000 MOLT
 - ✅ Reward tracking working
 - ✅ Vesting progress calculation
 
@@ -336,7 +336,7 @@ Validator #2: B21dUmYNBTHCBgdemEXYRu6voEsECC4fD77D94ienMcN
 **StakePool Data:**
 ```json
 {
-  "bootstrap_debt": 10000000000000,    // 10,000 MOLT (real data!)
+  "bootstrap_debt": 100000000000000,    // 100,000 MOLT (real data!)
   "total_rewards": 12069000000,        // 12.069 MOLT earned
   "vesting_progress": 0.001206         // 0.12% vested
 }
@@ -389,7 +389,7 @@ Validator #2: B21dUmYNBTHCBgdemEXYRu6voEsECC4fD77D94ienMcN
 
 **Phase 1: Balance Separation (COMPLETE)**
 1. Fixed critical bug: rewards adding to total instead of spendable
-2. Fixed bootstrap accounts: 10K MOLT now properly staked
+2. Fixed bootstrap accounts: 100K MOLT now properly staked
 3. Implemented balance breakdown: spendable/staked/locked
 4. Balance invariant verified across all operations
 
@@ -647,7 +647,7 @@ All core systems operational. All APIs working. Both SDKs functional. Multi-vali
 
 ## 📝 Final Notes
 
-**Bug Fixed:** Original issue was rewards adding to total balance instead of just spendable. Now properly routes rewards → spendable only, with bootstrap accounts correctly staked at 10K MOLT.
+**Bug Fixed:** Original issue was rewards adding to total balance instead of just spendable. Now properly routes rewards → spendable only, with bootstrap accounts correctly staked at 100K MOLT.
 
 **JavaScript SDK Resolution:** npm install was hanging due to network/registry issues. Fixed by:
 1. Using absolute path to js-sdk directory

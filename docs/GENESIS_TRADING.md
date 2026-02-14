@@ -42,19 +42,19 @@ The genesis treasury is gradually distributed via:
 
 #### 1. Validator Bootstrap Grants (250M MOLT allocation)
 ```rust
-// Validators automatically receive 10K MOLT on startup
+// Validators automatically receive 100K MOLT on startup
 // Code: validator/src/main.rs lines 242-254
 if validator_account.is_none() {
-    let bootstrap_account = Account::new(10_000, validator_pubkey);
+    let bootstrap_account = Account::new(100_000, validator_pubkey);
     state.put_account(&validator_pubkey, &bootstrap_account).unwrap();
 }
 ```
 
 **How bootstrap works:**
-- **10,000 MOLT** given to each new validator
+- **100,000 MOLT** given to each new validator
 - Recorded as `bootstrap_debt` ( validator "owes" this to the protocol)
 - Debt reduces as validator earns block rewards
-- Takes ~9 days to fully vest (graduation)
+- Takes ~86 days to fully vest (graduation)
 - After graduation: validator owns 100% of stake
 
 **Distribution timeline:**
@@ -307,7 +307,7 @@ Year 2+: Full DAO (on-chain voting)
 
 **Genesis & Distribution:**
 - [x] Genesis account creation
-- [x] Validator bootstrap grants (10K MOLT each)
+- [x] Validator bootstrap grants (100K MOLT each)
 - [ ] Builder grant proposal system
 - [ ] DAO governance for treasury spending
 - [ ] Multi-sig wallet for genesis key
