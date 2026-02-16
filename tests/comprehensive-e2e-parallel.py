@@ -752,6 +752,9 @@ def build_opcode_scenarios(
             {"label": "dex_core.initialize",         "args": bytes([0]) + admin},
             {"label": "dex_core.create_pair",         "args": bytes([1]) + admin + molt + weth + u64le(1000) + u64le(100) + u64le(1000)},
             {"label": "dex_core.set_preferred_quote", "args": bytes([4]) + admin + musd},
+            {"label": "dex_core.add_allowed_quote",    "args": bytes([21]) + admin + molt},
+            {"label": "dex_core.get_allowed_quote_count", "args": bytes([23])},
+            {"label": "dex_core.remove_allowed_quote",  "args": bytes([22]) + admin + molt},
             {"label": "dex_core.update_pair_fees",    "args": bytes([7]) + admin + u64le(1) + i16le(-2) + u16le(10)},
             # --- queries (no state deps beyond create_pair) ---
             {"label": "dex_core.get_pair_count",      "args": bytes([5])},
@@ -803,7 +806,7 @@ def build_opcode_scenarios(
             {"label": "dex_analytics.emergency_pause", "args": bytes([7]) + admin},
             {"label": "dex_analytics.emergency_unpause", "args": bytes([8]) + admin},
         ],
-        # ── dex_governance: 15 opcodes (0-14) ──
+        # ── dex_governance: 18 opcodes (0-17) ──
         # Op0:  initialize(admin[32])
         # Op1:  propose_new_pair(proposer[32]+base[32]+quote[32])
         # Op2:  vote(voter[32]+proposal_id(u64)+approve(1))
@@ -819,9 +822,15 @@ def build_opcode_scenarios(
         # Op12: emergency_pause(admin[32])
         # Op13: emergency_unpause(admin[32])
         # Op14: set_moltyid_address(admin[32]+addr[32])
+        # Op15: add_allowed_quote(admin[32]+token[32])
+        # Op16: remove_allowed_quote(admin[32]+token[32])
+        # Op17: get_allowed_quote_count()
         "dex_governance": [
             {"label": "dex_governance.initialize",            "args": bytes([0]) + admin},
             {"label": "dex_governance.set_preferred_quote",   "args": bytes([5]) + admin + musd},
+            {"label": "dex_governance.add_allowed_quote",     "args": bytes([15]) + admin + molt},
+            {"label": "dex_governance.get_allowed_quote_count", "args": bytes([17])},
+            {"label": "dex_governance.remove_allowed_quote",  "args": bytes([16]) + admin + molt},
             {"label": "dex_governance.set_moltyid_address",   "args": bytes([14]) + admin + contracts.get("moltyid", PublicKey(zero)).to_bytes()},
             {"label": "dex_governance.set_listing_requirements", "args": bytes([11]) + admin + u64le(1000) + u64le(500)},
             {"label": "dex_governance.propose_new_pair",      "args": bytes([1]) + sec + molt + weth},
