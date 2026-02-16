@@ -833,12 +833,18 @@ def build_opcode_scenarios(
     dex_gov_bytes = dex_gov_pk.to_bytes() if dex_gov_pk else zero32
 
     return {
-        # ─── DEX_CORE (21 opcodes) ───
+        # ─── DEX_CORE (24 opcodes) ───
         "dex_core": [
             # opcode 0: initialize (already done at genesis, but test re-init is safe)
             {"label": "dex_core.initialize", "args": bytes([0]) + admin},
             # opcode 4: set_preferred_quote(caller 32B, quote 32B)
             {"label": "dex_core.set_preferred_quote", "args": bytes([4]) + admin + molt_bytes},
+            # opcode 21: add_allowed_quote(caller 32B, quote 32B)
+            {"label": "dex_core.add_allowed_quote", "args": bytes([21]) + admin + musd_bytes},
+            # opcode 23: get_allowed_quote_count
+            {"label": "dex_core.get_allowed_quote_count", "args": bytes([23])},
+            # opcode 22: remove_allowed_quote(caller 32B, quote 32B)
+            {"label": "dex_core.remove_allowed_quote", "args": bytes([22]) + admin + musd_bytes},
             # opcode 1: create_pair(caller 32B, base 32B, quote 32B, tick_size 8B, lot_size 8B, min_order 8B)
             {"label": "dex_core.create_pair", "args": bytes([1]) + admin + weth_bytes + molt_bytes + u64le(1) + u64le(1_000_000) + u64le(1_000)},
             # opcode 7: update_pair_fees(caller 32B, pair_id 8B, maker_fee i16, taker_fee u16)
@@ -904,7 +910,7 @@ def build_opcode_scenarios(
             # opcode 8: emergency_unpause(caller 32B)
             {"label": "dex_analytics.emergency_unpause", "args": bytes([8]) + admin},
         ],
-        # ─── DEX_GOVERNANCE (15 opcodes) ───
+        # ─── DEX_GOVERNANCE (18 opcodes) ───
         "dex_governance": [
             {"label": "dex_governance.initialize", "args": bytes([0]) + admin},
             # opcode 14: set_moltyid_address(caller 32B, addr 32B)
@@ -913,6 +919,12 @@ def build_opcode_scenarios(
             {"label": "dex_governance.set_preferred_quote", "args": bytes([5]) + admin + molt_bytes},
             # opcode 6: get_preferred_quote
             {"label": "dex_governance.get_preferred_quote", "args": bytes([6])},
+            # opcode 15: add_allowed_quote(caller 32B, quote 32B)
+            {"label": "dex_governance.add_allowed_quote", "args": bytes([15]) + admin + musd_bytes},
+            # opcode 17: get_allowed_quote_count
+            {"label": "dex_governance.get_allowed_quote_count", "args": bytes([17])},
+            # opcode 16: remove_allowed_quote(caller 32B, quote 32B)
+            {"label": "dex_governance.remove_allowed_quote", "args": bytes([16]) + admin + musd_bytes},
             # opcode 11: set_listing_requirements(caller 32B, min_liquidity 8B, min_holders 8B)
             {"label": "dex_governance.set_listing_requirements", "args": bytes([11]) + admin + u64le(1000) + u64le(1)},
             # opcode 1: propose_new_pair(proposer 32B, base 32B, quote 32B)
