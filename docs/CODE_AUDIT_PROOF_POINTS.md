@@ -328,20 +328,20 @@ impl SlashingTracker {
 
 **Lines 24-48:**
 ```rust
-/// Base transaction fee (0.00001 MOLT = 10,000 shells)
-pub const BASE_FEE: u64 = 10_000;
+/// Base transaction fee (0.001 MOLT = 1,000,000 shells)
+pub const BASE_FEE: u64 = 1_000_000;
 
-/// Contract deployment fee (2.5 MOLT = 2,500,000,000 shells)
-pub const CONTRACT_DEPLOY_FEE: u64 = 2_500_000_000;
+/// Contract deployment fee (25 MOLT = 25,000,000,000 shells)
+pub const CONTRACT_DEPLOY_FEE: u64 = 25_000_000_000;
 
-/// Contract upgrade fee (1 MOLT = 1,000,000,000 shells)
-pub const CONTRACT_UPGRADE_FEE: u64 = 1_000_000_000;
+/// Contract upgrade fee (10 MOLT = 10,000,000,000 shells)
+pub const CONTRACT_UPGRADE_FEE: u64 = 10_000_000_000;
 
-/// NFT mint fee (0.001 MOLT = 1,000,000 shells)
-pub const NFT_MINT_FEE: u64 = 1_000_000;
+/// NFT mint fee (0.5 MOLT = 500,000,000 shells)
+pub const NFT_MINT_FEE: u64 = 500_000_000;
 
-/// NFT collection creation fee (100 MOLT = 100,000,000,000 shells)
-pub const NFT_COLLECTION_FEE: u64 = 100_000_000_000;
+/// NFT collection creation fee (1,000 MOLT = 1,000,000,000,000 shells)
+pub const NFT_COLLECTION_FEE: u64 = 1_000_000_000_000;
 ```
 
 **Verdict:** Fee structure matches documentation ✅
@@ -825,7 +825,7 @@ fn distribute_rewards(
 6. ⚠️ **Delegation tracking** - Aggregated works, individual tracking TODO
 
 #### Core Layer ✅
-1. ✅ **Fee structure** - 0.00001 MOLT base fee, various special fees
+1. ✅ **Fee structure** - 0.001 MOLT base fee, various special fees
 2. ✅ **Fee burn** - 50/50 split working, global tracking
 3. ✅ **Transaction processing** - Signature verification, sequential execution
 4. ✅ **Balance separation** - spendable/staked/locked with invariant

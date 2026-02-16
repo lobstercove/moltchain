@@ -18,7 +18,9 @@ MoltChain's economic model is designed to be **affordable, sustainable, and anti
 
 ### Fee Burn Mechanism
 - **50% of all fees are burned** (deflationary pressure)
-- **50% goes to validators** (sustainability)
+- **30% to block producer** (sustainability)
+- **10% to voters** (governance participation)
+- **10% to treasury** (ecosystem development)
 - Burn mechanism applies to all transaction types
 
 ## Transaction Fees
@@ -27,17 +29,17 @@ MoltChain's economic model is designed to be **affordable, sustainable, and anti
 
 **All transactions currently use the same base fee:**
 ```
-Fee: 10,000 shells (0.00001 MOLT)
+Fee: 1,000,000 shells (0.001 MOLT)
 Solana Comparison: $0.00025 per TX
 ```
 
 **MoltChain at Different Price Points:**
-- **$0.01/MOLT**: 0.00001 MOLT = **$0.0000001** per TX (2,500x cheaper than Solana)
-- **$0.10/MOLT**: 0.00001 MOLT = **$0.00001** per TX (250x cheaper than Solana)
-- **$1.00/MOLT**: 0.00001 MOLT = **$0.00001** per TX (25x cheaper than Solana)
-- **$10.00/MOLT**: 0.00001 MOLT = **$0.0001** per TX (2.5x cheaper than Solana)
+- **$0.01/MOLT**: 0.001 MOLT = **$0.00001** per TX (25x cheaper than Solana)
+- **$0.10/MOLT**: 0.001 MOLT = **$0.0001** per TX (2.5x cheaper than Solana)
+- **$1.00/MOLT**: 0.001 MOLT = **$0.001** per TX (Solana is cheaper here — governance adjusts)
+- **$10.00/MOLT**: 0.001 MOLT = **$0.01** per TX (governance would reduce fee)
 
-**Key Insight**: MoltChain remains **cheaper than Solana** even if MOLT reaches $10, while maintaining anti-spam protection.
+**Key Insight**: MoltChain remains **cheaper than Solana** up to ~$0.25/MOLT for base transactions, with governance fee adjustment ensuring competitiveness at any price point.
 
 **Use Cases:**
 - Simple transfers
@@ -52,17 +54,17 @@ Operation-specific fees are **IMPLEMENTED IN CODE** at competitive rates:
 
 #### Contract Deployment
 ```
-Implemented Fee: 2,500,000,000 shells (2.5 MOLT)
+Implemented Fee: 25,000,000,000 shells (25 MOLT)
 Code Location: core/src/processor.rs::CONTRACT_DEPLOY_FEE
 Solana Contract Deploy: ~$5
 ```
 
 **Competitiveness at Different MOLT Prices:**
-- At $0.01/MOLT: $0.025 per deploy (200x cheaper than Solana)
-- At $0.10/MOLT: $0.25 per deploy (20x cheaper than Solana)
-- At $1.00/MOLT: **$2.50 per deploy** (2x cheaper than Solana $5)
-- At $2.00/MOLT: $5.00 per deploy (matches Solana)
-- At $10.00/MOLT: $25.00 (5x more expensive - governance adjusts)
+- At $0.01/MOLT: $0.25 per deploy (20x cheaper than Solana)
+- At $0.10/MOLT: $2.50 per deploy (2x cheaper than Solana)
+- At $0.20/MOLT: $5.00 per deploy (matches Solana)
+- At $1.00/MOLT: **$25.00 per deploy** (governance would reduce fee)
+- At $10.00/MOLT: $250.00 (governance adjusts well before this)
 
 **Rationale:**
 - Prevents contract spam
@@ -72,15 +74,15 @@ Solana Contract Deploy: ~$5
 
 #### Contract Upgrade
 ```
-Implemented Fee: 1,000,000,000 shells (1 MOLT)
+Implemented Fee: 10,000,000,000 shells (10 MOLT)
 Code Location: core/src/processor.rs::CONTRACT_UPGRADE_FEE
 Proportion: 40% of deployment cost
 ```
 
 **Competitiveness:**
-- At $0.10/MOLT: $0.10 per upgrade
-- At $1.00/MOLT: **$1.00 per upgrade**
-- At $5.00/MOLT: $5.00 (matches Solana deploy cost)
+- At $0.10/MOLT: $1.00 per upgrade
+- At $1.00/MOLT: **$10.00 per upgrade**
+- At $0.50/MOLT: $5.00 (matches Solana deploy cost)
 
 **Rationale:**
 - Cheaper than deployment (iterative development friendly)
@@ -100,34 +102,34 @@ Additional Compute: 1 shell per 1,000 compute units
 - Math Operation: 10 compute units
 
 **Example Costs (at current BASE_FEE):**
-- Simple contract call: 0.00001 MOLT
-- Complex DeFi swap: 0.00002 MOLT (base + compute)
-- Large state update: 0.00005 MOLT (base + heavy compute)
+- Simple contract call: 0.001 MOLT
+- Complex DeFi swap: 0.002 MOLT (base + compute)
+- Large state update: 0.005 MOLT (base + heavy compute)
 
 ## NFT Economics
 
 ### NFT Minting (Implemented)
 ```
-Standard Mint: 1,000,000 shells (0.001 MOLT)
+Standard Mint: 500,000,000 shells (0.5 MOLT)
 Code Location: core/src/processor.rs::NFT_MINT_FEE
 
-Bulk Collection: 100,000,000,000 shells (100 MOLT)
+Bulk Collection: 1,000,000,000,000 shells (1,000 MOLT)
 Code Location: core/src/processor.rs::NFT_COLLECTION_FEE
 ```
 
 **Standard Mint Competitiveness:**
-- At $0.10/MOLT: $0.0001 per mint (100x cheaper than Solana)
-- At $1.00/MOLT: **$0.001 per mint** (10x cheaper than Solana)
-- At $10.00/MOLT: $0.01 per mint (matches Solana)
+- At $0.10/MOLT: $0.05 per mint
+- At $1.00/MOLT: **$0.50 per mint**
+- At $10.00/MOLT: $5.00 per mint (governance adjusts)
 
 **Collection Fee (Unlimited Mints):**
-- At $0.10/MOLT: $10 per collection
-- At $1.00/MOLT: $100 per collection
-- At $10.00/MOLT: $1,000 per collection
+- At $0.10/MOLT: $100 per collection
+- At $1.00/MOLT: $1,000 per collection
+- At $10.00/MOLT: $10,000 per collection
 
 **Break-even Analysis:**
-- $1/MOLT scenario: 100 mints to break even ($100 collection vs $1/mint Solana)
-- Makes sense for serious NFT projects with 1000+ items
+- $1/MOLT scenario: 2,000 mints to break even ($1,000 collection vs $0.50/mint individual)
+- Makes sense for serious NFT projects with 2,000+ items
 
 ### NFT Marketplace Fees
 ```
@@ -276,7 +278,7 @@ USD Value: Market-determined
 
 **Sustainability Model:**
 - Block rewards provide base income
-- 50% of transaction fees supplement rewards
+- 50% of transaction fees go to network participants (30% block producer, 10% voters, 10% treasury)
 - Deflationary fee burn increases scarcity over time
 - No inflation beyond initial supply
 
@@ -364,29 +366,29 @@ Large Data: 10 MOLT per 1MB per year
 
 ### For Users (Typical Activity)
 
-**Current Implementation (BASE_FEE = 0.00001 MOLT):**
+**Current Implementation (BASE_FEE = 0.001 MOLT):**
 ```
-1,200 transactions/year: 0.012 MOLT
-(100 tx/month at 0.00001 MOLT each)
+1,200 transactions/year: 1.2 MOLT
+(100 tx/month at 0.001 MOLT each)
 
 Price Scenarios:
-- At $0.10/MOLT: 0.012 MOLT = $0.0012/year
-- At $1.00/MOLT: 0.012 MOLT = $0.012/year  
-- At $10.00/MOLT: 0.012 MOLT = $0.12/year
+- At $0.10/MOLT: 1.2 MOLT = $0.12/year
+- At $1.00/MOLT: 1.2 MOLT = $1.20/year  
+- At $10.00/MOLT: 1.2 MOLT = $12.00/year
 
 Compare to Solana: 1,200 tx × $0.00025 = $0.30/year
-MoltChain is cheaper at any realistic MOLT price!
+MoltChain is cheaper than Solana at MOLT prices below ~$0.25
 ```
 
 **With Planned Differentiated Fees:**
 ```
-1,200 transactions: 0.012 MOLT
-10 contract deploys: 10 MOLT  
-50 contract upgrades: 10 MOLT
-12 NFT mints: 0.012 MOLT
+1,200 transactions: 1.2 MOLT
+10 contract deploys: 250 MOLT  
+50 contract upgrades: 500 MOLT
+12 NFT mints: 6 MOLT
 
-Heavy Developer Annual: ~20 MOLT
-At $1/MOLT: $20/year (incredibly cheap)
+Heavy Developer Annual: ~757 MOLT
+At $0.10/MOLT: $75.70/year
 ```
 
 ### For Validators
@@ -404,13 +406,13 @@ ROI: Infinite (no upfront capital required)
 
 ### For Developers
 ```
-Contract Deployment: 10 MOLT (one-time)
-10 Upgrades/year: 20 MOLT
+Contract Deployment: 25 MOLT (one-time)
+10 Upgrades/year: 100 MOLT
 Oracle Subscription: 100 MOLT/year
 NFT Collection: 1,000 MOLT (one-time)
 
-Annual Run Cost: ~120 MOLT + initial deployment
-USD Cost: Market-determined, but always competitive
+Annual Run Cost: ~200 MOLT + initial deployment
+USD Cost: Market-determined, but competitive at $0.10/MOLT
 ```
 
 ## Fee Adjustment Mechanism
@@ -445,8 +447,8 @@ As MOLT price increases over time due to market demand, fees must be adjusted do
 
 **Example Scenario:**
 - MOLT price rises from $0.10 to $1.00 (10x increase)
-- Current contract deploy: 2.5 MOLT = $2.50 → becomes $25 (too expensive!)
-- Proposal: Reduce to 0.25 MOLT (new price: $0.25 - even cheaper than before)
+- Current contract deploy: 25 MOLT = $25 → becomes $250 (too expensive!)
+- Proposal: Reduce to 2.5 MOLT (new price: $2.50 - even cheaper than before)
 - Vote passes → 7 days later, new fee activates automatically
 
 ### Dynamic Fee Multiplier (Congestion-Based)
@@ -475,7 +477,7 @@ match network_congestion {
 **Concept**: Automatic fee adjustment based on MOLT/USD price
 ```rust
 pub struct PriceOracleConfig {
-    pub target_usd_base_fee: f64,        // e.g., 0.00001 USD
+    pub target_usd_base_fee: f64,        // e.g., 0.0001 USD
     pub target_usd_contract_deploy: f64, // e.g., 2.50 USD
     pub adjustment_frequency: u64,       // e.g., every 1M slots (~4.6 days)
     pub max_adjustment_per_period: f64,  // e.g., 20% max change
@@ -506,18 +508,18 @@ pub struct PriceOracleConfig {
 
 **Example Emergency:**
 - MOLT price suddenly jumps to $100 (100x overnight)
-- Contract deploy: 2.5 MOLT = $250 (blocks ecosystem development)
-- Emergency adjustment: 0.025 MOLT = $2.50 (restores affordability)
+- Contract deploy: 25 MOLT = $2,500 (blocks ecosystem development)
+- Emergency adjustment: 0.25 MOLT = $25 (restores affordability)
 
 ### Current Fee Constants (Code Reference)
 
 **Location**: `core/src/processor.rs`
 ```rust
-pub const BASE_FEE: u64 = 10_000;                    // 0.00001 MOLT
-pub const CONTRACT_DEPLOY_FEE: u64 = 2_500_000_000;  // 2.5 MOLT
-pub const CONTRACT_UPGRADE_FEE: u64 = 1_000_000_000; // 1 MOLT
-pub const NFT_MINT_FEE: u64 = 1_000_000;             // 0.001 MOLT
-pub const NFT_COLLECTION_FEE: u64 = 100_000_000_000; // 100 MOLT
+pub const BASE_FEE: u64 = 1_000_000;                      // 0.001 MOLT
+pub const CONTRACT_DEPLOY_FEE: u64 = 25_000_000_000;      // 25 MOLT
+pub const CONTRACT_UPGRADE_FEE: u64 = 10_000_000_000;     // 10 MOLT
+pub const NFT_MINT_FEE: u64 = 500_000_000;                // 0.5 MOLT
+pub const NFT_COLLECTION_FEE: u64 = 1_000_000_000_000;   // 1,000 MOLT
 ```
 
 **To Adjust Fees Manually** (pre-DAO):
@@ -577,9 +579,9 @@ Low Usage (<20%): 0.5x multiplier
 ## Economic Security
 
 ### Spam Prevention
-- All transactions cost minimum 0.00001 MOLT (10,000 shells)
+- All transactions cost minimum 0.001 MOLT (1,000,000 shells)
 - Rate limiting: 1000 tx/second per account
-- Contract deployment barrier: 1 MOLT (planned)
+- Contract deployment barrier: 25 MOLT
 - Fee burning reduces circulating supply
 
 ### Validator Incentives
@@ -592,8 +594,10 @@ Low Usage (<20%): 0.5x multiplier
 ```
 Daily Transaction Volume: 10M (conservative)
 Daily Fee Revenue: 10,000 MOLT
-Daily Burn: 5,000 MOLT
-Daily Validator Rewards: 5,000 MOLT
+Daily Burn: 5,000 MOLT (50%)
+Daily Block Producer: 3,000 MOLT (30%)
+Daily Voters: 1,000 MOLT (10%)
+Daily Treasury: 1,000 MOLT (10%)
 
 Annual Deflation: ~1.8M MOLT (0.18% of supply)
 ```
@@ -604,22 +608,22 @@ Annual Deflation: ~1.8M MOLT (0.18% of supply)
 
 | Operation | MoltChain Fee | At $1/MOLT | Solana | Ethereum | MoltChain Advantage |
 |-----------|---------------|------------|--------|----------|---------------------|
-| Simple TX | 0.00001 MOLT | $0.00001 | $0.00025 | $2.00 | 25x cheaper than Solana |
-| Simple TX | 0.00001 MOLT | At $10/MOLT = $0.0001 | $0.00025 | $2.00 | 2.5x cheaper even at $10 |
-| 1,000 TXs | 0.01 MOLT | $0.01 | $0.25 | $2,000 | 25x cheaper than Solana |
-| Annual (1,200 TX) | 0.012 MOLT | $0.012 | $0.30 | $2,400 | 25x cheaper than Solana |
+| Simple TX | 0.001 MOLT | $0.001 | $0.00025 | $2.00 | 2,000x cheaper than Ethereum |
+| Simple TX | 0.001 MOLT | At $10/MOLT = $0.01 | $0.00025 | $2.00 | 200x cheaper than Ethereum |
+| 1,000 TXs | 1 MOLT | $1.00 | $0.25 | $2,000 | 2,000x cheaper than Ethereum |
+| Annual (1,200 TX) | 1.2 MOLT | $1.20 | $0.30 | $2,400 | 2,000x cheaper than Ethereum |
 
 **Planned Differentiated Fees vs Competition**
 
 | Operation | Implemented Fee | At $0.10/MOLT | At $1/MOLT | Solana | Advantage |
 |-----------|-----------------|---------------|------------|--------|-----------|  
-| Simple TX | 0.00001 MOLT | $0.000001 | $0.00001 | $0.00025 | 25x cheaper |
-| Contract Deploy | 2.5 MOLT | $0.25 | **$2.50** | $5.00 | 2x cheaper |
-| Contract Upgrade | 1 MOLT | $0.10 | **$1.00** | $5.00 | 5x cheaper |
-| NFT Mint | 0.001 MOLT | $0.0001 | **$0.001** | $0.01 | 10x cheaper |
-| NFT Collection | 100 MOLT | $10 | $100 | $500 | 5x cheaper |
+| Simple TX | 0.001 MOLT | $0.0001 | $0.001 | $0.00025 | 2.5x cheaper (at $0.10) |
+| Contract Deploy | 25 MOLT | $2.50 | **$25.00** | $5.00 | 2x cheaper (at $0.10) |
+| Contract Upgrade | 10 MOLT | $1.00 | **$10.00** | $5.00 | 5x cheaper (at $0.10) |
+| NFT Mint | 0.5 MOLT | $0.05 | **$0.50** | $0.01 | Competitive |
+| NFT Collection | 1,000 MOLT | $100 | $1,000 | $500 | Serious projects only |
 
-**Key Insight**: All fees are defined in MOLT/shells, prices scale with market value, but always remain competitive with Solana up to $2/MOLT.
+**Key Insight**: All fees are defined in MOLT/shells, prices scale with market value. At $0.10/MOLT, MoltChain is competitive with Solana across all operation types. Governance adjusts fees if MOLT price rises significantly.
 
 **Validator Economics Comparison**
 
@@ -629,7 +633,7 @@ Annual Deflation: ~1.8M MOLT (0.18% of supply)
 | Initial Stake | $0 | $50,000 | $100,000 |
 | Barrier | Work | Capital | Massive Capital |
 
-**Key Insight**: MoltChain maintains competitive pricing even if MOLT reaches $10, while Solana fees are fixed in USD. At $1 MOLT, MoltChain is 25x cheaper for transactions and 5x cheaper for contract operations.
+**Key Insight**: MoltChain maintains competitive pricing at $0.10/MOLT across all operations. Governance-based fee adjustment ensures affordability at any price point.
 
 ## Economic Sustainability
 
@@ -647,35 +651,35 @@ MOLT will find its natural market price through:
 
 **Conservative Launch ($MOLT = $0.01)**:
 - Market Cap: $10 million
-- Transaction: 0.00001 MOLT = **$0.0000001** per TX
-- Contract Deploy (planned): 1 MOLT = $0.01
+- Transaction: 0.001 MOLT = **$0.00001** per TX
+- Contract Deploy: 25 MOLT = $0.25
 - Validator Revenue: ~1,000 MOLT/yr = $10/year
-- **vs Solana**: 2,500x cheaper TXs, unlimited cheaper deploys
+- **vs Solana**: 25x cheaper TXs, 20x cheaper deploys
 
 **Realistic Launch Scenario ($MOLT = $0.10)**:
 - Market Cap: $100 million (achievable)
-- Transaction: 0.00001 MOLT = **$0.000001** per TX
-- Contract Deploy: 2.5 MOLT = **$0.25**
-- Contract Upgrade: 1 MOLT = **$0.10**
-- NFT Mint: 0.001 MOLT = **$0.0001**
+- Transaction: 0.001 MOLT = **$0.0001** per TX
+- Contract Deploy: 25 MOLT = **$2.50**
+- Contract Upgrade: 10 MOLT = **$1.00**
+- NFT Mint: 0.5 MOLT = **$0.05**
 - Validator Revenue: ~1,000 MOLT/yr = $100/year
-- **vs Solana**: 250x cheaper TXs, 20x cheaper deploys
+- **vs Solana**: 2.5x cheaper TXs, 2x cheaper deploys
 
 **Target Growth Scenario ($MOLT = $1.00)**:
 - Market Cap: $1 billion (success case)
-- Transaction: 0.00001 MOLT = **$0.00001** per TX
-- Contract Deploy: 2.5 MOLT = **$2.50**
-- Contract Upgrade: 1 MOLT = **$1.00**
-- NFT Mint: 0.001 MOLT = **$0.001**
+- Transaction: 0.001 MOLT = **$0.001** per TX
+- Contract Deploy: 25 MOLT = **$25.00**
+- Contract Upgrade: 10 MOLT = **$10.00**
+- NFT Mint: 0.5 MOLT = **$0.50**
 - Validator Revenue: ~1,000 MOLT /yr = $1,000/year
-- **vs Solana**: 25x cheaper TXs, 2x cheaper deploys
+- **vs Solana**: Governance would reduce fees to maintain competitiveness
 
 **Success Scenario ($MOLT = $10.00)**:
 - Market Cap: $10 billion
-- Transaction: 0.00001 MOLT = **$0.0001** per TX
-- Contract Deploy (planned): 1 MOLT = $10.00
+- Transaction: 0.001 MOLT = **$0.01** per TX
+- Contract Deploy: 25 MOLT = $250.00
 - Validator Revenue: ~1,000 MOLT/yr = $10,000/year
-- **vs Solana**: 2.5x cheaper TXs, 2x more expensive deploys (governance would adjust fees)
+- **vs Solana**: Governance would have already reduced fees (see Fee Adjustment Mechanism)
 
 **All scenarios maintain**:
 - ✅ Competitive pricing vs alternatives
@@ -710,6 +714,6 @@ MOLT will find its natural market price through:
 
 ---
 
-**Last Updated**: February 7, 2026
+**Last Updated**: February 15, 2026
 **Next Review**: May 1, 2026
 **Status**: Realistic pricing for community review

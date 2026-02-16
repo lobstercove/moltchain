@@ -10,6 +10,24 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  expected-contracts:
+    name: Expected Contract Lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify expected contracts lockfile
+        run: python3 tests/update-expected-contracts.py --check
+
+  prediction-market-tests:
+    name: Prediction Market Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Run prediction_market tests
+        run: cd contracts/prediction_market && cargo test --release
+
   test:
     name: Test
     runs-on: ubuntu-latest

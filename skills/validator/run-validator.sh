@@ -109,7 +109,12 @@ if [ -z "${MOLTCHAIN_SIGNER_BIND:-}" ]; then
 fi
 
 # Collect extra flags (e.g. --dev-mode, --import-key /path)
-EXTRA_FLAGS=""
+# Default: testnet always uses --dev-mode (allows multi-validator on one machine)
+if [ "$NETWORK" = "testnet" ]; then
+  EXTRA_FLAGS="--dev-mode"
+else
+  EXTRA_FLAGS=""
+fi
 for arg in "$@"; do
     case "$arg" in
         --dev-mode)
