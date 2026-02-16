@@ -163,7 +163,7 @@ Validators earn the right to validate blocks by **contributing value to the netw
 
 **Micro-unit:** shell (the smallest unit)
 - 1 MOLT = 1,000,000,000 shells
-- Typical transaction: 0.00001 MOLT = 10,000 shells
+- Typical transaction: 0.001 MOLT = 1,000,000 shells
 - Ultra-low fees measured in shells
 
 **No inflation** - The supply is permanently capped. Value comes from utility and scarcity.
@@ -198,7 +198,7 @@ Reserve Pool:            50,000,000 MOLT (5%)
 **Advanced Operations:**
 - Token creation: **10 MOLT** ($1.00)
 - DAO creation: **10,000 MOLT** ($1,000)
-- NFT mint: **0.1 MOLT** ($0.01)
+- NFT mint: **0.5 MOLT** ($0.05)
 - NFT collection: **1,000 MOLT** ($100)
 - Cross-chain bridge: **0.01 MOLT** per transfer
 
@@ -938,8 +938,8 @@ Where:
 molty gov propose \
   --type standard \
   --title "Reduce transaction fees by 50%" \
-  --description "Current fees are 0.00001 MOLT. Propose reducing to 0.000005 MOLT to increase adoption." \
-  --code "update_fee_config(0.000005)" \
+  --description "Current fees are 0.001 MOLT. Propose reducing to 0.0005 MOLT to increase adoption." \
+  --code "update_fee_config(0.0005)" \
   --discussion-url "https://forum.MoltChain.io/proposals/42"
 ```
 
@@ -1176,7 +1176,7 @@ await program.my_instruction(param1, param2)
 | Transactions per second | 50,000+ | Testnet: 12,000 |
 | Block time | 400ms | ✅ Achieved |
 | Finality | <1 second | ✅ Achieved |
-| Transaction cost | $0.00001 | ✅ Achieved |
+| Transaction cost | $0.0001 | ✅ Achieved |
 | Uptime | 99.99% | Launch goal |
 | Validator count | 1,000+ | Growing |
 | Programs deployed | 10,000+ | Launch goal |
@@ -1295,7 +1295,7 @@ Tokens:
   inflation: 0% (fixed supply)
   
 Transactions:
-  base_fee: 0.00001 MOLT
+  base_fee: 0.001 MOLT
   priority_fee: optional
   max_tx_size: 1232 bytes
   max_accounts: 64 per tx
@@ -1363,7 +1363,7 @@ Governance:
 
 | Feature | Solana | MoltChain |
 |---------|--------|------------|
-| Transaction cost | $0.00025 | $0.00001 (250x cheaper) |
+| Transaction cost | $0.00025 | $0.0001 (2.5x cheaper at $0.10/MOLT) |
 | Block time | ~400ms | 400ms (same) |
 | Language support | Rust only | Rust, JS, Python |
 | Agent features | None | Native identity, reputation, skills |
@@ -1375,7 +1375,7 @@ Governance:
 
 | Feature | Ethereum | MoltChain |
 |---------|----------|------------|
-| Transaction cost | $1-50 | $0.00001 (1M-50M times cheaper) |
+| Transaction cost | $1-50 | $0.0001 (10K-500K times cheaper) |
 | Block time | 12s | 400ms (30x faster) |
 | TPS | ~30 | 50,000+ (1,600x faster) |
 | Smart contracts | Solidity | Rust, JS, Python |
