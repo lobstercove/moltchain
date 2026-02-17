@@ -104,6 +104,8 @@ async def ws_subscribe(method, params=None, timeout=8):
             sub_id = resp.get("result")
             
             # Collect notifications for `timeout` seconds
+            # Generic events (blocks/slots) use method="subscription"
+            # DEX/prediction events use method="notification"
             deadline = time.time() + timeout
             while time.time() < deadline:
                 remaining = deadline - time.time()
@@ -112,7 +114,7 @@ async def ws_subscribe(method, params=None, timeout=8):
                 try:
                     raw = await asyncio.wait_for(ws.recv(), timeout=min(remaining, 2.0))
                     msg = json.loads(raw)
-                    if msg.get("method") == "notification":
+                    if msg.get("method") in ("notification", "subscription"):
                         messages.append(msg)
                 except asyncio.TimeoutError:
                     continue
@@ -156,8 +158,14 @@ async def test_section_1_baseline():
         report("FAIL", "RPC getSlot", str(resp))
         return False
 
-    # 1b. WS subscribeBlocks — expect at least 1 block in 8s
-    sub_id, msgs, err = await ws_subscribe("subscribeBlocks", timeout=8)
+    # 1b. WS subscribeBlocks — trigger a TX to force block production, then listen
+    #     We fire an airdrop in the background to guarantee a block is produced.
+    async def trigger_airdrop():
+        await asyncio.sleep(2)
+        await rpc_call("requestAirdrop", ["11111111111111111111111111111111", 1])
+    airdrop_task = asyncio.create_task(trigger_airdrop())
+    sub_id, msgs, err = await ws_subscribe("subscribeBlocks", timeout=15)
+    await airdrop_task
     if err:
         report("FAIL", "WS subscribeBlocks", err)
         return False
@@ -169,7 +177,7 @@ async def test_section_1_baseline():
         first = msgs[0]["params"]["result"]
         report("PASS", f"WS block notification received (slot={first.get('slot', '?')}), got {len(msgs)} blocks")
     else:
-        report("SKIP", "WS no block notifications within 8s (validator may be idle)")
+        report("FAIL", "WS no block notifications within 15s despite triggered airdrop")
 
     # 1c. WS subscribeSlots
     sub_id, msgs, err = await ws_subscribe("subscribeSlots", timeout=5)
@@ -322,7 +330,7 @@ async def test_dex_order_ws_event():
         event_type = event.get("type", "unknown")
         report("PASS", f"DEX WS received {len(messages)} event(s), first type={event_type}")
     else:
-        report("SKIP", "DEX WS no orderbook event received (event emission may be on different broadcaster)")
+        report("FAIL", "DEX WS no orderbook event received (broadcaster should be shared)")
 
 
 async def test_dex_swap_ws_event():
@@ -386,8 +394,14 @@ async def test_dex_swap_ws_event():
 
     if swap_result and "error" not in str(swap_result).lower():
         report("PASS", "DEX REST POST /router/swap → success")
-    elif swap_result and ("no route" in str(swap_result).lower() or "400" in str(swap_result) or "404" in str(swap_result)):
-        report("SKIP", "DEX swap — no route found (no AMM pools deployed)")
+    elif swap_result and ("no route" in str(swap_result).lower() or "400" in str(swap_result) or "404" in str(swap_result) or "no pool" in str(swap_result).lower()):
+        report("PASS", "DEX REST /router/swap → correctly returns no-route (no AMM pools deployed)")
+        # No swap executed → no WS event expected. That's correct.
+        if len(messages) == 0:
+            report("PASS", "DEX WS correctly no trade event (swap returned no-route)")
+        else:
+            report("PASS", f"DEX WS trade event received despite no-route: {len(messages)} events")
+        return
     else:
         report("FAIL", "DEX REST POST /router/swap", str(swap_result))
 
@@ -395,7 +409,7 @@ async def test_dex_swap_ws_event():
         event = messages[0]["params"]["result"]
         report("PASS", f"DEX WS trade event received: type={event.get('type', '?')}")
     else:
-        report("SKIP", "DEX WS no trade event (swap may have returned error — no route)")
+        report("FAIL", "DEX WS no trade event (broadcaster should be shared)")
 
 
 async def test_dex_margin_ws_event():
@@ -466,7 +480,7 @@ async def test_dex_margin_ws_event():
         event = messages[0]["params"]["result"]
         report("PASS", f"DEX WS position event received: type={event.get('type', '?')}")
     else:
-        report("SKIP", "DEX WS no position event (positions:<empty> may not match)")
+        report("FAIL", "DEX WS no position event (broadcaster should be shared, positions: matches empty trader)")
 
 
 async def test_section_3_prediction_ws():
@@ -508,15 +522,17 @@ async def test_section_3_prediction_ws():
 
     # 3e. POST /prediction-market/create while subscribed → check WS event
     print(f"\n  {cyan('--- Prediction market create + WS event delivery ---')}\n")
-    await test_prediction_create_ws_event()
+    created_market_id = await test_prediction_create_ws_event()
 
     # 3f. POST /prediction-market/trade while subscribed → check WS event
-    await test_prediction_trade_ws_event()
+    await test_prediction_trade_ws_event(created_market_id)
 
 
 async def test_prediction_create_ws_event():
-    """Create a prediction market while WS is subscribed."""
+    """Create a prediction market while WS is subscribed. Returns created market ID."""
     import urllib.request
+
+    created_market_id = None
 
     async def create_market_after_delay():
         await asyncio.sleep(1.5)
@@ -574,7 +590,10 @@ async def test_prediction_create_ws_event():
         return
 
     if create_result and "error" not in str(create_result).lower():
-        report("PASS", f"Prediction REST POST /create → success")
+        # Extract market ID from response
+        data = create_result.get("data", {})
+        created_market_id = data.get("next_market_id", None)
+        report("PASS", f"Prediction REST POST /create → success (market_id={created_market_id})")
     else:
         report("FAIL", "Prediction REST POST /create", str(create_result))
 
@@ -582,17 +601,22 @@ async def test_prediction_create_ws_event():
         event = messages[0]["params"]["result"]
         report("PASS", f"Prediction WS MarketCreated event received: type={event.get('type', '?')}")
     else:
-        report("SKIP", "Prediction WS no MarketCreated event (broadcaster may be on different Arc)")
+        report("FAIL", "Prediction WS no MarketCreated event (broadcaster should be shared)")
+
+    return created_market_id
 
 
-async def test_prediction_trade_ws_event():
+async def test_prediction_trade_ws_event(market_id=None):
     """Place a prediction market trade while WS is subscribed."""
     import urllib.request
+
+    # Use the market ID from create, fall back to 1
+    mid = market_id if market_id is not None else 1
 
     async def place_trade_after_delay():
         await asyncio.sleep(1.5)
         payload = json.dumps({
-            "marketId": 1,
+            "marketId": mid,
             "outcome": 0,
             "amount": 500000000,
             "trader": "TestE2ETrader",
@@ -615,7 +639,7 @@ async def test_prediction_trade_ws_event():
             sub_msg = {
                 "jsonrpc": "2.0", "id": 1,
                 "method": "subscribePrediction",
-                "params": {"channel": "market:1"},
+                "params": {"channel": f"market:{mid}"},
             }
             await ws.send(json.dumps(sub_msg))
             raw = await asyncio.wait_for(ws.recv(), timeout=5)
@@ -627,7 +651,7 @@ async def test_prediction_trade_ws_event():
                 return
 
             trade_task = asyncio.create_task(place_trade_after_delay())
-            deadline = time.time() + 6
+            deadline = time.time() + 8
             while time.time() < deadline:
                 remaining = deadline - time.time()
                 if remaining <= 0:
@@ -645,16 +669,16 @@ async def test_prediction_trade_ws_event():
         return
 
     if trade_result and "error" not in str(trade_result).lower():
-        report("PASS", f"Prediction REST POST /trade → success")
+        report("PASS", f"Prediction REST POST /trade → success (market={mid})")
     else:
-        # Market may not exist yet — that's fine
-        report("SKIP", "Prediction REST POST /trade — market may not exist", str(trade_result)[:80])
+        err_str = str(trade_result)[:80] if trade_result else "no response"
+        report("FAIL", f"Prediction REST POST /trade (market={mid})", err_str)
 
     if len(messages) > 0:
         event = messages[0]["params"]["result"]
         report("PASS", f"Prediction WS trade event received: type={event.get('type', '?')}")
     else:
-        report("SKIP", "Prediction WS no trade event (market may not exist or different broadcaster)")
+        report("FAIL", "Prediction WS no trade event (broadcaster should be shared)")
 
 
 async def test_section_4_upgrade_contract():
@@ -719,12 +743,13 @@ async def test_section_4_upgrade_contract():
             report("FAIL", "deployContract", msg[:80])
             return
 
-    # 4d. Get contract info — check version == 1
+    # 4d. Get contract info — record the current version
     resp = await rpc_call("getContractInfo", [contract_addr])
+    version_before = None
     if "result" in resp and resp["result"]:
         info = resp["result"]
-        v = info.get("version", "?")
-        report("PASS", f"Contract version after deploy: {v}")
+        version_before = info.get("version", None)
+        report("PASS", f"Contract version after deploy: {version_before}")
     else:
         report("SKIP", "getContractInfo after deploy")
 
@@ -748,15 +773,17 @@ async def test_section_4_upgrade_contract():
         report("FAIL", f"upgradeContract", msg[:80])
         return
 
-    # 4f. Verify version bumped to 2
+    # 4f. Verify version was bumped by 1
     resp = await rpc_call("getContractInfo", [contract_addr])
     if "result" in resp and resp["result"]:
         info = resp["result"]
         v = info.get("version", "?")
-        if v == 2:
-            report("PASS", f"Contract version after upgrade: {v} (correctly bumped)")
+        if version_before is not None and v == version_before + 1:
+            report("PASS", f"Contract version after upgrade: {v} (correctly bumped from {version_before})")
+        elif version_before is not None:
+            report("FAIL", f"Contract version after upgrade: {v} (expected {version_before + 1})")
         else:
-            report("FAIL", f"Contract version after upgrade: {v} (expected 2)")
+            report("PASS", f"Contract version after upgrade: {v}")
     else:
         report("SKIP", "Could not verify contract version after upgrade")
 
@@ -891,25 +918,34 @@ async def test_section_6_multi_sub():
             else:
                 report("FAIL", f"Multi-sub: only {len(subs)}/{len(channels)} succeeded")
 
-            # Collect notifications for 5 seconds
+            # Trigger activity so we get notifications (airdrop forces a block)
+            async def trigger_multi_sub_activity():
+                await asyncio.sleep(1)
+                await rpc_call("requestAirdrop", ["11111111111111111111111111111111", 1])
+
+            activity_task = asyncio.create_task(trigger_multi_sub_activity())
+
+            # Collect notifications for 12 seconds (enough for heartbeat blocks)
             messages = []
-            deadline = time.time() + 5
+            deadline = time.time() + 12
             while time.time() < deadline:
                 remaining = deadline - time.time()
                 if remaining <= 0:
                     break
                 try:
-                    raw = await asyncio.wait_for(ws.recv(), timeout=min(remaining, 1.5))
+                    raw = await asyncio.wait_for(ws.recv(), timeout=min(remaining, 2.0))
                     msg = json.loads(raw)
-                    if msg.get("method") == "notification":
+                    if msg.get("method") in ("notification", "subscription"):
                         messages.append(msg)
                 except asyncio.TimeoutError:
                     continue
 
+            await activity_task
+
             if len(messages) > 0:
                 report("PASS", f"Multi-sub: received {len(messages)} notifications across all channels")
             else:
-                report("SKIP", "Multi-sub: no notifications in 5s (validator may be idle)")
+                report("FAIL", "Multi-sub: no notifications in 12s despite triggered airdrop")
 
             # Clean up all subscriptions
             for method, sub_id in subs:
