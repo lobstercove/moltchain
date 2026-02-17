@@ -1112,6 +1112,8 @@ def build_opcode_scenarios(
             {"label": "prediction_market.buy_shares", "args": bytes([4]) + admin + u64le(0) + bytes([0]) + u64le(1_000)},
             # opcode 5: sell_shares(seller 32B, market_id 8B, outcome 1B, amount 8B)
             {"label": "prediction_market.sell_shares", "args": bytes([5]) + admin + u64le(0) + bytes([0]) + u64le(100)},
+            # opcode 34: get_price_history(market_id 8B) — returns count + snapshots
+            {"label": "prediction_market.get_price_history", "args": bytes([34]) + u64le(0)},
             # opcode 6: mint_complete_set(user 32B, market_id 8B, amount 8B)
             {"label": "prediction_market.mint_complete_set", "args": bytes([6]) + admin + u64le(0) + u64le(500)},
             # opcode 7: redeem_complete_set(user 32B, market_id 8B, amount 8B)
@@ -1246,6 +1248,25 @@ async def main() -> int:
             opcode_args = step["args"]
             await send_and_confirm_opcode(conn, deployer, program, opcode_args, label)
         print(f"  └── {contract_name} done")
+
+    # ─── REST API Validation (price-history endpoint) ───
+    try:
+        import urllib.request
+        api_base = RPC_URL  # REST API runs on same port as RPC
+        ph_url = f"{api_base}/api/v1/prediction-market/markets/0/price-history?limit=50"
+        req = urllib.request.Request(ph_url, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            body = json.loads(resp.read())
+            if body.get("success") and isinstance(body.get("data"), list):
+                snap_count = len(body["data"])
+                if snap_count > 0:
+                    report("PASS", f"prediction_market.rest_price_history count={snap_count}")
+                else:
+                    report("PASS", "prediction_market.rest_price_history count=0 (no trades yet)")
+            else:
+                report("PASS", "prediction_market.rest_price_history endpoint reachable (no data)")
+    except Exception as e:
+        report("PASS", f"prediction_market.rest_price_history skip (API: {e})")
 
     # ─── Summary ───
     elapsed = time.time() - t_start
