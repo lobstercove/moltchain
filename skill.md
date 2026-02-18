@@ -339,6 +339,12 @@ $MOLT_BIN --rpc-url "$RPC_URL" balance
 
 MoltyID is a contract interaction surface; use `molt call` + ABI/RPC introspection.
 
+Mutation auth invariant:
+
+- all MoltyID mutation calls are caller-verified (`get_caller().0` must match expected signer identity)
+- on caller mismatch, mutation returns code `200` and state remains unchanged
+- use `simulateTransaction.returnCode` to diagnose silent no-op writes quickly
+
 ## 4.1 Find MoltyID contract address
 
 `getAllContracts` returns `symbol`, `name`, and `owner` for each deployed
@@ -440,6 +446,27 @@ Account/tx/history:
 - `sendTransaction`
 - `confirmTransaction`
 - `simulateTransaction`
+
+`simulateTransaction` debugging note:
+
+- response includes `returnCode` (runtime contract return code)
+- treat non-zero return codes as semantic contract failures even when transaction encoding is valid
+
+### 5.1.1 `returnCode` troubleshooting table (agent triage)
+
+| `returnCode` | Meaning | Agent action |
+|---|---|---|
+| `0` | contract execution success | proceed to post-state verification (`getTransaction`, balance/profile/event checks) |
+| `200` | caller/auth mismatch (common in MoltyID mutation guards) | verify signer keypair ownership and first-arg identity; retry only after fixing signer/args |
+| non-zero (other) | contract-level semantic failure | fetch ABI, re-check arg order/types/lengths, and validate contract preconditions before retry |
+
+Recommended loop for write debugging:
+
+1. run `simulateTransaction` and read `returnCode`
+2. if non-zero, do **not** broadcast write blindly
+3. fix signer/args/preconditions based on code path
+4. re-simulate until `returnCode=0`
+5. broadcast and confirm with `confirmTransaction`
 
 Network/validator:
 
