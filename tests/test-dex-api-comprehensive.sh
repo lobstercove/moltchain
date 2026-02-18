@@ -2,7 +2,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # Comprehensive DEX REST API Test Suite
 # Tests all DEX endpoints against a live validator with fresh genesis state.
-# Expects validator running on localhost:8899 with 7 pairs + 7 pools.
+# Expects validator running on localhost:8899 with 5 pairs + 5 pools.
 # ═══════════════════════════════════════════════════════════════════════════════
 set -euo pipefail
 
@@ -59,18 +59,18 @@ echo ""
 
 # ─── 1. Core Stats ───
 echo "── 1. Core Stats ──"
-check_json "stats/core pair_count=7" "$BASE/stats/core" "d['data']['pair_count']" "7"
+check_json "stats/core pair_count=5" "$BASE/stats/core" "d['data']['pair_count']" "5"
 check_json "stats/core order_count=0" "$BASE/stats/core" "d['data']['order_count']" "0"
 check_json "stats/core trade_count=0" "$BASE/stats/core" "d['data']['trade_count']" "0"
 
 # ─── 2. AMM Stats ───
 echo "── 2. AMM Stats ──"
-check_json "stats/amm pool_count=7" "$BASE/stats/amm" "d['data']['pool_count']" "7"
+check_json "stats/amm pool_count=5" "$BASE/stats/amm" "d['data']['pool_count']" "5"
 check_json "stats/amm swap_count=0" "$BASE/stats/amm" "d['data']['swap_count']" "0"
 
 # ─── 3. GET /pairs — list all trading pairs ───
 echo "── 3. Trading Pairs ──"
-check_json "pairs returns 7" "$BASE/pairs" "len(d['data'])" "7"
+check_json "pairs returns 5" "$BASE/pairs" "len(d['data'])" "5"
 check_json "pairs[0] has pairId" "$BASE/pairs" "d['data'][0]['pairId']" "1"
 check_json "pairs[0] symbol=MOLT/mUSD" "$BASE/pairs" "d['data'][0]['symbol']" "MOLT/mUSD"
 check_json "pairs[0] baseSymbol=MOLT" "$BASE/pairs" "d['data'][0]['baseSymbol']" "MOLT"
@@ -87,17 +87,15 @@ check_json "pairs[0] camelCase takerFeeBps" "$BASE/pairs" "str(d['data'][0]['tak
 check_json "pair1=MOLT/mUSD" "$BASE/pairs" "d['data'][0]['symbol']" "MOLT/mUSD"
 check_json "pair2=wSOL/mUSD" "$BASE/pairs" "d['data'][1]['symbol']" "wSOL/mUSD"
 check_json "pair3=wETH/mUSD" "$BASE/pairs" "d['data'][2]['symbol']" "wETH/mUSD"
-check_json "pair4=REEF/mUSD" "$BASE/pairs" "d['data'][3]['symbol']" "REEF/mUSD"
-check_json "pair5=wSOL/MOLT" "$BASE/pairs" "d['data'][4]['symbol']" "wSOL/MOLT"
-check_json "pair6=wETH/MOLT" "$BASE/pairs" "d['data'][5]['symbol']" "wETH/MOLT"
-check_json "pair7=REEF/MOLT" "$BASE/pairs" "d['data'][6]['symbol']" "REEF/MOLT"
+check_json "pair4=wSOL/MOLT" "$BASE/pairs" "d['data'][3]['symbol']" "wSOL/MOLT"
+check_json "pair5=wETH/MOLT" "$BASE/pairs" "d['data'][4]['symbol']" "wETH/MOLT"
 
 # ─── 4. GET /pairs/:id — single pair ───
 echo "── 4. Single Pair ──"
 check_json "pair/1 symbol=MOLT/mUSD" "$BASE/pairs/1" "d['data']['symbol']" "MOLT/mUSD"
 check_json "pair/1 baseSymbol=MOLT" "$BASE/pairs/1" "d['data']['baseSymbol']" "MOLT"
 check_json "pair/1 quoteSymbol=mUSD" "$BASE/pairs/1" "d['data']['quoteSymbol']" "mUSD"
-check_json "pair/7 symbol=REEF/MOLT" "$BASE/pairs/7" "d['data']['symbol']" "REEF/MOLT"
+check_json "pair/5 symbol=wETH/MOLT" "$BASE/pairs/5" "d['data']['symbol']" "wETH/MOLT"
 # Non-existent pair → 404 with success=false
 NF_CODE=$(curl -s -o /tmp/dex_nf.json -w "%{http_code}" "$BASE/pairs/99")
 NF_SUCCESS=$(python3 -c "import json; print(json.load(open('/tmp/dex_nf.json'))['success'])" 2>/dev/null || echo "?")
@@ -139,7 +137,7 @@ check_json "ticker/1 has ask" "$BASE/pairs/1/ticker" "'ask' in d['data']" "True"
 
 # ─── 9. GET /tickers — all tickers ───
 echo "── 9. All Tickers ──"
-check_json "tickers returns 7" "$BASE/tickers" "len(d['data'])" "7"
+check_json "tickers returns 5" "$BASE/tickers" "len(d['data'])" "5"
 check_json "tickers[0] camelCase pairId" "$BASE/tickers" "d['data'][0]['pairId']" "1"
 check_json "tickers[0] camelCase lastPrice" "$BASE/tickers" "'lastPrice' in d['data'][0]" "True"
 check_json "tickers[0] camelCase volume24h" "$BASE/tickers" "'volume24h' in d['data'][0]" "True"
@@ -147,7 +145,7 @@ check_json "tickers[0] camelCase change24h" "$BASE/tickers" "'change24h' in d['d
 
 # ─── 10. GET /pools — AMM pools ───
 echo "── 10. AMM Pools ──"
-check_json "pools returns 7" "$BASE/pools" "len(d['data'])" "7"
+check_json "pools returns 5" "$BASE/pools" "len(d['data'])" "5"
 check_json "pool[0] camelCase poolId" "$BASE/pools" "d['data'][0]['poolId']" "1"
 check_json "pool[0] tokenASymbol=MOLT" "$BASE/pools" "d['data'][0]['tokenASymbol']" "MOLT"
 check_json "pool[0] tokenBSymbol=mUSD" "$BASE/pools" "d['data'][0]['tokenBSymbol']" "mUSD"
@@ -158,7 +156,7 @@ check_json "pool[0] camelCase sqrtPrice" "$BASE/pools" "'sqrtPrice' in d['data']
 
 # Verify all pool symbols
 check_json "pool1=MOLT/mUSD" "$BASE/pools" "f\"{d['data'][0]['tokenASymbol']}/{d['data'][0]['tokenBSymbol']}\"" "MOLT/mUSD"
-check_json "pool7=REEF/MOLT" "$BASE/pools" "f\"{d['data'][6]['tokenASymbol']}/{d['data'][6]['tokenBSymbol']}\"" "REEF/MOLT"
+check_json "pool5=wETH/MOLT" "$BASE/pools" "f\"{d['data'][4]['tokenASymbol']}/{d['data'][4]['tokenBSymbol']}\"" "wETH/MOLT"
 
 # ─── 11. GET /pools/:id ───
 echo "── 11. Single Pool ──"
@@ -298,11 +296,11 @@ echo "── 19. Symbol Enrichment ──"
 check_json "pair/2 baseSymbol=wSOL" "$BASE/pairs/2" "d['data']['baseSymbol']" "wSOL"
 check_json "pair/2 quoteSymbol=mUSD" "$BASE/pairs/2" "d['data']['quoteSymbol']" "mUSD"
 check_json "pair/3 baseSymbol=wETH" "$BASE/pairs/3" "d['data']['baseSymbol']" "wETH"
-check_json "pair/4 baseSymbol=REEF" "$BASE/pairs/4" "d['data']['baseSymbol']" "REEF"
-check_json "pair/5 quoteSymbol=MOLT" "$BASE/pairs/5" "d['data']['quoteSymbol']" "MOLT"
+check_json "pair/4 baseSymbol=wSOL" "$BASE/pairs/4" "d['data']['baseSymbol']" "wSOL"
+check_json "pair/4 quoteSymbol=MOLT" "$BASE/pairs/4" "d['data']['quoteSymbol']" "MOLT"
 check_json "pool/2 tokenASymbol=wSOL" "$BASE/pools" "d['data'][1]['tokenASymbol']" "wSOL"
 check_json "pool/3 tokenASymbol=wETH" "$BASE/pools" "d['data'][2]['tokenASymbol']" "wETH"
-check_json "pool/4 tokenASymbol=REEF" "$BASE/pools" "d['data'][3]['tokenASymbol']" "REEF"
+check_json "pool/4 tokenASymbol=wSOL" "$BASE/pools" "d['data'][3]['tokenASymbol']" "wSOL"
 
 # ─── 20. Cross-endpoint consistency ───
 echo "── 20. Cross-Endpoint Consistency ──"

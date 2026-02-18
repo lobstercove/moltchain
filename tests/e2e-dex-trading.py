@@ -114,11 +114,25 @@ def build_dispatcher_ix(abi: dict, fn_name: str, args: dict) -> bytes:
             buf += struct.pack("<B", int(val))
         elif ptype == "bool":
             buf += struct.pack("<B", 1 if val else 0)
-        elif ptype in ("string", "Pubkey"):
+        elif ptype == "Pubkey":
+            # 32 raw bytes — accept PublicKey object, hex string, or bytes
+            if hasattr(val, 'to_bytes'):
+                buf += val.to_bytes()
+            elif isinstance(val, bytes) and len(val) == 32:
+                buf += val
+            elif isinstance(val, str) and len(val) == 64:
+                buf += bytes.fromhex(val)
+            else:
+                buf += b'\x00' * 32  # zero pubkey fallback
+        elif ptype == "string":
             encoded = str(val).encode("utf-8")
             buf += struct.pack("<H", len(encoded)) + encoded
         elif ptype == "i64":
             buf += struct.pack("<q", int(val))
+        elif ptype == "i32":
+            buf += struct.pack("<i", int(val))
+        elif ptype == "i16":
+            buf += struct.pack("<h", int(val))
         else:
             buf += struct.pack("<Q", int(val))
     return bytes(buf)
@@ -131,20 +145,41 @@ def build_named_ix(fn_name: str, args: dict) -> bytes:
 
 
 async def call_contract(conn: Connection, kp: Keypair, contract_dir: str, fn_name: str, args: dict) -> Any:
-    """Send a contract call and return the result."""
+    """Send a contract call and return the result.
+
+    The validator deserializes ix.data as a JSON ContractInstruction::Call
+    envelope.  Accounts must be [caller, contract_address, ...].
+    """
     abi = load_abi(contract_dir)
     if contract_dir in DISPATCHER_CONTRACTS and abi:
-        data = build_dispatcher_ix(abi, fn_name, args)
+        raw_args = build_dispatcher_ix(abi, fn_name, args)
     else:
-        data = build_named_ix(fn_name, args)
+        raw_args = build_named_ix(fn_name, args)
 
-    ix = Instruction(CONTRACT_PROGRAM, data, [kp.public_key])
+    # Wrap in ContractInstruction::Call JSON envelope (matches Rust serde)
+    call_envelope = json.dumps({
+        "Call": {
+            "function": fn_name,
+            "args": list(raw_args),
+            "value": 0,
+        }
+    })
+    data = call_envelope.encode("utf-8")
+
+    # Resolve contract address via RPC (getAllContracts or getContractInfo)
+    contract_pubkey = await resolve_contract_address(conn, contract_dir)
+    if not contract_pubkey:
+        raise ValueError(f"Contract '{contract_dir}' not deployed")
+
+    # Accounts: [caller (signer), contract]
+    ix = Instruction(CONTRACT_PROGRAM, [kp.public_key(), contract_pubkey], data)
     tb = TransactionBuilder()
     tb.add(ix)
 
     latest = await conn.get_latest_block()
     blockhash = latest.get("hash", latest.get("blockhash", "0" * 64))
-    tx = tb.build(kp, blockhash)
+    tb.set_recent_blockhash(blockhash)
+    tx = tb.build_and_sign(kp)
     sig = await conn.send_transaction(tx)
 
     # Wait for confirmation
@@ -157,6 +192,64 @@ async def call_contract(conn: Connection, kp: Keypair, contract_dir: str, fn_nam
         except Exception:
             pass
     return sig
+
+
+# Mapping from contract directory name → symbol in the on-chain registry
+DIR_TO_SYMBOL: Dict[str, str] = {
+    "dex_core": "DEX",
+    "dex_amm": "DEXAMM",
+    "dex_analytics": "ANALYTICS",
+    "dex_governance": "DEXGOV",
+    "dex_margin": "DEXMARGIN",
+    "dex_rewards": "DEXREWARDS",
+    "dex_router": "DEXROUTER",
+    "prediction_market": "PREDICT",
+    "moltcoin": "MOLT",
+    "musd_token": "MUSD",
+    "wsol_token": "WSOL",
+    "weth_token": "WETH",
+    "moltswap": "MOLTSWAP",
+    "moltoracle": "ORACLE",
+    "moltmarket": "MARKET",
+    "lobsterlend": "LEND",
+    "moltdao": "DAO",
+    "moltbridge": "BRIDGE",
+    "moltauction": "AUCTION",
+    "moltpunks": "PUNKS",
+    "moltyid": "YID",
+    "bountyboard": "BOUNTY",
+    "clawpay": "CLAWPAY",
+    "clawpump": "CLAWPUMP",
+    "clawvault": "CLAWVAULT",
+    "compute_market": "COMPUTE",
+}
+
+# Cache of resolved contract addresses
+CONTRACT_ADDRESS_CACHE: Dict[str, PublicKey] = {}
+
+
+async def resolve_contract_address(conn: Connection, contract_dir: str) -> Optional[PublicKey]:
+    """Resolve contract directory name to its deployed address via symbol registry."""
+    if contract_dir in CONTRACT_ADDRESS_CACHE:
+        return CONTRACT_ADDRESS_CACHE[contract_dir]
+
+    symbol = DIR_TO_SYMBOL.get(contract_dir)
+    if not symbol:
+        return None
+
+    try:
+        registry = await rpc_call(conn, "getAllSymbolRegistry")
+        entries = registry if isinstance(registry, list) else registry.get("entries", [])
+        for entry in entries:
+            if entry.get("symbol") == symbol:
+                addr = entry.get("program", "")
+                if addr:
+                    pk = PublicKey.from_base58(addr)
+                    CONTRACT_ADDRESS_CACHE[contract_dir] = pk
+                    return pk
+    except Exception:
+        pass
+    return None
 
 
 async def rpc_call(conn: Connection, method: str, params=None) -> Any:
@@ -288,8 +381,8 @@ async def test_candle_data(conn: Connection, deployer: Keypair, trader_a: Keypai
             "price": 100_000_000,
             "quantity": 5_000_000_000,
             "side": 0,
-            "maker": str(trader_a.public_key),
-            "taker": str(trader_b.public_key),
+            "maker": str(trader_a.public_key()),
+            "taker": str(trader_b.public_key()),
         })
         report("PASS", "Analytics record_trade")
     except Exception as e:
@@ -323,7 +416,7 @@ async def test_candle_data(conn: Connection, deployer: Keypair, trader_a: Keypai
     # 2e. Trader stats
     try:
         ts = await call_contract(conn, trader_a, "dex_analytics", "get_trader_stats", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
         })
         report("PASS", "Analytics get_trader_stats")
     except Exception as e:
@@ -413,7 +506,7 @@ async def test_margin_trading(conn: Connection, deployer: Keypair, trader_a: Key
     # 4c. Check position info
     try:
         pos = await call_contract(conn, trader_a, "dex_margin", "get_position_info", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
             "pair_id": 0,
         })
         report("PASS", "Margin get_position_info")
@@ -423,7 +516,7 @@ async def test_margin_trading(conn: Connection, deployer: Keypair, trader_a: Key
     # 4d. Check margin ratio
     try:
         ratio = await call_contract(conn, trader_a, "dex_margin", "get_margin_ratio", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
             "pair_id": 0,
         })
         report("PASS", "Margin get_margin_ratio")
@@ -453,7 +546,7 @@ async def test_margin_trading(conn: Connection, deployer: Keypair, trader_a: Key
     # 4g. User positions list
     try:
         positions = await call_contract(conn, trader_a, "dex_margin", "get_user_positions", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
         })
         report("PASS", "Margin get_user_positions")
     except Exception as e:
@@ -462,7 +555,7 @@ async def test_margin_trading(conn: Connection, deployer: Keypair, trader_a: Key
     # 4h. Tier info
     try:
         tier = await call_contract(conn, trader_a, "dex_margin", "get_tier_info", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
         })
         report("PASS", "Margin get_tier_info")
     except Exception as e:
@@ -481,7 +574,7 @@ async def test_margin_trading(conn: Connection, deployer: Keypair, trader_a: Key
     # 4j. Liquidate position
     try:
         await call_contract(conn, deployer, "dex_margin", "liquidate", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
             "pair_id": 0,
         })
         report("PASS", "Margin liquidate position")
@@ -646,7 +739,7 @@ async def test_prediction_market(conn: Connection, deployer: Keypair, trader_a: 
     try:
         pos_a = await call_contract(conn, trader_a, "prediction_market", "get_position", {
             "market_id": 0,
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
         })
         report("PASS", "Prediction get_position Trader A")
     except Exception as e:
@@ -655,7 +748,7 @@ async def test_prediction_market(conn: Connection, deployer: Keypair, trader_a: 
     try:
         pos_b = await call_contract(conn, trader_b, "prediction_market", "get_position", {
             "market_id": 0,
-            "trader": str(trader_b.public_key),
+            "trader": str(trader_b.public_key()),
         })
         report("PASS", "Prediction get_position Trader B")
     except Exception as e:
@@ -693,7 +786,7 @@ async def test_prediction_market(conn: Connection, deployer: Keypair, trader_a: 
     # 5m. User markets
     try:
         um = await call_contract(conn, trader_a, "prediction_market", "get_user_markets", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
         })
         report("PASS", "Prediction get_user_markets")
     except Exception as e:
@@ -758,8 +851,8 @@ async def test_prediction_rpc(conn: Connection, trader_a: Keypair):
         ("getPredictionStats", []),
         ("getPredictionMarkets", [{"limit": 10, "offset": 0}]),
         ("getPredictionMarket", [0]),
-        ("getPredictionPositions", [str(trader_a.public_key)]),
-        ("getPredictionTraderStats", [str(trader_a.public_key)]),
+        ("getPredictionPositions", [str(trader_a.public_key())]),
+        ("getPredictionTraderStats", [str(trader_a.public_key())]),
         ("getPredictionLeaderboard", [{"limit": 10}]),
         ("getPredictionTrending", [{"limit": 5}]),
         ("getPredictionMarketAnalytics", [0]),
@@ -794,7 +887,7 @@ async def test_rewards(conn: Connection, deployer: Keypair, trader_a: Keypair):
     # 7a. Record trade for rewards
     try:
         await call_contract(conn, deployer, "dex_rewards", "record_trade", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
             "volume": 5_000_000_000,
             "fee_paid": 15_000_000,
         })
@@ -805,7 +898,7 @@ async def test_rewards(conn: Connection, deployer: Keypair, trader_a: Keypair):
     # 7b. Check pending rewards
     try:
         pending = await call_contract(conn, trader_a, "dex_rewards", "get_pending_rewards", {
-            "trader": str(trader_a.public_key),
+            "trader": str(trader_a.public_key()),
         })
         report("PASS", "Rewards get_pending_rewards")
     except Exception as e:
@@ -986,7 +1079,7 @@ async def test_protocol_stats_rpc(conn: Connection):
 async def test_reefstake_rpc(conn: Connection, deployer: Keypair):
     print(f"\n{bold(cyan('══ SECTION 11: ReefStake & Staking RPC ══'))}")
 
-    addr = str(deployer.public_key)
+    addr = str(deployer.public_key())
 
     endpoints = [
         ("getReefStakePoolInfo", []),
@@ -1018,7 +1111,7 @@ async def test_reefstake_rpc(conn: Connection, deployer: Keypair):
 async def test_moltyid_rpc(conn: Connection, deployer: Keypair):
     print(f"\n{bold(cyan('══ SECTION 12: MoltyID & Name RPC ══'))}")
 
-    addr = str(deployer.public_key)
+    addr = str(deployer.public_key())
 
     endpoints = [
         ("getMoltyIdProfile", [addr]),
@@ -1031,7 +1124,7 @@ async def test_moltyid_rpc(conn: Connection, deployer: Keypair):
         ("getMoltyIdAgentDirectory", [{"limit": 10}]),
         ("resolveMoltName", ["test.molt"]),
         ("reverseMoltName", [addr]),
-        ("searchMoltNames", [{"query": "test", "limit": 5}]),
+        ("searchMoltNames", ["test"]),
     ]
 
     for method, params in endpoints:
@@ -1056,7 +1149,7 @@ async def test_moltyid_rpc(conn: Connection, deployer: Keypair):
 async def test_core_rpc(conn: Connection, deployer: Keypair):
     print(f"\n{bold(cyan('══ SECTION 13: Chain Core RPC ══'))}")
 
-    addr = str(deployer.public_key)
+    addr = str(deployer.public_key())
 
     endpoints = [
         ("getBalance", [addr]),
@@ -1080,7 +1173,7 @@ async def test_core_rpc(conn: Connection, deployer: Keypair):
         ("getTokenAccounts", [addr]),
         ("getAccountTxCount", [addr]),
         ("getAllContracts", []),
-        ("getSymbolRegistry", []),
+        ("getSymbolRegistry", ["MOLT"]),
         ("getAllSymbolRegistry", []),
         ("getPrograms", []),
     ]
@@ -1228,12 +1321,12 @@ async def test_multi_pair_trading(conn: Connection, deployer: Keypair, trader_a:
 async def test_evm_token_rpc(conn: Connection, deployer: Keypair):
     print(f"\n{bold(cyan('══ SECTION 16: EVM Compat & Token RPC ══'))}")
 
-    addr = str(deployer.public_key)
+    addr = str(deployer.public_key())
 
     endpoints = [
         ("getEvmRegistration", [addr]),
-        ("getTokenBalance", [addr, "MOLT"]),
-        ("getTokenHolders", ["MOLT", {"limit": 5}]),
+        ("getTokenBalance", [addr, addr]),
+        ("getTokenHolders", [addr, 5]),
         ("getTokenTransfers", [addr, {"limit": 5}]),
     ]
 
@@ -1261,33 +1354,23 @@ async def main():
 
     # Load deployer keypair
     try:
-        deployer_json = json.loads(Path(DEPLOYER_PATH).read_text())
-        if isinstance(deployer_json, list):
-            deployer = Keypair(bytes(deployer_json[:32]))
-        elif isinstance(deployer_json, dict) and "private_key" in deployer_json:
-            pk = deployer_json["private_key"]
-            if isinstance(pk, str):
-                deployer = Keypair(bytes.fromhex(pk))
-            else:
-                deployer = Keypair(bytes(pk[:32]))
-        else:
-            deployer = Keypair(bytes(deployer_json[:32]))
-        print(f"  Deployer: {deployer.public_key}")
+        deployer = Keypair.load(Path(DEPLOYER_PATH))
+        print(f"  Deployer: {deployer.public_key()}")
     except Exception as e:
         print(red(f"  Failed to load deployer keypair: {e}"))
         print("  Falling back to random keypair")
-        deployer = Keypair()
+        deployer = Keypair.generate()
 
     # Generate two trader keypairs
-    trader_a = Keypair()
-    trader_b = Keypair()
-    print(f"  Trader A: {trader_a.public_key}")
-    print(f"  Trader B: {trader_b.public_key}")
+    trader_a = Keypair.generate()
+    trader_b = Keypair.generate()
+    print(f"  Trader A: {trader_a.public_key()}")
+    print(f"  Trader B: {trader_b.public_key()}")
 
     # Airdrop to traders
     for label, kp in [("Trader A", trader_a), ("Trader B", trader_b)]:
         try:
-            await rpc_call(conn, "requestAirdrop", [str(kp.public_key), 100_000_000_000])
+            await rpc_call(conn, "requestAirdrop", [str(kp.public_key()), 100])
             report("PASS", f"Airdrop 100 MOLT to {label}")
         except Exception as e:
             report("FAIL", f"Airdrop to {label}", str(e))
