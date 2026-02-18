@@ -181,6 +181,19 @@ $MOLT_BIN --rpc-url "$RPC_URL" wallet show agent-main
 $MOLT_BIN --rpc-url "$RPC_URL" wallet balance agent-main
 ```
 
+### Keypair file formats (unified)
+
+The CLI `--keypair` flag accepts **all four** common formats:
+
+| Format | Shape | Producer |
+|---|---|---|
+| KeypairFile (canonical) | `{"privateKey": [u8…], "publicKey": [u8…], "publicKeyBase58": "…"}` | `molt identity new`, `save_keypair()` |
+| Hex-string | `{"privateKey": "hex…", "publicKey": "hex…", "address": "…"}` | `molt wallet create` |
+| Flat byte array | `[172, 31, 143, …]` | `faucet-keypair.json`, Solana-compatible |
+| Browser wallet export | `{"secretKey": [64 bytes], …}` | Browser extension export |
+
+All formats are auto-detected. Use `--keypair <path>` with any of them.
+
 ## 3.2 Fund + transfer
 
 ```bash
@@ -211,10 +224,35 @@ $MOLT_BIN --rpc-url "$RPC_URL" token balance <TOKEN_ADDR> --address <BASE58_ADDR
 # Deploy WASM contract
 $MOLT_BIN --rpc-url "$RPC_URL" deploy ./target/wasm32-unknown-unknown/release/my_contract.wasm
 
-# Call function (JSON args array)
-$MOLT_BIN --rpc-url "$RPC_URL" call <CONTRACT_ADDR> initialize --args '["arg1", 123]'
+# Call function (JSON args array — auto-encoded by runtime)
+$MOLT_BIN --rpc-url "$RPC_URL" call <CONTRACT_ADDR> initialize --args '["<ADMIN_BASE58>"]'
 $MOLT_BIN --rpc-url "$RPC_URL" call <CONTRACT_ADDR> get_value --args '[]'
 ```
+
+### ABI calling convention (JSON mode)
+
+The runtime detects JSON array args and auto-encodes them to binary:
+
+- **Base58 strings** (valid pubkey) → 32-byte pubkey pointer (stride 32)
+- **Plain strings** → UTF-8 data pointer, zero-padded to 32-byte boundary (max 224 bytes)
+- **Small integers** (≤255) → 1-byte value (stride 1)
+- **Medium integers** (256–65535) → 2-byte LE value (stride 2)
+- **Large integers** (>65535) → 4-byte LE value (stride 4)
+- **Booleans** → 1 byte (stride 1)
+- **I64 WASM params** → 8-byte LE value (stride 8)
+
+For functions with `(ptr, len)` pairs, pass the string + explicit length:
+
+```bash
+# register_identity(owner: ptr32, agent_type: u8, name: ptr, name_len: u32)
+$MOLT_BIN --rpc-url "$RPC_URL" call <MOLTYID_ADDR> register_identity \
+  --args '["<OWNER_BASE58>", 1, "agent-name", 10]'
+```
+
+**Opcode-dispatch contracts** (DEX Core, DEX AMM, DEX Router, DEX Margin,
+DEX Governance, DEX Rewards, DEX Analytics, Prediction Market) export only
+`initialize()` + `call()` — use the SDK or binary layout descriptors, not
+JSON args, for their internal operations.
 
 ## 3.5 Governance lifecycle
 
@@ -303,11 +341,21 @@ MoltyID is a contract interaction surface; use `molt call` + ABI/RPC introspecti
 
 ## 4.1 Find MoltyID contract address
 
+`getAllContracts` returns `symbol`, `name`, and `owner` for each deployed
+contract (when registered in the symbol registry).
+
 ```bash
+# List all contracts with names
 curl -sS -X POST "$RPC_URL" \
   -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"getAllContracts","params":[]}' \
-| jq -r '.result.contracts[] | select((tostring|ascii_downcase|contains("moltyid"))) | (.program_id // .address // .id)'
+| jq '.result.contracts[] | {program_id, symbol, name}'
+
+# Find MoltyID specifically (symbol "YID")
+curl -sS -X POST "$RPC_URL" \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getAllContracts","params":[]}' \
+| jq -r '.result.contracts[] | select(.symbol=="YID" or (.name // "" | ascii_downcase | contains("moltyid"))) | .program_id'
 ```
 
 ## 4.2 Inspect ABI before calling
@@ -1054,18 +1102,32 @@ Custody API (`moltchain-custody`, default `http://localhost:9105`):
 - `POST /withdrawals`
 - `PUT /withdrawals/:job_id/burn`
 - `GET /reserves`
+- `POST /webhooks` (register webhook, HMAC-SHA256 secret)
+- `GET /webhooks` (list configured webhooks; secrets redacted)
+- `DELETE /webhooks/:id`
+- `GET /ws/events?token=<bearer>&filter=<csv_event_types>` (real-time event stream)
+- `GET /events` (paginated audit event history)
 
 Custody notes for autonomous agents:
 
 - deposit flow: `issued -> confirmed -> swept -> credited`
 - withdrawals require burn signature submission via `PUT /withdrawals/:job_id/burn`
-- no webhook endpoint is present; use polling (`/deposits/:deposit_id`, `/status`) and/or WS subscriptions for notifications
+- webhook delivery uses HMAC-SHA256 signatures and retry/backoff (3 retries, exponential)
+- WS stream supports bearer auth token and optional event-type filtering
+- use polling (`/deposits/:deposit_id`, `/status`) as fallback when webhook/WS transport is unavailable
+
+Custody event taxonomy (for bots, automations, and alerting):
+
+- deposits: `deposit.created`, `deposit.confirmed`, `deposit.expired`
+- sweeps: `sweep.signing`, `sweep.submitted`, `sweep.failed`, `sweep.confirmed`
+- credits: `credit.queued`, `credit.build_failed`, `credit.submitted`, `credit.confirmed`
+- withdrawals: `withdrawal.requested`, `withdrawal.burn_submitted`, `withdrawal.burn_confirmed`, `withdrawal.signatures_collected`, `withdrawal.broadcast`, `withdrawal.confirmed`, `withdrawal.permanently_failed`
+- rebalancing: `rebalance.submitted`, `rebalance.confirmed`, `rebalance.slippage_exceeded`, `rebalance.output_unverified`
 
 ---
 
 ## 8.1 Remaining Limitations / Guardrails
 
-- custody webhook callbacks are not part of this runbook yet (you are handling this separately); until deployed, use polling + WS for credit/withdrawal progression.
 - prediction-market is opcode-dispatch; some human docs are sparse, so runtime ABI introspection is mandatory before building calls.
 - argument placeholders in this playbook must be replaced by ABI-validated values per network deployment.
 
