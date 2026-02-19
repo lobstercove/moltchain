@@ -24,6 +24,7 @@ export class SpreadStrategy {
   private netPosition: number = 0; // + = long, - = short
   private running: boolean = false;
   private timer: NodeJS.Timer | null = null;
+  private traderAddress: string;
 
   constructor(
     dex: MoltDEX,
@@ -37,6 +38,7 @@ export class SpreadStrategy {
     this.pairId = pairId;
     this.config = config;
     this.dryRun = dryRun;
+    this.traderAddress = dex.getAddress();
   }
 
   async start(): Promise<void> {
@@ -56,7 +58,7 @@ export class SpreadStrategy {
     });
 
     // Subscribe to own order updates
-    this.ws.subscribe(`orders:mm`, (event: any) => {
+    this.ws.subscribe(`orders:${this.traderAddress}`, (event: any) => {
       if (event.data?.status === 'filled') {
         const filled = this.activeOrders.find(o => o.orderId === event.data.id);
         if (filled) {

@@ -82,22 +82,26 @@ export function encodeCreatePool(
  * Encode add_liquidity calldata.
  * Opcode: 0x03 = add_liquidity
  *
- * Layout: [opcode(1)] [pool_id(8)] [lower_tick(4)] [upper_tick(4)] [amount(8)]
+ * Layout: [opcode(1)] [provider(32)] [pool_id(8)] [lower_tick(4)] [upper_tick(4)] [amount_a(8)] [amount_b(8)]
  */
 export function encodeAddLiquidity(
+  provider: Uint8Array,
   poolId: number,
   lowerTick: number,
   upperTick: number,
-  amount: bigint,
+  amountA: bigint,
+  amountB: bigint,
 ): Uint8Array {
-  const buf = new Uint8Array(25);
+  const buf = new Uint8Array(65);
   const view = new DataView(buf.buffer);
 
   buf[0] = 0x03;
-  view.setBigUint64(1, BigInt(poolId), true);
-  view.setInt32(9, lowerTick, true);
-  view.setInt32(13, upperTick, true);
-  view.setBigUint64(17, amount, true);
+  buf.set(provider.subarray(0, 32), 1);
+  view.setBigUint64(33, BigInt(poolId), true);
+  view.setInt32(41, lowerTick, true);
+  view.setInt32(45, upperTick, true);
+  view.setBigUint64(49, amountA, true);
+  view.setBigUint64(57, amountB, true);
 
   return buf;
 }
@@ -106,14 +110,16 @@ export function encodeAddLiquidity(
  * Encode remove_liquidity calldata.
  * Opcode: 0x04 = remove_liquidity
  *
- * Layout: [opcode(1)] [position_id(8)]
+ * Layout: [opcode(1)] [provider(32)] [position_id(8)] [liquidity_amount(8)]
  */
-export function encodeRemoveLiquidity(positionId: number): Uint8Array {
-  const buf = new Uint8Array(9);
+export function encodeRemoveLiquidity(provider: Uint8Array, positionId: number, liquidityAmount: bigint): Uint8Array {
+  const buf = new Uint8Array(49);
   const view = new DataView(buf.buffer);
 
   buf[0] = 0x04;
-  view.setBigUint64(1, BigInt(positionId), true);
+  buf.set(provider.subarray(0, 32), 1);
+  view.setBigUint64(33, BigInt(positionId), true);
+  view.setBigUint64(41, liquidityAmount, true);
 
   return buf;
 }

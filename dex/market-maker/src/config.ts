@@ -48,6 +48,8 @@ export interface BotConfig {
   dryRun: boolean;
   /** Log level */
   logLevel: 'debug' | 'info' | 'warn' | 'error';
+  /** Path to wallet keypair JSON file */
+  walletPath: string;
 }
 
 export const DEFAULT_SPREAD_CONFIG: SpreadConfig = {
@@ -75,6 +77,7 @@ export function loadConfig(): BotConfig {
     wsEndpoint: process.env.DEX_WS_ENDPOINT || 'ws://localhost:8900',
     pairId: parseInt(process.env.MM_PAIR_ID || '0', 10),
     strategy,
+    walletPath: process.env.MM_WALLET_PATH || './mm-keypair.json',
     spread: {
       halfSpreadBps: parseInt(process.env.MM_HALF_SPREAD_BPS || '15', 10),
       levels: parseInt(process.env.MM_LEVELS || '5', 10),

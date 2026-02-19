@@ -136,9 +136,27 @@ export class MoltDEX {
   /** Call the JSON-RPC endpoint for lower-level operations */
   private async rpc(method: string, params: any = {}): Promise<any> {
     const body = { jsonrpc: '2.0', id: Date.now(), method, params };
-    const res = await this.post<{ result?: any; error?: any }>('/', body);
-    if (res.error) throw new Error(`RPC error ${res.error.code}: ${res.error.message}`);
-    return res.result;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.timeout);
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (this.apiKey) headers['X-API-Key'] = this.apiKey;
+      const res = await fetch(`${this.endpoint}/`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`RPC HTTP ${res.status}: ${text}`);
+      }
+      const json = await res.json();
+      if (json.error) throw new Error(`RPC error ${json.error.code}: ${json.error.message}`);
+      return json.result;
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   // =========================================================================
@@ -185,6 +203,9 @@ export class MoltDEX {
 
   /** Place a limit order */
   async placeLimitOrder(params: PlaceOrderParams): Promise<ApiResponse<Order>> {
+    if (typeof params.price !== 'number' || params.price <= 0) throw new Error('price must be a positive number');
+    if (typeof params.quantity !== 'number' || params.quantity <= 0) throw new Error('quantity must be a positive number');
+    if (params.side !== 'buy' && params.side !== 'sell') throw new Error('side must be "buy" or "sell"');
     return this.post('/api/v1/orders', {
       ...params,
       orderType: params.orderType || 'limit',
@@ -193,6 +214,8 @@ export class MoltDEX {
 
   /** Place a market order */
   async placeMarketOrder(params: Omit<PlaceOrderParams, 'price'>): Promise<ApiResponse<Order>> {
+    if (typeof params.quantity !== 'number' || params.quantity <= 0) throw new Error('quantity must be a positive number');
+    if (params.side !== 'buy' && params.side !== 'sell') throw new Error('side must be "buy" or "sell"');
     return this.post('/api/v1/orders', {
       ...params,
       orderType: 'market',
