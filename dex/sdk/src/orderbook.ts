@@ -50,38 +50,40 @@ export function decodeOrder(buf: Uint8Array): Order {
 
 /**
  * Encode PlaceOrderParams into contract calldata.
- * Opcode: 0x03 = place_order
+ * Opcode: 0x02 = place_order
  *
- * Layout: [opcode(1)] [pair_id(8)] [side(1)] [type(1)] [price(8)] [qty(8)] [expiry(8)]
+ * Layout: [opcode(1)] [trader(32)] [pair_id(8)] [side(1)] [type(1)] [price(8)] [qty(8)] [expiry(8)]
  */
-export function encodePlaceOrder(params: PlaceOrderParams): Uint8Array {
-  const buf = new Uint8Array(35);
+export function encodePlaceOrder(params: PlaceOrderParams, trader: Uint8Array): Uint8Array {
+  const buf = new Uint8Array(67);
   const view = new DataView(buf.buffer);
 
-  buf[0] = 0x03; // place_order opcode
+  buf[0] = 0x02; // place_order opcode
+  buf.set(trader.subarray(0, 32), 1);
   const pairId = typeof params.pair === 'number' ? params.pair : 0; // resolve symbol to pairId externally
-  view.setBigUint64(1, BigInt(pairId), true);
-  buf[9] = params.side === 'sell' ? 1 : 0;
-  buf[10] = params.orderType === 'market' ? 1 : params.orderType === 'stop-limit' ? 2 : params.orderType === 'post-only' ? 3 : 0;
-  view.setBigUint64(11, BigInt(Math.round(params.price * PRICE_SCALE)), true);
-  view.setBigUint64(19, BigInt(params.quantity), true);
-  view.setBigUint64(27, BigInt(params.expiry || 0), true);
+  view.setBigUint64(33, BigInt(pairId), true);
+  buf[41] = params.side === 'sell' ? 1 : 0;
+  buf[42] = params.orderType === 'market' ? 1 : params.orderType === 'stop-limit' ? 2 : params.orderType === 'post-only' ? 3 : 0;
+  view.setBigUint64(43, BigInt(Math.round(params.price * PRICE_SCALE)), true);
+  view.setBigUint64(51, BigInt(params.quantity), true);
+  view.setBigUint64(59, BigInt(params.expiry || 0), true);
 
   return buf;
 }
 
 /**
  * Encode cancel order calldata.
- * Opcode: 0x04 = cancel_order
+ * Opcode: 0x03 = cancel_order
  *
- * Layout: [opcode(1)] [order_id(8)]
+ * Layout: [opcode(1)] [trader(32)] [order_id(8)]
  */
-export function encodeCancelOrder(orderId: number): Uint8Array {
-  const buf = new Uint8Array(9);
+export function encodeCancelOrder(trader: Uint8Array, orderId: number): Uint8Array {
+  const buf = new Uint8Array(41);
   const view = new DataView(buf.buffer);
 
-  buf[0] = 0x04; // cancel_order opcode
-  view.setBigUint64(1, BigInt(orderId), true);
+  buf[0] = 0x03; // cancel_order opcode
+  buf.set(trader.subarray(0, 32), 1);
+  view.setBigUint64(33, BigInt(orderId), true);
 
   return buf;
 }
