@@ -406,6 +406,23 @@ From portal docs, name APIs include:
 
 Always verify exact signature from `getContractAbi` before invoking.
 
+### 4.5 MoltyID + DEX integration (wallet connect)
+
+On wallet connect, the DEX frontend automatically:
+1. Calls `reverseMoltName` RPC to resolve the connected address to a `.molt` name
+2. Calls `getMoltyIdProfile` RPC to fetch reputation + trust tier
+3. Displays `.molt` name (instead of truncated hex) and `⭐{reputation}` badge in the header
+4. On wallet list display, batch-resolves all saved wallets via `batchReverseMoltNames` RPC
+
+Agents using the SDK/RPC can replicate this for identity-aware interactions:
+
+```bash
+curl -sS -X POST "$RPC_URL" -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"reverseMoltName","params":["<ADDR>"]}' | jq
+curl -sS -X POST "$RPC_URL" -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":2,"method":"getMoltyIdProfile","params":["<ADDR>"]}' | jq
+```
+
 ---
 
 ## 5) JSON-RPC Method Catalog (source-verified from `rpc/src/lib.rs`)
@@ -457,6 +474,9 @@ Account/tx/history:
 | `returnCode` | Meaning | Agent action |
 |---|---|---|
 | `0` | contract execution success | proceed to post-state verification (`getTransaction`, balance/profile/event checks) |
+| `5` | oracle unavailable/stale (`dex-margin`: `close_position`, `partial_close`) | wait for oracle to resume, retry; do NOT assume zero PnL |
+| `7` | oracle unavailable for health check (`dex-margin`: `remove_margin`) | wait for oracle to resume, retry |
+| `12` | reduce-only rejected (`dex-core`: `place_order`) | verify open position exists, direction is closing, and qty ≤ position size |
 | `200` | caller/auth mismatch (common in MoltyID mutation guards) | verify signer keypair ownership and first-arg identity; retry only after fixing signer/args |
 | non-zero (other) | contract-level semantic failure | fetch ABI, re-check arg order/types/lengths, and validate contract preconditions before retry |
 
@@ -962,6 +982,18 @@ Use this matrix when the objective is “touch every contract surface” and kee
 
 - `moltyid`: `register_identity` -> `set_endpoint`/`set_metadata` -> `add_skill` -> `attest_skill`/`vouch` -> name lifecycle (`register_name`, `renew_name`, `resolve_name`) -> profile reads
 - `moltdao`: `create_proposal`/`create_proposal_typed` -> `vote`/`vote_with_reputation` -> `execute_proposal` -> treasury ops (`get_treasury_balance`, `treasury_transfer` when authorized)
+- `dex-governance`: proposal flow (`propose_new_pair`, `propose_fee_change`) -> vote -> `execute_proposal` (live cross-contract dispatch) -> verify via `gov_exec_result_{id}` storage key
+
+**Governance execution dispatch (dex-governance `execute_proposal`):**
+
+| Proposal Type | Cross-call target | Effect |
+|---|---|---|
+| `PROPOSAL_NEW_PAIR` | `dex_core::create_pair` | Creates pair from evidence field + `PREFERRED_QUOTE_KEY` |
+| `PROPOSAL_FEE_CHANGE` | `dex_core::update_pair_fees` | Updates maker/taker fees; stored at `gov_exec_fees_{id}` |
+| `PROPOSAL_DELIST` | `dex_core::pause_pair` | Halts trading on a pair |
+| `PROPOSAL_PARAM_CHANGE` | N/A (local) | Stores evidence blob at `gov_param_applied_{id}` |
+
+Audit trail: execution slot, results, and fees stored under `gov_exec_*` keys for every executed proposal.
 
 ### 7.7.4 NFT contracts
 
@@ -979,13 +1011,17 @@ Use this matrix when the objective is “touch every contract surface” and kee
 
 ### 7.7.6 DEX suite contracts
 
-- `dex-core`: pair admin (`create_pair`, `update_pair_fees`), trader flow (`place_order`, `modify_order`, `cancel_order`), matching/settlement (`match_order`, `settle_trade`), analytics reads (`get_order_book`, `get_trade_history`)
+- `dex-core`: pair admin (`create_pair`, `update_pair_fees`, `set_margin_address` [opcode 30]), trader flow (`place_order`, `modify_order`, `cancel_order`), matching/settlement (`match_order`, `settle_trade`), analytics reads (`get_order_book`, `get_trade_history`)
 - `dex-amm`: `create_pool` -> `add_liquidity` -> `swap_exact_in`/`swap_exact_out` -> `collect_fees` -> `remove_liquidity`
 - `dex-router`: `get_best_route` -> `swap` / `multi_hop_swap` / `swap_exact_out`
-- `dex-governance`: proposal flow (`propose_new_pair`, `propose_fee_change`) -> vote -> execute; emergency path `emergency_delist`
-- `dex-rewards`: referral + rewards loop (`register_referral`, `get_pending_rewards`, `claim_trading_rewards`, `claim_lp_rewards`)
-- `dex-margin`: `open_margin_position` -> `add_margin`/`remove_margin` -> ratio checks (`get_margin_ratio`) -> `close_margin_position`; liquidation keeper via `get_liquidatable_positions`
+- `dex-governance`: proposal flow (`propose_new_pair`, `propose_fee_change`) -> vote -> `execute_proposal` (see 7.7.3 dispatch table); emergency path `emergency_delist`
+- `dex-rewards`: referral + rewards loop (`register_referral`, `get_pending_rewards`, `claim_trading_rewards`, `claim_lp_rewards`). **Monthly epoch cap**: 500,000 MOLT/month; resets after 2,592,000 slots; trades receive 0 reward once budget exhausted.
+- `dex-margin`: `open_margin_position` -> `add_margin`/`remove_margin` -> ratio checks (`get_margin_ratio`) -> `close_margin_position`/`partial_close`; liquidation keeper via `get_liquidatable_positions`; query via `query_user_open_position` [opcode 26]
 - `dex-analytics`: ingest (`record_trade`, `update_price_feed`) and query (`get_ohlcv`, `get_24h_stats`, `get_all_pairs_stats`, `get_leaderboard`)
+
+**Reduce-only orders** (`dex-core`): set `order_type | 0x80` in `place_order()`. The flag triggers cross-contract validation against `dex-margin` (opcode 26) to confirm an open position exists on the correct side, and caps quantity at position size. Returns code 12 on rejection.
+
+**Oracle safety** (`dex-margin`): `close_position`, `partial_close`, `remove_margin` **reject with error codes 5/7** when oracle/mark price is unavailable or stale. Agents must NOT assume zero-PnL exit — wait for oracle recovery and retry.
 
 ### 7.7.7 Prediction contract
 
@@ -995,6 +1031,10 @@ Use this matrix when the objective is “touch every contract surface” and kee
   - trading: `buy_shares`, `sell_shares`, `mint_complete_set`, `redeem_complete_set`
   - resolution path: `submit_resolution`, `challenge_resolution`, `finalize_resolution`, `dao_resolve`, `dao_void`, `close_market`
   - settlement: `redeem_shares`, `reclaim_collateral`
+
+**Prediction market return data:** `create_market`, `add_liquidity`, `buy_shares`, `sell_shares`, `withdraw_liquidity` all write full **u64** values to `set_return_data()`. The `call()` return code (u32) may truncate for large values — always read `return_data` for the authoritative result.
+
+**Multi-outcome sell math:** Uses binary search over `total_a_for_sets()` (sequential constant-product swaps) for exact computation. No equal-partition approximation. Returns `(0, 0)` if any pool has ≤1 reserve.
 
 ## 7.8 Objective-to-Contract Coverage Map
 
@@ -1055,6 +1095,15 @@ The following list comes from contract source (`contracts/*/src/lib.rs`, exporte
 - `dex_margin`: `call` (opcode dispatch; resolve callable methods from runtime ABI)
 - `dex_analytics`: `initialize`, `call` (opcode dispatch; resolve callable methods from runtime ABI)
 - `prediction_market`: `initialize`, `call` (opcode dispatch; resolve callable methods from runtime ABI)
+
+**Opcode-dispatch new additions (Tasks 58-63):**
+
+| Contract | Opcode | Function | Notes |
+|---|---|---|---|
+| `dex_core` | 30 | `set_margin_address(caller, margin_addr)` | Admin-only; links to dex_margin for reduce-only validation |
+| `dex_margin` | 26 | `query_user_open_position(trader, pair_id)` | Returns open position data or 0 if none |
+| `dex_governance` | (existing) | `execute_proposal` | Now performs real cross-contract dispatch (see 7.7.3) |
+| `prediction_market` | 1,3,4,5,13-15 | (existing) | `call()` no longer overwrites function-set return_data on success |
 - `musd_token`: `initialize`, `mint`, `burn`, `transfer`, `approve`, `transfer_from`, `attest_reserves`, `balance_of`, `allowance`, `total_supply`, `total_minted`, `total_burned`, `get_reserve_ratio`, `get_last_attestation_slot`, `get_attestation_count`, `get_epoch_remaining`, `get_transfer_count`, `emergency_pause`, `emergency_unpause`, `transfer_admin`
 - `weth_token`: `initialize`, `mint`, `burn`, `transfer`, `approve`, `transfer_from`, `attest_reserves`, `balance_of`, `allowance`, `total_supply`, `total_minted`, `total_burned`, `get_reserve_ratio`, `get_last_attestation_slot`, `get_attestation_count`, `get_epoch_remaining`, `get_transfer_count`, `emergency_pause`, `emergency_unpause`, `transfer_admin`
 - `wsol_token`: `initialize`, `mint`, `burn`, `transfer`, `approve`, `transfer_from`, `attest_reserves`, `balance_of`, `allowance`, `total_supply`, `total_minted`, `total_burned`, `get_reserve_ratio`, `get_last_attestation_slot`, `get_attestation_count`, `get_epoch_remaining`, `get_transfer_count`, `emergency_pause`, `emergency_unpause`, `transfer_admin`
@@ -1155,8 +1204,11 @@ Custody event taxonomy (for bots, automations, and alerting):
 
 ## 8.1 Remaining Limitations / Guardrails
 
-- prediction-market is opcode-dispatch; some human docs are sparse, so runtime ABI introspection is mandatory before building calls.
-- argument placeholders in this playbook must be replaced by ABI-validated values per network deployment.
+- Opcode-dispatch contracts (`dex-*`, `prediction-market`) require runtime ABI introspection (`getContractAbi`) before building calls — always verify opcode → function mapping.
+- Argument placeholders in this playbook must be replaced by ABI-validated values per network deployment.
+- Oracle outages block margin operations (`close_position`, `partial_close`, `remove_margin`) — agents must implement retry-with-backoff rather than assuming zero PnL.
+- Prediction market sell returns `(0, 0)` when pool reserves are too low (≤1) — check return_data before assuming trade executed.
+- DEX rewards are epoch-capped at 500,000 MOLT/month — trades after budget exhaustion receive 0 reward until next epoch.
 
 ---
 
