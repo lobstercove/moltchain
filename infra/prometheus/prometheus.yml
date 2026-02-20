@@ -12,7 +12,7 @@ rule_files:
 alerting:
   alertmanagers:
     - static_configs:
-        - targets: []
+        - targets: ['alertmanager:9093']
 
 scrape_configs:
   # ─── MoltChain Node Metrics ───
