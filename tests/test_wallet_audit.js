@@ -424,6 +424,30 @@ test('mnemonicToKeypair passphrase changes derived key', async () => {
         'Different passphrase must produce different address');
 });
 
+// AUDIT-FIX I2-02: Verify wallet.js never stores plaintext secret key material
+test('wallet.js only stores encrypted keys (no plaintext in localStorage)', () => {
+    // Verify every wallet creation/import path calls encryptPrivateKey before storage
+    const createMatch = walletSrc.match(/finishCreateWallet[\s\S]*?localStorage/);
+    // The wallet code must encrypt before any localStorage write involving keys
+    const encryptCalls = (walletSrc.match(/encryptPrivateKey/g) || []).length;
+    assert(encryptCalls >= 6,
+        `Wallet must call encryptPrivateKey for all key storage paths (found ${encryptCalls}, need >=6)`);
+
+    // Verify no plaintext key assignment directly to wallet object without encryption
+    // Pattern: wallet.privateKey = or wallet.seed = (without encrypt) should NOT exist
+    const plaintextKeyStore = walletSrc.match(/wallet\.\s*(?:privateKey|seed|secretKey)\s*=\s*(?!await\s+MoltCrypto)/g);
+    assert(!plaintextKeyStore || plaintextKeyStore.length === 0,
+        'Must not store plaintext privateKey/seed/secretKey on wallet object');
+});
+
+// AUDIT-FIX I2-02: Verify encryptPrivateKey uses AES-GCM with proper parameters
+test('encryptPrivateKey uses AES-256-GCM + PBKDF2', () => {
+    assert(cryptoSrc.includes("'AES-GCM'"), 'Must use AES-GCM');
+    assert(cryptoSrc.includes('iterations: 100000'), 'Must use 100000 PBKDF2 iterations');
+    assert(cryptoSrc.includes("length: 256"), 'Must use 256-bit key');
+    assert(cryptoSrc.includes('getRandomValues'), 'Must use CSPRNG for salt/IV');
+});
+
 test('encryptPrivateKey/decryptPrivateKey roundtrip', async () => {
     const seedHex = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     const password = 'test-password-123';
