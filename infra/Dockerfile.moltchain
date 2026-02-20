@@ -41,7 +41,7 @@ RUN mkdir -p /data/state && chown -R moltchain:moltchain /data
 
 USER moltchain
 
-EXPOSE 8000 8001 9100
+EXPOSE 8899 8900 9100
 
 ENTRYPOINT ["/app/moltchain-rpc"]
-CMD ["--data-dir", "/data/state", "--rpc-port", "8000", "--ws-port", "8001"]
+CMD ["--data-dir", "/data/state", "--rpc-port", "8899", "--ws-port", "8900"]

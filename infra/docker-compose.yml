@@ -38,7 +38,7 @@ services:
       dockerfile: infra/Dockerfile.custody
     environment:
       - RUST_LOG=info
-      - CUSTODY_RPC_URL=http://moltchain:8000
+      - CUSTODY_RPC_URL=http://moltchain:8899
       - CUSTODY_JUPITER_API_URL=${CUSTODY_JUPITER_API_URL:-}
       - CUSTODY_UNISWAP_ROUTER=${CUSTODY_UNISWAP_ROUTER:-}
       - CUSTODY_SOLANA_RPC=${CUSTODY_SOLANA_RPC:-https://api.devnet.solana.com}
@@ -56,8 +56,8 @@ services:
       context: ../dex/market-maker
       dockerfile: ../../infra/Dockerfile.market-maker
     environment:
-      - DEX_ENDPOINT=http://moltchain:8000
-      - DEX_WS_ENDPOINT=ws://moltchain:8001/ws
+      - DEX_ENDPOINT=http://moltchain:8899
+      - DEX_WS_ENDPOINT=ws://moltchain:8900/ws
       - MM_PAIR_ID=0
       - MM_STRATEGY=spread
       - MM_HALF_SPREAD_BPS=15
