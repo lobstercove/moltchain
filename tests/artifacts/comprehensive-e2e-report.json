@@ -1,3345 +1,3345 @@
 {
   "summary": {
-    "pass": 214,
-    "fail": 453,
-    "skip": 0
+    "pass": 123,
+    "fail": 535,
+    "skip": 9
   },
-  "elapsed_seconds": 88.3,
+  "elapsed_seconds": 0.7,
   "results": [
     {
       "status": "PASS",
       "msg": "validator healthy",
-      "ts": 1771431712
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "current slot: 363",
-      "ts": 1771431712
+      "msg": "current slot: 48",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "deployer funded (100 MOLT)",
-      "ts": 1771431712
+      "status": "SKIP",
+      "msg": "deployer airdrop skipped: RPC Error: Airdrop rate limit: 1 per 60 seconds per address. Try again in 8 seconds.",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
       "msg": "secondary funded (100 MOLT)",
-      "ts": 1771431712
+      "ts": 1771573909
     },
     {
       "status": "PASS",
       "msg": "discovered 27/27 contracts",
-      "ts": 1771431712
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.initialize sig=074f172e911bfa64...",
-      "ts": 1771431712
+      "status": "FAIL",
+      "msg": "moltcoin.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.mint sig=26e8c82347169ac0...",
-      "ts": 1771431712
+      "status": "FAIL",
+      "msg": "moltcoin.mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.transfer sig=0197c58f3080ae3d...",
-      "ts": 1771431712
+      "status": "FAIL",
+      "msg": "moltcoin.transfer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.burn sig=ba4e89be4cd9bfc5...",
-      "ts": 1771431712
+      "status": "FAIL",
+      "msg": "moltcoin.burn error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.approve sig=c9a0b1b96af058be...",
-      "ts": 1771431712
+      "status": "FAIL",
+      "msg": "moltcoin.approve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.balance_of sig=d717a02982b76763...",
-      "ts": 1771431712
+      "status": "FAIL",
+      "msg": "moltcoin.balance_of error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "moltcoin.total_supply sig=97edb698e2040fa7...",
-      "ts": 1771431713
+      "status": "FAIL",
+      "msg": "moltcoin.total_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "musd_token.initialize not confirmed in 15s",
-      "ts": 1771431728
+      "msg": "musd_token.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.mint sig=f3bd175361762a59...",
-      "ts": 1771431728
+      "status": "FAIL",
+      "msg": "musd_token.mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.transfer sig=1e82fc03161fa93a...",
-      "ts": 1771431728
+      "status": "FAIL",
+      "msg": "musd_token.transfer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.approve sig=c9700a0e33e71f02...",
-      "ts": 1771431728
+      "status": "FAIL",
+      "msg": "musd_token.approve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.burn sig=a1a30b1a4612e94e...",
-      "ts": 1771431728
+      "status": "FAIL",
+      "msg": "musd_token.burn error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.balance_of sig=3331299d82eade2b...",
-      "ts": 1771431728
+      "status": "FAIL",
+      "msg": "musd_token.balance_of error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.total_supply sig=35447b4d3ac9c512...",
-      "ts": 1771431728
+      "status": "FAIL",
+      "msg": "musd_token.total_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.allowance sig=f8dcef72112470a5...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.allowance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.total_minted sig=ab97007581b2b037...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.total_minted error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.total_burned sig=54cadb58f32fe58a...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.total_burned error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.transfer_from sig=1e036a636291c1c9...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.transfer_from error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.emergency_pause sig=7002508032ba970a...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.emergency_unpause sig=efd92d5c9722a884...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.get_transfer_count sig=6d26e1b7c2af2cca...",
-      "ts": 1771431729
+      "status": "FAIL",
+      "msg": "musd_token.get_transfer_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.get_attestation_count sig=d84b1491acbdd463...",
-      "ts": 1771431730
+      "status": "FAIL",
+      "msg": "musd_token.get_attestation_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.get_epoch_remaining sig=ea6212d018d7bc8e...",
-      "ts": 1771431730
+      "status": "FAIL",
+      "msg": "musd_token.get_epoch_remaining error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.get_last_attestation_slot sig=00b898e12ce533a5...",
-      "ts": 1771431730
+      "status": "FAIL",
+      "msg": "musd_token.get_last_attestation_slot error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.get_reserve_ratio sig=479f50c5f7178497...",
-      "ts": 1771431730
+      "status": "FAIL",
+      "msg": "musd_token.get_reserve_ratio error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.attest_reserves sig=b365cbb2d7c5c95e...",
-      "ts": 1771431730
+      "status": "FAIL",
+      "msg": "musd_token.attest_reserves error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "musd_token.transfer_admin sig=b05fb7e43c404993...",
-      "ts": 1771431730
+      "status": "FAIL",
+      "msg": "musd_token.transfer_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "weth_token.initialize not confirmed in 15s",
-      "ts": 1771431745
+      "msg": "weth_token.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.mint sig=e407794dfa331034...",
-      "ts": 1771431746
+      "status": "FAIL",
+      "msg": "weth_token.mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.transfer sig=709176691c434cfb...",
-      "ts": 1771431746
+      "status": "FAIL",
+      "msg": "weth_token.transfer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.approve sig=f556db7480c06b08...",
-      "ts": 1771431746
+      "status": "FAIL",
+      "msg": "weth_token.approve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.burn sig=3800770a65e820f5...",
-      "ts": 1771431746
+      "status": "FAIL",
+      "msg": "weth_token.burn error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.balance_of sig=ad63c934f35c8baa...",
-      "ts": 1771431746
+      "status": "FAIL",
+      "msg": "weth_token.balance_of error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.total_supply sig=fa53d2aebbeabf11...",
-      "ts": 1771431746
+      "status": "FAIL",
+      "msg": "weth_token.total_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.allowance sig=73583ee657d73203...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.allowance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.total_minted sig=80c8fe90d20641f7...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.total_minted error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.total_burned sig=44849aa421b1068d...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.total_burned error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.transfer_from sig=f322874a288fffe2...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.transfer_from error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.emergency_pause sig=ef8de4296069a435...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.emergency_unpause sig=a6781b20455da9b1...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.get_transfer_count sig=699e84e72ab250b6...",
-      "ts": 1771431747
+      "status": "FAIL",
+      "msg": "weth_token.get_transfer_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.get_attestation_count sig=0d39ec3a19f78939...",
-      "ts": 1771431748
+      "status": "FAIL",
+      "msg": "weth_token.get_attestation_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.get_epoch_remaining sig=3c00b7f627120ecc...",
-      "ts": 1771431748
+      "status": "FAIL",
+      "msg": "weth_token.get_epoch_remaining error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.get_last_attestation_slot sig=5991723f22d998c6...",
-      "ts": 1771431748
+      "status": "FAIL",
+      "msg": "weth_token.get_last_attestation_slot error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.get_reserve_ratio sig=7b1ad28371d13b38...",
-      "ts": 1771431748
+      "status": "FAIL",
+      "msg": "weth_token.get_reserve_ratio error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.attest_reserves sig=b6b3b9104762479f...",
-      "ts": 1771431748
+      "status": "FAIL",
+      "msg": "weth_token.attest_reserves error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "weth_token.transfer_admin sig=083047bc106607d0...",
-      "ts": 1771431748
+      "status": "FAIL",
+      "msg": "weth_token.transfer_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "wsol_token.initialize not confirmed in 15s",
-      "ts": 1771431763
+      "msg": "wsol_token.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.mint sig=ccb8413db2e137c6...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.transfer sig=a3b988f21e6d982f...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.transfer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.approve sig=06d65c89eab59b98...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.approve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.burn sig=a84251a1078cb222...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.burn error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.balance_of sig=ea3646ebe39d7b66...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.balance_of error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.total_supply sig=b0425bc2aec1607e...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.total_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.allowance sig=2797d3aa20138479...",
-      "ts": 1771431764
+      "status": "FAIL",
+      "msg": "wsol_token.allowance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.total_minted sig=fe9ecc6207727146...",
-      "ts": 1771431765
+      "status": "FAIL",
+      "msg": "wsol_token.total_minted error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.total_burned sig=9455755686c95da2...",
-      "ts": 1771431765
+      "status": "FAIL",
+      "msg": "wsol_token.total_burned error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.transfer_from sig=f18bf8b5e54a5f95...",
-      "ts": 1771431765
+      "status": "FAIL",
+      "msg": "wsol_token.transfer_from error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.emergency_pause sig=47dedf4a7fdac0ad...",
-      "ts": 1771431765
+      "status": "FAIL",
+      "msg": "wsol_token.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.emergency_unpause sig=02a4dac504972b47...",
-      "ts": 1771431765
+      "status": "FAIL",
+      "msg": "wsol_token.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.get_transfer_count sig=e0edbe97950e6c28...",
-      "ts": 1771431765
+      "status": "FAIL",
+      "msg": "wsol_token.get_transfer_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.get_attestation_count sig=aae0799b45bea81d...",
-      "ts": 1771431766
+      "status": "FAIL",
+      "msg": "wsol_token.get_attestation_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.get_epoch_remaining sig=c83a21f22f62f374...",
-      "ts": 1771431766
+      "status": "FAIL",
+      "msg": "wsol_token.get_epoch_remaining error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.get_last_attestation_slot sig=15411e487d4c4026...",
-      "ts": 1771431766
+      "status": "FAIL",
+      "msg": "wsol_token.get_last_attestation_slot error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.get_reserve_ratio sig=86ca9c4acaf93bdd...",
-      "ts": 1771431766
+      "status": "FAIL",
+      "msg": "wsol_token.get_reserve_ratio error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.attest_reserves sig=d66fe0ae0dc547e7...",
-      "ts": 1771431766
+      "status": "FAIL",
+      "msg": "wsol_token.attest_reserves error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "wsol_token.transfer_admin sig=be60b58c5993e4a1...",
-      "ts": 1771431766
+      "status": "FAIL",
+      "msg": "wsol_token.transfer_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpump.initialize not confirmed in 15s",
-      "ts": 1771431781
+      "msg": "clawpump.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.create_token sig=0eeb8ab600f52542...",
-      "ts": 1771431782
+      "status": "FAIL",
+      "msg": "clawpump.create_token error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.buy sig=88de45aa3ebf988a...",
-      "ts": 1771431782
+      "status": "FAIL",
+      "msg": "clawpump.buy error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.sell sig=da75e8b5d6038a62...",
-      "ts": 1771431782
+      "status": "FAIL",
+      "msg": "clawpump.sell error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.get_token_info sig=7343fa2afc3ba5fa...",
-      "ts": 1771431782
+      "status": "FAIL",
+      "msg": "clawpump.get_token_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.get_token_count sig=aa254846dcbcf776...",
-      "ts": 1771431782
+      "status": "FAIL",
+      "msg": "clawpump.get_token_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.get_platform_stats sig=cb9c9261149eed59...",
-      "ts": 1771431782
+      "status": "FAIL",
+      "msg": "clawpump.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.get_buy_quote sig=58e29b39b481236c...",
-      "ts": 1771431783
+      "status": "FAIL",
+      "msg": "clawpump.get_buy_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.get_graduation_info sig=d8655aa35393800c...",
-      "ts": 1771431783
+      "status": "FAIL",
+      "msg": "clawpump.get_graduation_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.set_buy_cooldown sig=6786bb197897b843...",
-      "ts": 1771431783
+      "status": "FAIL",
+      "msg": "clawpump.set_buy_cooldown error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.set_sell_cooldown sig=210a973d7eb38503...",
-      "ts": 1771431783
+      "status": "FAIL",
+      "msg": "clawpump.set_sell_cooldown error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.set_max_buy sig=e876b24a0858cce3...",
-      "ts": 1771431783
+      "status": "FAIL",
+      "msg": "clawpump.set_max_buy error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.set_creator_royalty sig=b808cb1c669f1bca...",
-      "ts": 1771431784
+      "status": "FAIL",
+      "msg": "clawpump.set_creator_royalty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.set_dex_addresses sig=39d08f3c82de29f8...",
-      "ts": 1771431784
+      "status": "FAIL",
+      "msg": "clawpump.set_dex_addresses error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.pause sig=100d5bf8d4f70a22...",
-      "ts": 1771431784
+      "status": "FAIL",
+      "msg": "clawpump.pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.unpause sig=94c414335bd077fa...",
-      "ts": 1771431784
+      "status": "FAIL",
+      "msg": "clawpump.unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.withdraw_fees sig=df04db31a31b8039...",
-      "ts": 1771431784
+      "status": "FAIL",
+      "msg": "clawpump.withdraw_fees error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.freeze_token sig=0d602b4021dfa811...",
-      "ts": 1771431784
+      "status": "FAIL",
+      "msg": "clawpump.freeze_token error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "clawpump.unfreeze_token sig=7522f5f98e2e67b7...",
-      "ts": 1771431785
+      "status": "FAIL",
+      "msg": "clawpump.unfreeze_token error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.initialize not confirmed in 15s",
-      "ts": 1771431800
+      "msg": "lobsterlend.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.deposit error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.deposit error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.borrow error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.borrow error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.repay error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.repay error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.withdraw error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.withdraw error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_protocol_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_protocol_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_account_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_account_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_interest_rate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_interest_rate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.set_deposit_cap error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.set_deposit_cap error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.set_reserve_factor error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.set_reserve_factor error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.withdraw_reserves error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.withdraw_reserves error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.liquidate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.liquidate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.flash_borrow error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.flash_borrow error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.flash_repay error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.flash_repay error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_deposit_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_deposit_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_borrow_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_borrow_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_liquidation_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_liquidation_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "lobsterlend.get_platform_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "lobsterlend.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.list_nft error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.list_nft error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.get_listing error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.get_listing error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.cancel_listing error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.cancel_listing error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.get_marketplace_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.get_marketplace_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.set_marketplace_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.set_marketplace_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.list_nft_with_royalty error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.list_nft_with_royalty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.make_offer error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.make_offer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.cancel_offer error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.cancel_offer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.buy_nft error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.buy_nft error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.accept_offer error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.accept_offer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.mm_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.mm_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.mm_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.mm_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltmarket.get_marketplace_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltmarket.get_marketplace_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.initialize_ma_admin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.initialize_ma_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.create_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.create_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.place_bid error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.place_bid error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.set_reserve_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.set_reserve_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.set_royalty error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.set_royalty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.get_auction_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.get_auction_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.get_collection_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.get_collection_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.update_collection_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.update_collection_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.cancel_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.cancel_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.finalize_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.finalize_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.make_offer error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.make_offer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.accept_offer error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.accept_offer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.ma_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.ma_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.ma_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.ma_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltauction.get_auction_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltauction.get_auction_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.add_bridge_validator error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.add_bridge_validator error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.set_required_confirmations error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.set_required_confirmations error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.set_request_timeout error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.set_request_timeout error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.get_bridge_status error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.get_bridge_status error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.remove_bridge_validator error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.remove_bridge_validator error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.lock_tokens error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.lock_tokens error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.submit_mint error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.submit_mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.has_confirmed_mint error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.has_confirmed_mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.submit_unlock error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.submit_unlock error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.has_confirmed_unlock error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.has_confirmed_unlock error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.is_source_tx_used error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.is_source_tx_used error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.is_burn_proof_used error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.is_burn_proof_used error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.confirm_mint error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.confirm_mint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.confirm_unlock error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.confirm_unlock error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.cancel_expired_request error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.cancel_expired_request error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.set_moltyid_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.set_moltyid_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.set_identity_gate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.set_identity_gate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.mb_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.mb_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltbridge.mb_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltbridge.mb_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.register_provider error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.register_provider error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.set_storage_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.set_storage_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.store_data error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.store_data error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.confirm_storage error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.confirm_storage error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.get_storage_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.get_storage_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.get_storage_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.get_storage_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.get_provider_stake error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.get_provider_stake error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.claim_storage_rewards error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.claim_storage_rewards error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.stake_collateral error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.stake_collateral error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.issue_challenge error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.issue_challenge error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.respond_challenge error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.respond_challenge error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.set_challenge_window error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.set_challenge_window error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.set_slash_percent error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.set_slash_percent error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.slash_provider error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.slash_provider error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "reef_storage.get_platform_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "reef_storage.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.set_protocol_addresses error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.set_protocol_addresses error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.add_strategy error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.add_strategy error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.deposit error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.deposit error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.withdraw error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.withdraw error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.get_vault_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.get_vault_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.get_user_position error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.get_user_position error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.get_strategy_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.get_strategy_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.harvest error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.harvest error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.set_deposit_cap error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.set_deposit_cap error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.set_deposit_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.set_deposit_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.set_withdrawal_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.set_withdrawal_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.set_risk_tier error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.set_risk_tier error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.update_strategy_allocation error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.update_strategy_allocation error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.remove_strategy error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.remove_strategy error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.withdraw_protocol_fees error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.withdraw_protocol_fees error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.cv_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.cv_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawvault.cv_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawvault.cv_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.initialize_cp_admin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.initialize_cp_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.set_identity_admin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.set_identity_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.set_moltyid_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.set_moltyid_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.set_identity_gate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.set_identity_gate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.create_stream error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.create_stream error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.create_stream_with_cliff error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.create_stream_with_cliff error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.get_stream error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.get_stream error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.get_stream_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.get_stream_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.get_withdrawable error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.get_withdrawable error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.withdraw_from_stream error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.withdraw_from_stream error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.transfer_stream error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.transfer_stream error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.cancel_stream error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.cancel_stream error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.get_stream_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.get_stream_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "clawpay.get_platform_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "clawpay.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.register_identity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.register_identity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_identity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_identity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_identity_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_identity_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_endpoint error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_endpoint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_endpoint error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_endpoint error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_metadata error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_metadata error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_metadata error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_metadata error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_availability error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_availability error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_availability error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_availability error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_rate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_rate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_rate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_rate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.add_skill error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.add_skill error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_skills error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_skills error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.vouch error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.vouch error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_vouches error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_vouches error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_delegate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_delegate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_delegate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_delegate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.revoke_delegate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.revoke_delegate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.update_reputation error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.update_reputation error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.update_reputation_typed error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.update_reputation_typed error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_reputation error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_reputation error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_trust_tier error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_trust_tier error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.update_agent_type error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.update_agent_type error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.deactivate_identity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.deactivate_identity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_agent_profile error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_agent_profile error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_recovery_guardians error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_recovery_guardians error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.register_name error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.register_name error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.resolve_name error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.resolve_name error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.reverse_resolve error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.reverse_resolve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_achievements error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_achievements error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_attestations error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_attestations error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.add_skill_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.add_skill_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_endpoint_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_endpoint_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_metadata_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_metadata_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_availability_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_availability_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.set_rate_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.set_rate_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.update_agent_type_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.update_agent_type_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.attest_skill error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.attest_skill error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.revoke_attestation error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.revoke_attestation error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.approve_recovery error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.approve_recovery error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.execute_recovery error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.execute_recovery error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.award_contribution_achievement error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.award_contribution_achievement error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.create_name_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.create_name_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.bid_name_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.bid_name_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.get_name_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.get_name_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.finalize_name_auction error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.finalize_name_auction error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.transfer_name error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.transfer_name error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.renew_name error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.renew_name error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.release_name error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.release_name error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.transfer_name_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.transfer_name_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.renew_name_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.renew_name_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.release_name_as error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.release_name_as error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.admin_register_reserved_name error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.admin_register_reserved_name error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.transfer_admin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.transfer_admin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.mid_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.mid_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltyid.mid_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltyid.mid_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.set_protocol_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.set_protocol_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.set_platform_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.set_platform_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.create_pool error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.create_pool error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.add_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.add_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.swap error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.swap error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.swap_a_for_b error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.swap_a_for_b error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.swap_b_for_a error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.swap_b_for_a error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.swap_a_for_b_with_deadline error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.swap_a_for_b_with_deadline error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.swap_b_for_a_with_deadline error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.swap_b_for_a_with_deadline error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_pool_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_pool_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_pool_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_pool_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_reserves error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_reserves error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_liquidity_balance error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_liquidity_balance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_total_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_total_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_protocol_fees error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_protocol_fees error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_flash_loan_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_flash_loan_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_twap_cumulatives error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_twap_cumulatives error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_twap_snapshot_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_twap_snapshot_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.flash_loan_borrow error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.flash_loan_borrow error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.flash_loan_repay error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.flash_loan_repay error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.flash_loan_abort error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.flash_loan_abort error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.remove_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.remove_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.ms_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.ms_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.ms_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.ms_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_swap_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_swap_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_total_volume error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_total_volume error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltswap.get_swap_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltswap.get_swap_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.register_feed error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.register_feed error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.submit_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.submit_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.get_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.get_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.register_feed error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.register_feed error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.submit_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.submit_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.get_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.get_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.get_feed_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.get_feed_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.get_feed_list error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.get_feed_list error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.set_update_interval error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.set_update_interval error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.add_reporter error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.add_reporter error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.remove_reporter error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.remove_reporter error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.get_oracle_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.get_oracle_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.mo_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.mo_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltoracle.mo_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltoracle.mo_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.set_quorum error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.set_quorum error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.set_voting_period error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.set_voting_period error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.create_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.create_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.cast_vote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.cast_vote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_proposal_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_proposal_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_vote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_vote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_vote_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_vote_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.finalize_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.finalize_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.set_timelock_delay error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.set_timelock_delay error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.execute_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.execute_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_dao_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_dao_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_active_proposals error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_active_proposals error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_total_supply error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_total_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.get_treasury_balance error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.get_treasury_balance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.veto_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.veto_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.cancel_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.cancel_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.treasury_transfer error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.treasury_transfer error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.dao_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.dao_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltdao.dao_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltdao.dao_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.mint_punk error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.mint_punk error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.transfer_punk error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.transfer_punk error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.get_punk_metadata error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.get_punk_metadata error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.get_total_supply error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.get_total_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.get_owner_of error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.get_owner_of error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.set_base_uri error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.set_base_uri error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.set_max_supply error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.set_max_supply error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.get_punks_by_owner error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.get_punks_by_owner error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.set_royalty error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.set_royalty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.balance_of error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.balance_of error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.approve error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.approve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.burn error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.burn error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.mp_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.mp_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.mp_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.mp_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "moltpunks.get_collection_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "moltpunks.get_collection_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.register_provider error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.register_provider error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.create_job error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.create_job error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.accept_job error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.accept_job error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.submit_result error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.submit_result error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.confirm_result error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.confirm_result error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.get_job_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.get_job_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.get_provider_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.get_provider_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.get_job_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.get_job_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.set_platform_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.set_platform_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.cm_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.cm_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.cm_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.cm_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "compute_market.get_platform_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "compute_market.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.create_bounty error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.create_bounty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.get_bounty error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.get_bounty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.get_bounty_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.get_bounty_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.submit_work error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.submit_work error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.approve_submission error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.approve_submission error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.cancel_bounty error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.cancel_bounty error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.set_platform_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.set_platform_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.bb_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.bb_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.bb_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.bb_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "bountyboard.get_platform_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "bountyboard.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.create_pair error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.create_pair error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.set_preferred_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.set_preferred_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.add_allowed_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.add_allowed_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_allowed_quote_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_allowed_quote_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.remove_allowed_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.remove_allowed_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.update_pair_fees error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.update_pair_fees error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_pair_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_pair_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_preferred_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_preferred_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_pair_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_pair_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_trade_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_trade_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_fee_treasury error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_fee_treasury error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.place_order error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.place_order error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_order error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_order error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_best_bid error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_best_bid error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_best_ask error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_best_ask error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_spread error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_spread error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.modify_order error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.modify_order error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.cancel_order error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.cancel_order error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.cancel_all_orders error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.cancel_all_orders error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.pause_pair error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.pause_pair error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.unpause_pair error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.unpause_pair error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_total_volume error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_total_volume error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_user_orders error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_user_orders error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_core.get_open_order_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_core.get_open_order_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.create_pool error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.create_pool error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.set_protocol_fee error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.set_protocol_fee error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.add_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.add_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_pool_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_pool_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_position error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_position error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_pool_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_pool_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_position_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_position_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_tvl error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_tvl error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.quote_swap error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.quote_swap error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.swap_exact_in error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.swap_exact_in error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.swap_exact_out error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.swap_exact_out error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.collect_fees error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.collect_fees error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.remove_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.remove_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_total_volume error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_total_volume error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_swap_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_swap_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_total_fees_collected error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_total_fees_collected error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_amm.get_amm_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_amm.get_amm_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.record_trade error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.record_trade error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_ohlcv error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_ohlcv error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_24h_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_24h_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_trader_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_trader_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_last_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_last_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_record_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_record_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_trader_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_trader_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_analytics.get_global_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_analytics.get_global_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.set_preferred_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.set_preferred_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.add_allowed_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.add_allowed_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.get_allowed_quote_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.get_allowed_quote_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.remove_allowed_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.remove_allowed_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.set_moltyid_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.set_moltyid_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.set_listing_requirements error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.set_listing_requirements error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.propose_new_pair error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.propose_new_pair error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.propose_fee_change error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.propose_fee_change error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.vote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.vote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.get_proposal_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.get_proposal_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.get_preferred_quote error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.get_preferred_quote error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.get_proposal_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.get_proposal_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.finalize_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.finalize_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.execute_proposal error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.execute_proposal error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.emergency_delist error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.emergency_delist error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.get_governance_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.get_governance_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_governance.get_voter_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_governance.get_voter_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.set_moltcoin_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.set_moltcoin_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.set_mark_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.set_mark_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.set_max_leverage error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.set_max_leverage error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.set_maintenance_margin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.set_maintenance_margin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.open_position error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.open_position error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_position_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_position_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_margin_ratio error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_margin_ratio error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_tier_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_tier_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.add_margin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.add_margin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.remove_margin error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.remove_margin error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.liquidate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.liquidate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.close_position error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.close_position error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.withdraw_insurance error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.withdraw_insurance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_total_volume error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_total_volume error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_user_positions error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_user_positions error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_total_pnl error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_total_pnl error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_liquidation_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_liquidation_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_margin.get_margin_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_margin.get_margin_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.set_moltcoin_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.set_moltcoin_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.set_rewards_pool error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.set_rewards_pool error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.set_reward_rate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.set_reward_rate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.set_referral_rate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.set_referral_rate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.register_referral error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.register_referral error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.record_trade error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.record_trade error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.accrue_lp_rewards error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.accrue_lp_rewards error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.claim_trading_rewards error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.claim_trading_rewards error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.claim_lp_rewards error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.claim_lp_rewards error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_pending_rewards error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_pending_rewards error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_trading_tier error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_trading_tier error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_referral_rate error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_referral_rate error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_total_distributed error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_total_distributed error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_trader_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_trader_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_total_volume error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_total_volume error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_rewards.get_reward_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_rewards.get_reward_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.set_addresses error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.set_addresses error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.register_route error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.register_route error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.get_route_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.get_route_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.get_swap_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.get_swap_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.get_route_info error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.get_route_info error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.get_best_route error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.get_best_route error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.set_route_enabled error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.set_route_enabled error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.swap error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.swap error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.multi_hop_swap error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.multi_hop_swap error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.get_total_volume_routed error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.get_total_volume_routed error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "dex_router.get_router_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "dex_router.get_router_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.initialize error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.initialize error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.set_moltyid_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.set_moltyid_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.set_oracle_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.set_oracle_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.set_musd_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.set_musd_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.set_dex_gov_address error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.set_dex_gov_address error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.create_market error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.create_market error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_market_count error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_market_count error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_market error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_market error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_price error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_price error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_outcome_pool error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_outcome_pool error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_pool_reserves error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_pool_reserves error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_platform_stats error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_platform_stats error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.quote_buy error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.quote_buy error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.quote_sell error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.quote_sell error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.add_initial_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.add_initial_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.add_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.add_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.buy_shares error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.buy_shares error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.sell_shares error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.sell_shares error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_price_history error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_price_history error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.mint_complete_set error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.mint_complete_set error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.redeem_complete_set error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.redeem_complete_set error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_position error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_position error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_user_markets error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_user_markets error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.get_lp_balance error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.get_lp_balance error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.withdraw_liquidity error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.withdraw_liquidity error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.submit_resolution error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.submit_resolution error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.challenge_resolution error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.challenge_resolution error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.finalize_resolution error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.finalize_resolution error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.dao_resolve error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.dao_resolve error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.dao_void error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.dao_void error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.redeem_shares error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.redeem_shares error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.reclaim_collateral error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.reclaim_collateral error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.close_market error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.close_market error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.emergency_pause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.emergency_pause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "FAIL",
-      "msg": "prediction_market.emergency_unpause error=All connection attempts failed",
-      "ts": 1771431800
+      "msg": "prediction_market.emergency_unpause error=RPC Error: Invalid JSON transaction: expected value at line 1 column 1",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "prediction_market.rest_price_history skip (API: <urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "prediction_market.rest_price_history count=0 (no trades yet)",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexCoreStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexCoreStats -> {'pair_count': 5, 'order_count': 0, 'trade_count': 0, 'total_volume': 0, 'fee_treasury': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexAmmStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexAmmStats -> {'pool_count': 5, 'position_count': 0, 'swap_count': 0, 'total_volume': 0, 'total_fees': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexMarginStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexMarginStats -> {'position_count': 0, 'total_volume': 0, 'liquidation_count': 0, 'total_pnl_profit': 0, 'total_pnl_loss': 0, 'insurance_fund': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexRewardsStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexRewardsStats -> {'trade_count': 0, 'trader_count': 0, 'total_volume': 0, 'total_distributed': 0, 'epoch': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexRouterStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexRouterStats -> {'route_count': 0, 'swap_count': 0, 'total_volume': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexAnalyticsStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexAnalyticsStats -> {'record_count': 0, 'trader_count': 0, 'total_volume': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getDexGovernanceStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getDexGovernanceStats -> {'proposal_count': 0, 'total_votes': 0, 'voter_count': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltswapStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltswapStats -> {'swap_count': 0, 'volume_a': 0, 'volume_b': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getLobsterLendStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getLobsterLendStats -> {'total_deposits': 0, 'total_borrows': 0, 'reserves': 0, 'deposit_count': 0, 'borrow_count': 0, 'liquidation_count': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getClawPayStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getClawPayStats -> {'stream_count': 0, 'total_streamed': 0, 'total_withdrawn': 0, 'cancel_count': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getBountyBoardStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getBountyBoardStats -> {'bounty_count': 0, 'completed_count': 0, 'reward_volume': 0, 'cancel_count': 0}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getComputeMarketStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getComputeMarketStats -> {'job_count': 0, 'completed_count': 0, 'payment_volume': 0, 'dispute_count': 0}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getReefStorageStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getReefStorageStats -> {'data_count': 0, 'total_bytes': 0, 'challenge_count': 0}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltMarketStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltMarketStats -> {'listing_count': 0, 'sale_count': 0, 'sale_volume': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltAuctionStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltAuctionStats -> {'auction_count': 0, 'total_volume': 0, 'total_sales': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltPunksStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltPunksStats -> {'total_minted': 0, 'transfer_count': 0, 'burn_count': 0, 'paused': False}",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/core skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/core skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/amm skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/amm skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/margin skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/margin skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/router skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/router skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/rewards skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/rewards skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/analytics skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/analytics skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/governance skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/governance skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
-      "status": "PASS",
-      "msg": "rest/api/v1/dex/stats/moltswap skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "status": "SKIP",
+      "msg": "rest/api/v1/dex/stats/moltswap skip (HTTP Error 404: Not Found)",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getBlock skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getBlock -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getLatestBlock skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getLatestBlock -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getAccount skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getAccount -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getAccountInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getAccountInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTransactionsByAddress skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTransactionsByAddress -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getAccountTxCount skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getAccountTxCount -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getRecentTransactions skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getRecentTransactions -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTokenAccounts skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTokenAccounts -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTotalBurned skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTotalBurned -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getValidators skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getValidators -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMetrics skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMetrics -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTreasuryInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTreasuryInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getGenesisAccounts skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getGenesisAccounts -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getFeeConfig skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getFeeConfig -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getRentParams skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getRentParams -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getPeers skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getPeers -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getNetworkInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getNetworkInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getClusterInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getClusterInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getValidatorInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getValidatorInfo accepted (code=-32602)",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getValidatorPerformance skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getValidatorPerformance accepted (code=-32602)",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getChainStatus skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getChainStatus -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getStakingStatus skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getStakingStatus -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getStakingRewards skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getStakingRewards -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getStakingPosition skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getStakingPosition -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getReefStakePoolInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getReefStakePoolInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getUnstakingQueue skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getUnstakingQueue -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getRewardAdjustmentInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getRewardAdjustmentInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getAllContracts skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getAllContracts -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getContractInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getContractInfo -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getContractLogs skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getContractLogs -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getPrograms skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getPrograms -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getProgramStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getProgramStats accepted (code=-32602)",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdStats -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdIdentity skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdIdentity -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdReputation skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdReputation -> ok",
+      "ts": 1771573909
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdSkills skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdSkills -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdProfile skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdProfile -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdAchievements skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdAchievements -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMoltyIdAgentDirectory skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMoltyIdAgentDirectory -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.resolveMoltName skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.resolveMoltName -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.searchMoltNames skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.searchMoltNames -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getEvmRegistration skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getEvmRegistration -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getSymbolRegistry skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getSymbolRegistry -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getCollection skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getCollection accepted (code=-32602)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getNFTsByOwner skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getNFTsByOwner -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getNFTsByCollection skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getNFTsByCollection accepted (code=-32602)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getNFTActivity skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getNFTActivity -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMarketListings skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMarketListings -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getMarketSales skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getMarketSales -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTokenBalance skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTokenBalance accepted (code=-32602)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTokenHolders skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTokenHolders accepted (code=-32602)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getTokenTransfers skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getTokenTransfers -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getPredictionMarketStats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getPredictionMarketStats -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getPredictionMarkets skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getPredictionMarkets -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getPredictionLeaderboard skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getPredictionLeaderboard -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rpc.getPredictionTrending skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rpc.getPredictionTrending -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/pairs skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/pairs accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/tickers skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/tickers accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/pools skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/pools accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/orders skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/orders accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/leaderboard skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/leaderboard accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/routes skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/routes accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/dex/governance/proposals skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/dex/governance/proposals accepted (HTTP 404)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/prediction-market/stats skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/prediction-market/stats -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/prediction-market/markets skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/prediction-market/markets -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/prediction-market/leaderboard skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/prediction-market/leaderboard -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "rest.GET/api/v1/prediction-market/trending skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "rest.GET/api/v1/prediction-market/trending -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(Slots) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(Slots) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(Blocks) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(Blocks) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(Transactions) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(Transactions) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(Validators) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(Validators) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(Epochs) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(Epochs) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(NftMints) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(NftMints) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(NftTransfers) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(NftTransfers) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(MarketListings) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(MarketListings) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(MarketSales) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(MarketSales) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(BridgeLocks) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(BridgeLocks) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(BridgeMints) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(BridgeMints) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(Governance) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(Governance) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "ws.subscribe(TokenBalance) skip ([Errno 61] Connection refused)",
-      "ts": 1771431800
+      "msg": "ws.subscribe(TokenBalance) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getAccountInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getAccountInfo -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getBalance skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getBalance -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getBlockHeight skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getBlockHeight accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getBlockTime skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getBlockTime accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getEpochInfo skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getEpochInfo accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getSlot skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getSlot -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getVersion skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getVersion accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getHealth skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getHealth accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getRecentBlockhash skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getRecentBlockhash -> ok",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getSignaturesForAddress skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getSignaturesForAddress accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getTransaction skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getTransaction accepted (code=-32001)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getMinimumBalanceForRentExemption skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getMinimumBalanceForRentExemption accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "sol_compat.getFeeForMessage skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "sol_compat.getFeeForMessage accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_blockNumber skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_blockNumber accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_chainId skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_chainId accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_getBalance skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_getBalance accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_getBlockByNumber skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_getBlockByNumber accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_gasPrice skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_gasPrice accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.net_version skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.net_version accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.web3_clientVersion skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.web3_clientVersion accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_getCode skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_getCode accepted (code=-32601)",
+      "ts": 1771573910
     },
     {
       "status": "PASS",
-      "msg": "evm_compat.eth_estimateGas skip (<urlopen error [Errno 61] Connection refused>)",
-      "ts": 1771431800
+      "msg": "evm_compat.eth_estimateGas accepted (code=-32601)",
+      "ts": 1771573910
     }
   ]
 }

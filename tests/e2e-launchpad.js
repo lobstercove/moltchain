@@ -146,6 +146,22 @@ async function sendTx(keypair, instructions) {
     return rpc('sendTransaction', [b64]);
 }
 
+// Simulate a transaction without submitting it — returns { success, stateChanges, returnCode, logs }
+async function simulateTx(keypair, instructions) {
+    const bhRes = await rpc('getRecentBlockhash');
+    const bh = typeof bhRes === 'string' ? bhRes : bhRes.blockhash;
+    const nix = instructions.map(ix => ({
+        program_id: ix.program_id,
+        accounts: ix.accounts || [keypair.address],
+        data: typeof ix.data === 'string' ? Array.from(new TextEncoder().encode(ix.data)) : Array.from(ix.data),
+    }));
+    const msg = encodeMsg(nix, bh, keypair.address);
+    const sig = nacl.sign.detached(msg, keypair.secretKey);
+    const payload = { signatures: [bytesToHex(sig)], message: { instructions: nix, blockhash: bh } };
+    const b64 = Buffer.from(JSON.stringify(payload)).toString('base64');
+    return rpc('simulateTransaction', [b64]);
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // Contract call helpers
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -580,28 +596,36 @@ async function runTests() {
             assert(true, `Zero-amount buy correctly rejected: ${e.message.slice(0, 50)}`);
         }
 
-        // 9b. Buy non-existent token (id=999)
+        // 9b. Buy non-existent token (id=999) — contract should return 0 with no state changes
         try {
-            const result = await sendTx(dave, [
+            const sim = await simulateTx(dave, [
                 namedCallIx(dave.address, CONTRACTS.clawpump, 'buy', buildBuy(dave.address, 999, SHELLS_PER_MOLT), SHELLS_PER_MOLT)
             ]);
-            // Should fail — token doesn't exist
-            skipped++;
-            console.log('  ⊘ Buy non-existent token: tx accepted (may fail on-chain)');
+            // Contract returns success (no WASM trap) but with 0 state changes
+            if (sim && sim.stateChanges === 0) {
+                assert(true, `Buy non-existent token correctly has no effect (0 state changes)`);
+            } else {
+                failed++;
+                console.log('  ✗ Buy non-existent token was NOT rejected (should be gated)');
+            }
         } catch (e) {
-            assert(true, `Buy non-existent token correctly rejected`);
+            assert(true, `Buy non-existent token correctly rejected: ${e.message.slice(0, 60)}`);
         }
 
-        // 9c. Sell more tokens than owned
+        // 9c. Sell more tokens than owned — contract should return 0 with no state changes
         try {
             await sleep(5500);
-            const result = await sendTx(dave, [
+            const sim = await simulateTx(dave, [
                 namedCallIx(dave.address, CONTRACTS.clawpump, 'sell', buildSell(dave.address, tokenId1, 999_999_999_999))
             ]);
-            skipped++;
-            console.log('  ⊘ Sell more than owned: tx accepted (may fail on-chain)');
+            if (sim && sim.stateChanges === 0) {
+                assert(true, `Sell more than owned correctly has no effect (0 state changes)`);
+            } else {
+                failed++;
+                console.log('  ✗ Sell more than owned was NOT rejected (should be gated)');
+            }
         } catch (e) {
-            assert(true, `Sell more than owned correctly rejected`);
+            assert(true, `Sell more than owned correctly rejected: ${e.message.slice(0, 60)}`);
         }
 
     } else {
@@ -708,13 +732,18 @@ async function runTests() {
 
             // Try to execute (should fail — not finalized yet)
             try {
-                const result = await sendTx(alice, [
+                const sim = await simulateTx(alice, [
                     contractIx(alice.address, CONTRACTS.dex_governance, buildExecuteProposal(proposalId))
                 ]);
-                skipped++;
-                console.log('  ⊘ Execute accepted (may fail on-chain: not passed yet)');
+                // Contract returns non-zero code (2 = not passed) with 0 state changes
+                if (sim && sim.stateChanges === 0) {
+                    assert(true, `Execute correctly blocked (0 state changes, proposal not passed)`);
+                } else {
+                    failed++;
+                    console.log('  ✗ Execute was NOT rejected (should require passed status)');
+                }
             } catch (e) {
-                assert(true, 'Execute correctly requires passed status');
+                assert(true, `Execute correctly requires passed status: ${e.message.slice(0, 60)}`);
             }
         }
 
