@@ -17,7 +17,7 @@ RUN cd rpc && cargo build --release
 
 # Build all contracts (WASM)
 RUN rustup target add wasm32-unknown-unknown
-RUN ./scripts/build-all-contracts.sh || true
+RUN ./scripts/build-all-contracts.sh
 
 # ─── Runtime ───
 FROM debian:bookworm-slim
