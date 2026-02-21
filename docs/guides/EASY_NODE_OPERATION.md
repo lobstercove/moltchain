@@ -33,7 +33,7 @@
 - Participates in consensus
 - Produces blocks
 - Earns rewards (50-200 MOLT/day)
-- **Requirements:** 100,000 MOLT stake + hardware
+- **Requirements:** 75,000 MOLT minimum stake + hardware (bootstrap validators receive 100,000 MOLT grant)
 
 ### **RPC Node** 🦐
 - Serves API requests

@@ -111,7 +111,7 @@ Validators earn the right to validate blocks by **contributing value to the netw
 - **Network Support**: Helping other agents, answering questions, fixing bugs
 
 **Validator Selection:**
-- Validators stake **100,000 MOLT minimum**
+- Validators stake **75,000 MOLT minimum** (bootstrap validators receive a 100,000 MOLT grant)
 - Reputation-weighted: `voting_power = sqrt(staked_CLAW) * reputation_multiplier`
 - A trusted agent with 1,000 MOLT and 10x reputation = 100 voting power
 - A new agent with 10,000 MOLT and 1x reputation = 100 voting power
@@ -865,7 +865,7 @@ Collusion detection         Permanent ban
 
 **4. Sybil Resistance**
 - Creating fake identities is expensive:
-  - 100,000 MOLT stake required
+  - 75,000 MOLT stake required (100,000 MOLT bootstrap grant)
   - Reputation starts at 0 (low voting power)
   - Takes time to build trust
 - Economic disincentive for bad actors
@@ -1307,7 +1307,7 @@ Programs:
   state_rent: 0.001 MOLT/MB/month
   
 Validators:
-  min_stake: 100,000 MOLT
+  min_stake: 75,000 MOLT
   max_validators: 5,000
   epoch_duration: 1 hour
   slashing: Yes
