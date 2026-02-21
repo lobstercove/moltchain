@@ -8,7 +8,7 @@
 
 | Constant | Shells | MOLT | USD ($0.10) | Source |
 |----------|--------|------|-------------|--------|
-| MIN_VALIDATOR_STAKE | 100,000,000,000,000 | 100,000 | $10,000 | core/consensus.rs |
+| MIN_VALIDATOR_STAKE | 75,000,000,000,000 | 75,000 | $7,500 | core/consensus.rs |
 | MAX_VALIDATOR_STAKE | 1,000,000,000,000,000 | 1,000,000 | $100,000 | core/consensus.rs |
 | BOOTSTRAP_GRANT | 100,000,000,000,000 | 100,000 | $10,000 | core/consensus.rs |
 | UNSTAKE_COOLDOWN | 1,512,000 slots | ~7 days | — | core/consensus.rs |
