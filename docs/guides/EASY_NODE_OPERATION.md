@@ -311,6 +311,9 @@ services:
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?Set GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
 ```
 
 ```bash
