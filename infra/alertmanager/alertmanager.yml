@@ -71,11 +71,13 @@ receivers:
   - name: 'default'
     # Webhook receiver — configure URL before production deployment
     webhook_configs:
-      - url: '${ALERTMANAGER_WEBHOOK_URL:-http://localhost:9099/webhook}'
+      # P9-INF-07: No default fallback — ALERTMANAGER_WEBHOOK_URL env var required
+      - url: '${ALERTMANAGER_WEBHOOK_URL}'
         send_resolved: true
 
   - name: 'critical'
     # Critical alerts — configure with high-priority notification channel
     webhook_configs:
-      - url: '${ALERTMANAGER_CRITICAL_WEBHOOK_URL:-http://localhost:9099/webhook}'
+      # P9-INF-07: No default fallback — ALERTMANAGER_CRITICAL_WEBHOOK_URL env var required
+      - url: '${ALERTMANAGER_CRITICAL_WEBHOOK_URL}'
         send_resolved: true
