@@ -150,7 +150,9 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
       - grafana-data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-moltchain}
+      # P9-INF-02: No default fallback — GRAFANA_PASSWORD env var is required.
+      # Set it in .env or export before running: export GRAFANA_PASSWORD=$(openssl rand -base64 24)
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD env var is required - set a strong password}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
     networks:
