@@ -305,22 +305,42 @@ if [ "$RESTART" = true ]; then
     V1_PID=$!
     echo "   V1 PID: $V1_PID"
 
-    echo "   Waiting for V1 genesis (8s)..."
-    sleep 8
+    echo "   Waiting for V1 genesis (30s)..."
+    sleep 30
+
+    # Auto-copy genesis keypair to keypairs/deployer.json for E2E tests
+    GENESIS_KEY=$(find "$REPO_ROOT/data/state-8000/genesis-keys" -name "genesis-primary-*.json" -type f 2>/dev/null | head -1)
+    if [ -n "$GENESIS_KEY" ]; then
+        mkdir -p "$REPO_ROOT/keypairs"
+        cp "$GENESIS_KEY" "$REPO_ROOT/keypairs/deployer.json"
+        echo "   ✓ Copied genesis keypair to keypairs/deployer.json"
+    fi
 
     echo "   Starting V2 (secondary)..."
     nohup "$LAUNCHER" "$NETWORK" 2 $EXTRA_FLAGS > /tmp/moltchain-v2.log 2>&1 &
     echo "   V2 PID: $!"
 
-    sleep 3
+    echo "   Waiting for V2 sync (30s)..."
+    sleep 30
 
     echo "   Starting V3 (tertiary)..."
     nohup "$LAUNCHER" "$NETWORK" 3 $EXTRA_FLAGS > /tmp/moltchain-v3.log 2>&1 &
     echo "   V3 PID: $!"
 
     echo ""
-    echo "   Waiting for sync (10s)..."
+    echo "   Waiting for final sync (10s)..."
     sleep 10
+
+    # Auto-fund deployer from treasury for E2E tests
+    FUND_SCRIPT="${REPO_ROOT}/scripts/fund-deployer.py"
+    if [ -f "$FUND_SCRIPT" ] && command -v python3 &>/dev/null; then
+        echo "   Funding deployer from treasury..."
+        cd "$REPO_ROOT"
+        if [ -d ".venv" ]; then
+            source .venv/bin/activate 2>/dev/null
+        fi
+        python3 "$FUND_SCRIPT" 2>&1 | sed 's/^/   /'
+    fi
 
     echo ""
     echo -e "${GREEN}Stack restarted (dev mode — fingerprint = SHA-256(pubkey)). Check logs:${NC}"
