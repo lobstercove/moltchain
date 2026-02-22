@@ -1,5 +1,5 @@
 {
-  "rpc_url": "http://localhost:8899",
+  "rpc_url": "http://127.0.0.1:8899",
   "strict_write_assertions": true,
   "require_full_write_activity": true,
   "enforce_domain_assertions": true,
@@ -17,8 +17,8 @@
     "unexpected_discovered": []
   },
   "summary": {
-    "pass": 50,
-    "fail": 178,
+    "pass": 121,
+    "fail": 107,
     "skip": 0
   },
   "results": [
@@ -27,1576 +27,1576 @@
       "action": "expected_contract_set",
       "status": "PASS",
       "detail": "matched",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "bountyboard",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 10 functions: approve_submission,approve_work,bb_pause,bb_unpause,cancel_bounty,get_bounty_count,get_platform_stats,initialize,set_identity_gate,set_platform_fee",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "clawpay",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 13 functions: cancel_stream,create_stream_with_cliff,get_platform_stats,get_stream,get_stream_count,get_withdrawable,pause,set_identity_admin,set_identity_gate,set_moltyid_address,transfer_stream,unpause,withdraw_from_stream",
-      "timestamp": 1771426153
+      "detail": "missing 15 functions: cancel_stream,create_stream_with_cliff,get_platform_stats,get_stream,get_stream_count,get_withdrawable,pause,set_identity_admin,set_identity_gate,set_moltyid_address,set_self_address,set_token_address,transfer_stream,unpause,withdraw_from_stream",
+      "timestamp": 1771792889
     },
     {
       "contract": "clawpump",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 15 functions: freeze_token,get_buy_quote,get_graduation_info,get_token_count,get_token_info,pause,sell,set_buy_cooldown,set_creator_royalty,set_dex_addresses,set_max_buy,set_sell_cooldown,unfreeze_token,unpause,withdraw_fees",
-      "timestamp": 1771426153
+      "detail": "missing 16 functions: freeze_token,get_buy_quote,get_graduation_info,get_token_count,get_token_info,pause,sell,set_buy_cooldown,set_creator_royalty,set_dex_addresses,set_max_buy,set_molt_token,set_sell_cooldown,unfreeze_token,unpause,withdraw_fees",
+      "timestamp": 1771792889
     },
     {
       "contract": "clawvault",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 14 functions: add_strategy,cv_pause,cv_unpause,get_strategy_info,get_user_position,harvest,remove_strategy,set_deposit_cap,set_deposit_fee,set_protocol_addresses,set_risk_tier,set_withdrawal_fee,update_strategy_allocation,withdraw_protocol_fees",
-      "timestamp": 1771426153
+      "detail": "missing 15 functions: add_strategy,cv_pause,cv_unpause,get_strategy_info,get_user_position,harvest,remove_strategy,set_deposit_cap,set_deposit_fee,set_molt_token,set_protocol_addresses,set_risk_tier,set_withdrawal_fee,update_strategy_allocation,withdraw_protocol_fees",
+      "timestamp": 1771792889
     },
     {
       "contract": "compute_market",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 29 functions: accept_job,add_arbitrator,cancel_job,claim_job,cm_pause,cm_unpause,complete_job,confirm_result,create_job,deactivate_provider,dispute_job,get_escrow,get_job_count,get_job_info,get_platform_stats,get_provider_info,reactivate_provider,release_payment,remove_arbitrator,resolve_dispute,set_challenge_period,set_claim_timeout,set_complete_timeout,set_identity_admin,set_identity_gate,set_moltyid_address,set_platform_fee,submit_result,update_provider",
-      "timestamp": 1771426153
+      "detail": "missing 30 functions: accept_job,add_arbitrator,cancel_job,claim_job,cm_pause,cm_unpause,complete_job,confirm_result,create_job,deactivate_provider,dispute_job,get_escrow,get_job_count,get_job_info,get_platform_stats,get_provider_info,reactivate_provider,release_payment,remove_arbitrator,resolve_dispute,set_challenge_period,set_claim_timeout,set_complete_timeout,set_identity_admin,set_identity_gate,set_moltyid_address,set_platform_fee,set_token_address,submit_result,update_provider",
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_amm",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_analytics",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_core",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_governance",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_margin",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_rewards",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "dex_router",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "lobsterlend",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 15 functions: flash_borrow,flash_repay,get_account_info,get_borrow_count,get_deposit_count,get_interest_rate,get_liquidation_count,get_platform_stats,liquidate,pause,set_deposit_cap,set_reserve_factor,unpause,withdraw,withdraw_reserves",
-      "timestamp": 1771426153
+      "detail": "missing 16 functions: flash_borrow,flash_repay,get_account_info,get_borrow_count,get_deposit_count,get_interest_rate,get_liquidation_count,get_platform_stats,liquidate,pause,set_deposit_cap,set_moltcoin_address,set_reserve_factor,unpause,withdraw,withdraw_reserves",
+      "timestamp": 1771792889
     },
     {
       "contract": "moltauction",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 12 functions: accept_offer,finalize_auction,get_auction_info,get_auction_stats,get_collection_stats,initialize_ma_admin,ma_pause,ma_unpause,make_offer,set_reserve_price,set_royalty,update_collection_stats",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "moltbridge",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 17 functions: add_bridge_validator,cancel_expired_request,confirm_mint,confirm_unlock,get_bridge_status,has_confirmed_mint,has_confirmed_unlock,is_burn_proof_used,is_source_tx_used,lock_tokens,mb_pause,mb_unpause,remove_bridge_validator,set_identity_gate,set_moltyid_address,submit_mint,submit_unlock",
-      "timestamp": 1771426153
+      "detail": "missing 18 functions: add_bridge_validator,cancel_expired_request,confirm_mint,confirm_unlock,get_bridge_status,has_confirmed_mint,has_confirmed_unlock,is_burn_proof_used,is_source_tx_used,lock_tokens,mb_pause,mb_unpause,remove_bridge_validator,set_identity_gate,set_moltyid_address,set_token_address,submit_mint,submit_unlock",
+      "timestamp": 1771792889
     },
     {
       "contract": "moltcoin",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 3 functions: approve,balance_of,total_supply",
-      "timestamp": 1771426153
+      "detail": "missing 4 functions: approve,balance_of,total_supply,transfer_from",
+      "timestamp": 1771792889
     },
     {
       "contract": "moltdao",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 22 functions: cancel_proposal,cast_vote,create_proposal,dao_pause,dao_unpause,execute_proposal,finalize_proposal,get_active_proposals,get_dao_stats,get_proposal,get_proposal_count,get_total_supply,get_treasury_balance,get_vote,get_vote_count,initialize,set_quorum,set_timelock_delay,set_voting_period,treasury_transfer,veto_proposal,vote_with_reputation",
-      "timestamp": 1771426153
+      "detail": "missing 23 functions: cancel_proposal,cast_vote,create_proposal,dao_pause,dao_unpause,execute_proposal,finalize_proposal,get_active_proposals,get_dao_stats,get_proposal,get_proposal_count,get_total_supply,get_treasury_balance,get_vote,get_vote_count,initialize,set_moltyid_address,set_quorum,set_timelock_delay,set_voting_period,treasury_transfer,veto_proposal,vote_with_reputation",
+      "timestamp": 1771792889
     },
     {
       "contract": "moltmarket",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 9 functions: accept_offer,buy_nft,cancel_offer,get_listing,list_nft_with_royalty,make_offer,mm_pause,mm_unpause,set_marketplace_fee",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "moltoracle",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 18 functions: add_reporter,get_aggregated_price,get_attestation_data,get_feed_count,get_feed_list,get_price,get_randomness,initialize,mo_pause,mo_unpause,query_oracle,register_feed,remove_reporter,reveal_randomness,set_authorized_attester,set_update_interval,submit_attestation,verify_attestation",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "moltpunks",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 16 functions: balance_of,burn,get_collection_stats,get_owner_of,get_punk_metadata,get_punks_by_owner,get_total_supply,mint_punk,mp_pause,mp_unpause,owner_of,set_base_uri,set_max_supply,set_royalty,total_minted,transfer_punk",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "moltswap",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 25 functions: create_pool,flash_loan_abort,flash_loan_borrow,flash_loan_repay,get_flash_loan_fee,get_liquidity_balance,get_pool_count,get_pool_info,get_protocol_fees,get_quote,get_reserves,get_swap_count,get_swap_stats,get_total_liquidity,get_total_volume,get_twap_cumulatives,get_twap_snapshot_count,remove_liquidity,set_moltyid_address,set_platform_fee,set_reputation_discount,swap,swap_a_for_b_with_deadline,swap_b_for_a,swap_b_for_a_with_deadline",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "moltyid",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 46 functions: add_skill_as,admin_register_reserved_name,approve_recovery,attest_skill,award_contribution_achievement,bid_name_auction,create_name_auction,deactivate_identity,execute_recovery,finalize_name_auction,get_achievements,get_attestations,get_availability,get_delegate,get_endpoint,get_identity,get_identity_count,get_metadata,get_name_auction,get_rate,get_reputation,get_skills,get_trust_tier,get_vouches,mid_pause,mid_unpause,register_name,release_name,release_name_as,renew_name,renew_name_as,resolve_name,reverse_resolve,revoke_attestation,set_availability_as,set_endpoint_as,set_metadata_as,set_rate_as,set_recovery_guardians,transfer_admin,transfer_name,transfer_name_as,update_agent_type,update_agent_type_as,update_reputation,update_reputation_typed",
-      "timestamp": 1771426153
+      "detail": "missing 48 functions: add_skill_as,admin_register_reserved_name,approve_recovery,attest_skill,award_contribution_achievement,bid_name_auction,create_name_auction,deactivate_identity,execute_recovery,finalize_name_auction,get_achievements,get_attestations,get_availability,get_delegate,get_endpoint,get_identity,get_identity_count,get_metadata,get_name_auction,get_rate,get_reputation,get_skills,get_trust_tier,get_vouches,mid_pause,mid_unpause,register_name,release_name,release_name_as,renew_name,renew_name_as,resolve_name,reverse_resolve,revoke_attestation,set_availability_as,set_endpoint_as,set_metadata_as,set_mid_self_address,set_mid_token_address,set_rate_as,set_recovery_guardians,transfer_admin,transfer_name,transfer_name_as,update_agent_type,update_agent_type_as,update_reputation,update_reputation_typed",
+      "timestamp": 1771792889
     },
     {
       "contract": "musd_token",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 14 functions: allowance,attest_reserves,balance_of,emergency_pause,emergency_unpause,get_attestation_count,get_epoch_remaining,get_last_attestation_slot,get_reserve_ratio,total_burned,total_minted,total_supply,transfer_admin,transfer_from",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "prediction_market",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 1 functions: call",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "reef_storage",
       "action": "function_coverage",
       "status": "FAIL",
-      "detail": "missing 13 functions: claim_storage_rewards,confirm_storage,get_platform_stats,get_provider_stake,get_storage_info,get_storage_price,issue_challenge,respond_challenge,set_challenge_window,set_slash_percent,slash_provider,stake_collateral,store_data",
-      "timestamp": 1771426153
+      "detail": "missing 14 functions: claim_storage_rewards,confirm_storage,get_platform_stats,get_provider_stake,get_storage_info,get_storage_price,issue_challenge,respond_challenge,set_challenge_window,set_molt_token,set_slash_percent,slash_provider,stake_collateral,store_data",
+      "timestamp": 1771792889
     },
     {
       "contract": "weth_token",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 14 functions: allowance,attest_reserves,balance_of,emergency_pause,emergency_unpause,get_attestation_count,get_epoch_remaining,get_last_attestation_slot,get_reserve_ratio,total_burned,total_minted,total_supply,transfer_admin,transfer_from",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "wsol_token",
       "action": "function_coverage",
       "status": "FAIL",
       "detail": "missing 14 functions: allowance,attest_reserves,balance_of,emergency_pause,emergency_unpause,get_attestation_count,get_epoch_remaining,get_last_attestation_slot,get_reserve_ratio,total_burned,total_minted,total_supply,transfer_admin,transfer_from",
-      "timestamp": 1771426153
+      "timestamp": 1771792889
     },
     {
       "contract": "moltcoin",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426153
+      "status": "PASS",
+      "detail": "sig=3df9ad9b2a40d31cb47a200238c032a35a80e3d61b1282b246488d558ce0c026",
+      "timestamp": 1771792889
     },
     {
       "contract": "moltcoin",
       "action": "mint",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426154
+      "status": "PASS",
+      "detail": "sig=004f34c4f7753050237e5b3da030ae38f37335a1d8cfda54c0a48c4d78d04571",
+      "timestamp": 1771792890
     },
     {
       "contract": "moltcoin",
       "action": "transfer",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426154
+      "status": "PASS",
+      "detail": "sig=1b0bd28d1668f24a19c1bce93041c944bdfeae6bbcd9528f25d17c2bb4b0f854",
+      "timestamp": 1771792891
     },
     {
       "contract": "moltcoin",
       "action": "burn",
       "status": "PASS",
-      "detail": "sig=e668a84dc367c7066f4e205868123ff9fa26072041b95346fd933016382ed8de",
-      "timestamp": 1771426155
+      "detail": "sig=87c350263299a76b4973cc23fefcc1152212fbac899f5402158cc274f252c732",
+      "timestamp": 1771792891
     },
     {
       "contract": "moltcoin",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=13->14,events=0->0,required=4",
-      "timestamp": 1771426155
+      "status": "PASS",
+      "detail": "delta=4,required=4",
+      "timestamp": 1771792891
     },
     {
       "contract": "moltcoin",
       "action": "token_invariants",
       "status": "FAIL",
-      "detail": "missing required successful steps: mint,transfer",
-      "timestamp": 1771426155
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792891
     },
     {
       "contract": "clawpump",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426155
+      "status": "PASS",
+      "detail": "sig=e13abd50a470c9e18932ec9f4b5b3dfa69c46673824ae5389ef5d925d4b7ca58",
+      "timestamp": 1771792892
     },
     {
       "contract": "clawpump",
       "action": "create_token",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426156
+      "status": "PASS",
+      "detail": "sig=d51c5110d25da8f687459e1be7af360b5303bb7942d8c82333157e6fd1ed9b16",
+      "timestamp": 1771792892
     },
     {
       "contract": "clawpump",
       "action": "buy",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426156
+      "status": "PASS",
+      "detail": "sig=2d745ffeec6449a5cefb911aedb99cb5328801f3439937e8d39f22726ae2147b",
+      "timestamp": 1771792893
     },
     {
       "contract": "clawpump",
       "action": "get_platform_stats",
       "status": "PASS",
-      "detail": "sig=bb1e9830c056bbd4da5582746cf092ba563dfb636eb7ca8f7b982bf52ed9a751",
-      "timestamp": 1771426157
+      "detail": "sig=89c5914f019749436767078f9185035b0164fcf6ad1363c2fed03a9110c95141",
+      "timestamp": 1771792897
     },
     {
       "contract": "clawpump",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=0,calls=15->15,events=0->0,required=3",
-      "timestamp": 1771426157
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1771792897
     },
     {
       "contract": "clawpump",
       "action": "launch_token_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: create_token,buy",
-      "timestamp": 1771426157
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792897
     },
     {
       "contract": "lobsterlend",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 14->14, events 0->0)",
-      "timestamp": 1771426157
+      "status": "PASS",
+      "detail": "sig=0ea459a3eb2e6b021c8bf4f78eec36a3eddf36b3c3ac6a567c50df822ef6c1ea",
+      "timestamp": 1771792898
     },
     {
       "contract": "lobsterlend",
       "action": "deposit",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 14->14, events 0->0)",
-      "timestamp": 1771426158
+      "status": "PASS",
+      "detail": "sig=d4d214cd23eb8224e1dd7e0a3592019931a07f7216ea11d56dd77335d3d75908",
+      "timestamp": 1771792899
     },
     {
       "contract": "lobsterlend",
       "action": "borrow",
       "status": "PASS",
-      "detail": "sig=741e54c0a17f1a19d0510014d60d6e0a9ee57bc7ad65fc4f2a67ec5f048ffe5c",
-      "timestamp": 1771426158
+      "detail": "sig=7a5e2ad05ff38046227f911c1635189d1ffca69425931d8a0b6939b58c637dba",
+      "timestamp": 1771792902
     },
     {
       "contract": "lobsterlend",
       "action": "repay",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426159
+      "status": "PASS",
+      "detail": "sig=c0e43cb6431140fc57128f6b4b5f68c5178debbb6c34c2124c3143a4a8d7e639",
+      "timestamp": 1771792905
     },
     {
       "contract": "lobsterlend",
       "action": "get_protocol_stats",
       "status": "PASS",
-      "detail": "sig=f3c6300c29a1e2c5e586e87b4e3fac07d2218c9abc14ff3e40d31275a955b54f",
-      "timestamp": 1771426160
+      "detail": "sig=d61e96f8ba344177cf91248b954e4abfd7560403c9f446d9e08cb37baccce48a",
+      "timestamp": 1771792906
     },
     {
       "contract": "lobsterlend",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=14->15,events=0->0,required=4",
-      "timestamp": 1771426160
+      "status": "PASS",
+      "detail": "delta=5,required=4",
+      "timestamp": 1771792906
     },
     {
       "contract": "lobsterlend",
       "action": "lending_credit_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: deposit,repay",
-      "timestamp": 1771426160
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792906
     },
     {
       "contract": "moltmarket",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426160
+      "status": "PASS",
+      "detail": "sig=6dc7e58c4d29342a78cddf10e84f8e62d4ae6284a875170f25f0c81bde0bf531",
+      "timestamp": 1771792906
     },
     {
       "contract": "moltmarket",
       "action": "list_nft",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426161
+      "status": "PASS",
+      "detail": "sig=06395b45899da8553f0434fc2c0d7fca6a4a39a073e0ebcd0575f9232f51b00c",
+      "timestamp": 1771792907
     },
     {
       "contract": "moltmarket",
       "action": "cancel_listing",
       "status": "PASS",
-      "detail": "sig=a0f2925250d3ed158085579ce4cbdaef7acf84f5948bc66635fba0735588ca62",
-      "timestamp": 1771426161
+      "detail": "sig=cbb18018e799e04e30dffc238f7064d405a427e48d8c1444737107d224c223d4",
+      "timestamp": 1771792908
     },
     {
       "contract": "moltmarket",
       "action": "get_marketplace_stats",
       "status": "PASS",
-      "detail": "sig=f4578e454321623a2a8b6eb2d502f408004a0cad56abca186de1fc3390c0a45d",
-      "timestamp": 1771426162
+      "detail": "sig=9c4cf5a3838a3d870cad19e5034a6a57048a365df7235324318370e604c47b54",
+      "timestamp": 1771792909
     },
     {
       "contract": "moltmarket",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=2,calls=15->17,events=0->0,required=3",
-      "timestamp": 1771426162
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1771792909
     },
     {
       "contract": "moltmarket",
       "action": "market_listing_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: list_nft",
-      "timestamp": 1771426162
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792909
     },
     {
       "contract": "moltauction",
       "action": "initialize",
       "status": "PASS",
-      "detail": "sig=e9050a8e277d77bc6ffa29a7f41d89dd19c7fbec759d08306cb3b17d01fb6235",
-      "timestamp": 1771426162
+      "detail": "sig=8a3dfd330386308f955d86b9a5b768f3c2f19a07d811700513596b32bca91ca8",
+      "timestamp": 1771792909
     },
     {
       "contract": "moltauction",
       "action": "create_auction",
       "status": "PASS",
-      "detail": "sig=2a10f77a5c9a7e8ef1c1c0ec4b36a9f7bbe55e51d527dbe84f799185bb4a3275",
-      "timestamp": 1771426163
+      "detail": "sig=8e35c62bb9dcc4b9841f1e2afa4c2fd9f758b01ac7a020b411c579610fd06a47",
+      "timestamp": 1771792910
     },
     {
       "contract": "moltauction",
       "action": "place_bid",
-      "status": "PASS",
-      "detail": "sig=77512c35ebf5c55a1113c6a556a951deae16ba0451b8153720d889407bf79d59",
-      "timestamp": 1771426169
+      "status": "FAIL",
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771792910
     },
     {
       "contract": "moltauction",
       "action": "cancel_auction",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 18->18, events 0->0)",
-      "timestamp": 1771426170
+      "status": "PASS",
+      "detail": "sig=e70295c0fe15d1d58f768d4d9693425852bb0efb5bbe3c5370ebcc40ad72bf51",
+      "timestamp": 1771792911
     },
     {
       "contract": "moltauction",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=3,calls=15->18,events=0->0,required=4",
-      "timestamp": 1771426170
+      "detail": "delta=3,calls=34->37,events=0->0,required=4",
+      "timestamp": 1771792911
     },
     {
       "contract": "moltauction",
       "action": "auction_bid_flow",
       "status": "FAIL",
-      "detail": "no storage delta observed (0)",
-      "timestamp": 1771426170
+      "detail": "missing required successful steps: place_bid",
+      "timestamp": 1771792911
     },
     {
       "contract": "moltbridge",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426170
+      "status": "PASS",
+      "detail": "sig=d511847a2c9ce2a9a3ea34a092a1e348b6c6ee0cd5c491eb5ff3899eca58c12d",
+      "timestamp": 1771792916
     },
     {
       "contract": "moltbridge",
       "action": "set_required_confirmations",
       "status": "PASS",
-      "detail": "sig=664938166ff64d16c76d720a771deb85ac125640cf76a75695287b114c75844f",
-      "timestamp": 1771426171
+      "detail": "sig=25f5479b07ccd524f7bbd51cd87905940b44018c559046c07ec0b75e20196d49",
+      "timestamp": 1771792917
     },
     {
       "contract": "moltbridge",
       "action": "set_request_timeout",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 16->16, events 0->0)",
-      "timestamp": 1771426171
+      "status": "PASS",
+      "detail": "sig=c6e960a907c1060dfaa81c02c58b4c1074574c1094ac2914b87668964d7035b7",
+      "timestamp": 1771792919
     },
     {
       "contract": "moltbridge",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=15->16,events=0->0,required=3",
-      "timestamp": 1771426171
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1771792919
     },
     {
       "contract": "moltbridge",
       "action": "bridge_admin_config",
       "status": "FAIL",
-      "detail": "missing required successful steps: set_request_timeout",
-      "timestamp": 1771426171
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792919
     },
     {
       "contract": "reef_storage",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426172
+      "status": "PASS",
+      "detail": "sig=74196f1fd92737c302038db5b03d83540a7c92f42d918c965e6163360f38c3d0",
+      "timestamp": 1771792925
     },
     {
       "contract": "reef_storage",
       "action": "register_provider",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426172
+      "status": "PASS",
+      "detail": "sig=5bf2494065774231b45fc7d0d831bc6148d2babfede4427f6cdae4c757080f6f",
+      "timestamp": 1771792925
     },
     {
       "contract": "reef_storage",
       "action": "set_storage_price",
       "status": "PASS",
-      "detail": "sig=cdb6fee510191d8843570a717177c4e09f70e1cef262a57fd451ed6a6163aa51",
-      "timestamp": 1771426173
+      "detail": "sig=99b95fdaec36d25160041d07e8db666e66a03714682beaf50946e44e472b1aaf",
+      "timestamp": 1771792926
     },
     {
       "contract": "reef_storage",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=12->13,events=0->0,required=3",
-      "timestamp": 1771426173
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1771792926
     },
     {
       "contract": "reef_storage",
       "action": "storage_provider_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: register_provider",
-      "timestamp": 1771426173
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792926
     },
     {
       "contract": "clawvault",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426173
+      "status": "PASS",
+      "detail": "sig=57d349e52333769328b3cd19639b3a8a2909e8422faa496b5dfd93ae9cefd172",
+      "timestamp": 1771792928
     },
     {
       "contract": "clawvault",
       "action": "deposit",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426174
+      "status": "PASS",
+      "detail": "sig=0955c88a997731fbc7a3e8cb3faf150c93c8c2d0ddf2b8d08f826494f8093e06",
+      "timestamp": 1771792928
     },
     {
       "contract": "clawvault",
       "action": "withdraw",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426174
+      "status": "PASS",
+      "detail": "sig=5518b85eb3cf326ef0d33fcb3efea3825c68cc16f7c9887b67380bae1a6a6e63",
+      "timestamp": 1771792929
     },
     {
       "contract": "clawvault",
       "action": "get_vault_stats",
       "status": "PASS",
-      "detail": "sig=8d1d6b7c196c92d96df2089a30dfd66677ef0c607244b2f18f5a8fd235f7bcc3",
-      "timestamp": 1771426175
+      "detail": "sig=b80915aa79646305eb458565fc245d527eb1961ba729b6232a09150e321c5786",
+      "timestamp": 1771792929
     },
     {
       "contract": "clawvault",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=12->13,events=0->0,required=3",
-      "timestamp": 1771426175
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1771792929
     },
     {
       "contract": "clawvault",
       "action": "vault_roundtrip_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: deposit,withdraw",
-      "timestamp": 1771426175
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792929
     },
     {
       "contract": "clawpay",
       "action": "initialize_cp_admin",
       "status": "PASS",
-      "detail": "sig=4c2a9dab10996647196195aa923a43e327b0456b1c67e4180b8740d0c1f558c5",
-      "timestamp": 1771426176
+      "detail": "sig=ccd5fdb1c1848f5a56b6749e36e97e0554a331d1fdb2572fbd699e6f65d1c3bd",
+      "timestamp": 1771792930
     },
     {
       "contract": "clawpay",
       "action": "create_stream",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426176
+      "status": "PASS",
+      "detail": "sig=1ce5c0b5e53fad56673dd0672366406009cb4187dcb77c7631fa9e4055ab7f40",
+      "timestamp": 1771792931
     },
     {
       "contract": "clawpay",
       "action": "get_stream_info",
       "status": "PASS",
-      "detail": "sig=31f86b5702f01054f69d48ccd29fa101ecdc5853c4c488c77aff5c415de9748e",
-      "timestamp": 1771426177
+      "detail": "sig=8d840353f9b693f115d7733fd2ad753ecbc56b8ba859df8d41cb7f84f4dd946a",
+      "timestamp": 1771792931
     },
     {
       "contract": "clawpay",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=11->12,events=0->0,required=2",
-      "timestamp": 1771426177
+      "status": "PASS",
+      "detail": "delta=3,required=2",
+      "timestamp": 1771792931
     },
     {
       "contract": "moltyid",
       "action": "initialize",
       "status": "PASS",
-      "detail": "sig=c470d37f70e70f105c55554ed95157fdc40eedf176150441a5e9ab8eb4572e09",
-      "timestamp": 1771426177
+      "detail": "sig=718a7645dee32fb805e04128b4e8891215fb5bfaa46709be4b8553af10c3c1c3",
+      "timestamp": 1771792932
     },
     {
       "contract": "moltyid",
       "action": "register_identity",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 77->77, events 0->0)",
-      "timestamp": 1771426178
+      "status": "PASS",
+      "detail": "sig=f8029fc78748818e5734c6475c668737da148269433d9d7da594f4389d2d8162",
+      "timestamp": 1771792933
     },
     {
       "contract": "moltyid",
       "action": "set_endpoint",
       "status": "PASS",
-      "detail": "sig=9168b5ceb95da56155ac8dbc51929ada96d515971c18b837fd65606bacd039c2",
-      "timestamp": 1771426178
+      "detail": "sig=964f26c2d8b8b685974c101fdedf2370ff659e06d4674d924c2763ecb4753104",
+      "timestamp": 1771792934
     },
     {
       "contract": "moltyid",
       "action": "set_metadata",
       "status": "PASS",
-      "detail": "sig=6b1f315ebde7983832e4ab8a492e1ffd8f7c7a2245b104b14f1e064a87bbd9db",
-      "timestamp": 1771426179
+      "detail": "sig=ff136dee1694e11b0362d800ced8e6ebf56d53e3b22ee87671eb6bdf8d83e297",
+      "timestamp": 1771792936
     },
     {
       "contract": "moltyid",
       "action": "set_availability",
       "status": "PASS",
-      "detail": "sig=e4cd3e20748fae0429b71b5be637f8038e9d55b7aa4e58aa5985ee5f3dcedced",
-      "timestamp": 1771426179
+      "detail": "sig=16360b0778caf7bf04f0656ee4c8d58566863deeb6afc7f6c426641b45d13e12",
+      "timestamp": 1771792937
     },
     {
       "contract": "moltyid",
       "action": "set_rate",
       "status": "PASS",
-      "detail": "sig=545be6b067d95be9e54cfa41f04a39c05676fc414debd34c7a9edfeea1a92bd1",
-      "timestamp": 1771426180
+      "detail": "sig=af7a0bb601f0a7e744ffef3900a1082feb1b1fbacf47df9e67c202a4b7c14e63",
+      "timestamp": 1771792938
     },
     {
       "contract": "moltyid",
       "action": "add_skill",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 81->81, events 0->0)",
-      "timestamp": 1771426180
+      "status": "PASS",
+      "detail": "sig=9dff7251b6595db7ebd12ed9af7ec43ea38d5443e06ab94ac663e939edf378c7",
+      "timestamp": 1771792938
     },
     {
       "contract": "moltyid",
       "action": "vouch",
       "status": "PASS",
-      "detail": "sig=22146462a000ac2a9117390725de2419dfb097be15d4fb94ccf900c9f4a56d24",
-      "timestamp": 1771426181
+      "detail": "sig=69984f5282ea4e9df4ebbce7ada613a31f19e3b4d2fdaeb67de887156778cf15",
+      "timestamp": 1771792939
     },
     {
       "contract": "moltyid",
       "action": "set_delegate",
       "status": "PASS",
-      "detail": "sig=57ed67de31bc2062c945b482365a442d08d51b1c1cba197846041fafa68792aa",
-      "timestamp": 1771426181
+      "detail": "sig=6dd36f01e934e130f7459e1a85edf1d7c3d33d67bdc9796b2f0723efd65c6f23",
+      "timestamp": 1771792940
     },
     {
       "contract": "moltyid",
       "action": "revoke_delegate",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 83->83, events 0->0)",
-      "timestamp": 1771426182
+      "status": "PASS",
+      "detail": "sig=28daeff57df9bd47c10cdf316b749109aab494724643bfefc9d34dedee6cdb5a",
+      "timestamp": 1771792940
     },
     {
       "contract": "moltyid",
       "action": "register_identity",
       "status": "FAIL",
       "detail": "negative guardrail reason not found in transaction payload (expected any of: ['already registered', 'return: 3', 'error'])",
-      "timestamp": 1771426182
+      "timestamp": 1771792941
     },
     {
       "contract": "moltyid",
       "action": "get_agent_profile",
       "status": "PASS",
-      "detail": "sig=c5d191c80b7e3a08a43e1a04f6537918018fe2233f747554a6d513012de3b687",
-      "timestamp": 1771426183
+      "detail": "sig=8cbaeeb06926c526cc42e5cdfe3bb5e3e6ed4ac8ac6f32264d234582be773a26",
+      "timestamp": 1771792942
     },
     {
       "contract": "moltyid",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=8,calls=76->84,events=0->0,required=10",
-      "timestamp": 1771426183
+      "status": "PASS",
+      "detail": "delta=12,required=10",
+      "timestamp": 1771792942
     },
     {
       "contract": "moltyid",
       "action": "identity_lifecycle_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: register_identity,revoke_delegate",
-      "timestamp": 1771426183
+      "detail": "missing required successful steps: register_identity",
+      "timestamp": 1771792942
     },
     {
       "contract": "moltdao",
       "action": "initialize_dao",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426183
+      "status": "PASS",
+      "detail": "sig=ab368b9ad98a32ae1040ebe3bf68b0986159f990dc59e0de3d92633f7f37c819",
+      "timestamp": 1771792945
     },
     {
       "contract": "moltdao",
       "action": "create_proposal_typed",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426184
+      "status": "PASS",
+      "detail": "sig=11d317dccdd71bb196c2248420b9a8ba06169a0826e501ed45a4d08998fd4dbf",
+      "timestamp": 1771792946
     },
     {
       "contract": "moltdao",
       "action": "vote",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426184
+      "status": "PASS",
+      "detail": "sig=bd8540f5443192ee50b9b0bcd95f77683f2a7feb8bc6d80c464c151db37e6c26",
+      "timestamp": 1771792947
     },
     {
       "contract": "moltdao",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=0,calls=15->15,events=0->0,required=3",
-      "timestamp": 1771426184
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1771792947
     },
     {
       "contract": "moltdao",
       "action": "dao_governance_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: create_proposal_typed,vote",
-      "timestamp": 1771426184
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792947
     },
     {
       "contract": "prediction_market",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 12->12, events 0->0)",
-      "timestamp": 1771426185
+      "status": "PASS",
+      "detail": "sig=e0d60b2c2cffb72a26a5699e5b6f5adf76e3a53478fa84d947d9cf981888da4b",
+      "timestamp": 1771792951
     },
     {
       "contract": "prediction_market",
       "action": "set_moltyid_address",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426210
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_moltyid_address' not found: Missing export set_moltyid_address",
+      "timestamp": 1771792951
     },
     {
       "contract": "prediction_market",
       "action": "set_musd_address",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426236
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_musd_address' not found: Missing export set_musd_address",
+      "timestamp": 1771792951
     },
     {
       "contract": "prediction_market",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=0,calls=12->12,events=0->0,required=3",
-      "timestamp": 1771426236
+      "detail": "delta=1,calls=40->41,events=0->0,required=3",
+      "timestamp": 1771792951
     },
     {
       "contract": "prediction_market",
       "action": "prediction_admin_wiring",
       "status": "FAIL",
       "detail": "missing required successful steps: set_moltyid_address,set_musd_address",
-      "timestamp": 1771426236
+      "timestamp": 1771792951
     },
     {
       "contract": "compute_market",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 16->16, events 0->0)",
-      "timestamp": 1771426236
+      "status": "PASS",
+      "detail": "sig=292197bcaefea85928b15f787ea86411b146ae903118e483abbb1510bbb6e927",
+      "timestamp": 1771792952
     },
     {
       "contract": "compute_market",
       "action": "register_provider",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 16->16, events 0->0)",
-      "timestamp": 1771426237
+      "status": "PASS",
+      "detail": "sig=54e262a3eb1f3d9e763b743f6bd5532cee2a3e30f8cb6640dc249e417036ae25",
+      "timestamp": 1771792954
     },
     {
       "contract": "compute_market",
       "action": "submit_job",
       "status": "PASS",
-      "detail": "sig=420820e506f88a948cb813b90e43119577fd2d6f5af577bd40a5329f029835d4",
-      "timestamp": 1771426237
+      "detail": "sig=602e190e01f73738e26e78f00913a74ae3cfdb58d48d6d3320ededa634ed1016",
+      "timestamp": 1771792955
     },
     {
       "contract": "compute_market",
       "action": "get_job",
       "status": "PASS",
-      "detail": "sig=c51364c2bf2c29367cca2db1cb6396f62eb9527291bea19d55344a210bf5ad91",
-      "timestamp": 1771426238
+      "detail": "sig=2144d45a3cc27bf92f73b09a61a784f8c88ef1ed9d9fdcfdbb5a14ef32fd70a1",
+      "timestamp": 1771792959
     },
     {
       "contract": "compute_market",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=2,calls=16->18,events=0->0,required=3",
-      "timestamp": 1771426238
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1771792959
     },
     {
       "contract": "compute_market",
       "action": "compute_job_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: register_provider",
-      "timestamp": 1771426238
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771792959
     },
     {
       "contract": "bountyboard",
       "action": "set_identity_admin",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 20->20, events 0->0)",
-      "timestamp": 1771426238
+      "status": "PASS",
+      "detail": "sig=be43413b16e22b15f24a25af5d7fc6a4ebced8b758fd804a17e113d52babbd8b",
+      "timestamp": 1771792959
     },
     {
       "contract": "bountyboard",
       "action": "set_moltyid_address",
       "status": "PASS",
-      "detail": "sig=db7da1d63d7963a0304a6e045367c174a437ac11a888ff7172283dc50717585f",
-      "timestamp": 1771426239
+      "detail": "sig=2bcbac92ffb44599167bdfb360b2b6bc45320049bb05a787e701218428a87382",
+      "timestamp": 1771792962
     },
     {
       "contract": "bountyboard",
       "action": "set_token_address",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 21->21, events 0->0)",
-      "timestamp": 1771426239
+      "status": "PASS",
+      "detail": "sig=70b3f6d58716b92f50fd5c082d3e90ee1c42b3ef30aa4269e44a15610d65d989",
+      "timestamp": 1771792963
     },
     {
       "contract": "bountyboard",
       "action": "create_bounty",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 21->21, events 0->0)",
-      "timestamp": 1771426240
+      "status": "PASS",
+      "detail": "sig=3bae84b374d18655f0cec75151c3c698de40d2415c1026184d0252e5a8eec3e1",
+      "timestamp": 1771792964
     },
     {
       "contract": "bountyboard",
       "action": "submit_work",
-      "status": "PASS",
-      "detail": "sig=587f1253447047cf92e9735e16c6ec239fac35dc269bc087f8cf6a958acac00e",
-      "timestamp": 1771426241
+      "status": "FAIL",
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771792964
     },
     {
       "contract": "bountyboard",
       "action": "get_bounty",
       "status": "PASS",
-      "detail": "sig=cfea08fddbbaec3da99d66b2c95bf18406683240ab5861036f73edfd86b552de",
-      "timestamp": 1771426242
+      "detail": "sig=3defbfdda89c752f1e27aadb1c7b841cf1a0133a27e07a0fa44ad522acc5712f",
+      "timestamp": 1771792965
     },
     {
       "contract": "bountyboard",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=2,calls=20->22,events=0->0,required=5",
-      "timestamp": 1771426242
+      "status": "PASS",
+      "detail": "delta=5,required=5",
+      "timestamp": 1771792965
     },
     {
       "contract": "bountyboard",
       "action": "bounty_submission_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: create_bounty",
-      "timestamp": 1771426242
+      "detail": "missing required successful steps: submit_work",
+      "timestamp": 1771792965
     },
     {
       "contract": "moltoracle",
       "action": "initialize_oracle",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 24->24, events 0->0)",
-      "timestamp": 1771426242
+      "status": "PASS",
+      "detail": "sig=09cd9c8941d953661e5dfcd50c755accc90d1b91414e8f767a3ec71cd2a32915",
+      "timestamp": 1771792968
     },
     {
       "contract": "moltoracle",
       "action": "add_price_feeder",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 24->24, events 0->0)",
-      "timestamp": 1771426243
+      "status": "PASS",
+      "detail": "sig=682312cdb2eec955feb22fcb239a66538dc95965bd26aec6adcc805113460c02",
+      "timestamp": 1771792970
     },
     {
       "contract": "moltoracle",
       "action": "submit_price",
       "status": "PASS",
-      "detail": "sig=060d30028ff78ee135650d83bce424f70cc956423bf0bd10962e3fca785efbbf",
-      "timestamp": 1771426243
+      "detail": "sig=017e0c7d8b1d16b50f873c1ceb48568f38385b4467926d7630ec21390bbf7f10",
+      "timestamp": 1771792972
     },
     {
       "contract": "moltoracle",
       "action": "submit_price",
       "status": "FAIL",
-      "detail": "negative guardrail reason not found in transaction payload (expected any of: ['not authorized', 'no authorized feeder', 'return: 0', 'error'])",
-      "timestamp": 1771426247
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771792972
     },
     {
       "contract": "moltoracle",
       "action": "commit_randomness",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 26->26, events 0->0)",
-      "timestamp": 1771426248
+      "status": "PASS",
+      "detail": "sig=691f2a697234429bbbf54967da832d6c239f672ff5044d7ae58423f0ac2c087d",
+      "timestamp": 1771792972
     },
     {
       "contract": "moltoracle",
       "action": "request_randomness",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 26->26, events 0->0)",
-      "timestamp": 1771426248
+      "status": "PASS",
+      "detail": "sig=7fdc43ba9e2eb3bc18509f9611112c9eb4af2c4a3b04a07a2a0b928115c1e58c",
+      "timestamp": 1771792973
     },
     {
       "contract": "moltoracle",
       "action": "get_oracle_stats",
       "status": "PASS",
-      "detail": "sig=2e542f5be029e91d57d76dafa3e87280ce4fbf1ffdae5ab1ab130c09780b0eb7",
-      "timestamp": 1771426249
+      "detail": "sig=d08631239789e4e21c0f6fa59ce154496420a3e2d0a22ae9d37f6187e8d10011",
+      "timestamp": 1771792974
     },
     {
       "contract": "moltoracle",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=2,calls=24->26,events=0->0,required=5",
-      "timestamp": 1771426249
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1771792974
     },
     {
       "contract": "moltoracle",
       "action": "oracle_freshness_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: add_price_feeder,submit_price,request_randomness",
-      "timestamp": 1771426249
+      "detail": "missing required successful steps: submit_price",
+      "timestamp": 1771792974
     },
     {
       "contract": "moltoracle",
       "action": "oracle_signal_delta",
       "status": "PASS",
-      "detail": "calls_delta=2, events_delta=0",
-      "timestamp": 1771426249
+      "detail": "calls_delta=6, events_delta=0",
+      "timestamp": 1771792974
     },
     {
       "contract": "moltpunks",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 21->21, events 0->0)",
-      "timestamp": 1771426249
+      "status": "PASS",
+      "detail": "sig=0079069aa8f2d3fbba015c3ca15ee8b9dcc50972426b79e3a5fe0d70d2653d86",
+      "timestamp": 1771792976
     },
     {
       "contract": "moltpunks",
       "action": "mint",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 21->21, events 0->0)",
-      "timestamp": 1771426250
+      "status": "PASS",
+      "detail": "sig=10eabf3f9d71bfae50038ab0fd91f21659753096289988cb2ae0be465b1bcd49",
+      "timestamp": 1771792977
     },
     {
       "contract": "moltpunks",
       "action": "transfer",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 21->21, events 0->0)",
-      "timestamp": 1771426250
+      "status": "PASS",
+      "detail": "sig=68ea170de7c754a195317214b4b3e46336a3a06619fe5e72819065a9b6b3718d",
+      "timestamp": 1771792978
     },
     {
       "contract": "moltpunks",
       "action": "approve",
-      "status": "PASS",
-      "detail": "sig=743452d23a4e28f7ef4c300cdb5088a247cc6d36790d971cc8cb913c86156b0c",
-      "timestamp": 1771426251
+      "status": "FAIL",
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771792978
     },
     {
       "contract": "moltpunks",
       "action": "transfer_from",
       "status": "PASS",
-      "detail": "sig=62700be94369c2e95c4dbfd2b379c16e59e25cc91a1215f9ae335b2a32ac6b2d",
-      "timestamp": 1771426252
+      "detail": "sig=12260085f02bbc1ba7ed02f76e22a4cdb39fde4728233216a929aac4ebec1cf6",
+      "timestamp": 1771792979
     },
     {
       "contract": "moltpunks",
       "action": "mint",
       "status": "FAIL",
-      "detail": "negative guardrail reason not found in transaction payload (expected any of: ['unauthorized', 'mint failed', 'return: 0', 'error'])",
-      "timestamp": 1771426253
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771792979
     },
     {
       "contract": "moltpunks",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=3,calls=21->24,events=0->0,required=5",
-      "timestamp": 1771426253
+      "detail": "delta=4,calls=17->21,events=0->0,required=5",
+      "timestamp": 1771792979
     },
     {
       "contract": "moltpunks",
       "action": "nft_ownership_flow",
       "status": "FAIL",
-      "detail": "missing required successful steps: mint,transfer",
-      "timestamp": 1771426253
+      "detail": "missing required successful steps: mint",
+      "timestamp": 1771792979
     },
     {
       "contract": "moltswap",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 24->24, events 0->0)",
-      "timestamp": 1771426253
+      "status": "PASS",
+      "detail": "sig=f83cd6b4ac8a5ea28d9cb4d70c853930570ef2a5daca76fe5ba5418791198d54",
+      "timestamp": 1771792983
     },
     {
       "contract": "moltswap",
       "action": "set_identity_admin",
       "status": "PASS",
-      "detail": "sig=14ab1643a7011405a7796f45e1928c67960610e7d9da92ac4eee8b90b4fdbb2d",
-      "timestamp": 1771426254
+      "detail": "sig=f41f9bf6656aa72f5ea22d46da8f124385d5fbdc28fc21ef5f75993d26a36efb",
+      "timestamp": 1771792985
     },
     {
       "contract": "moltswap",
       "action": "add_liquidity",
       "status": "PASS",
-      "detail": "sig=a83676f20b88bbab6bcda086ea0a2d64a47067a20ff4ec3e1aed903a7225ad2d",
-      "timestamp": 1771426254
+      "detail": "sig=2ef70b77b3fe6ed8a5c234083217c75ad97e6362a22d6dcc9fad134bfba2bf08",
+      "timestamp": 1771792988
     },
     {
       "contract": "moltswap",
       "action": "swap_a_for_b",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 26->26, events 0->0)",
-      "timestamp": 1771426255
+      "status": "PASS",
+      "detail": "sig=d1df2fbafb391a0e99d60ca05028a5e43d093ffe8191a22653b3f50ef1aa17db",
+      "timestamp": 1771792990
+    },
+    {
+      "contract": "moltswap",
+      "action": "set_protocol_fee",
+      "status": "PASS",
+      "detail": "sig=d72740a2dd9901ab4f5ac453d267ec8cfd358c70e7f54f1b02124e652683e06d",
+      "timestamp": 1771792999
     },
     {
       "contract": "moltswap",
       "action": "set_protocol_fee",
       "status": "FAIL",
-      "detail": "no observable write delta (calls 26->26, events 0->0)",
-      "timestamp": 1771426256
-    },
-    {
-      "contract": "moltswap",
-      "action": "set_protocol_fee",
-      "status": "FAIL",
-      "detail": "negative guardrail reason not found in transaction payload (expected any of: ['unauthorized', 'return: 2', 'error'])",
-      "timestamp": 1771426257
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771792999
     },
     {
       "contract": "moltswap",
       "action": "ms_pause",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 27->27, events 0->0)",
-      "timestamp": 1771426257
+      "status": "PASS",
+      "detail": "sig=143090fab67218d356402e13926ab015d2cbceff9d0ea8c045590ab3cec85851",
+      "timestamp": 1771792999
     },
     {
       "contract": "moltswap",
       "action": "ms_unpause",
       "status": "PASS",
-      "detail": "sig=7fd3d86bcfc6a19984c0b6c17ba34fcae52292dc432352c43e568ee7c2702b93",
-      "timestamp": 1771426258
+      "detail": "sig=e13cde9ad8040f411062dd52eef3de8f762e41bb83e6d4c11d457d5b69c98888",
+      "timestamp": 1771793002
     },
     {
       "contract": "moltswap",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=4,calls=24->28,events=0->0,required=7",
-      "timestamp": 1771426258
+      "status": "PASS",
+      "detail": "delta=7,required=7",
+      "timestamp": 1771793002
     },
     {
       "contract": "moltswap",
       "action": "swap_reserve_movement",
-      "status": "FAIL",
-      "detail": "missing required successful steps: swap_a_for_b",
-      "timestamp": 1771426258
+      "status": "PASS",
+      "detail": "required steps satisfied, storage_delta=1",
+      "timestamp": 1771793002
     },
     {
       "contract": "musd_token",
       "action": "initialize",
       "status": "PASS",
-      "detail": "sig=a629b58490673dc1a71e706e00e5d009140332dbd013231884675f295b8bc0ab",
-      "timestamp": 1771426258
+      "detail": "sig=07fc8ebe03272640853b081d7865eebcd7d7572fcb2127a55f5488358dc7f197",
+      "timestamp": 1771793003
     },
     {
       "contract": "musd_token",
       "action": "mint",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 15->15, events 0->0)",
-      "timestamp": 1771426259
+      "status": "PASS",
+      "detail": "sig=00d26db12bda1f508905ee1ece33b67ceb9dbfd36923fb8c2aa6aa147aae3595",
+      "timestamp": 1771793003
     },
     {
       "contract": "musd_token",
       "action": "transfer",
       "status": "PASS",
-      "detail": "sig=ee2676528cab8837f23739188db50d2dbc9d48095152e0a1b8a12022f6f92d30",
-      "timestamp": 1771426259
+      "detail": "sig=8759afda2d62038e64dd96223350f6da697757d064d753cdc853e491f7733dda",
+      "timestamp": 1771793004
     },
     {
       "contract": "musd_token",
       "action": "approve",
       "status": "PASS",
-      "detail": "sig=d943d602ee53c54dbae329e04373bd6d0283eb60b7b949a2b2d7b0530f137b5f",
-      "timestamp": 1771426260
+      "detail": "sig=503a239f95d9290f614e089d253f2f2f3b97cd36410755f8044722a15918aaf5",
+      "timestamp": 1771793004
     },
     {
       "contract": "musd_token",
       "action": "burn",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 17->17, events 0->0)",
-      "timestamp": 1771426260
+      "status": "PASS",
+      "detail": "sig=8544414e6770fb41a26f05e5125f793c55862f5d49bd27c97b491eb1b1165266",
+      "timestamp": 1771793005
     },
     {
       "contract": "musd_token",
       "action": "mint",
       "status": "FAIL",
-      "detail": "negative guardrail reason not found in transaction payload (expected any of: ['unauthorized', 'return: 2', 'error'])",
-      "timestamp": 1771426261
+      "detail": "RPC Error: Payer account does not exist on-chain. Fund it first.",
+      "timestamp": 1771793005
     },
     {
       "contract": "musd_token",
       "action": "get_transfer_count",
       "status": "PASS",
-      "detail": "sig=eaf58db779fb92bf8a6a621038744b63858fae5e348cbf29eb5790883b2dba12",
-      "timestamp": 1771426262
+      "detail": "sig=bb68c68d14ee8e20da33c02c78f5c66f55ee197fd774db5e7c3f9df1151463a7",
+      "timestamp": 1771793005
     },
     {
       "contract": "musd_token",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=4,calls=14->18,events=0->0,required=5",
-      "timestamp": 1771426262
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1771793005
     },
     {
       "contract": "musd_token",
       "action": "token_invariants",
       "status": "FAIL",
-      "detail": "missing required successful steps: mint,burn",
-      "timestamp": 1771426262
+      "detail": "missing required successful steps: mint",
+      "timestamp": 1771793005
     },
     {
       "contract": "weth_token",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426262
+      "status": "PASS",
+      "detail": "sig=7b93e25c4cf5afb2fc66d933d0f13f8fba083e696dae057628c12f07c4e7c743",
+      "timestamp": 1771793006
     },
     {
       "contract": "weth_token",
       "action": "mint",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426263
+      "status": "PASS",
+      "detail": "sig=cc14cf7cc6e61d9cb97c04f350c1acb397ce868965220cc748c0bc24be974d50",
+      "timestamp": 1771793007
     },
     {
       "contract": "weth_token",
       "action": "transfer",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426263
+      "status": "PASS",
+      "detail": "sig=69a470e0368cd6dc6444b4cc5c12fc3ce73126180a447906e208a36d905d2f41",
+      "timestamp": 1771793007
     },
     {
       "contract": "weth_token",
       "action": "approve",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426264
+      "status": "PASS",
+      "detail": "sig=1839572413a4324e7a0f7801d0f897644f69aaf03f44a2a5713960a8ec4cc852",
+      "timestamp": 1771793008
     },
     {
       "contract": "weth_token",
       "action": "burn",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426264
+      "status": "PASS",
+      "detail": "sig=8659cf0bb01761d61a7ffd71e9928f6ef0724d69e56f16597055e276c0ca6166",
+      "timestamp": 1771793008
     },
     {
       "contract": "weth_token",
       "action": "get_transfer_count",
       "status": "PASS",
-      "detail": "sig=5052b8ea95fed87b952bba7e038052ee5b1f6cdc8a693195700dd03d10834534",
-      "timestamp": 1771426265
+      "detail": "sig=06f05024d428e6888c42b4710170ac4998217a2df4385f282b0474dcfeaa53ed",
+      "timestamp": 1771793008
     },
     {
       "contract": "weth_token",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=0,calls=13->13,events=0->0,required=5",
-      "timestamp": 1771426265
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1771793008
     },
     {
       "contract": "weth_token",
       "action": "token_invariants",
       "status": "FAIL",
-      "detail": "missing required successful steps: mint,transfer,burn",
-      "timestamp": 1771426265
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771793008
     },
     {
       "contract": "wsol_token",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 13->13, events 0->0)",
-      "timestamp": 1771426265
+      "status": "PASS",
+      "detail": "sig=176fe8ee3a98d6428ab149195975565d0e18234f48a9a67738daba597197c4a6",
+      "timestamp": 1771793009
     },
     {
       "contract": "wsol_token",
       "action": "mint",
       "status": "PASS",
-      "detail": "sig=415b86186cb1b40406ba71b5e3f5ff65b96c6f8d5b481d6903ac9e2e4313457f",
-      "timestamp": 1771426266
+      "detail": "sig=d004348bbab4f4f231978e0610682036b9b7382922c3e893cdd4a2b6f6eda185",
+      "timestamp": 1771793010
     },
     {
       "contract": "wsol_token",
       "action": "transfer",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 14->14, events 0->0)",
-      "timestamp": 1771426266
+      "status": "PASS",
+      "detail": "sig=df25ef8bac09cc45f8cc258a82c3dbb89581d4873bb5020fb24a4db26013848d",
+      "timestamp": 1771793010
     },
     {
       "contract": "wsol_token",
       "action": "approve",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 14->14, events 0->0)",
-      "timestamp": 1771426267
+      "status": "PASS",
+      "detail": "sig=0b25ab48ebcda0799cd6f73d86014a19f372e9e71b31e954429e8d5dc470b173",
+      "timestamp": 1771793014
     },
     {
       "contract": "wsol_token",
       "action": "burn",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 14->14, events 0->0)",
-      "timestamp": 1771426267
+      "status": "PASS",
+      "detail": "sig=3534fa73926043cf0602dce2e33580441d5f2b6b67607ab6a23360789c68fcab",
+      "timestamp": 1771793014
     },
     {
       "contract": "wsol_token",
       "action": "get_transfer_count",
       "status": "PASS",
-      "detail": "sig=7b993d3e972993437adcb79226bc1b1d73865f73311aeb3204054c9028ebfa49",
-      "timestamp": 1771426268
+      "detail": "sig=9429765e9807c88d28af6cd9477e0066abe61d834c2d74fe947b79ed38cf09fe",
+      "timestamp": 1771793015
     },
     {
       "contract": "wsol_token",
       "action": "activity_floor",
-      "status": "FAIL",
-      "detail": "delta=1,calls=13->14,events=0->0,required=5",
-      "timestamp": 1771426268
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1771793015
     },
     {
       "contract": "wsol_token",
       "action": "token_invariants",
       "status": "FAIL",
-      "detail": "missing required successful steps: transfer,burn",
-      "timestamp": 1771426268
+      "detail": "no storage delta observed (0)",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 14->14, events 0->0)",
-      "timestamp": 1771426268
+      "status": "PASS",
+      "detail": "sig=625bfc01b04d37ea58d2d915c8ee43fbeb6a292d4e24e6532ad67e8bb0be1801",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "set_preferred_quote",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426294
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_preferred_quote' not found: Missing export set_preferred_quote",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "create_pair",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426319
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'create_pair' not found: Missing export create_pair",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "update_pair_fees",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426345
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'update_pair_fees' not found: Missing export update_pair_fees",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "place_order",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426370
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'place_order' not found: Missing export place_order",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "modify_order",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426396
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'modify_order' not found: Missing export modify_order",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "cancel_all_orders",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426421
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'cancel_all_orders' not found: Missing export cancel_all_orders",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "get_pair_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426446
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_pair_count' not found: Missing export get_pair_count",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_core",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=0,calls=14->14,events=0->0,required=7",
-      "timestamp": 1771426446
+      "detail": "delta=1,calls=35->36,events=0->0,required=7",
+      "timestamp": 1771793015
     },
     {
       "contract": "dex_amm",
       "action": "initialize",
       "status": "PASS",
-      "detail": "sig=b622a400454071b19382cdb267a8d31e09a8e588c9e5f8ff3d51a1103eaa1b9c",
-      "timestamp": 1771426447
+      "detail": "sig=e75dd557972f8dbe425cf464e194e40e20dcd602145c61c9037f2e29ee8c0083",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "create_pool",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426472
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'create_pool' not found: Missing export create_pool",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "add_liquidity",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426498
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'add_liquidity' not found: Missing export add_liquidity",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "swap_exact_in",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426523
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'swap_exact_in' not found: Missing export swap_exact_in",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "remove_liquidity",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426548
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'remove_liquidity' not found: Missing export remove_liquidity",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "get_pool_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426574
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_pool_count' not found: Missing export get_pool_count",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "get_position_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426599
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_position_count' not found: Missing export get_position_count",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_amm",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=1,calls=11->12,events=0->0,required=5",
-      "timestamp": 1771426599
+      "detail": "delta=1,calls=26->27,events=0->0,required=5",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "initialize",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426625
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'initialize' not found: Missing export initialize",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "set_addresses",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426650
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_addresses' not found: Missing export set_addresses",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "register_route",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426675
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'register_route' not found: Missing export register_route",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "set_route_enabled",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426701
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_route_enabled' not found: Missing export set_route_enabled",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "get_best_route",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426726
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_best_route' not found: Missing export get_best_route",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "get_route_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426751
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_route_count' not found: Missing export get_route_count",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_router",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=0,calls=6->6,events=0->0,required=4",
-      "timestamp": 1771426751
+      "detail": "delta=0,calls=26->26,events=0->0,required=4",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "initialize",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426777
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'initialize' not found: Missing export initialize",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "set_mark_price",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426802
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_mark_price' not found: Missing export set_mark_price",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "open_position",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426828
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'open_position' not found: Missing export open_position",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "add_margin",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426853
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'add_margin' not found: Missing export add_margin",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "remove_margin",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426878
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'remove_margin' not found: Missing export remove_margin",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "close_position",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426904
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'close_position' not found: Missing export close_position",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "get_position_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426929
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_position_count' not found: Missing export get_position_count",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_margin",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=0,calls=3->3,events=0->0,required=6",
-      "timestamp": 1771426929
+      "detail": "delta=0,calls=22->22,events=0->0,required=6",
+      "timestamp": 1771793020
     },
     {
       "contract": "dex_rewards",
       "action": "initialize",
       "status": "PASS",
-      "detail": "sig=7338cc6b0c7931ea112a6d279b3d720a7db09e70d4b626cc1112a0325acc5f65",
-      "timestamp": 1771426929
+      "detail": "sig=df7421b68ed68b57472a48be635320278adb72d31ec9d33e22bd77ddd5245a16",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "set_moltcoin_address",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426955
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_moltcoin_address' not found: Missing export set_moltcoin_address",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "set_rewards_pool",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771426980
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_rewards_pool' not found: Missing export set_rewards_pool",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "set_authorized_caller",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427005
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_authorized_caller' not found: Missing export set_authorized_caller",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "set_reward_rate",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427031
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_reward_rate' not found: Missing export set_reward_rate",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "record_trade",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427056
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'record_trade' not found: Missing export record_trade",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "register_referral",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427082
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'register_referral' not found: Missing export register_referral",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "get_total_distributed",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427107
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_total_distributed' not found: Missing export get_total_distributed",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_rewards",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=1,calls=7->8,events=0->0,required=7",
-      "timestamp": 1771427107
+      "detail": "delta=1,calls=20->21,events=0->0,required=7",
+      "timestamp": 1771793021
     },
     {
       "contract": "dex_governance",
       "action": "initialize",
-      "status": "FAIL",
-      "detail": "no observable write delta (calls 9->9, events 0->0)",
-      "timestamp": 1771427107
+      "status": "PASS",
+      "detail": "sig=8166dcd31451e63d1d422579d29ce717b34dc2f9ae2dd9e6d28a0143f7c8de95",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_governance",
       "action": "set_moltyid_address",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427133
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_moltyid_address' not found: Missing export set_moltyid_address",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_governance",
       "action": "set_preferred_quote",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427158
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_preferred_quote' not found: Missing export set_preferred_quote",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_governance",
       "action": "set_listing_requirements",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427184
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'set_listing_requirements' not found: Missing export set_listing_requirements",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_governance",
       "action": "propose_fee_change",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427209
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'propose_fee_change' not found: Missing export propose_fee_change",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_governance",
       "action": "get_proposal_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427234
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_proposal_count' not found: Missing export get_proposal_count",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_governance",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=0,calls=9->9,events=0->0,required=5",
-      "timestamp": 1771427234
+      "detail": "delta=1,calls=24->25,events=0->0,required=5",
+      "timestamp": 1771793022
     },
     {
       "contract": "dex_analytics",
       "action": "initialize",
       "status": "PASS",
-      "detail": "sig=87f260f9069a1b5e7cfefbb8d10c2268343e72ba9e2b2ccda5b329e287fe0cc7",
-      "timestamp": 1771427235
+      "detail": "sig=260626429076493dde65e012f3dffe38546f17dce5202726ec9715d2415cf076",
+      "timestamp": 1771793023
     },
     {
       "contract": "dex_analytics",
       "action": "record_trade",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427260
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'record_trade' not found: Missing export record_trade",
+      "timestamp": 1771793023
     },
     {
       "contract": "dex_analytics",
       "action": "get_record_count",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427286
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_record_count' not found: Missing export get_record_count",
+      "timestamp": 1771793023
     },
     {
       "contract": "dex_analytics",
       "action": "get_last_price",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427311
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_last_price' not found: Missing export get_last_price",
+      "timestamp": 1771793023
     },
     {
       "contract": "dex_analytics",
       "action": "get_24h_stats",
       "status": "FAIL",
-      "detail": "transaction not confirmed within 25s (last error: RPC Error: Transaction not found)",
-      "timestamp": 1771427337
+      "detail": "RPC Error: Transaction simulation failed: Contract execution error: Function 'get_24h_stats' not found: Missing export get_24h_stats",
+      "timestamp": 1771793023
     },
     {
       "contract": "dex_analytics",
       "action": "activity_floor",
       "status": "FAIL",
-      "detail": "delta=1,calls=4->5,events=0->0,required=2",
-      "timestamp": 1771427337
+      "detail": "delta=1,calls=12->13,events=0->0,required=2",
+      "timestamp": 1771793023
     },
     {
       "contract": "global",
       "action": "negative_assertion_floor",
       "status": "PASS",
       "detail": "executed=5,required=5",
-      "timestamp": 1771427337
+      "timestamp": 1771793023
     }
   ],
-  "generated_at": 1771427337
+  "generated_at": 1771793023
 }
