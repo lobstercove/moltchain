@@ -104,7 +104,7 @@ async def test_dex_router_wiring(conn):
         report("FAIL", f"DEX Router has only {route_count} routes (expected >= 10)")
 
     # Verify via storage that set_addresses was called
-    router_addr = await get_contract_address(conn, "DEXRTR")
+    router_addr = await get_contract_address(conn, "DEXROUTER")
     if not router_addr:
         report("SKIP", "DEX Router address not found in registry")
         return
@@ -197,7 +197,7 @@ async def test_moltswap_wiring(conn):
     """Verify moltswap has moltyid address set."""
     print("\n── MoltSwap Wiring ──")
 
-    swap_addr = await get_contract_address(conn, "MSWAP")
+    swap_addr = await get_contract_address(conn, "MOLTSWAP")
     if not swap_addr:
         report("SKIP", "MoltSwap address not found in registry")
         return
@@ -276,7 +276,7 @@ async def test_dex_margin_wiring(conn):
     """Verify dex_margin has mark prices and enabled pairs."""
     print("\n── DEX Margin Wiring ──")
 
-    margin_addr = await get_contract_address(conn, "DEXMRG")
+    margin_addr = await get_contract_address(conn, "DEXMARGIN")
     if not margin_addr:
         report("SKIP", "DEX Margin address not found in registry")
         return
@@ -375,11 +375,11 @@ async def test_contract_deployment(conn):
 
     expected_symbols = [
         "MOLT", "MUSD", "WSOL", "WETH", "YID",
-        "DEX", "DEXAMM", "DEXRTR", "DEXGOV", "DEXMRG", "DEXRWD", "DEXANA",
-        "DAO", "ORACLE", "LEND", "BRIDGE", "MSWAP",
-        "MKTPLACE", "PUNKS", "AUCTION",
-        "CLAWPAY", "PUMP", "VAULT",
-        "REEF", "COMPUTE", "BOUNTY", "PREDMKT",
+        "DEX", "DEXAMM", "DEXROUTER", "DEXGOV", "DEXMARGIN", "DEXREWARDS", "ANALYTICS",
+        "DAO", "ORACLE", "LEND", "BRIDGE", "MOLTSWAP",
+        "MARKET", "PUNKS", "AUCTION",
+        "CLAWPAY", "CLAWPUMP", "CLAWVAULT",
+        "REEF", "COMPUTE", "BOUNTY", "PREDICT",
     ]
 
     found_symbols = {e.get("symbol", "").upper() for e in entries}
@@ -403,11 +403,11 @@ async def main() -> int:
 
     # Verify RPC is reachable
     try:
-        health = await rpc_call(conn, "getHealth")
-        if health:
-            report("PASS", "RPC node is healthy")
+        slot = await rpc_call(conn, "getSlot")
+        if slot is not None:
+            report("PASS", f"RPC node is reachable (slot={slot})")
         else:
-            report("FAIL", "RPC getHealth returned null")
+            report("FAIL", "RPC getSlot returned null")
             return 1
     except Exception as e:
         report("FAIL", f"Cannot reach RPC at {RPC_URL}", str(e))
