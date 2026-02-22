@@ -1398,10 +1398,10 @@ async def main() -> int:
 
     # ─── REST Stats Endpoints Validation ───
     rest_stats_endpoints = [
-        "/api/v1/dex/stats/core", "/api/v1/dex/stats/amm",
-        "/api/v1/dex/stats/margin", "/api/v1/dex/stats/router",
-        "/api/v1/dex/stats/rewards", "/api/v1/dex/stats/analytics",
-        "/api/v1/dex/stats/governance", "/api/v1/dex/stats/moltswap",
+        "/api/v1/stats/core", "/api/v1/stats/amm",
+        "/api/v1/stats/margin", "/api/v1/stats/router",
+        "/api/v1/stats/rewards", "/api/v1/stats/analytics",
+        "/api/v1/stats/governance", "/api/v1/stats/moltswap",
     ]
     for endpoint in rest_stats_endpoints:
         try:

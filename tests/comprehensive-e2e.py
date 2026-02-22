@@ -1078,10 +1078,10 @@ async def main() -> int:
 
     # ─── REST Stats Endpoints Validation ───
     rest_stats_endpoints = [
-        "/api/v1/dex/stats/core", "/api/v1/dex/stats/amm",
-        "/api/v1/dex/stats/margin", "/api/v1/dex/stats/router",
-        "/api/v1/dex/stats/rewards", "/api/v1/dex/stats/analytics",
-        "/api/v1/dex/stats/governance", "/api/v1/dex/stats/moltswap",
+        "/api/v1/stats/core", "/api/v1/stats/amm",
+        "/api/v1/stats/margin", "/api/v1/stats/router",
+        "/api/v1/stats/rewards", "/api/v1/stats/analytics",
+        "/api/v1/stats/governance", "/api/v1/stats/moltswap",
     ]
     for endpoint in rest_stats_endpoints:
         try:
@@ -1192,13 +1192,13 @@ async def main() -> int:
     # ─── Extended REST API Endpoints ───
     rest_extended = [
         # DEX CRUD endpoints
-        ("GET", "/api/v1/dex/pairs"),
-        ("GET", "/api/v1/dex/tickers"),
-        ("GET", "/api/v1/dex/pools"),
-        ("GET", "/api/v1/dex/orders"),
-        ("GET", "/api/v1/dex/leaderboard"),
-        ("GET", "/api/v1/dex/routes"),
-        ("GET", "/api/v1/dex/governance/proposals"),
+        ("GET", "/api/v1/pairs"),
+        ("GET", "/api/v1/tickers"),
+        ("GET", "/api/v1/pools"),
+        ("GET", "/api/v1/orders"),
+        ("GET", "/api/v1/leaderboard"),
+        ("GET", "/api/v1/routes"),
+        ("GET", "/api/v1/governance/proposals"),
         # Prediction Market
         ("GET", "/api/v1/prediction-market/stats"),
         ("GET", "/api/v1/prediction-market/markets"),
