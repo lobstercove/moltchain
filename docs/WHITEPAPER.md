@@ -1017,10 +1017,10 @@ Reputation accrues through on-chain interactions: successful transactions, vouch
 |------|------|-----------|--------------|-----------------|------------|
 | 0 | Newcomer | 0–99 | 0% | 1.0x | 100 tx/epoch |
 | 1 | Known | 100–499 | 0% | 1.1x | 100 tx/epoch |
-| 2 | Trusted | 500–749 | 10% | 1.25x | 200 tx/epoch |
-| 3 | Established | 1,000–4,999 | 30% | 1.5x | 500 tx/epoch |
-| 4 | Veteran | 5,000–9,999 | 30% | 2.0x (Express Lane) | 500 tx/epoch |
-| 5 | Legendary | 10,000+ | 30% | 3.0x (Express Lane) | 500 tx/epoch |
+| 2 | Trusted | 500–749 | 5% | 1.25x | 200 tx/epoch |
+| 3 | Established | 750–999 | 7.5% | 1.5x | 200 tx/epoch |
+| 4 | Veteran | 1,000–4,999 | 10% | 2.0x (Express Lane) | 500 tx/epoch |
+| 5 | Legendary | 5,000+ | 10% | 3.0x (Express Lane) | 500 tx/epoch |
 
 Tier 4+ agents enter the **Express Lane** — a dedicated priority queue with guaranteed block inclusion. This ensures that established agents always get their transactions processed, even during network congestion.
 
