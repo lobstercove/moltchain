@@ -300,13 +300,27 @@ if [ "$RESTART" = true ]; then
         exit 1
     fi
 
+    # ── Generate ZK keys (if not cached) ──
+    # The Groth16 trusted setup is memory-intensive, so it runs as a
+    # standalone binary before validators start.  Keys are cached at
+    # ~/.moltchain/zk/ and persist across resets.
+    ZK_SETUP_BIN="${REPO_ROOT}/target/release/zk-setup"
+    if [ -x "$ZK_SETUP_BIN" ]; then
+        echo "   Ensuring ZK proving/verification keys exist..."
+        "$ZK_SETUP_BIN" 2>&1 | sed 's/^/   /'
+    else
+        echo -e "   ${YELLOW}⚠  zk-setup binary not found — build with: cargo build --release --bin zk-setup${NC}"
+        echo -e "   ${YELLOW}   Shielded transactions will be unavailable until keys are generated.${NC}"
+    fi
+    echo ""
+
     echo "   Starting V1 (primary - creates genesis)..."
     nohup "$LAUNCHER" "$NETWORK" 1 $EXTRA_FLAGS > /tmp/moltchain-v1.log 2>&1 &
     V1_PID=$!
     echo "   V1 PID: $V1_PID"
 
-    echo "   Waiting for V1 genesis (30s)..."
-    sleep 30
+    echo "   Waiting for V1 genesis (20s)..."
+    sleep 20
 
     # Auto-copy genesis keypair to keypairs/deployer.json for E2E tests
     GENESIS_KEY=$(find "$REPO_ROOT/data/state-8000/genesis-keys" -name "genesis-primary-*.json" -type f 2>/dev/null | head -1)
@@ -320,8 +334,8 @@ if [ "$RESTART" = true ]; then
     nohup "$LAUNCHER" "$NETWORK" 2 $EXTRA_FLAGS > /tmp/moltchain-v2.log 2>&1 &
     echo "   V2 PID: $!"
 
-    echo "   Waiting for V2 sync (30s)..."
-    sleep 30
+    echo "   Waiting for V2 sync (20s)..."
+    sleep 20
 
     echo "   Starting V3 (tertiary)..."
     nohup "$LAUNCHER" "$NETWORK" 3 $EXTRA_FLAGS > /tmp/moltchain-v3.log 2>&1 &
