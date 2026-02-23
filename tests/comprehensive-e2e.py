@@ -1350,9 +1350,9 @@ async def main() -> int:
     import urllib.request as urllib_req
 
     ZK_PROVE_BIN = str(ROOT / "target" / "release" / "zk-prove")
-    # Validator stores ZK keys in its data dir.  The first validator's
-    # P2P port is 8001, so state lives in data/state-8001/zk/.
-    ZK_KEY_DIR = str(ROOT / "data" / "state-8001" / "zk")
+    # ZK keys live in the shared cache (~/.moltchain/zk/) which survives
+    # blockchain resets.  Fall back to the legacy per-validator data dir.
+    ZK_KEY_DIR = str(Path.home() / ".moltchain" / "zk")
 
     # ── 3.0  Check zk-prove binary exists ──
     zk_prove_exists = Path(ZK_PROVE_BIN).is_file()
@@ -1363,8 +1363,8 @@ async def main() -> int:
 
     zk_key_dir_exists = Path(ZK_KEY_DIR).is_dir()
     if not zk_key_dir_exists:
-        # Fallback: try data/state-30333/zk (common validator port)
-        for port in [30333, 8001, 8002, 8003]:
+        # Fallback: try legacy per-validator data dirs
+        for port in [8001, 8002, 8003, 30333]:
             alt = str(ROOT / "data" / f"state-{port}" / "zk")
             if Path(alt).is_dir():
                 ZK_KEY_DIR = alt
@@ -1661,7 +1661,9 @@ async def main() -> int:
             req = urllib_req.Request(rest_url, headers={"Accept": "application/json"})
             with urllib_req.urlopen(req, timeout=5) as resp:
                 mr_rest = json.loads(resp.read())
-            if "merkleRoot" in mr_rest or "root" in mr_rest:
+            # Response is wrapped: {"success":true,"data":{"merkleRoot":...}}
+            mr_data = mr_rest.get("data", mr_rest)
+            if "merkleRoot" in mr_data or "root" in mr_data:
                 report("PASS", f"zk.rest.merkle-root ok")
             else:
                 report("FAIL", f"zk.rest.merkle-root missing merkleRoot field")
