@@ -298,7 +298,11 @@ PY
       return 0
     fi
     FUNDING_DEGRADED=1
-    skip "Treasury keypair missing and airdrop fallback failed for $to_addr"
+    if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+      fail "Treasury keypair missing and airdrop fallback failed for $to_addr"
+    else
+      skip "Treasury keypair missing and airdrop fallback failed for $to_addr"
+    fi
     return 1
   fi
 
@@ -326,29 +330,60 @@ PY
     else
       cat /tmp/e2e-transfer.log >&2 || true
       FUNDING_DEGRADED=1
-      skip "Treasury transfer failed and airdrop fallback failed for $to_addr"
+      if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+        fail "Treasury transfer failed and airdrop fallback failed for $to_addr"
+      else
+        skip "Treasury transfer failed and airdrop fallback failed for $to_addr"
+      fi
       return 1
     fi
   fi
 }
 
-assert_balance_positive() {
+get_balance_shells_with_retry() {
   local address="$1"
-  if (( FUNDING_DEGRADED == 1 )); then
-    skip "Balance check skipped for $address (funding degraded)"
-    return 0
-  fi
-  local balance
-  balance="$(rpc_call "getBalance" "[\"$address\"]" | python3 -c 'import json,sys
+  local attempts="${2:-6}"
+  local delay_secs="${3:-1}"
+  local i=1
+  while (( i <= attempts )); do
+    local balance
+    balance="$(rpc_call "getBalance" "[\"$address\"]" | python3 -c 'import json,sys
 try:
  d=json.load(sys.stdin).get("result",0)
  if isinstance(d,dict):
-  print(d.get("shells",d.get("balance",0)))
+  print(d.get("spendable", d.get("shells", d.get("balance",0))))
  else:
   print(d)
 except Exception:
  print(0)
 ' 2>/dev/null || echo 0)"
+
+    if [[ "$balance" =~ ^[0-9]+$ ]] && (( balance > 0 )); then
+      echo "$balance"
+      return 0
+    fi
+
+    sleep "$delay_secs"
+    ((i++))
+  done
+
+  echo 0
+  return 1
+}
+
+assert_balance_positive() {
+  local address="$1"
+  if (( FUNDING_DEGRADED == 1 )); then
+    if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+      fail "Balance check cannot proceed for $address (funding degraded)"
+      return 1
+    else
+      skip "Balance check skipped for $address (funding degraded)"
+      return 0
+    fi
+  fi
+  local balance
+  balance="$(get_balance_shells_with_retry "$address" 6 1 || echo 0)"
 
   if [[ "$balance" =~ ^[0-9]+$ ]] && (( balance > 0 )); then
     pass "Balance positive for $address"
