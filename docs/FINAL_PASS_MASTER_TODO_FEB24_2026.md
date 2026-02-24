@@ -197,8 +197,18 @@ Update:
 Status:
 - Existing docs: `docs/CUSTODY_MULTISIG_SETUP.md`, `docs/deployment/CUSTODY_DEPLOYMENT.md`.
 - Gap tasks:
-  - [ ] Add executable e2e test for multisig transfer/approval/rejection path in CI/gate.
-  - [ ] Add validator + custody key rotation scenario test.
+  - [x] Add executable e2e test for multisig transfer/approval/rejection path in CI/gate.
+  - [x] Add validator + custody key rotation scenario test.
+
+Update:
+- Extended `tests/services-deep-e2e.sh` with a new `Multisig and key-rotation regression checks` stage that runs exact gated cargo tests for governed-wallet multisig rejection + approval lifecycle and validator/custody key-rotation scenarios.
+- Added validator key-rotation regression test in `validator/src/keypair_loader.rs` (`test_keypair_rotation_changes_loaded_pubkey`) to verify rotated key material changes loaded validator identity.
+- Added custody master-seed rotation regression test in `custody/src/main.rs` (`test_master_seed_rotation_changes_derived_addresses`) to verify seed rotation changes deterministic Solana and EVM derived custody addresses.
+- Validation evidence (targeted, scope-only):
+  - `cargo test -p moltchain-core processor::tests::test_ecosystem_grant_requires_multisig -- --exact` → `1 passed`
+  - `cargo test -p moltchain-core processor::tests::test_governed_proposal_lifecycle -- --exact` → `1 passed`
+  - `cargo test -p moltchain-validator keypair_loader::tests::test_keypair_rotation_changes_loaded_pubkey -- --exact` → `1 passed`
+  - `cargo test -p moltchain-custody tests::test_master_seed_rotation_changes_derived_addresses -- --exact` → `1 passed`
 
 ---
 

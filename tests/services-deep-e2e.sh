@@ -353,7 +353,24 @@ else
 fi
 
 EXPECTED_CONTRACTS=()
-if [[ -d "$ROOT_DIR/contracts" ]]; then
+EXPECTED_CONTRACTS_FILE="${EXPECTED_CONTRACTS_FILE:-$ROOT_DIR/tests/expected-contracts.json}"
+
+if [[ -f "$EXPECTED_CONTRACTS_FILE" ]]; then
+  while IFS= read -r name; do
+    [[ -n "$name" ]] && EXPECTED_CONTRACTS+=("$name")
+  done < <(python3 - "$EXPECTED_CONTRACTS_FILE" <<'PY'
+import json,sys
+try:
+  data=json.load(open(sys.argv[1], 'r', encoding='utf-8'))
+except Exception:
+  raise SystemExit(0)
+contracts=data.get('contracts', []) if isinstance(data, dict) else []
+for item in contracts:
+  if isinstance(item, str) and item.strip():
+    print(item.strip())
+PY
+)
+elif [[ -d "$ROOT_DIR/contracts" ]]; then
   while IFS= read -r d; do
     EXPECTED_CONTRACTS+=("$(basename "$d")")
   done < <(find "$ROOT_DIR/contracts" -mindepth 1 -maxdepth 1 -type d | sort)
@@ -620,6 +637,31 @@ if [[ -n "$MOLTYID_ID" ]]; then
   else
     fail "getContractEvents(moltyid)"
   fi
+fi
+
+section "7) Multisig and key-rotation regression checks"
+if command -v cargo >/dev/null 2>&1; then
+  if (
+    cd "$ROOT_DIR" &&
+      cargo test -p moltchain-core processor::tests::test_ecosystem_grant_requires_multisig -- --exact >/dev/null 2>&1 &&
+      cargo test -p moltchain-core processor::tests::test_governed_proposal_lifecycle -- --exact >/dev/null 2>&1
+  ); then
+    pass "governed multisig transfer/approval/rejection path"
+  else
+    fail "governed multisig transfer/approval/rejection path"
+  fi
+
+  if (
+    cd "$ROOT_DIR" &&
+      cargo test -p moltchain-validator keypair_loader::tests::test_keypair_rotation_changes_loaded_pubkey -- --exact >/dev/null 2>&1 &&
+      cargo test -p moltchain-custody tests::test_master_seed_rotation_changes_derived_addresses -- --exact >/dev/null 2>&1
+  ); then
+    pass "validator + custody key rotation scenario"
+  else
+    fail "validator + custody key rotation scenario"
+  fi
+else
+  fail "cargo unavailable for multisig/key-rotation checks"
 fi
 
 # -----------------------------------------------------------------------------
