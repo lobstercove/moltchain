@@ -217,11 +217,11 @@ Update:
 Objective: verify election spread under 400ms production blocks while heartbeat tasks run at 5s.
 
 Required evidence:
-- [ ] Slot-to-leader mapping distribution over sustained load windows.
-- [ ] Per-validator block production count and variance.
-- [ ] Mempool pull fairness across elected leaders.
-- [ ] Correlation analysis: heartbeat timing vs leader dominance.
-- [ ] Sequential vs parallel e2e impact comparison.
+- [x] Slot-to-leader mapping distribution over sustained load windows.
+- [x] Per-validator block production count and variance.
+- [x] Mempool pull fairness across elected leaders.
+- [x] Correlation analysis: heartbeat timing vs leader dominance.
+- [x] Sequential vs parallel e2e impact comparison.
 
 Execution plan:
 1. Full reset.
@@ -230,6 +230,21 @@ Execution plan:
 4. Run parallel e2e load and collect leader/slot timeline.
 5. Run sequential e2e load and collect leader/slot timeline.
 6. Produce `docs/audits/VALIDATOR_ROTATION_EVIDENCE_FEB24_2026.md`.
+
+Update:
+- Re-ran section-4 evidence capture with fresh windows under baseline no-load, sequential write load, and parallel write load (2 concurrent `tests/contracts-write-e2e.py` processes) and recorded output in `tests/artifacts/validator_rotation_feb24/`.
+- Captured sustained slot-to-leader timelines in:
+  - `baseline_no_load.json` (30 slots)
+  - `sequential_load_window.json` (90 slots)
+  - `parallel_load_window.json` (90 slots)
+- Captured validator production snapshot in `getValidators_snapshot.json` and computed comparative fairness/correlation metrics in `summary_metrics.json`.
+- Updated `docs/audits/VALIDATOR_ROTATION_EVIDENCE_FEB24_2026.md` with all required dimensions: leader mapping distribution, per-validator variance, mempool fairness deltas, heartbeat-vs-dominance correlation, and sequential vs parallel impact.
+- Root-cause note captured: early load runs failed because `requestAirdrop` is disabled with 3 validators and signer spendable balance dropped below secondary-funding threshold; fixed by using funded validator keypairs (`validator-8001`/`validator-8002`) in isolated background terminals.
+
+Validation evidence:
+- `python3 tests/artifacts/validator_rotation_feb24/capture_window.py --label sequential_load --slots 90 ...` → wrote `sequential_load_window.json`.
+- `python3 tests/artifacts/validator_rotation_feb24/capture_window.py --label parallel_load --slots 90 ...` → wrote `parallel_load_window.json`.
+- `curl ... method=getValidators ...` → wrote `getValidators_snapshot.json` with 3 validator entries.
 
 ---
 
