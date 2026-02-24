@@ -42,6 +42,10 @@ const path = require('path');
 
 const cryptoSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'crypto.js'), 'utf8');
 const walletSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'wallet.js'), 'utf8');
+const shieldedSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'shielded.js'), 'utf8');
+const identitySrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'identity.js'), 'utf8');
+const walletHtml = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'index.html'), 'utf8');
+const explorerAddressSrc = fs.readFileSync(path.join(__dirname, '..', 'explorer', 'js', 'address.js'), 'utf8');
 
 // ---- Minimal nacl polyfill for Node.js ----
 let nacl;
@@ -253,15 +257,78 @@ test('signTransaction returns signature before zeroing', async () => {
 console.log('\nW-6: Address validation in identity module');
 
 test('identity.js validates transfer recipient address', () => {
-    const identitySrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'identity.js'), 'utf8');
     assert(identitySrc.includes('MoltCrypto.isValidAddress(values.recipient)'),
         'Must validate recipient address in transfer');
 });
 
 test('identity.js validates vouch address', () => {
-    const identitySrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'identity.js'), 'utf8');
     assert(identitySrc.includes('MoltCrypto.isValidAddress(values.vouchee)'),
         'Must validate vouchee address');
+});
+
+// ---- W-10: Shielded wallet flow assertions ----
+console.log('\nW-10: Shield / Unshield wallet flow wiring');
+
+test('wallet shield tab exposes shield and unshield actions', () => {
+    assert(walletHtml.includes('data-tab="shield"'), 'Wallet must include Shield tab');
+    assert(walletHtml.includes('onclick="openShieldModal()"'), 'Wallet must wire openShieldModal from UI');
+    assert(walletHtml.includes('onclick="openUnshieldModal()"'), 'Wallet must wire openUnshieldModal from UI');
+    assert(walletHtml.includes('id="shieldModal"'), 'Wallet must include shield modal');
+    assert(walletHtml.includes('id="unshieldModal"'), 'Wallet must include unshield modal');
+});
+
+test('shielded.js confirm handlers call shield/unshield operations', () => {
+    assert(shieldedSrc.includes('function confirmShield()'), 'confirmShield handler must exist');
+    assert(shieldedSrc.includes('shieldMolt(amount);'), 'confirmShield must trigger shieldMolt');
+    assert(shieldedSrc.includes('function confirmUnshield()'), 'confirmUnshield handler must exist');
+    assert(shieldedSrc.includes('unshieldMolt(amount, recipient);'), 'confirmUnshield must trigger unshieldMolt');
+    assert(shieldedSrc.includes("showNotification('Enter a recipient address', 'error')"),
+        'confirmUnshield must validate recipient input');
+});
+
+test('shielded.js submits on-chain shield/unshield transactions and updates UI', () => {
+    assert(shieldedSrc.includes("submitShieldTransaction"), 'Shield flow must submit shield transaction');
+    assert(shieldedSrc.includes("submitUnshieldTransaction"), 'Unshield flow must submit unshield transaction');
+    assert(shieldedSrc.includes('updateShieldedUI();'), 'Shielded flows must refresh wallet shielded UI');
+    assert(shieldedSrc.includes("closeModal('shieldModal')"), 'Shield flow must close shield modal on success');
+    assert(shieldedSrc.includes("closeModal('unshieldModal')"), 'Unshield flow must close unshield modal on success');
+});
+
+// ---- W-11: .molt full lifecycle assertions ----
+console.log('\nW-11: .molt lifecycle workflow wiring');
+
+test('identity.js includes .molt register/renew/transfer/release actions', () => {
+    assert(identitySrc.includes("buildContractCall('register_name'"), 'register_name flow must exist');
+    assert(identitySrc.includes("buildContractCall('renew_name'"), 'renew_name flow must exist');
+    assert(identitySrc.includes("buildContractCall('transfer_name'"), 'transfer_name flow must exist');
+    assert(identitySrc.includes("buildContractCall('release_name'"), 'release_name flow must exist');
+});
+
+test('identity.js resolves and reverse-resolves .molt names', () => {
+    assert(identitySrc.includes("rpc.call('reverseMoltName'"), 'reverseMoltName lookup must exist');
+    assert(identitySrc.includes("rpc.call('resolveMoltName'"), 'resolveMoltName lookup must exist');
+});
+
+test('.molt state-changing actions refresh wallet identity visibility', () => {
+    assert(identitySrc.includes('await retryLoadIdentity(5, 1200);') || identitySrc.includes('await loadIdentity();'),
+        '.molt action flows must refresh identity data after transaction');
+});
+
+// ---- W-12: Vouch + achievement visibility assertions ----
+console.log('\nW-12: Vouch / achievement wallet+explorer visibility');
+
+test('wallet identity action includes vouch transaction and renders vouches/achievements', () => {
+    assert(identitySrc.includes("buildContractCall('vouch'"), 'Wallet must support vouch user action');
+    assert(identitySrc.includes('renderVouchesSection('), 'Wallet must render vouches section');
+    assert(identitySrc.includes('renderAchievementsSection('), 'Wallet must render achievements section');
+});
+
+test('explorer address view renders MoltyID vouches and achievements', () => {
+    assert(explorerAddressSrc.includes("rpcCall('getMoltyIdProfile'"), 'Explorer must fetch MoltyID profile');
+    assert(explorerAddressSrc.includes("rpcCall('reverseMoltName'"), 'Explorer must fetch reverse .molt name');
+    assert(explorerAddressSrc.includes('Vouched By ('), 'Explorer must render vouch visibility section');
+    assert(explorerAddressSrc.includes('Achievements'), 'Explorer must render achievements visibility section');
+    assert(explorerAddressSrc.includes("data-identity-action=\"vouch\""), 'Explorer must expose vouch user action');
 });
 
 test('isValidAddress rejects short strings', () => {
