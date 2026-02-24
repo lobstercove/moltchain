@@ -9,7 +9,8 @@ let ackCount = 0;
 let dexNotifications = 0;
 let genericNotifications = 0;
 
-const requiredAcks = new Set([1, 2, 3]);
+const requiredAcks = new Set([1, 2, 3, 4, 5]);
+const expectedErrorIds = new Set([6]);
 
 function fail(msg) {
     if (finished) return;
@@ -53,7 +54,28 @@ ws.on('open', () => {
         params: {},
     }));
 
-    console.log('SUBSCRIBED to trades:1 + ticker:1 + slots');
+    ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 4,
+        method: 'subscribeDex',
+        params: { channel: 'orders:testaddr' },
+    }));
+
+    ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 5,
+        method: 'subscribeDex',
+        params: { channel: 'positions:testaddr' },
+    }));
+
+    ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 6,
+        method: 'subscribeDex',
+        params: { channel: 'rewards:testaddr' },
+    }));
+
+    console.log('SUBSCRIBED to trades:1 + ticker:1 + slots + orders:testaddr + positions:testaddr (and invalid rewards:testaddr)');
 });
 
 ws.on('message', (raw) => {
@@ -67,6 +89,11 @@ ws.on('message', (raw) => {
     }
 
     if (msg && msg.error) {
+        const errId = msg.id;
+        if (expectedErrorIds.has(errId)) {
+            expectedErrorIds.delete(errId);
+            return;
+        }
         fail(`rpc error received: ${JSON.stringify(msg.error)}`);
         return;
     }
@@ -102,6 +129,10 @@ ws.on('error', (e) => {
 setTimeout(() => {
     if (requiredAcks.size > 0) {
         fail(`missing subscription ACKs for ids: ${Array.from(requiredAcks).join(', ')}`);
+        return;
+    }
+    if (expectedErrorIds.size > 0) {
+        fail(`missing expected invalid-channel error for ids: ${Array.from(expectedErrorIds).join(', ')}`);
         return;
     }
     pass();
