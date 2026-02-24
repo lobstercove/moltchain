@@ -1,7 +1,0 @@
-{
-  "description": "Ed25519 release signing keypair for MoltChain auto-updater",
-  "usage": "Sign SHA256SUMS files for GitHub releases. The public key is embedded in validator/src/updater.rs",
-  "warning": "KEEP THIS FILE SECURE — it controls binary update integrity",
-  "privateKeySeed": "c85a7c8f46e021cb958a432402f2d5ca2c59aff89efbbea9bea62a11900819b8",
-  "publicKey": "dd34731c7bc7e9317ed0f83991930c3859b05ecf2d74f10c4dc08de6b6bad332"
-}
