@@ -357,6 +357,7 @@ Progress update (this session):
 - [x] Three consecutive strict gate runs completed with `PASS:24 FAIL:0 SKIP:0` on each run.
 - [x] Validator rotation evidence report created: `docs/audits/VALIDATOR_ROTATION_EVIDENCE_FEB24_2026.md`.
 - [x] Open-source boundary plan created: `docs/deployment/OPEN_SOURCE_BOUNDARY_PLAN.md`.
+- [x] Post-push fresh strict gate confirmation completed with faucet healthy and strict mode green: `STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh` → `PASS:26 FAIL:0 SKIP:0`.
 
 ---
 
