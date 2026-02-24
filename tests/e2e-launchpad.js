@@ -96,6 +96,19 @@ async function rest(path) {
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+function canonicalDuplicateCount(pairs) {
+    const seen = new Set();
+    let duplicates = 0;
+    for (const pair of pairs || []) {
+        const base = String(pair.baseToken || '');
+        const quote = String(pair.quoteToken || '');
+        const key = base < quote ? `${base}|${quote}` : `${quote}|${base}`;
+        if (seen.has(key)) duplicates += 1;
+        else seen.add(key);
+    }
+    return duplicates;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // Keypair generation
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -381,6 +394,16 @@ async function runTests() {
 
     const hasClawPump = !!CONTRACTS.clawpump;
     const hasGov = !!CONTRACTS.dex_governance;
+
+    let baselinePairDuplicates = 0;
+    try {
+        const baselinePairs = await rest('/pairs');
+        baselinePairDuplicates = canonicalDuplicateCount(baselinePairs?.data || []);
+        assert(true, `Baseline duplicate canonical pairs: ${baselinePairDuplicates}`);
+    } catch (e) {
+        skipped++;
+        console.log(`  ⊘ Baseline pair-duplicate snapshot skipped: ${e.message}`);
+    }
 
     // ══════════════════════════════════════════════════════════════════════
     // 2. Multi-wallet funding
@@ -807,6 +830,13 @@ async function runTests() {
             const first = pairs.data[0];
             assert(first.pairId > 0, `First pair ID: ${first.pairId}`);
             assert(typeof first.lastPrice === 'number', `Has last price: ${first.lastPrice}`);
+
+            // Explicit negative check: no duplicate listing paths (same/reversed pair)
+            const duplicateCount = canonicalDuplicateCount(pairs.data);
+            assert(
+                duplicateCount <= baselinePairDuplicates,
+                `Canonical duplicate pair count did not increase (${baselinePairDuplicates} -> ${duplicateCount})`,
+            );
         }
     } catch (e) {
         failed++;
