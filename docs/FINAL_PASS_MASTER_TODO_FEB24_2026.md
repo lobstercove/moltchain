@@ -123,11 +123,12 @@ Status:
 - Existing coverage: `tests/e2e-launchpad.js`, `tests/services-deep-e2e.sh`, gate suites.
 - Gap tasks:
   - [x] Add explicit test that graduation event triggers listing visibility and tradeability in one workflow.
-  - [ ] Add negative tests for duplicate listing paths after graduation.
+  - [x] Add negative tests for duplicate listing paths after graduation.
 
 Update:
 - Extended `tests/e2e-launchpad.js` with launchpad graduation → DEX visibility/tradability checks (`/launchpad/tokens?filter=graduated`, graduated-token quote rejection, and DEX pairs/ticker visibility assertions).
 - Validated new linkage assertions directly via focused API checks in current runtime (graduated-list shape + DEX visibility).
+- Added explicit canonical duplicate-listing guard in `tests/e2e-launchpad.js` (same/reversed pair normalization) with baseline-vs-current duplicate-count assertion so new workflow execution cannot introduce additional duplicate listings.
 
 ## 3.3 Prediction market workflow (full)
 
