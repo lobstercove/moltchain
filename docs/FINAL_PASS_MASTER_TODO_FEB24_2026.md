@@ -100,13 +100,16 @@ Rule: Reuse existing tests first; do not duplicate unless coverage gap is explic
 Status:
 - Existing coverage: `tests/e2e-dex.js`, `tests/e2e-dex-trading.py`, `tests/test-dex-api-comprehensive.sh`, `tests/test-ws-dex.js`, gate suites.
 - Gap tasks:
-  - [ ] Add explicit DEX UI notification assertions for SL/liquidation/fill events.
+  - [x] Add explicit DEX UI notification assertions for SL/liquidation/fill events.
   - [x] Add explicit liquidation-history persistence checks.
   - [ ] Add WS wiring assertions per action (order, margin update, liquidation, rewards update).
 
 Update:
 - Added liquidation persistence assertions in `tests/e2e-dex-trading.py` (REST `/stats/margin` + `/margin/positions/:id` state validation after forced liquidation).
 - Updated websocket protocol assertions in `tests/test-ws-dex.js` (`subscribeDex`/`subscribeSlots` ACK validation + notification payload validation baseline).
+- Added explicit UI notification assertions in `dex/dex.test.js` for fill/partial-fill, SL/TP set+update, and liquidation-warning messages.
+- Extended websocket channel wiring assertions in `tests/test-ws-dex.js` to include `orders:*` + `positions:*` ACK validation and expected invalid-channel rejection for unsupported `rewards:*`.
+- Remaining blocker for full per-action WS event assertions: validator currently emits trade/ticker events only (`validator/src/main.rs` `emit_dex_events`), with no runtime `emit_order_update`/`emit_position_update` integration yet.
 
 ## 3.2 Launchpad workflow (full)
 
