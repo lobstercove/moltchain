@@ -29,7 +29,7 @@ compatibility adapters on dedicated routes for external tooling.
 
 ## ✅ Release-Verified Operator Baseline (Feb 24, 2026)
 
-This baseline is kept consistent with `skills/validator/SKILL.md`,
+This baseline is kept consistent with `docs/consensus/VALIDATOR_SETUP.md`,
 `developers/rpc-reference.html`, and `developers/ws-reference.html`.
 
 - Canonical JSON-RPC endpoint: `http://localhost:8899`
