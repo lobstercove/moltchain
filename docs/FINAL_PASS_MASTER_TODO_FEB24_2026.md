@@ -159,9 +159,15 @@ Update:
 Status:
 - Existing coverage: wallet audits + gate + contract write tests.
 - Gap tasks:
-  - [ ] Add explicit UI-level shielding/unshielding assertions from wallet flow.
-  - [ ] Add `.molt` namespace full workflow test (register, resolve, reverse resolve, renew/release where supported).
-  - [ ] Add achievement/vouch end-to-end verification from user action to explorer/wallet visibility.
+  - [x] Add explicit UI-level shielding/unshielding assertions from wallet flow.
+  - [x] Add `.molt` namespace full workflow test (register, resolve, reverse resolve, renew/release where supported).
+  - [x] Add achievement/vouch end-to-end verification from user action to explorer/wallet visibility.
+
+Update:
+- Extended `tests/test_wallet_audit.js` with explicit shielded wallet flow assertions (shield/unshield tab wiring, modal handlers, submit calls, and post-action UI refresh checks).
+- Added `.molt` lifecycle workflow assertions in `tests/test_wallet_audit.js` covering register/resolve/reverse-resolve/renew/transfer/release wiring and post-transaction identity refresh behavior.
+- Added wallet+explorer vouch/achievement visibility assertions in `tests/test_wallet_audit.js` verifying user action wiring (`vouch`) and rendered visibility paths in wallet identity and explorer address views.
+- Validation evidence: `node tests/test_wallet_audit.js` passes with new W-10/W-11/W-12 checks.
 
 ## 3.5 Explorer + Developers + Marketplace
 
