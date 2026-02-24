@@ -197,10 +197,10 @@ Execution plan:
 
 Repeat until stable pass achieved N times (set N=3 minimum):
 
-- [ ] Full reset chain state.
-- [ ] Start 3 validators with 15s delay each.
-- [ ] Confirm all RPC/WS endpoints healthy.
-- [ ] Run strict production gate.
+- [x] Full reset chain state.
+- [x] Start 3 validators with 15s delay each.
+- [x] Confirm all RPC/WS endpoints healthy.
+- [x] Run strict production gate (3 consecutive strict passes: `PASS:24 FAIL:0 SKIP:0`).
 - [ ] Archive artifacts (`tests/artifacts/*`, logs, summaries).
 - [ ] If fail: classify root cause (`test harness`, `contract logic`, `rpc/ws`, `ui wiring`) and fix surgically.
 
@@ -265,7 +265,8 @@ Deliverable:
 
 Progress update (this session):
 - [x] One fresh reset + restart completed successfully.
-- [x] One strict gate run completed with `PASS:24 FAIL:0 SKIP:0`.
+- [x] Strict gate reliability hardened in `tests/production-e2e-gate.sh` (retry-based balance checks + strict fail on degraded funding).
+- [x] Three consecutive strict gate runs completed with `PASS:24 FAIL:0 SKIP:0` on each run.
 - [x] Validator rotation evidence report created: `docs/audits/VALIDATOR_ROTATION_EVIDENCE_FEB24_2026.md`.
 - [x] Open-source boundary plan created: `docs/deployment/OPEN_SOURCE_BOUNDARY_PLAN.md`.
 
@@ -275,7 +276,7 @@ Progress update (this session):
 
 - [ ] Contract duplicate-pair guard merged and tested.
 - [ ] UI launch empty-state centering merged.
-- [ ] Strict gate green with no critical skips.
+- [x] Strict gate green with no critical skips.
 - [ ] Coverage gaps either implemented or explicitly documented as remaining blockers.
 - [ ] Validator rotation report present.
 - [ ] SKILL/docs aligned.
