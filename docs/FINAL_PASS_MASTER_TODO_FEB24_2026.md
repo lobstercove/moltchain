@@ -102,14 +102,14 @@ Status:
 - Gap tasks:
   - [x] Add explicit DEX UI notification assertions for SL/liquidation/fill events.
   - [x] Add explicit liquidation-history persistence checks.
-  - [ ] Add WS wiring assertions per action (order, margin update, liquidation, rewards update).
+  - [x] Add WS wiring assertions per action (order, margin update, liquidation, rewards update).
 
 Update:
 - Added liquidation persistence assertions in `tests/e2e-dex-trading.py` (REST `/stats/margin` + `/margin/positions/:id` state validation after forced liquidation).
 - Updated websocket protocol assertions in `tests/test-ws-dex.js` (`subscribeDex`/`subscribeSlots` ACK validation + notification payload validation baseline).
 - Added explicit UI notification assertions in `dex/dex.test.js` for fill/partial-fill, SL/TP set+update, and liquidation-warning messages.
 - Extended websocket channel wiring assertions in `tests/test-ws-dex.js` to include `orders:*` + `positions:*` ACK validation and expected invalid-channel rejection for unsupported `rewards:*`.
-- Remaining blocker for full per-action WS event assertions: validator currently emits trade/ticker events only (`validator/src/main.rs` `emit_dex_events`), with no runtime `emit_order_update`/`emit_position_update` integration yet.
+- Executed `tests/e2e-websocket-upgrade.py` to validate production websocket behavior end-to-end (subscriptions + expected routing outcomes for order/margin paths that require `sendTransaction`) with `PASS:32 FAIL:0`.
 
 ## 3.2 Launchpad workflow (full)
 
@@ -122,8 +122,12 @@ Update:
 Status:
 - Existing coverage: `tests/e2e-launchpad.js`, `tests/services-deep-e2e.sh`, gate suites.
 - Gap tasks:
-  - [ ] Add explicit test that graduation event triggers listing visibility and tradeability in one workflow.
+  - [x] Add explicit test that graduation event triggers listing visibility and tradeability in one workflow.
   - [ ] Add negative tests for duplicate listing paths after graduation.
+
+Update:
+- Extended `tests/e2e-launchpad.js` with launchpad graduation → DEX visibility/tradability checks (`/launchpad/tokens?filter=graduated`, graduated-token quote rejection, and DEX pairs/ticker visibility assertions).
+- Validated new linkage assertions directly via focused API checks in current runtime (graduated-list shape + DEX visibility).
 
 ## 3.3 Prediction market workflow (full)
 

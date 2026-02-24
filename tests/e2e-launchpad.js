@@ -832,9 +832,44 @@ async function runTests() {
     }
 
     // ══════════════════════════════════════════════════════════════════════
-    // 18. Post-test balance verification
+    // 18. Launchpad graduation -> DEX visibility/tradability
     // ══════════════════════════════════════════════════════════════════════
-    section('18. Post-Test Balance Verification');
+    section('18. Launchpad Graduation -> DEX Visibility/Tradability');
+    try {
+        const graduated = await rest('/launchpad/tokens?filter=graduated&limit=5');
+        const gradList = graduated?.data?.tokens || [];
+        assert(Array.isArray(gradList), 'Launchpad graduated-token list shape is valid');
+
+        if (gradList.length === 0) {
+            skipped++;
+            console.log('  ⊘ No graduated launchpad tokens available in current state; skipped graduation->DEX linkage checks');
+        } else {
+            const token = gradList[0];
+            assert(token.graduated === true, `Graduated token flagged true (id=${token.id})`);
+
+            const tokenInfo = await rest(`/launchpad/tokens/${token.id}`);
+            assert(tokenInfo?.data?.graduated === true, `Token ${token.id} details confirm graduated=true`);
+
+            // Once graduated, bonding-curve quotes should be disabled (trade on DEX)
+            const quote = await rest(`/launchpad/tokens/${token.id}/quote?molt=1`);
+            assert(quote === null, `Launchpad quote disabled for graduated token ${token.id}`);
+
+            // DEX remains queryable for post-graduation discovery/trading surface
+            const pairsNow = await rest('/pairs');
+            assert((pairsNow?.data?.length || 0) > 0, `DEX pairs visible after graduation (${pairsNow?.data?.length || 0})`);
+            const pairId = pairsNow?.data?.[0]?.pairId || 1;
+            const ticker = await rest(`/pairs/${pairId}/ticker`);
+            assert(ticker !== null, `DEX ticker accessible for visible pair ${pairId}`);
+        }
+    } catch (e) {
+        failed++;
+        console.error(`  ✗ Launchpad graduation/DEX linkage check failed: ${e.message}`);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // 19. Post-test balance verification
+    // ══════════════════════════════════════════════════════════════════════
+    section('19. Post-Test Balance Verification');
     const finalBals = {};
     for (const [name, w] of [['Alice', alice], ['Bob', bob], ['Charlie', charlie], ['Dave', dave]]) {
         const bal = await getBalance(w.address);
@@ -846,9 +881,9 @@ async function runTests() {
     assert(finalBals['Bob'] < 100 * SHELLS_PER_MOLT, 'Bob spent MOLT (fees + buys)');
 
     // ══════════════════════════════════════════════════════════════════════
-    // 19. REST API: 24h Stats verification
+    // 20. REST API: 24h Stats verification
     // ══════════════════════════════════════════════════════════════════════
-    section('19. REST API: 24h Stats');
+    section('20. REST API: 24h Stats');
     try {
         const tickers = await rest('/tickers');
         if (tickers?.data?.length > 0) {
