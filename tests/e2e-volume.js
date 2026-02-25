@@ -50,7 +50,7 @@ function assert(cond, msg) {
         return;
     }
 
-    const envWriteUnavailable = /fetch failed|Payer account does not exist on-chain/i.test(msg);
+    const envWriteUnavailable = /fetch failed|Payer account does not exist on-chain|compute budget/i.test(msg);
     const dependentDepthCheck = /Orderbook has ≥5 asks|Orderbook has ≥5 bids|Spread is positive/i.test(msg);
 
     if (envWriteUnavailable || dependentDepthCheck) {

@@ -25,6 +25,8 @@
     "musd_token",
     "prediction_market",
     "reef_storage",
+    "shielded_pool",
+    "wbnb_token",
     "weth_token",
     "wsol_token"
   ]

@@ -1,0 +1,920 @@
+
+===============================================================
+  DEEP SERVICES E2E
+  Tue Feb 24 23:49:35 +04 2026
+===============================================================
+RPC: http://localhost:8899
+DEX: http://localhost:8899/api/v1
+
+
+--- 1) Core deep RPC surfaces ---
+  PASS  health
+  PASS  getAllContracts
+  PASS  getPrograms
+  PASS  getAllSymbolRegistry
+  PASS  getMarketListings
+  PASS  getMarketSales
+  PASS  getRewardAdjustmentInfo
+  PASS  getReefStakePoolInfo
+
+--- 2) Contract inventory expectations ---
+  PASS  deployed contract count >= 10 (28)
+  PASS  loaded expected contract catalog (27 entries)
+  PASS  contract deployed: bountyboard
+  PASS  getContractInfo(bountyboard)
+  PASS  getProgramStats(bountyboard)
+  PASS  getProgramStorage(bountyboard)
+  PASS  getProgramCalls(bountyboard)
+  PASS  getContractEvents(bountyboard)
+  PASS  contract deployed: clawpay
+  PASS  getContractInfo(clawpay)
+  PASS  getProgramStats(clawpay)
+  PASS  getProgramStorage(clawpay)
+  PASS  getProgramCalls(clawpay)
+  PASS  getContractEvents(clawpay)
+  PASS  contract deployed: clawpump
+  PASS  getContractInfo(clawpump)
+  PASS  getProgramStats(clawpump)
+  PASS  getProgramStorage(clawpump)
+  PASS  getProgramCalls(clawpump)
+  PASS  getContractEvents(clawpump)
+  PASS  contract deployed: clawvault
+  PASS  getContractInfo(clawvault)
+  PASS  getProgramStats(clawvault)
+  PASS  getProgramStorage(clawvault)
+  PASS  getProgramCalls(clawvault)
+  PASS  getContractEvents(clawvault)
+  PASS  contract deployed: compute_market
+  PASS  getContractInfo(compute_market)
+  PASS  getProgramStats(compute_market)
+  PASS  getProgramStorage(compute_market)
+  PASS  getProgramCalls(compute_market)
+  PASS  getContractEvents(compute_market)
+  PASS  contract deployed: dex_amm
+  PASS  getContractInfo(dex_amm)
+  PASS  getProgramStats(dex_amm)
+  PASS  getProgramStorage(dex_amm)
+  PASS  getProgramCalls(dex_amm)
+  PASS  getContractEvents(dex_amm)
+  PASS  contract deployed: dex_analytics
+  PASS  getContractInfo(dex_analytics)
+  PASS  getProgramStats(dex_analytics)
+  PASS  getProgramStorage(dex_analytics)
+  PASS  getProgramCalls(dex_analytics)
+  PASS  getContractEvents(dex_analytics)
+  PASS  contract deployed: dex_core
+  PASS  getContractInfo(dex_core)
+  PASS  getProgramStats(dex_core)
+  PASS  getProgramStorage(dex_core)
+  PASS  getProgramCalls(dex_core)
+  PASS  getContractEvents(dex_core)
+  PASS  contract deployed: dex_governance
+  PASS  getContractInfo(dex_governance)
+  PASS  getProgramStats(dex_governance)
+  PASS  getProgramStorage(dex_governance)
+  PASS  getProgramCalls(dex_governance)
+  PASS  getContractEvents(dex_governance)
+  PASS  contract deployed: dex_margin
+  PASS  getContractInfo(dex_margin)
+  PASS  getProgramStats(dex_margin)
+  PASS  getProgramStorage(dex_margin)
+  PASS  getProgramCalls(dex_margin)
+  PASS  getContractEvents(dex_margin)
+  PASS  contract deployed: dex_rewards
+  PASS  getContractInfo(dex_rewards)
+  PASS  getProgramStats(dex_rewards)
+  PASS  getProgramStorage(dex_rewards)
+  PASS  getProgramCalls(dex_rewards)
+  PASS  getContractEvents(dex_rewards)
+  PASS  contract deployed: dex_router
+  PASS  getContractInfo(dex_router)
+  PASS  getProgramStats(dex_router)
+  PASS  getProgramStorage(dex_router)
+  PASS  getProgramCalls(dex_router)
+  PASS  getContractEvents(dex_router)
+  PASS  contract deployed: lobsterlend
+  PASS  getContractInfo(lobsterlend)
+  PASS  getProgramStats(lobsterlend)
+  PASS  getProgramStorage(lobsterlend)
+  PASS  getProgramCalls(lobsterlend)
+  PASS  getContractEvents(lobsterlend)
+  PASS  contract deployed: moltauction
+  PASS  getContractInfo(moltauction)
+  PASS  getProgramStats(moltauction)
+  PASS  getProgramStorage(moltauction)
+  PASS  getProgramCalls(moltauction)
+  PASS  getContractEvents(moltauction)
+  PASS  contract deployed: moltbridge
+  PASS  getContractInfo(moltbridge)
+  PASS  getProgramStats(moltbridge)
+  PASS  getProgramStorage(moltbridge)
+  PASS  getProgramCalls(moltbridge)
+  PASS  getContractEvents(moltbridge)
+  PASS  contract deployed: moltcoin
+  PASS  getContractInfo(moltcoin)
+  PASS  getProgramStats(moltcoin)
+  PASS  getProgramStorage(moltcoin)
+  PASS  getProgramCalls(moltcoin)
+  PASS  getContractEvents(moltcoin)
+  PASS  contract deployed: moltdao
+  PASS  getContractInfo(moltdao)
+  PASS  getProgramStats(moltdao)
+  PASS  getProgramStorage(moltdao)
+  PASS  getProgramCalls(moltdao)
+  PASS  getContractEvents(moltdao)
+  PASS  contract deployed: moltmarket
+  PASS  getContractInfo(moltmarket)
+  PASS  getProgramStats(moltmarket)
+  PASS  getProgramStorage(moltmarket)
+  PASS  getProgramCalls(moltmarket)
+  PASS  getContractEvents(moltmarket)
+  PASS  contract deployed: moltoracle
+  PASS  getContractInfo(moltoracle)
+  PASS  getProgramStats(moltoracle)
+  PASS  getProgramStorage(moltoracle)
+  PASS  getProgramCalls(moltoracle)
+  PASS  getContractEvents(moltoracle)
+  PASS  contract deployed: moltpunks
+  PASS  getContractInfo(moltpunks)
+  PASS  getProgramStats(moltpunks)
+  PASS  getProgramStorage(moltpunks)
+  PASS  getProgramCalls(moltpunks)
+  PASS  getContractEvents(moltpunks)
+  PASS  contract deployed: moltswap
+  PASS  getContractInfo(moltswap)
+  PASS  getProgramStats(moltswap)
+  PASS  getProgramStorage(moltswap)
+  PASS  getProgramCalls(moltswap)
+  PASS  getContractEvents(moltswap)
+  PASS  contract deployed: moltyid
+  PASS  getContractInfo(moltyid)
+  PASS  getProgramStats(moltyid)
+  PASS  getProgramStorage(moltyid)
+  PASS  getProgramCalls(moltyid)
+  PASS  getContractEvents(moltyid)
+  PASS  contract deployed: musd_token
+  PASS  getContractInfo(musd_token)
+  PASS  getProgramStats(musd_token)
+  PASS  getProgramStorage(musd_token)
+  PASS  getProgramCalls(musd_token)
+  PASS  getContractEvents(musd_token)
+  PASS  contract deployed: prediction_market
+  PASS  getContractInfo(prediction_market)
+  PASS  getProgramStats(prediction_market)
+  PASS  getProgramStorage(prediction_market)
+  PASS  getProgramCalls(prediction_market)
+  PASS  getContractEvents(prediction_market)
+  PASS  contract deployed: reef_storage
+  PASS  getContractInfo(reef_storage)
+  PASS  getProgramStats(reef_storage)
+  PASS  getProgramStorage(reef_storage)
+  PASS  getProgramCalls(reef_storage)
+  PASS  getContractEvents(reef_storage)
+  PASS  contract deployed: weth_token
+  PASS  getContractInfo(weth_token)
+  PASS  getProgramStats(weth_token)
+  PASS  getProgramStorage(weth_token)
+  PASS  getProgramCalls(weth_token)
+  PASS  getContractEvents(weth_token)
+  PASS  contract deployed: wsol_token
+  PASS  getContractInfo(wsol_token)
+  PASS  getProgramStats(wsol_token)
+  PASS  getProgramStorage(wsol_token)
+  PASS  getProgramCalls(wsol_token)
+  PASS  getContractEvents(wsol_token)
+  PASS  MoltyID contract discoverable
+  PASS  getContractInfo(moltyid)
+  PASS  ClawPump launchpad contract discoverable
+  PASS  getContractInfo(clawpump)
+  PASS  getProgramStats(clawpump)
+
+--- 3) Token lifecycle write-path ---
+  PASS  token write-path disabled
+
+--- 4) DEX API deep checks ---
+  PASS  DEX /pairs
+  PASS  DEX /tickers
+  PASS  DEX /pools
+  PASS  DEX bootstrap pair not yet seeded (MOLT/MUSD) — expected on fresh testnet
+
+--- 5) Faucet and custody service checks ---
+
+--- 6) Program and contract event deep checks ---
+  PASS  getProgramStats(moltyid)
+  PASS  getContractEvents(moltyid)
+
+--- 7) Multisig and key-rotation regression checks ---
+  PASS  governed multisig transfer/approval/rejection path
+  PASS  validator + custody key rotation scenario
+
+--- 8) Admin method access-control smoke checks ---
+  PASS  non-admin rejected for setFeeConfig
+  PASS  non-admin rejected for setRentParams
+
+===============================================================
+DEEP SERVICES E2E SUMMARY
+PASS: 188
+FAIL: 0
+===============================================================
+
+===============================================================
+  CONTRACT WRITE E2E
+  RPC: http://127.0.0.1:8899
+  STRICT_WRITE_ASSERTIONS: 0
+  REQUIRE_FULL_WRITE_ACTIVITY: 0
+  ENFORCE_DOMAIN_ASSERTIONS: 0
+  ENABLE_NEGATIVE_ASSERTIONS: 1
+  REQUIRE_NEGATIVE_CODE_MATCH: 0
+  REQUIRE_SCENARIO_FOR_DISCOVERED: 1
+  MIN_NEGATIVE_ASSERTIONS_EXECUTED: 5
+  REQUIRE_EXPECTED_CONTRACT_SET: 1
+  EXPECTED_CONTRACTS_FILE: /Users/johnrobin/.openclaw/workspace/moltchain/tests/expected-contracts.json
+===============================================================
+
+  PASS  validator healthy
+  PASS  deployer airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.
+  PASS  secondary airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.
+  PASS  secondary funded via transfer sig=b0b3a8e58433c0b7a5330a0b1f5062ef508cdeca95b57b4844092b7b88284959
+  PASS  expected contract set matched discovered deployment
+
+--- moltcoin ---
+  PASS  moltcoin.initialize sig=6f03678d4596e96763d59aaf8fe1aa4654caa68a47b1a236de4c0433ec43cd61
+  PASS  moltcoin.mint sig=05bcea16bb3197d5fb30e2ce0be5033e642bdc6d734f5eb1c72a4ad54f96f277
+  PASS  moltcoin.transfer sig=df2dacf4ba0a83df6d407629724dc6c0149eb6d69d5f0a9fc57be573000a9c04
+  PASS  moltcoin.burn sig=13039d710216a9e2482794b8ee88ea0415bfba0cf160768d33893aedee505e84
+  PASS  moltcoin.activity_floor delta=2 required>=0
+
+--- clawpump ---
+  PASS  clawpump.initialize sig=251945b19bd3a8668bd93c642df557eeff030e699a17b4b993092bf05f841c8e
+  PASS  clawpump.create_token sig=bcd6a26f68d448a17e97e2c39236392567047ff5c266ec976215159188de0b74
+  PASS  clawpump.buy sig=9a3a1c94b520355c18abf113ad9f44512a0a73ecc5e2a06d2480d4cfda2cc89d
+  PASS  clawpump.get_platform_stats sig=efe81b26b63ac0f3c3e633fdebb0045f75781006402953d0576f9a1324c2c8ff
+  PASS  clawpump.activity_floor delta=2 required>=0
+
+--- lobsterlend ---
+  PASS  lobsterlend.initialize sig=143b97144f26e36dbe0abc79dda9850f4e655a06d0510222094733d24bd673de
+  PASS  lobsterlend.deposit sig=6fb41db64fb180330d53374b6be850118409f8287d8e948b89bae5d191150b53
+  PASS  lobsterlend.borrow sig=92ad5d9e5ba8abf14b3b61d876cbb85f4b2f986a9613303637ffc746fe3a0739
+  PASS  lobsterlend.repay sig=2b30ab0150ac4922f57962de0257409d9db4089f69209cd1c9eae51f2dbafba4
+  PASS  lobsterlend.get_protocol_stats sig=ed15ce0c733bda9e28993294ccd017777dcb64bfa6141454fec4b42ff0177474
+  PASS  lobsterlend.activity_floor delta=3 required>=0
+
+--- moltmarket ---
+  PASS  moltmarket.initialize sig=64eb13a3afafec36858c4ef0ecbae3bb3d60d34301ce74032b370380a77e8342
+  PASS  moltmarket.list_nft sig=b5b940718038dc03f7aef57bfab143fe10a51ee359b7ce259baecfb6cda57ba7
+  PASS  moltmarket.cancel_listing sig=2d44242b38c9cc3bca43006c6261c4d59f090db7a46bca1a6bd8ed3c2d344b73
+  PASS  moltmarket.get_marketplace_stats sig=4dbb8f4fc9bf06cbde33776bbad5cd62fffb13cc01ce0a64b29e72eb5177759a
+  PASS  moltmarket.activity_floor delta=0 required>=0
+
+--- moltauction ---
+  PASS  moltauction.initialize sig=f76f68a799dfcdb778953dd0e783024a59c4d94258c050d2c43b4fed57a503d2
+  PASS  moltauction.create_auction sig=d1f0a1c11c320b5fc436c0182f84d7c8b0bad1935692f77544448e4c0b4053da
+  PASS  moltauction.place_bid sig=0864861a629f459199e18e0b44f9095ef8f4becadcd4106ac5f7e9dec7e4a118
+  PASS  moltauction.cancel_auction sig=33a484b49bf01a035a59919d91477eb754a4698f575a0da6efccc41e4862f5f3
+  PASS  moltauction.activity_floor delta=1 required>=0
+
+--- moltbridge ---
+  PASS  moltbridge.initialize sig=706471c7cb011428ec270b85eebc5c06296792c7c2019b3fa70a595c93a9fb2a
+  PASS  moltbridge.set_required_confirmations sig=ecced6c7666d132cdc6089b9dde45a25ef679e858c67a8440e4ecaa0ac20a8c1
+  PASS  moltbridge.set_request_timeout sig=1e0c6a9f26779b4d5e1a610ef5a27db9a78b65eeb3a6422b3ed184202ddb6f74
+  PASS  moltbridge.activity_floor delta=0 required>=0
+
+--- reef_storage ---
+  PASS  reef_storage.initialize sig=add311c6111c5547f117813c8fd5184f64d4c484e6979944b7feaa42b858aa58
+  PASS  reef_storage.register_provider sig=34434a41d65bc92e1cfdd8d4b365e082c1201aad8419c42fb86ac1c18dc8cbff
+  PASS  reef_storage.set_storage_price sig=b99043fe744518a5bbab1489b7192886628972b55131b76969351360b100b7ff
+  PASS  reef_storage.activity_floor delta=0 required>=0
+
+--- clawvault ---
+  PASS  clawvault.initialize sig=61acdee768559b28d28aac5115b58b2520d7c2b3411237a8abd09c10f0d15f62
+  PASS  clawvault.deposit sig=7173feac512b04e56202c6bedd8bf234d1c3932380ce34f73be1c8f8f152041c
+  PASS  clawvault.withdraw sig=7a0217d66a86b7044cce678505393e7485760105753573b61ee508cd78904084
+  PASS  clawvault.get_vault_stats sig=cbb8e422a06674dace3634739486ba6e24fab7cf7bb9097abb732f9069cde85c
+  PASS  clawvault.activity_floor delta=2 required>=0
+
+--- clawpay ---
+  PASS  clawpay.initialize_cp_admin sig=3bbf4daa744c41ef2c2b17f3be29af8b2ba8544f2711ba09c3221bb0cc12c349
+  PASS  clawpay.create_stream sig=b04d1e5ddf74272ebe8f7ab8a50b1ac3e825a2f738d4280ae1becb9ea5cb6dca
+  PASS  clawpay.get_stream_info sig=416612bff38fff7536c797ce8afd7917c41c15765ebbfd2a0184b9e29f8447a9
+  PASS  clawpay.activity_floor delta=0 required>=0
+
+--- moltyid ---
+  PASS  moltyid.initialize sig=33def508123a5011b27107578efc7720acb8e0da6907478e15cb90904bbbe577
+  PASS  moltyid.register_identity sig=23e27a1300cd6ccaf1e6ca80a063f6b3c138fffc1c55aeaa8b5fff1ff4713c0d
+  PASS  moltyid.set_endpoint sig=8cb7c2355af493642b0f606d062bd8427e01e48cccf6023dc7f0f8eccc61b613
+  PASS  moltyid.set_metadata sig=3ad4c7c80bbdeb2530897ee32fae7b8ed635b00439ea3c85f89d5515efdbc8b2
+  PASS  moltyid.set_availability sig=1854e61497545bc88201dfe1a762aaaa31f811ae0fd6e5286211ca8ea5cb1f65
+  PASS  moltyid.set_rate sig=06513fa074d5cf3d99db2e3be7fbb2eea2b4c60c6b662cdb1e8de93d875ed0da
+  PASS  moltyid.add_skill sig=53b21c3304d376ddd4675a6912d144f5b0554e6294aa197e125188541ae35b69
+  PASS  moltyid.vouch sig=c04479031882467f5fb78019b3ab4d64579f60921218d4abe034e420ae8b6c14
+  PASS  moltyid.set_delegate sig=651cd01b2059545919db5b9594ec0e65985f035fded30db73010e0f58b2e5331
+  PASS  moltyid.revoke_delegate sig=d2b282cf0c64c7d89bac457ee43b67b4f5d35d3c3077f0bdf19e506b9789dc45
+  PASS  moltyid.register_identity sig=574ddbff5f0c662ca4f18834c538d1488e35fd4d2f00e04b32a358bfe969cb21
+  PASS  moltyid.get_agent_profile sig=c338db2475ad2aa317a55eb21d568852265ac8a1afe510566f7d5b4adb2b04dc
+  PASS  moltyid.activity_floor delta=2 required>=0
+
+--- moltdao ---
+  PASS  moltdao.initialize_dao sig=f922ef0a77d25f585505f65766cc6a5af23097e5c7b0af6ea0444b722d37e2c3
+  PASS  moltdao.create_proposal_typed sig=c63e7808b9a56f7b42929e4e9d60b8f3579e0da09974b09c325d0593a795aa65
+  PASS  moltdao.vote sig=b49d0a9530b31df9ef2b0bfd6faa3e7d075f1f756ba6a41e55d1664f5ac1f10c
+  PASS  moltdao.activity_floor delta=0 required>=0
+
+--- prediction_market ---
+  PASS  prediction_market.initialize sig=5af046bbbb37f9cf64a80d6a1f510a4b6f689f0ea4b08bde74701b042e90cbb2
+  PASS  prediction_market.set_moltyid_address sig=b40d7ff7a89125fd2e5bb6baca608c3aec8f0b23d9521a254bb864183f408033
+  PASS  prediction_market.set_musd_address sig=ba7b56098cdf6f818b493e6f07a4eb3ab857ee518b9a57e400ca1476ae33b7e4
+  PASS  prediction_market.activity_floor delta=0 required>=0
+
+--- compute_market ---
+  PASS  compute_market.initialize sig=3032a185917334f1f6a06379d3c89e5ad1c304d0985ccfa4ab23c4908b1ba076
+  PASS  compute_market.register_provider sig=4cce83bb55ce64a57c6bdb8d074904b502791aa8eb4225f03c6d0f63a37d7275
+  PASS  compute_market.submit_job sig=d0ceda891696ea7dfffc2c8549f98edc6534950470ff33daac07089f1bf585eb
+  PASS  compute_market.get_job sig=445e59887c673f0cc75ac3c1f5140d4554130e281c9eb83dc696ef5ae3110299
+  PASS  compute_market.activity_floor delta=1 required>=0
+
+--- bountyboard ---
+  PASS  bountyboard.set_identity_admin sig=323939e9ec5239efe089b1156387eb168f95ef4fe5ccb2cb293911201ff01f9e
+  PASS  bountyboard.set_moltyid_address sig=e7379a0d96cff35899c806f6b8915fb4df307205a8830414997a2491ab3f2c4e
+  PASS  bountyboard.set_token_address sig=e285cf6f6bee28db7a55c628fe93e226361aebbc3f8f04d0152c325bb0bcd435
+  PASS  bountyboard.create_bounty sig=f659ab73cfc6c8a5817b12f8ba9a08865097bdbcf11db3523006c3f6c9cc8461
+  PASS  bountyboard.submit_work sig=8815a40ef4fadd6a1b771773bd4a7711380a4a7380898baf94f60c28b58948bb
+  PASS  bountyboard.get_bounty sig=1ec11d52702045850e0d35bfefd855145f83f68a657d01cccfce7c83ef14598c
+  PASS  bountyboard.activity_floor delta=2 required>=0
+
+--- moltoracle ---
+  PASS  moltoracle.initialize_oracle sig=f84a4bc0ab98b7d3f639022a7696efb36991bf4ead909365994e685ef018a612
+  PASS  moltoracle.add_price_feeder sig=848540f9bfec5451a0d3af729ecb2234b91ff1714c1e62a50499ac3ef5fc389a
+  PASS  moltoracle.submit_price sig=f1cfa75e38f7e610a18c3dd1d2c63dba725a4b5a9e9e62d984ef3609804ffa44
+  PASS  moltoracle.submit_price sig=76dd546c6056930875fcd26afb6e9258b690ad3577777e6b176e0c8682ef347b
+  PASS  moltoracle.commit_randomness sig=8691832ccce37b7a7c5d47f766ac05b7e66181a4f3436fb1822b836f677e3fb8
+  PASS  moltoracle.request_randomness sig=531d901b26b68bc7b87ccd28074d7931bbc0cbcd71e47f89ef22a22f94d351ec
+  PASS  moltoracle.get_oracle_stats sig=f3975067911a915732b13e703b4ec3f8eac5084d02703db943e828c07664e5e0
+  PASS  moltoracle.activity_floor delta=5 required>=0
+
+--- moltpunks ---
+  PASS  moltpunks.initialize sig=6a73b734e59a327def9dfb1faad220815ea5ed6b30f14c4a3b3fed98d60f6e54
+  PASS  moltpunks.mint sig=0c6dfb6a734e1a11783619cfeb8edae73ce5e481ea2ede7d7e981fded0bd8dd7
+  PASS  moltpunks.transfer sig=725a26c66f8b7a976da0ce84b3429ba0979fa38cdf4da3b18b149e90f5f620ec
+  PASS  moltpunks.approve sig=9b614cd37988d971718684b042dc4997b37ab5a73a83986ee54d70579f0fc1b1
+  PASS  moltpunks.transfer_from sig=02d96a58b5ea47242f63196665c08e33a555cc7c7f025a8e76ccb0104adc3de7
+  PASS  moltpunks.mint sig=b1aa5c383eeb1eac9ed945ba83371ad401626803b3ac9c4f95f3981bd6756360
+  PASS  moltpunks.activity_floor delta=1 required>=0
+
+--- moltswap ---
+  PASS  moltswap.initialize sig=9216893b628821ac8c8f048d55ef42152850b16580cbde63934034d1cecf67ad
+  PASS  moltswap.set_identity_admin sig=3ea88d5d15cd536f012c87a8c91cbfb8409f04d9f44e84d548fc18dee793123c
+  PASS  moltswap.add_liquidity sig=05e1d3c6754596e6cdd7aaef058b91eb33be5553de01183650523b020fbdf2e2
+  PASS  moltswap.swap_a_for_b sig=dcb0bc9036b7aa2758b60044667a0d6e03bdfb578bd8380c917d05156d238d67
+  PASS  moltswap.set_protocol_fee sig=202228c4f41cd045346efb3a0ef23406cfea3952c9f1e372478025aeb48f4f0e
+  PASS  moltswap.set_protocol_fee sig=5b1cf6a4b026ca92f7e8f8e3b0c38d57dae5e21eed67b180c417516ca7026b4e
+  PASS  moltswap.ms_pause sig=1312af18659e1afb4c4243254f7b834243fd4a8e14d7adb9a7a4cdbe235b87f8
+  PASS  moltswap.ms_unpause sig=57e82fa4b9e336b897847d590effbe898a3b19e15313a59861cc5f9d2889048f
+  PASS  moltswap.activity_floor delta=7 required>=0
+
+--- musd_token ---
+  PASS  musd_token.initialize sig=9418e38144358bbeeb7e04cc0c7259e181e1ac4599bfe9b7c350beefb0e014b0
+  PASS  musd_token.mint sig=09ee67d4d594fd1adf6d18a5f8c677a07c2052d6206b69c136c82acb9ae69735
+  PASS  musd_token.transfer sig=e1f80c28214f063857eaf419c25177977dbdedf4f2d29209188a2731c43443ae
+  PASS  musd_token.approve sig=9705db991a22d339eb2ed54ae84113c9ed7d430bf47307d14da2a9ca2e51e1e0
+  PASS  musd_token.burn sig=b23caec2618ec7021be4670b8c926ec592d71b18cfeebccf30e0e1c5e565b355
+  PASS  musd_token.mint sig=77b87004c354d528649a09cc2c17357005931bf422ea6f9661f674359ffbd549
+  PASS  musd_token.get_transfer_count sig=fbda2ebac29e7a37919eed5762f0b5ca5363be6ec69c6d5a1d347f3695debeb0
+  PASS  musd_token.activity_floor delta=1 required>=0
+
+--- weth_token ---
+  PASS  weth_token.initialize sig=7dbe13df3cf528b134ba8196cb2dcf12d61e37f1ff0fbb3d709c86e2be1fee75
+  PASS  weth_token.mint sig=5f97cc51e003a139fa35d55ece374dad593defb06bb2bab5737c61f2e6f9017b
+  PASS  weth_token.transfer sig=9c1c5c7770cde24ef5d1f5f6d7474f5f196105b08d91d06b44a80aad59d34d17
+  PASS  weth_token.approve sig=d59da2a047055198b8c97f7a2c5b4f36cff4036ab9e588c0392b2f1c99efe836
+  PASS  weth_token.burn sig=8d02882027376dc80a219a761f7711151805d7c941558ea6d396a2deb15b90e5
+  PASS  weth_token.get_transfer_count sig=edb9fca189b4c955040d1f14b8c71e1d5ef1a4cab531f549747e89c60898179b
+  PASS  weth_token.activity_floor delta=2 required>=0
+
+--- wsol_token ---
+  PASS  wsol_token.initialize sig=523e44a509efe60b68d043cc4eadc311c626f3248a1850097186902aa77da6bd
+  PASS  wsol_token.mint sig=3e7f086374d4a94ddc39896315cb5836ffd7767a588adaaa4f0946ce8ecb9ec1
+  PASS  wsol_token.transfer sig=9a4ad1e2ef8d1200fd96da4d415b2bd0e85af9ec89f37c7fb664d2d64c2fca2b
+  PASS  wsol_token.approve sig=6dead61b12138be454e89fd3def5290eb53dec5cbe8e7f4540bd3b4d501e5903
+  PASS  wsol_token.burn sig=ff6433d663d17d2b6fbf67266077ead902a21ef4a341a28649c60bd9b5b6e60d
+  PASS  wsol_token.get_transfer_count sig=a966b90068a0cdfab2a120bc3ac5df0fe490baba860ec3b641637adfeab6b8a8
+  PASS  wsol_token.activity_floor delta=2 required>=0
+
+--- dex_core ---
+  PASS  dex_core.initialize sig=e9657868771a3aa7ffca90c1b2af7eee5cced28d9c4cc437197b151c1b92e18d
+  PASS  dex_core.set_preferred_quote sig=4a9fa23053f9996de0f07ddf281fc0c881824247bb17788edaa15efe4f8fd76d
+  PASS  dex_core.create_pair sig=2b44377a9c9860d8ca7510ae4e7f08722b3449653d5f8de6c2a211057a4474cc
+  PASS  dex_core.update_pair_fees sig=1cfecccbd6fda24258684bb41b11012ae75c6593d00101af892876b76b02f117
+  PASS  dex_core.place_order sig=51dee45ded8fc7fc51d78287ed7eb03dcd2c9a530bf7f3a44382642d78221c0b
+  PASS  dex_core.modify_order sig=0aecef94eb3ccf738f89b5d3e4111c8d8f1b98155ad6a5c477fa463629729a9d
+  PASS  dex_core.cancel_all_orders sig=e1b5b20d69c8406fef5a38f422eb37c8e42a2c328532c585c4b715fc705e0b66
+  PASS  dex_core.get_pair_count sig=de9188cb6e8bdf9fd052878626558bee9ac556a210e7ff13e062be9b04de98af
+  PASS  dex_core.activity_floor delta=1 required>=0
+
+--- dex_amm ---
+  PASS  dex_amm.initialize sig=ce32f0f7b3242112a375efcb19968b262e9f8085a327eefd4586d0ecafaf1cc9
+  PASS  dex_amm.create_pool sig=9e9eb4b8188ed02c434dfa1d0f079e4a212314b2dce22333e3be97045b1f3193
+  PASS  dex_amm.add_liquidity sig=ac4f84fbac8eb3e76d86c4b2c8cb5b76caed4e95e95b1df5f6e9f4400541ad55
+  PASS  dex_amm.swap_exact_in sig=96d47d595dfcae55a5aed69b3b0bf36e0ef76074626f56f57187b3ed6e3a7e48
+  PASS  dex_amm.remove_liquidity sig=5ee0f234e47e9ee07cfaaedb0405252e5958a98175d7858ca833ff1ef2ab2470
+  PASS  dex_amm.get_pool_count sig=cf4244d4dffb37640dc9dd0b015ce680048cf7a8638ef45340df5f38156896e8
+  PASS  dex_amm.get_position_count sig=95de6776703e47a616969883594deb49ec16c43f23247eab75f46ad98d9e7506
+  PASS  dex_amm.activity_floor delta=2 required>=0
+
+--- dex_router ---
+  PASS  dex_router.initialize sig=964816e8292c7a201b739833f88abfdc29b77d70328334925bc87e90a9dc802e
+  PASS  dex_router.set_addresses sig=66774d6fa278e7b64faba9616a324f9537f332fc73aba7b84a2f6c8356652c26
+  PASS  dex_router.register_route sig=8f13ce2d8408b260b8cb0fee1f6d4ee8072bf42314f5eff83fe23adf1af0f482
+  PASS  dex_router.set_route_enabled sig=df05be6e66ddf16678ce595b59034f7117e89bf48d55265a681dc286ef508663
+  PASS  dex_router.get_best_route sig=a4d56d7afbc1963f0ab118aecb7bc5b249d10f4ff8354b2b15af18cd183b5c3c
+  PASS  dex_router.get_route_count sig=59c46d158fa47c4f98360fcbe41e183d97f438df6899d3013f17cecbc828c5bc
+  PASS  dex_router.activity_floor delta=2 required>=0
+
+--- dex_margin ---
+  PASS  dex_margin.initialize sig=70478e75654c5d5599e6038830a1405f133b5807f8e02ac4dd66f37c16325c9a
+  PASS  dex_margin.set_mark_price sig=6544e2d5421f6b6c84a9c267dfd84b55edcccfecf838bcef3175b5fe74141516
+  PASS  dex_margin.open_position sig=29858ca57b9ec2c2ac545c862466f3aa12a0ff7b6a78a077678d3e549d59ef4e
+  PASS  dex_margin.add_margin sig=8b03f8d0e928569824e534558bdbfe92e337e22cd39c42fbd37eff17f8cbd0ae
+  PASS  dex_margin.remove_margin sig=a2e6d065edf40d68b143a3c0950278112df96a141275954326b93aaa8db21e80
+  PASS  dex_margin.close_position sig=931165058e299b58c16c72471d54ecfa0d86fb97137e13fd551222cbfa1ed0f8
+  PASS  dex_margin.get_margin_stats sig=112c9079ef11d32fb933bf5f547b56fa5c4e80131fd7222ee6d16bf8b979f7bb
+  PASS  dex_margin.activity_floor delta=2 required>=0
+
+--- dex_rewards ---
+  PASS  dex_rewards.initialize sig=158ab22231ffb1712c0b7ceb66534d33bc842c3f482d161ab9026387f4f93796
+  PASS  dex_rewards.set_moltcoin_address sig=8ac366716580cf5b6d966652dc9d3f56b6330d28e4958a028e6513c94d3c8b39
+  PASS  dex_rewards.set_rewards_pool sig=679d728ee827fec503819b901d51c17a1c823a879ff58664a46fa787c9325809
+  PASS  dex_rewards.set_reward_rate sig=362ef4b0a0255d155006e666daf0f215cb3286255ffb18fc7fef67f7b2341ce8
+  PASS  dex_rewards.record_trade sig=76fb00acf2fd4208858a1b88c5d987437a3f3aeed215d65a1e569e23dd11371e
+  PASS  dex_rewards.register_referral sig=54a6f446e6b143dd143f0f1bb10467d8681252aefd424e33f7ccc6d0ffa32325
+  PASS  dex_rewards.get_total_distributed sig=00f5d9ffcf3ef9130b6266900df8ae2f3816bb513935525c1a5f647b9c47471d
+  PASS  dex_rewards.activity_floor delta=5 required>=0
+
+--- dex_governance ---
+  PASS  dex_governance.initialize sig=96d332f0ed8a25cf9e71719b89018dedef56112cd8a7407c41126795b3beaf40
+  PASS  dex_governance.set_moltyid_address sig=f568d27d1039cc314bb3f5eb4f82eb4ec85cd08247a1930d20c180cd36d3972b
+  PASS  dex_governance.set_preferred_quote sig=3bc394840e2981b6aba09eaa19f05803d423e0f511a694e49dd8eaa78ae78c63
+  PASS  dex_governance.set_listing_requirements sig=7bd23a587582eef668ff643c1d737eaf082aa42083f4b15efb9a676c40e3f835
+  PASS  dex_governance.propose_fee_change sig=fd9e277d5d340015b366de4d6c28355e7b78697e97529feb7071f448327812bd
+  PASS  dex_governance.get_proposal_count sig=c567fb21633ffa8c0540b844697fbc0effc98d42632f95ed34fb7dee60e5ec0b
+  PASS  dex_governance.activity_floor delta=4 required>=0
+
+--- dex_analytics ---
+  PASS  dex_analytics.initialize sig=97168417a6300d24a495c342bbc3b2ec07ea7cb26271428aabc5bd073c932e0d
+  PASS  dex_analytics.record_trade sig=fb5ebb684c427381d0a512325026fc325e1bbe3f2fe5e791e053e988ef6453dc
+  PASS  dex_analytics.get_record_count sig=4b177e5f59ff0555fa58767b71d91596ef340bb922c5637ee436b9ec9c37492a
+  PASS  dex_analytics.get_last_price sig=ddd5ab88bc8e71c369d23dd9c0a739901766c5043721de4da63a991f59a1de55
+  PASS  dex_analytics.get_24h_stats sig=1040b473730c13b81d182c146ed75c0458c7523b98bcd00ebd83053b42e7d33a
+  PASS  dex_analytics.activity_floor delta=0 required>=0
+  PASS  negative assertion execution floor met (executed=5, required>=5)
+
+===============================================================
+SUMMARY: PASS=181 FAIL=0 SKIP=0
+===============================================================
+REPORT: /Users/johnrobin/.openclaw/workspace/moltchain/tests/artifacts/contracts-write-e2e-report.json
+
+═══════════════════════════════════════════════
+  MoltChain DEX E2E Test Suite
+  RPC: http://127.0.0.1:8899
+═══════════════════════════════════════════════
+
+
+── Setup: Contract Discovery ──
+  ✓ Contract dex_core: zDF7ew4vp8AHU5ZhTmknreNfKqM1fBBpsPgj51gdYdP
+  ✓ Contract dex_amm: DRvxAtR4MNKCN1vZMEWHH4G2nXwVFfubAPTpm7BHiGsS
+  ✓ Contract dex_router: HN9fbhPr6hBo81r1C95G4eHXS2Hww5GgzSiGH55hL4zC
+  ✓ Contract dex_margin: 4xxan88SVugQU4eJ9hfZJpkVHKSs9k6LiGFGTn82LQar
+  ✓ Contract dex_rewards: 7xUoVqzg83mFcVR3uK17bwUGqDj1AYakkdmT43Yc4BBu
+  ✓ Contract dex_governance: 8yBXrzqJRJTV6NCJYedDDksyBFiwqR7DTCQ1EB8ZiCUc
+  ✓ Contract dex_analytics: G6Xev4cZRAibhJieHJ867FhVXUCd7KfzBdzHqVhX63L1
+  ✓ Contract prediction_market: 8UouZdh2aVoWHDrAN8sSn6oomZwJwWzNNcvtkihHmVYy
+  ✓ Token MOLT: ER2gAKdf4PFazATrYzTmet9ysGmW5Y73ihT7dpUwKZR3
+  ✓ Token mUSD: CkR8bwqUF73sbtep6pGB1YJ5aS8c1NH8q1QuigXsgmUN
+
+── Setup: Wallets ──
+  Alice: 44dGRhL7SG3xFJaPHZFX5ioF2PRJdUEL3zzR8VqcEMjH
+  Bob:   HVJVE5NHTsU47aJdTHD55x4v4ZPHySvRUQXA3eHakAjr
+  ✓ Loaded funded genesis wallets (airdrop not required)
+
+── Setup: Airdrop ──
+  ✓ Alice has ~100 MOLT (9999.9730)
+  ✓ Bob has ~100 MOLT (99685907.7093)
+
+── E2E 1: Full Trade Lifecycle ──
+  ↷ Alice sell order unavailable (fetch failed)
+  ✓ Orderbook API returns data
+  ↷ Orderbook post-sell assertion skipped (sell transaction unavailable)
+  ↷ Bob buy order unavailable (fetch failed)
+  ✓ Trades API returns data
+  ✓ Trade history has entries (4 trades)
+  ✓ Trade has price field
+  ✓ Trade has quantity/amount field
+  ↷ Balance-change assertion skipped (trade transaction unavailable)
+
+── E2E 2: Full LP Lifecycle ──
+  ↷ Add liquidity unavailable (fetch failed)
+  ✓ LP positions API returns data
+  ✓ Pools API returns data
+  ✓ Pools list has entries (7)
+  ✓ Collect fees TX submitted (fetch failed)
+  ✓ Remove liquidity TX submitted (fetch failed)
+
+── E2E 3: Prediction Market ──
+  ✓ No prediction markets yet (genesis doesn't create them)
+  ✓ Prediction stats API accessible
+
+── E2E 4: Margin Trading ──
+  ✓ Margin open TX submitted (fetch failed)
+  ✓ Margin positions API accessible
+  ✓ Margin close TX submitted (fetch failed)
+  ✓ Margin info API accessible
+
+── E2E 5: Governance ──
+  ✓ Governance propose TX submitted (fetch failed)
+  ✓ Governance proposals API accessible
+  ✓ Governance vote TX submitted (fetch failed)
+  ✓ Governance stats API accessible
+
+── E2E 6: Rewards ──
+  ✓ Rewards claim TX submitted (fetch failed)
+  ✓ Rewards API accessible
+  ✓ Rewards stats API accessible
+
+── E2E 7: Router ──
+  ✓ Router quote API accessible (Unexpected token 'F', "Failed to "... is not valid JSON)
+
+── E2E 8: Multi-User Trading ──
+  ↷ Alice sell unavailable (fetch failed)
+  ↷ Bob buy unavailable (fetch failed)
+  ✓ Alice final balance: 9999.9730 MOLT
+  ✓ Bob final balance: 99685907.6718 MOLT
+
+── E2E 9: Cross-View Consistency ──
+  ✓ Pairs list available after trades (7 pairs)
+  ✓ Ticker API returns data
+  ✓ Candles API accessible (may be empty on fresh chain)
+  ✓ Analytics stats API accessible
+
+── E2E 10: REST API Coverage ──
+  ✓ GET /pairs returns data
+  ✓ GET /pairs/1 returns data
+  ✓ GET /pairs/1/orderbook returns data
+  ✓ GET /pairs/1/trades returns data
+  ✓ GET /pairs/1/stats returns data
+  ✓ GET /pairs/1/ticker returns data
+  ✓ GET /pools returns data
+  ✓ RPC getSlot returns data
+  ✓ RPC getRecentBlockhash returns data
+  ✓ RPC getLatestBlock returns data
+
+── E2E 11: WebSocket Connectivity ──
+  ✓ WebSocket port 8900 is listening
+
+── E2E 12: Fresh User View ──
+  ✓ Fresh user has 0 balance (expected 0, got 0)
+  ✓ Fresh user sees 7 pairs
+  ✓ Fresh user can view orderbook
+  ✓ Fresh user can view trade history
+  ✓ Fresh user can view pools
+
+── E2E 13: Order Cancellation ──
+  ↷ Place order for cancel unavailable (fetch failed)
+  ✓ Cancel TX submitted (fetch failed)
+
+── E2E 14: Multi-Pair ──
+  ✓ Genesis pairs available (7 pairs)
+  ✓ Pair MOLT/mUSD: price=0.1
+  ✓ Pair MOLT/mUSD: status=active
+  ✓ Pair wSOL/mUSD: price=78.28
+  ✓ Pair wSOL/mUSD: status=active
+  ✓ Pair wETH/mUSD: price=1855
+  ✓ Pair wETH/mUSD: status=active
+  ✓ Pair wSOL/MOLT: price=782.8
+  ✓ Pair wSOL/MOLT: status=active
+  ✓ Pair wETH/MOLT: price=18550
+  ✓ Pair wETH/MOLT: status=active
+  ✓ Pair wBNB/mUSD: price=588.79
+  ✓ Pair wBNB/mUSD: status=active
+  ✓ Pair wBNB/MOLT: price=5887.9
+  ✓ Pair wBNB/MOLT: status=active
+  ✓ wSOL/mUSD order TX submitted (fetch failed)
+
+── E2E 15: Oracle Prices ──
+  ✓ MOLT/mUSD price in range: $0.1
+  ✓ wSOL/mUSD price in range: $78.28
+  ✓ wETH/mUSD price in range: $1855
+
+═══════════════════════════════════════════════
+  Results: 79 passed, 0 failed, 8 skipped
+═══════════════════════════════════════════════
+
+[1m[36m
+╔══════════════════════════════════════════════════╗[0m[0m
+[1m[36m║  MoltChain DEX Trading + RPC Coverage E2E Test   ║[0m[0m
+[1m[36m╚══════════════════════════════════════════════════╝
+[0m[0m
+  Deployer: 3TJyKSqrp9ctQ9QAUqBaXgDnvkmoHETKcDQnQxhAJQwN
+[32m  PASS[0m  Loaded funded genesis trader wallets
+  Trader A: 44dGRhL7SG3xFJaPHZFX5ioF2PRJdUEL3zzR8VqcEMjH
+  Trader B: HVJVE5NHTsU47aJdTHD55x4v4ZPHySvRUQXA3eHakAjr
+[32m  PASS[0m  Trader A already funded
+[32m  PASS[0m  Trader B already funded
+
+[1m[36m══ SECTION 1: Order Lifecycle + Matching ══[0m[0m
+[32m  PASS[0m  DEX create_pair (MOLT/MUSD)
+[32m  PASS[0m  Trader A: limit BUY 10 MOLT @ 0.1
+[32m  PASS[0m  Trader B: limit SELL 5 MOLT @ 0.1 (partial match)
+[32m  PASS[0m  get_best_bid after partial fill
+[32m  PASS[0m  get_best_ask after partial fill
+[32m  PASS[0m  get_spread verification
+[32m  PASS[0m  get_trade_count after matching
+[32m  PASS[0m  Trader A get_user_orders
+[32m  PASS[0m  Trader A cancel_all_orders
+[32m  PASS[0m  get_open_order_count = 0 after cancel
+[32m  PASS[0m  get_total_volume > 0 after trade
+
+[1m[36m══ SECTION 2: Candle / OHLCV Verification ══[0m[0m
+[32m  PASS[0m  Analytics record_trade
+[32m  PASS[0m  Analytics get_ohlcv (1m candles)
+[32m  PASS[0m  Analytics get_24h_stats
+[32m  PASS[0m  Analytics get_last_price
+[32m  PASS[0m  Analytics get_trader_stats
+[32m  PASS[0m  Analytics get_global_stats
+[32m  PASS[0m  Analytics get_record_count > 0
+
+[1m[36m══ SECTION 3: DEX Stats RPC Endpoints ══[0m[0m
+[32m  PASS[0m  RPC getDexCoreStats
+[32m  PASS[0m  RPC getDexAmmStats
+[32m  PASS[0m  RPC getDexMarginStats
+[32m  PASS[0m  RPC getDexRewardsStats
+[32m  PASS[0m  RPC getDexRouterStats
+[32m  PASS[0m  RPC getDexAnalyticsStats
+[32m  PASS[0m  RPC getDexGovernanceStats
+
+[1m[36m══ SECTION 4: Margin Trading ══[0m[0m
+[32m  PASS[0m  Margin set_mark_price
+[32m  PASS[0m  Margin open_position LONG 3x
+[32m  PASS[0m  Margin get_position_info
+[32m  PASS[0m  Margin get_margin_ratio
+[32m  PASS[0m  Margin add_margin
+[32m  PASS[0m  Margin remove_margin
+[32m  PASS[0m  Margin get_user_positions
+[32m  PASS[0m  Margin get_tier_info
+[32m  PASS[0m  Margin open_position LONG 8x (liquidation target)
+[32m  PASS[0m  Margin liquidation baseline captured (0)
+[32m  PASS[0m  Margin set_mark_price (drop for liquidation)
+[32m  PASS[0m  Margin liquidate position
+[32m  PASS[0m  Margin get_liquidation_count
+[32m  PASS[0m  Margin liquidationCount unchanged (0 -> 0); verifying position-state persistence
+[33m  SKIP[0m  Margin position liquidation status fetch
+         HTTP Error 404: Not Found
+[32m  PASS[0m  Margin get_margin_stats
+[32m  PASS[0m  Margin open_position SHORT 2x
+[32m  PASS[0m  Margin close_position (voluntary)
+[32m  PASS[0m  Margin get_total_volume
+[32m  PASS[0m  Margin get_total_pnl
+
+[1m[36m══ SECTION 5: Prediction Market Lifecycle ══[0m[0m
+[32m  PASS[0m  Prediction create_market
+[32m  PASS[0m  Prediction get_market_count
+[32m  PASS[0m  Prediction get_market(0)
+[32m  PASS[0m  Prediction add_initial_liquidity
+[32m  PASS[0m  Prediction get_price outcome=0 (YES)
+[32m  PASS[0m  Prediction quote_buy
+[32m  PASS[0m  Trader A: buy_shares YES
+[32m  PASS[0m  Trader B: buy_shares NO
+[32m  PASS[0m  Prediction get_position Trader A
+[32m  PASS[0m  Prediction get_position Trader B
+[32m  PASS[0m  Trader B: sell_shares NO (partial)
+[32m  PASS[0m  Prediction get_pool_reserves
+[32m  PASS[0m  Prediction get_price_history
+[32m  PASS[0m  Prediction get_user_markets
+[32m  PASS[0m  Prediction get_platform_stats
+[32m  PASS[0m  Prediction submit_resolution (YES wins)
+[32m  PASS[0m  Prediction finalize_resolution
+[33m  SKIP[0m  Prediction pre-redeem market collateral unavailable
+[32m  PASS[0m  Prediction pre-redeem position snapshot captured
+[32m  PASS[0m  Trader A: redeem_shares (winner)
+[32m  PASS[0m  Trader B: redeem_shares (loser — 0 payout)
+[33m  SKIP[0m  Prediction settlement accounting: winner pre-redeem shares unavailable
+[33m  SKIP[0m  Prediction settlement accounting: loser pre-redeem shares unavailable
+[33m  SKIP[0m  Prediction WS lifecycle assertions skipped (no prediction events emitted by running validator)
+         restart validator with latest build to validate runtime emission
+
+[1m[36m══ SECTION 6: Prediction Market RPC ══[0m[0m
+[33m  SKIP[0m  RPC getPredictionStats
+         Not implemented
+[32m  PASS[0m  RPC getPredictionMarkets
+[33m  SKIP[0m  RPC getPredictionMarket
+         Not implemented
+[32m  PASS[0m  RPC getPredictionPositions
+[32m  PASS[0m  RPC getPredictionTraderStats
+[32m  PASS[0m  RPC getPredictionLeaderboard
+[32m  PASS[0m  RPC getPredictionTrending
+[32m  PASS[0m  RPC getPredictionMarketAnalytics
+
+[1m[36m══ SECTION 7: DEX Rewards ══[0m[0m
+[32m  PASS[0m  Rewards record_trade
+[32m  PASS[0m  Rewards get_pending_rewards
+[32m  PASS[0m  Rewards claim_trading_rewards
+
+[1m[36m══ SECTION 8: Router Multi-hop ══[0m[0m
+[32m  PASS[0m  Router register_route WETH→MUSD
+[32m  PASS[0m  Router get_best_route
+[32m  PASS[0m  Router get_route_count
+[32m  PASS[0m  Router get_router_stats
+
+[1m[36m══ SECTION 9: AMM Pool Operations ══[0m[0m
+[32m  PASS[0m  AMM create_pool MOLT/MUSD
+[32m  PASS[0m  AMM add_liquidity
+[32m  PASS[0m  AMM get_pool_info
+[32m  PASS[0m  AMM quote_swap
+[32m  PASS[0m  AMM swap_exact_in
+[32m  PASS[0m  AMM get_tvl
+[32m  PASS[0m  AMM get_amm_stats
+
+[1m[36m══ SECTION 10: Protocol Stats RPC ══[0m[0m
+[32m  PASS[0m  RPC getMoltswapStats
+[33m  SKIP[0m  RPC getLobsterlendStats
+         Not implemented
+[33m  SKIP[0m  RPC getClawpayStats
+         Not implemented
+[33m  SKIP[0m  RPC getBountyboardStats
+         Not implemented
+[32m  PASS[0m  RPC getComputeMarketStats
+[32m  PASS[0m  RPC getReefStorageStats
+[33m  SKIP[0m  RPC getMoltmarketStats
+         Not implemented
+[33m  SKIP[0m  RPC getMoltauctionStats
+         Not implemented
+[33m  SKIP[0m  RPC getMoltpunksStats
+         Not implemented
+
+[1m[36m══ SECTION 11: ReefStake & Staking RPC ══[0m[0m
+[32m  PASS[0m  RPC getReefStakePoolInfo
+[32m  PASS[0m  RPC getStakingPosition
+[32m  PASS[0m  RPC getUnstakingQueue
+[32m  PASS[0m  RPC getRewardAdjustmentInfo
+[32m  PASS[0m  RPC getStakingStatus
+[32m  PASS[0m  RPC getStakingRewards
+
+[1m[36m══ SECTION 12: MoltyID & Name RPC ══[0m[0m
+[32m  PASS[0m  RPC getMoltyIdProfile (null result — no data)
+[32m  PASS[0m  RPC getMoltyIdIdentity (null result — no data)
+[32m  PASS[0m  RPC getMoltyIdReputation
+[32m  PASS[0m  RPC getMoltyIdSkills
+[32m  PASS[0m  RPC getMoltyIdVouches
+[32m  PASS[0m  RPC getMoltyIdAchievements
+[32m  PASS[0m  RPC getMoltyIdStats
+[32m  PASS[0m  RPC getMoltyIdAgentDirectory
+[32m  PASS[0m  RPC resolveMoltName (null result — no data)
+[32m  PASS[0m  RPC reverseMoltName (null result — no data)
+[32m  PASS[0m  RPC searchMoltNames
+
+[1m[36m══ SECTION 13: Chain Core RPC ══[0m[0m
+[32m  PASS[0m  RPC getBalance
+[32m  PASS[0m  RPC getAccount
+[32m  PASS[0m  RPC getSlot
+[32m  PASS[0m  RPC getRecentBlockhash
+[32m  PASS[0m  RPC getLatestBlock
+[32m  PASS[0m  RPC getMetrics
+[32m  PASS[0m  RPC getValidators
+[32m  PASS[0m  RPC getTreasuryInfo
+[32m  PASS[0m  RPC getChainStatus
+[32m  PASS[0m  RPC getNetworkInfo
+[32m  PASS[0m  RPC getPeers
+[32m  PASS[0m  RPC getTotalBurned
+[32m  PASS[0m  RPC getFeeConfig
+[32m  PASS[0m  RPC getRentParams
+[32m  PASS[0m  RPC getGenesisAccounts
+[32m  PASS[0m  RPC getClusterInfo
+[32m  PASS[0m  RPC getTransactionsByAddress
+[32m  PASS[0m  RPC getRecentTransactions
+[32m  PASS[0m  RPC getTokenAccounts
+[32m  PASS[0m  RPC getAccountTxCount
+[32m  PASS[0m  RPC getAllContracts
+[32m  PASS[0m  RPC getSymbolRegistry
+[32m  PASS[0m  RPC getAllSymbolRegistry
+[32m  PASS[0m  RPC getPrograms
+
+[1m[36m══ SECTION 14: DEX Governance ══[0m[0m
+[32m  PASS[0m  Governance propose_new_pair
+[32m  PASS[0m  Governance get_proposal_count
+[32m  PASS[0m  Governance vote (FOR)
+[32m  PASS[0m  Governance get_governance_stats
+
+[1m[36m══ SECTION 15: Multi-Pair Concurrent Trading ══[0m[0m
+[32m  PASS[0m  Create pair WETH/MUSD
+[32m  PASS[0m  Create pair WSOL/MUSD
+[32m  PASS[0m  Create pair MOLT/WETH
+[32m  PASS[0m  DEX get_pair_count (multi-pair)
+[32m  PASS[0m  Multi-pair BUY order on pair 1
+[32m  PASS[0m  Multi-pair BUY order on pair 2
+[32m  PASS[0m  Multi-pair BUY order on pair 3
+[32m  PASS[0m  Multi-pair SELL order on pair 1 (match)
+[32m  PASS[0m  Multi-pair SELL order on pair 2 (match)
+[32m  PASS[0m  Multi-pair SELL order on pair 3 (match)
+[32m  PASS[0m  DEX get_fee_treasury (fees collected)
+
+[1m[36m══ SECTION 16: EVM Compat & Token RPC ══[0m[0m
+[32m  PASS[0m  RPC getEvmRegistration
+[32m  PASS[0m  RPC getTokenBalance
+[32m  PASS[0m  RPC getTokenHolders
+[32m  PASS[0m  RPC getTokenTransfers
+
+[1m══════════════════════════════════════════════════[0m
+  [1mDEX Trading + RPC Coverage E2E Results[0m
+  [32mPASS: 150[0m  [31mFAIL: 0[0m  [33mSKIP: 13[0m  Total: 163
+[1m══════════════════════════════════════════════════[0m
+
+╔═══════════════════════════════════════════════════════════════╗
+║   MoltChain ClawPump Launchpad & Governance E2E Tests        ║
+╚═══════════════════════════════════════════════════════════════╝
+
+── 0. Validator Health ──
+  ✓ Validator reachable, slot=4290
+
+── 1. Contract Discovery ──
+  ✓ ClawPump contract discovered: 3mhfBLcChgdk...
+  ✓ DEX Governance discovered: 8yBXrzqJRJTV...
+  ✓ DEX Core discovered: zDF7ew4vp8AH...
+  ✓ DEX AMM discovered: DRvxAtR4MNKC...
+  ✓ Baseline duplicate canonical pairs: 0
+
+── 2. Multi-Wallet Funding ──
+  Alice:   44dGRhL7SG3xFJaP...
+  Bob:     HVJVE5NHTsU47aJd...
+  Charlie: 5JVHvFdWEFZNkLjR...
+  Dave:    2tJ1SRRdSnXuSBdm...
+  ✓ Loaded funded genesis wallets (airdrop not required)
+  ✓ Alice funded: 9999.9 MOLT
+  ✓ Bob funded: 99685904.9 MOLT
+  ✓ Charlie funded: 348800000.0 MOLT
+
+── 3. ClawPump: Create Token ──
+  ✗ Token creation failed: fetch failed
+
+── 4. ClawPump: Buy on Bonding Curve ──
+
+── 5. ClawPump: Token Info ──
+
+── 6. ClawPump: Sell Tokens ──
+
+── 7. ClawPump: Second Token (Isolated Curves) ──
+  ✗ Token #2 creation/buy failed: fetch failed
+
+── 8. ClawPump: Platform Stats ──
+  ⊘ get_platform_stats skipped: fetch failed
+
+── 9. ClawPump: Edge Cases ──
+  ✓ Zero-amount buy correctly rejected: fetch failed
+  ✓ Buy non-existent token correctly rejected: fetch failed
+  ✓ Sell more than owned correctly rejected: fetch failed
+
+── 10. Governance: Propose New Pair ──
+  ⊘ Governance proposal skipped (may need MoltyID): fetch failed
+
+── 11. Governance: Multi-Voter Voting ──
+
+── 12. Governance: Finalize & Execute ──
+
+── 13. Governance: Read Proposal Info ──
+  ⊘ get_proposal_info skipped: fetch failed
+
+── 14. Governance: Stats ──
+  ⊘ get_governance_stats skipped: fetch failed
+
+── 15. Governance: Fee Change Proposal ──
+  ⊘ Fee change proposal skipped: fetch failed
+
+── 16. REST API: DEX Pairs ──
+  ✓ DEX has 7 trading pairs
+  ✓ First pair ID: 1
+  ✓ Has last price: 0.1
+  ✓ Canonical duplicate pair count did not increase (0 -> 0)
+
+── 17. REST API: Tickers ──
+  ✓ Tickers API returned 7 pairs
+  ✓ Ticker has lastPrice: 0.1
+  ✓ Ticker has change24h: -90
+  ✓ Ticker has volume24h
+
+── 18. Launchpad Graduation -> DEX Visibility/Tradability ──
+  ✓ Launchpad graduated-token list shape is valid
+  ⊘ No graduated launchpad tokens available in current state; skipped graduation->DEX linkage checks
+
+── 19. Post-Test Balance Verification ──
+  Alice: 9999.95 MOLT
+  Bob: 99685904.83 MOLT
+  Charlie: 348800000.00 MOLT
+  Dave: 250000000.28 MOLT
+  ✗ Alice spent MOLT (fees + buys)
+  ✗ Bob spent MOLT (fees + buys)
+
+── 20. REST API: 24h Stats ──
+  ✓ 24h change field present in ticker data
+  ✓ 24h high present (may be 0 if no trades on genesis pairs)
+
+═══════════════════════════════════════════════
+  Results: 24 passed, 4 failed, 6 skipped
+═══════════════════════════════════════════════
+

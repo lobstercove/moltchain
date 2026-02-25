@@ -27,6 +27,40 @@ rpc_result() {
     rpc "$port" "$method" "$params" | python3 -c "import sys,json; print(json.dumps(json.load(sys.stdin).get('result')))" 2>/dev/null
 }
 
+wait_for_health() {
+    local port=$1
+    local attempts=${2:-20}
+    local delay=${3:-1}
+    for _ in $(seq 1 "$attempts"); do
+        local status
+        status=$(rpc "$port" "health" 2>/dev/null || echo "")
+        if echo "$status" | python3 -c "import sys,json; r=json.load(sys.stdin); assert r.get('result') is not None" 2>/dev/null; then
+            return 0
+        fi
+        sleep "$delay"
+    done
+    return 1
+}
+
+wait_for_validator_count() {
+    local port=$1
+    local min_count=$2
+    local attempts=${3:-20}
+    local delay=${4:-1}
+    for _ in $(seq 1 "$attempts"); do
+        local validators vcount
+        validators=$(rpc_result "$port" "getValidators" 2>/dev/null || echo "[]")
+        vcount=$(echo "$validators" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
+        if [ "$vcount" -ge "$min_count" ]; then
+            echo "$vcount"
+            return 0
+        fi
+        sleep "$delay"
+    done
+    echo "0"
+    return 1
+}
+
 cleanup() {
     info "Cleaning up validators..."
     for pid in ${V1PID:-} ${V2PID:-} ${V3PID:-}; do
@@ -75,8 +109,7 @@ sleep 6
 echo ""
 info "Test 1: Health checks"
 for port in 9101 9103 9105; do
-    STATUS=$(rpc "$port" "health" 2>/dev/null || echo "")
-    if echo "$STATUS" | python3 -c "import sys,json; r=json.load(sys.stdin); assert r.get('result') is not None" 2>/dev/null; then
+    if wait_for_health "$port" 20 1; then
         pass "V$(( (port - 9101) / 2 + 1 )) healthy (port $port)"
     else
         fail "V$(( (port - 9101) / 2 + 1 )) NOT healthy (port $port)"
@@ -85,9 +118,7 @@ done
 
 # ── Test 2: All validators registered ───────────────────────
 info "Test 2: Validator registration"
-VALIDATORS=$(rpc_result 9101 "getValidators")
-VCOUNT=$(echo "$VALIDATORS" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
-if [ "$VCOUNT" -ge 2 ]; then
+if VCOUNT=$(wait_for_validator_count 9101 2 20 1); then
     pass "Validator count >= 2 (got $VCOUNT)"
 else
     fail "Expected >= 2 validators, got $VCOUNT"

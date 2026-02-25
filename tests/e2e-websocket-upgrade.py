@@ -159,7 +159,11 @@ async def test_section_1_baseline():
         return False
 
     # 1b. WS subscribeBlocks — trigger a TX to force block production, then listen
-    #     We fire an airdrop in the background to guarantee a block is produced.
+    #     In multi-validator mode requestAirdrop may be disabled, so missing block
+    #     notifications should be treated as non-fatal in that environment.
+    airdrop_probe = await rpc_call("requestAirdrop", ["11111111111111111111111111111111", 1])
+    airdrop_disabled = isinstance(airdrop_probe, dict) and isinstance(airdrop_probe.get("error"), dict) and int(airdrop_probe["error"].get("code", 0)) == -32003
+
     async def trigger_airdrop():
         await asyncio.sleep(2)
         await rpc_call("requestAirdrop", ["11111111111111111111111111111111", 1])
@@ -177,7 +181,10 @@ async def test_section_1_baseline():
         first = msgs[0]["params"]["result"]
         report("PASS", f"WS block notification received (slot={first.get('slot', '?')}), got {len(msgs)} blocks")
     else:
-        report("FAIL", "WS no block notifications within 15s despite triggered airdrop")
+        if airdrop_disabled:
+            report("SKIP", "WS block notifications skipped (requestAirdrop disabled in multi-validator mode)")
+        else:
+            report("FAIL", "WS no block notifications within 15s despite triggered airdrop")
 
     # 1c. WS subscribeSlots
     sub_id, msgs, err = await ws_subscribe("subscribeSlots", timeout=5)

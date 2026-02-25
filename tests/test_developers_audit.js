@@ -11,7 +11,7 @@ const JS  = path.join(DEV, 'js', 'developers.js');
 const CSS = path.join(DEV, 'css', 'developers.css');
 const RPC_REFERENCE_MD = path.join(__dirname, '..', 'docs', 'guides', 'RPC_API_REFERENCE.md');
 
-// All 15 HTML pages
+// All developer HTML pages
 const ALL_PAGES = fs.readdirSync(DEV).filter(f => f.endsWith('.html')).sort();
 
 let pass = 0, fail = 0;
@@ -261,8 +261,8 @@ ok(jsContent.includes("classList.toggle('active')"), 'initMobileNav toggles .act
 // ------------------------------------------------------------------
 console.log('[Structural] Portal-wide checks');
 
-// All 15 HTML pages exist
-ok(ALL_PAGES.length === 15, `15 HTML pages found (got ${ALL_PAGES.length})`);
+// At least baseline set of pages exists (new pages may be added over time)
+ok(ALL_PAGES.length >= 15, `>=15 HTML pages found (got ${ALL_PAGES.length})`);
 
 // developers.js has all 9 init functions
 const initFunctions = [

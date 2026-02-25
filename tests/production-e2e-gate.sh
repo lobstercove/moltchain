@@ -623,8 +623,8 @@ if [[ -z "$AGENT_ADDR" || -z "$HUMAN_ADDR" || -z "$AGENT_KEYPAIR" || ! -f "$AGEN
   skip "Token write path disabled due missing actor/funding prerequisites"
 fi
 
-run_script_stage "RPC comprehensive" "cd '$ROOT_DIR' && bash test-rpc-comprehensive.sh"
-run_script_stage "WebSocket comprehensive" "cd '$ROOT_DIR' && bash test-websocket.sh"
+run_script_stage "RPC comprehensive" "cd '$ROOT_DIR' && bash tests/test-rpc-comprehensive.sh"
+run_script_stage "WebSocket comprehensive" "cd '$ROOT_DIR' && bash tests/test-websocket.sh"
 if [[ "$REQUIRE_MULTI_VALIDATOR" == "1" ]]; then
   run_script_stage "Live multi-validator E2E" "cd '$ROOT_DIR' && MOLTYID_G_PHASE_WRITE_TESTS=1 bash tests/live-e2e-test.sh"
 else
@@ -640,8 +640,8 @@ if [[ "$RUN_CONTRACT_WRITE_SUITE" == "1" ]]; then
 else
   skip "Contract write scenario suite disabled (set RUN_CONTRACT_WRITE_SUITE=1 to enable)"
 fi
-run_script_stage "Contract deployment pipeline" "cd '$ROOT_DIR' && bash test-contract-deployment.sh"
-run_script_stage "CLI comprehensive" "cd '$ROOT_DIR' && bash test-cli-comprehensive.sh"
+run_script_stage "Contract deployment pipeline" "cd '$ROOT_DIR' && bash tests/test-contract-deployment.sh"
+run_script_stage "CLI comprehensive" "cd '$ROOT_DIR' && bash tests/test-cli-comprehensive.sh"
 
 if [[ "$RUN_SDK_SUITE" == "1" ]]; then
   run_script_stage "SDK full matrix" "cd '$ROOT_DIR' && bash scripts/test-all-sdks.sh"

@@ -1,0 +1,493 @@
+
+===============================================================
+  DEEP SERVICES E2E
+  Tue Feb 24 23:41:40 +04 2026
+===============================================================
+RPC: http://localhost:8899
+DEX: http://localhost:8899/api/v1
+
+
+--- 1) Core deep RPC surfaces ---
+  PASS  health
+  PASS  getAllContracts
+  PASS  getPrograms
+  PASS  getAllSymbolRegistry
+  PASS  getMarketListings
+  PASS  getMarketSales
+  PASS  getRewardAdjustmentInfo
+  PASS  getReefStakePoolInfo
+
+--- 2) Contract inventory expectations ---
+  PASS  deployed contract count >= 10 (28)
+  PASS  loaded expected contract catalog (27 entries)
+  PASS  contract deployed: bountyboard
+  PASS  getContractInfo(bountyboard)
+  PASS  getProgramStats(bountyboard)
+  PASS  getProgramStorage(bountyboard)
+  PASS  getProgramCalls(bountyboard)
+  PASS  getContractEvents(bountyboard)
+  PASS  contract deployed: clawpay
+  PASS  getContractInfo(clawpay)
+  PASS  getProgramStats(clawpay)
+  PASS  getProgramStorage(clawpay)
+  PASS  getProgramCalls(clawpay)
+  PASS  getContractEvents(clawpay)
+  PASS  contract deployed: clawpump
+  PASS  getContractInfo(clawpump)
+  PASS  getProgramStats(clawpump)
+  PASS  getProgramStorage(clawpump)
+  PASS  getProgramCalls(clawpump)
+  PASS  getContractEvents(clawpump)
+  PASS  contract deployed: clawvault
+  PASS  getContractInfo(clawvault)
+  PASS  getProgramStats(clawvault)
+  PASS  getProgramStorage(clawvault)
+  PASS  getProgramCalls(clawvault)
+  PASS  getContractEvents(clawvault)
+  PASS  contract deployed: compute_market
+  PASS  getContractInfo(compute_market)
+  PASS  getProgramStats(compute_market)
+  PASS  getProgramStorage(compute_market)
+  PASS  getProgramCalls(compute_market)
+  PASS  getContractEvents(compute_market)
+  PASS  contract deployed: dex_amm
+  PASS  getContractInfo(dex_amm)
+  PASS  getProgramStats(dex_amm)
+  PASS  getProgramStorage(dex_amm)
+  PASS  getProgramCalls(dex_amm)
+  PASS  getContractEvents(dex_amm)
+  PASS  contract deployed: dex_analytics
+  PASS  getContractInfo(dex_analytics)
+  PASS  getProgramStats(dex_analytics)
+  PASS  getProgramStorage(dex_analytics)
+  PASS  getProgramCalls(dex_analytics)
+  PASS  getContractEvents(dex_analytics)
+  PASS  contract deployed: dex_core
+  PASS  getContractInfo(dex_core)
+  PASS  getProgramStats(dex_core)
+  PASS  getProgramStorage(dex_core)
+  PASS  getProgramCalls(dex_core)
+  PASS  getContractEvents(dex_core)
+  PASS  contract deployed: dex_governance
+  PASS  getContractInfo(dex_governance)
+  PASS  getProgramStats(dex_governance)
+  PASS  getProgramStorage(dex_governance)
+  PASS  getProgramCalls(dex_governance)
+  PASS  getContractEvents(dex_governance)
+  PASS  contract deployed: dex_margin
+  PASS  getContractInfo(dex_margin)
+  PASS  getProgramStats(dex_margin)
+  PASS  getProgramStorage(dex_margin)
+  PASS  getProgramCalls(dex_margin)
+  PASS  getContractEvents(dex_margin)
+  PASS  contract deployed: dex_rewards
+  PASS  getContractInfo(dex_rewards)
+  PASS  getProgramStats(dex_rewards)
+  PASS  getProgramStorage(dex_rewards)
+  PASS  getProgramCalls(dex_rewards)
+  PASS  getContractEvents(dex_rewards)
+  PASS  contract deployed: dex_router
+  PASS  getContractInfo(dex_router)
+  PASS  getProgramStats(dex_router)
+  PASS  getProgramStorage(dex_router)
+  PASS  getProgramCalls(dex_router)
+  PASS  getContractEvents(dex_router)
+  PASS  contract deployed: lobsterlend
+  PASS  getContractInfo(lobsterlend)
+  PASS  getProgramStats(lobsterlend)
+  PASS  getProgramStorage(lobsterlend)
+  PASS  getProgramCalls(lobsterlend)
+  PASS  getContractEvents(lobsterlend)
+  PASS  contract deployed: moltauction
+  PASS  getContractInfo(moltauction)
+  PASS  getProgramStats(moltauction)
+  PASS  getProgramStorage(moltauction)
+  PASS  getProgramCalls(moltauction)
+  PASS  getContractEvents(moltauction)
+  PASS  contract deployed: moltbridge
+  PASS  getContractInfo(moltbridge)
+  PASS  getProgramStats(moltbridge)
+  PASS  getProgramStorage(moltbridge)
+  PASS  getProgramCalls(moltbridge)
+  PASS  getContractEvents(moltbridge)
+  PASS  contract deployed: moltcoin
+  PASS  getContractInfo(moltcoin)
+  PASS  getProgramStats(moltcoin)
+  PASS  getProgramStorage(moltcoin)
+  PASS  getProgramCalls(moltcoin)
+  PASS  getContractEvents(moltcoin)
+  PASS  contract deployed: moltdao
+  PASS  getContractInfo(moltdao)
+  PASS  getProgramStats(moltdao)
+  PASS  getProgramStorage(moltdao)
+  PASS  getProgramCalls(moltdao)
+  PASS  getContractEvents(moltdao)
+  PASS  contract deployed: moltmarket
+  PASS  getContractInfo(moltmarket)
+  PASS  getProgramStats(moltmarket)
+  PASS  getProgramStorage(moltmarket)
+  PASS  getProgramCalls(moltmarket)
+  PASS  getContractEvents(moltmarket)
+  PASS  contract deployed: moltoracle
+  PASS  getContractInfo(moltoracle)
+  PASS  getProgramStats(moltoracle)
+  PASS  getProgramStorage(moltoracle)
+  PASS  getProgramCalls(moltoracle)
+  PASS  getContractEvents(moltoracle)
+  PASS  contract deployed: moltpunks
+  PASS  getContractInfo(moltpunks)
+  PASS  getProgramStats(moltpunks)
+  PASS  getProgramStorage(moltpunks)
+  PASS  getProgramCalls(moltpunks)
+  PASS  getContractEvents(moltpunks)
+  PASS  contract deployed: moltswap
+  PASS  getContractInfo(moltswap)
+  PASS  getProgramStats(moltswap)
+  PASS  getProgramStorage(moltswap)
+  PASS  getProgramCalls(moltswap)
+  PASS  getContractEvents(moltswap)
+  PASS  contract deployed: moltyid
+  PASS  getContractInfo(moltyid)
+  PASS  getProgramStats(moltyid)
+  PASS  getProgramStorage(moltyid)
+  PASS  getProgramCalls(moltyid)
+  PASS  getContractEvents(moltyid)
+  PASS  contract deployed: musd_token
+  PASS  getContractInfo(musd_token)
+  PASS  getProgramStats(musd_token)
+  PASS  getProgramStorage(musd_token)
+  PASS  getProgramCalls(musd_token)
+  PASS  getContractEvents(musd_token)
+  PASS  contract deployed: prediction_market
+  PASS  getContractInfo(prediction_market)
+  PASS  getProgramStats(prediction_market)
+  PASS  getProgramStorage(prediction_market)
+  PASS  getProgramCalls(prediction_market)
+  PASS  getContractEvents(prediction_market)
+  PASS  contract deployed: reef_storage
+  PASS  getContractInfo(reef_storage)
+  PASS  getProgramStats(reef_storage)
+  PASS  getProgramStorage(reef_storage)
+  PASS  getProgramCalls(reef_storage)
+  PASS  getContractEvents(reef_storage)
+  PASS  contract deployed: weth_token
+  PASS  getContractInfo(weth_token)
+  PASS  getProgramStats(weth_token)
+  PASS  getProgramStorage(weth_token)
+  PASS  getProgramCalls(weth_token)
+  PASS  getContractEvents(weth_token)
+  PASS  contract deployed: wsol_token
+  PASS  getContractInfo(wsol_token)
+  PASS  getProgramStats(wsol_token)
+  PASS  getProgramStorage(wsol_token)
+  PASS  getProgramCalls(wsol_token)
+  PASS  getContractEvents(wsol_token)
+  PASS  MoltyID contract discoverable
+  PASS  getContractInfo(moltyid)
+  PASS  ClawPump launchpad contract discoverable
+  PASS  getContractInfo(clawpump)
+  PASS  getProgramStats(clawpump)
+
+--- 3) Token lifecycle write-path ---
+  PASS  token write-path disabled
+
+--- 4) DEX API deep checks ---
+  PASS  DEX /pairs
+  PASS  DEX /tickers
+  PASS  DEX /pools
+  PASS  DEX bootstrap pair not yet seeded (MOLT/MUSD) — expected on fresh testnet
+
+--- 5) Faucet and custody service checks ---
+
+--- 6) Program and contract event deep checks ---
+  PASS  getProgramStats(moltyid)
+  PASS  getContractEvents(moltyid)
+
+--- 7) Multisig and key-rotation regression checks ---
+  PASS  governed multisig transfer/approval/rejection path
+  PASS  validator + custody key rotation scenario
+
+--- 8) Admin method access-control smoke checks ---
+  PASS  non-admin rejected for setFeeConfig
+  PASS  non-admin rejected for setRentParams
+
+===============================================================
+DEEP SERVICES E2E SUMMARY
+PASS: 188
+FAIL: 0
+===============================================================
+
+===============================================================
+  CONTRACT WRITE E2E
+  RPC: http://127.0.0.1:8899
+  STRICT_WRITE_ASSERTIONS: 1
+  REQUIRE_FULL_WRITE_ACTIVITY: 1
+  ENFORCE_DOMAIN_ASSERTIONS: 1
+  ENABLE_NEGATIVE_ASSERTIONS: 1
+  REQUIRE_NEGATIVE_CODE_MATCH: 0
+  REQUIRE_SCENARIO_FOR_DISCOVERED: 1
+  MIN_NEGATIVE_ASSERTIONS_EXECUTED: 5
+  REQUIRE_EXPECTED_CONTRACT_SET: 1
+  EXPECTED_CONTRACTS_FILE: /Users/johnrobin/.openclaw/workspace/moltchain/tests/expected-contracts.json
+===============================================================
+
+  PASS  validator healthy
+  PASS  deployer airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.
+  PASS  secondary airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.
+  PASS  secondary funded via transfer sig=4fa6ed241d7a97c224f2bf7ceeac62a328dd6682d1aca5478220b5928342eb23
+  PASS  expected contract set matched discovered deployment
+
+--- moltcoin ---
+  PASS  moltcoin.initialize sig=8f4fedc48670a7df32cb6e076ff8999a4f7e47b567bf882d5797a7d222a13f3a
+  PASS  moltcoin.mint sig=2efd9a51618af0f0baeeca7be221152447bc8b05119bff7aff25035d895f6b51
+  PASS  moltcoin.transfer sig=6ce43d16ab693134c1dfa12367a7186cd0a93a3c48eff29bb164286f050e903b
+  PASS  moltcoin.burn sig=eea1053e300bd5d0b9b206230e68be6ab85436c503b534914311284528e6fda8
+  PASS  moltcoin.activity_floor delta=4 required>=4
+  PASS  moltcoin.token_invariants required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0
+
+--- clawpump ---
+  PASS  clawpump.initialize sig=9a71b19d2e4ddcff4a7c13ffe7e6c80d8059a985a9ddb3b70a0edaf42138ca5b
+  PASS  clawpump.create_token sig=70f64f998fe3a1f3ad3873bc861a2aaa3ec441db271cf650104720efb9be4a96
+  PASS  clawpump.buy sig=7dc263fc02a32d2e0dda0f1aa37402add81f76d69ec6fa98bce9e1a7ed19b994
+  PASS  clawpump.get_platform_stats sig=1e7332eced49aac29e970d5d9cb4e1e6541f3c24779ae56811eb45243f71fb30
+  PASS  clawpump.activity_floor delta=4 required>=3
+  PASS  clawpump.launch_token_flow required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0
+
+--- lobsterlend ---
+  PASS  lobsterlend.initialize sig=17dc4f2b0ad9f9574a68b728e7abdee44c704406dad959d2fef6273f648db01b
+  PASS  lobsterlend.deposit sig=b82cede1d584b8896b32131de2ef2f1580c70d250cf804893877a34e9a8e98c1
+  PASS  lobsterlend.borrow sig=0484e2979d3ec625cb5e4293d32b2a6818ecdf37cd7eb3a90fada661d3fc9b9f
+  PASS  lobsterlend.repay sig=ad3a62b3763ba8f1654c5cc6da43659b79494344aec7f306acbe9d2a9921470b
+  PASS  lobsterlend.get_protocol_stats sig=aab5b1ecdb4f43052b1a061df3f70f78c36af9d43c47a76fd9ef9b4fcdd0a3f4
+  PASS  lobsterlend.activity_floor delta=5 required>=4
+  PASS  lobsterlend.lending_credit_flow required steps satisfied, calls_delta=5, events_delta=0, storage_delta=0
+
+--- moltmarket ---
+  FAIL  moltmarket.initialize error=no observable write delta (calls 13->13, events 0->0, storage 4->4)
+  FAIL  moltmarket.list_nft error=no observable write delta (calls 13->13, events 0->0, storage 4->4)
+  FAIL  moltmarket.cancel_listing error=no observable write delta (calls 13->13, events 0->0, storage 4->4)
+  PASS  moltmarket.get_marketplace_stats sig=d4ad257f332ede4ab50479c4f032a0c90d9aa098ede55d9869aa3b5d5b7e5b9e
+  FAIL  moltmarket.activity_floor delta=0 (calls 13->13, events 0->0, storage 4->4) required>=3
+  FAIL  moltmarket.market_listing_flow missing required successful steps: list_nft,cancel_listing
+
+--- moltauction ---
+  FAIL  moltauction.initialize error=no observable write delta (calls 20->20, events 0->0, storage 4->4)
+  FAIL  moltauction.create_auction error=no observable write delta (calls 20->20, events 0->0, storage 4->4)
+  FAIL  moltauction.place_bid error=no observable write delta (calls 20->20, events 0->0, storage 4->4)
+  FAIL  moltauction.cancel_auction error=no observable write delta (calls 20->20, events 0->0, storage 4->4)
+  FAIL  moltauction.activity_floor delta=0 (calls 20->20, events 0->0, storage 4->4) required>=4
+  FAIL  moltauction.auction_bid_flow missing required successful steps: create_auction,place_bid
+
+--- moltbridge ---
+  FAIL  moltbridge.initialize error=no observable write delta (calls 16->16, events 0->0, storage 9->9)
+  PASS  moltbridge.set_required_confirmations sig=8bba6c2c15ef187fb58fa697d33eea8658284b733df81cc221df7bc1394876b2
+  PASS  moltbridge.set_request_timeout sig=0c67855c6c978cd37d8c16b5a7cd928d982f2d0e03f0b43ae34004f4cd8c4036
+  FAIL  moltbridge.activity_floor delta=2 (calls 16->18, events 0->0, storage 9->9) required>=3
+  PASS  moltbridge.bridge_admin_config required steps satisfied, calls_delta=2, events_delta=0, storage_delta=0
+
+--- reef_storage ---
+  FAIL  reef_storage.initialize error=no observable write delta (calls 21->21, events 0->0, storage 5->5)
+  FAIL  reef_storage.register_provider error=no observable write delta (calls 21->21, events 0->0, storage 5->5)
+  FAIL  reef_storage.set_storage_price error=no observable write delta (calls 21->21, events 0->0, storage 5->5)
+  FAIL  reef_storage.activity_floor delta=0 (calls 21->21, events 0->0, storage 5->5) required>=3
+  FAIL  reef_storage.storage_provider_flow missing required successful steps: register_provider,set_storage_price
+
+--- clawvault ---
+  FAIL  clawvault.initialize error=no observable write delta (calls 16->16, events 0->0, storage 7->7)
+  PASS  clawvault.deposit sig=e6abcd938366f5a8b3956174553c0d50e4a58c384158b8c1616b060003626773
+  PASS  clawvault.withdraw sig=dd0555120a51e9f9fb49d2b10c5cb4809f1d61af15bf0ba632fc0a45e0acd46e
+  PASS  clawvault.get_vault_stats sig=37218b3f02411307416ebfb6aec8da26c385297497e20283441a155c27e86bee
+  PASS  clawvault.activity_floor delta=3 required>=3
+  PASS  clawvault.vault_roundtrip_flow required steps satisfied, calls_delta=3, events_delta=0, storage_delta=0
+
+--- clawpay ---
+  PASS  clawpay.initialize_cp_admin sig=580f1cbcc736df7981a238996028518ed839627f9a234b2600407498a16398ef
+  PASS  clawpay.create_stream sig=989169597b0ed692a0f496cfb5434b12757c445496e54e3242d44c691dd7900c
+  PASS  clawpay.get_stream_info sig=c866c5b438e74231b2b08e5248759a04463ea522441af4ec56548ae31c927128
+  PASS  clawpay.activity_floor delta=3 required>=2
+
+--- moltyid ---
+  PASS  moltyid.initialize sig=b149deb376dc43ac0305420eb027c82db9b4e7d192a702c6c0d5618a839e00e8
+  FAIL  moltyid.register_identity error=no observable write delta (calls 93->93, events 0->0, storage 272->272)
+  FAIL  moltyid.set_endpoint error=no observable write delta (calls 93->93, events 0->0, storage 272->272)
+  FAIL  moltyid.set_metadata error=no observable write delta (calls 93->93, events 0->0, storage 272->272)
+  FAIL  moltyid.set_availability error=no observable write delta (calls 93->93, events 0->0, storage 272->272)
+  PASS  moltyid.set_rate sig=27dd88b7d9fe5876c9d5564d58a430243aa26ae9a632f6f224fd6049c8f082aa
+  PASS  moltyid.add_skill sig=5fadc08142c4955b44a76e6b50f916256411689bc7c326a931b253961966cb1b
+  PASS  moltyid.vouch sig=955778b2ba584fa17fcd8d6e6e14b13b55af46660d1fa3b9b28259dd1b1c8b5f
+  PASS  moltyid.set_delegate sig=51807b4bd6ffa8797db07d42098eb00f9d0410c07c5c0fb6de721b0aa06ad67e
+  FAIL  moltyid.revoke_delegate error=no observable write delta (calls 97->97, events 0->0, storage 272->272)
+  PASS  moltyid.register_identity sig=be0daf4f57e0f8190eed7aa8c538659fc8a4aebe8a929621f73c205c44222aa1
+  PASS  moltyid.get_agent_profile sig=43ac10e08e35ec369d4fc0940366ad2859f5d30b2dde25f8d100564c6367ca0f
+  FAIL  moltyid.activity_floor delta=5 (calls 92->97, events 0->0, storage 272->272) required>=10
+  FAIL  moltyid.identity_lifecycle_flow missing required successful steps: set_endpoint,set_metadata,revoke_delegate
+
+--- moltdao ---
+  FAIL  moltdao.initialize_dao error=no observable write delta (calls 19->19, events 0->0, storage 8->8)
+  PASS  moltdao.create_proposal_typed sig=1b05ad870a82b811f749c291de4a400ea1405f646ee11964db2c88afbe2839de
+  PASS  moltdao.vote sig=6886c18ed637ad1faad5c8aac625b57df9afcaceeef9e7b2d47d906d69dda456
+  FAIL  moltdao.activity_floor delta=2 (calls 19->21, events 0->0, storage 8->8) required>=3
+  PASS  moltdao.dao_governance_flow required steps satisfied, calls_delta=2, events_delta=0, storage_delta=0
+
+--- prediction_market ---
+  FAIL  prediction_market.initialize error=no observable write delta (calls 38->38, events 0->0, storage 12->12)
+  FAIL  prediction_market.set_moltyid_address error=no observable write delta (calls 38->38, events 0->0, storage 12->12)
+  FAIL  prediction_market.set_musd_address error=no observable write delta (calls 38->38, events 0->0, storage 12->12)
+  FAIL  prediction_market.activity_floor delta=0 (calls 38->38, events 0->0, storage 12->12) required>=3
+  FAIL  prediction_market.prediction_admin_wiring missing required successful steps: set_moltyid_address,set_musd_address
+
+--- compute_market ---
+  FAIL  compute_market.initialize error=no observable write delta (calls 14->14, events 0->0, storage 2->2)
+  FAIL  compute_market.register_provider error=no observable write delta (calls 14->14, events 0->0, storage 2->2)
+  FAIL  compute_market.submit_job error=no observable write delta (calls 14->14, events 0->0, storage 2->2)
+  PASS  compute_market.get_job sig=2184c7c6b2d30275640a461d6bd2da96232199e87005ebc57f421aad86d02e29
+  FAIL  compute_market.activity_floor delta=0 (calls 14->14, events 0->0, storage 2->2) required>=3
+  FAIL  compute_market.compute_job_flow missing required successful steps: register_provider,submit_job
+
+--- bountyboard ---
+  FAIL  bountyboard.set_identity_admin error=no observable write delta (calls 17->17, events 0->0, storage 2->2)
+  FAIL  bountyboard.set_moltyid_address error=no observable write delta (calls 17->17, events 0->0, storage 2->2)
+  PASS  bountyboard.set_token_address sig=ada1f97076b24d588185a492db2edc61e3a89daa2c1d8e02ae766a4e5dddb785
+  FAIL  bountyboard.create_bounty error=no observable write delta (calls 18->18, events 0->0, storage 2->2)
+  FAIL  bountyboard.submit_work error=no observable write delta (calls 18->18, events 0->0, storage 2->2)
+  PASS  bountyboard.get_bounty sig=926ab80d8d8d0c04e704a8b75bee4f9fe8e131b2d1bc211ff32ba30caa47aaab
+  FAIL  bountyboard.activity_floor delta=1 (calls 17->18, events 0->0, storage 2->2) required>=5
+  FAIL  bountyboard.bounty_submission_flow missing required successful steps: create_bounty,submit_work
+
+--- moltoracle ---
+  FAIL  moltoracle.initialize_oracle error=no observable write delta (calls 36->36, events 0->0, storage 8->8)
+  FAIL  moltoracle.add_price_feeder error=no observable write delta (calls 36->36, events 0->0, storage 8->8)
+  FAIL  moltoracle.submit_price error=no observable write delta (calls 36->36, events 0->0, storage 8->8)
+  PASS  moltoracle.submit_price sig=8ed0afed9b40c21db2ea2f9656a11d6e3fce821bc0934233372c8cedc44782a8
+  PASS  moltoracle.commit_randomness sig=9ca490415f9d85c796f7fd01969986190aaa8d092d1df3ae0ccc7d1f98c101f1
+  PASS  moltoracle.request_randomness sig=67053eda38e6e3173a14559472851925e104f7c823e6feb4697e6d24573ac9b5
+  PASS  moltoracle.get_oracle_stats sig=d708c6ce669c822109e422c4d50efd07b60c5d75164fdef799e497b978a18a5a
+  FAIL  moltoracle.activity_floor delta=3 (calls 36->39, events 0->0, storage 8->8) required>=5
+  FAIL  moltoracle.oracle_freshness_flow missing required successful steps: add_price_feeder
+  PASS  moltoracle.oracle_signal_delta calls_delta=3, events_delta=0
+
+--- moltpunks ---
+  PASS  moltpunks.initialize sig=c5fccc56d1c73952894f47305021c1828e236566edbe02e96950c000518e7ad6
+  FAIL  moltpunks.mint error=no observable write delta (calls 26->26, events 0->0, storage 4->4)
+  PASS  moltpunks.transfer sig=e52933456361d0e9f452fcba448284f922161eda5fe5b00c0958613560f1e050
+  PASS  moltpunks.approve sig=19e67e34d927039d449dd0d47121493eae80ad4eaee5b9cf739ce6cf0b2bdc2a
+  FAIL  moltpunks.transfer_from error=no observable write delta (calls 27->27, events 0->0, storage 4->4)
+  PASS  moltpunks.mint sig=5c609738a17011f71ab8ad24cce471f0739d9fdc8fd7dc6c9dce10b24f203fc6
+  FAIL  moltpunks.activity_floor delta=2 (calls 25->27, events 0->0, storage 4->4) required>=4
+  FAIL  moltpunks.nft_ownership_flow missing required successful steps: transfer_from
+
+--- moltswap ---
+  FAIL  moltswap.initialize error=no observable write delta (calls 31->31, events 0->0, storage 7->7)
+  PASS  moltswap.set_identity_admin sig=5592838d73eee37c03547e9f792ac34d4a4500394df9be878fac5401c57caa4c
+  FAIL  moltswap.add_liquidity error=no observable write delta (calls 32->32, events 0->0, storage 7->7)
+  PASS  moltswap.swap_a_for_b sig=3ee7aa100cfab12b89da3bf7ede37b2aaa40b3aedc63beb717ce839b0b8b241f
+  PASS  moltswap.set_protocol_fee sig=75e081576227d4783606d20c714cd28240337a01837b6975124571690a02c2b6
+  PASS  moltswap.set_protocol_fee sig=384aee366f81365dad42b56025da4bb34ffa53826bf8da1f5138beeeaf3a2bb0
+  FAIL  moltswap.ms_pause error=no observable write delta (calls 34->34, events 0->0, storage 7->7)
+  FAIL  moltswap.ms_unpause error=no observable write delta (calls 34->34, events 0->0, storage 7->7)
+  FAIL  moltswap.activity_floor delta=3 (calls 31->34, events 0->0, storage 7->7) required>=7
+  FAIL  moltswap.swap_reserve_movement missing required successful steps: add_liquidity
+
+--- musd_token ---
+  PASS  musd_token.initialize sig=ebf11b79184ec023e974c9816b1c8fde2759ab0dcd073753360eb69dec0b8642
+  FAIL  musd_token.mint error=no observable write delta (calls 22->22, events 0->0, storage 7->7)
+  FAIL  musd_token.transfer error=no observable write delta (calls 22->22, events 0->0, storage 7->7)
+  FAIL  musd_token.approve error=no observable write delta (calls 22->22, events 0->0, storage 7->7)
+  PASS  musd_token.burn sig=ae2559954ec1166c0a7e6766d40861935ba54202cdb246d6f72a6091b949e32d
+  PASS  musd_token.mint sig=9eb13ac629e046252b8fa1c12f982faf3ed91688a3a530ee0b9fab8667149548
+  PASS  musd_token.get_transfer_count sig=6cfb1c79462b026e9145d53fe515319d61e559c901e415cfa1f9dffdd467cef5
+  FAIL  musd_token.activity_floor delta=4 (calls 21->25, events 0->0, storage 7->7) required>=5
+  FAIL  musd_token.token_invariants missing required successful steps: transfer
+
+--- weth_token ---
+  PASS  weth_token.initialize sig=974c5f2cc0f2512fee986341dd664985925214ede5637eb2678cad18ea006509
+  PASS  weth_token.mint sig=59c5859907adbe0f86d12084d342e0dd406477da76136b9f4abfef612c11bde3
+  FAIL  weth_token.transfer error=no observable write delta (calls 32->32, events 0->0, storage 7->7)
+  PASS  weth_token.approve sig=571f76c1cb0352b71d7775f431ae14ba98417091bf4e6d78f922f15a11fe0f79
+  FAIL  weth_token.burn error=no observable write delta (calls 33->33, events 0->0, storage 7->7)
+  PASS  weth_token.get_transfer_count sig=411689f694388902869bdd8e1fcd5bb818acc9dd9ac3f4448963799d228ec8b8
+  FAIL  weth_token.activity_floor delta=4 (calls 30->34, events 0->0, storage 7->7) required>=5
+  FAIL  weth_token.token_invariants missing required successful steps: transfer,burn
+
+--- wsol_token ---
+  FAIL  wsol_token.initialize error=no observable write delta (calls 28->28, events 0->0, storage 7->7)
+  FAIL  wsol_token.mint error=no observable write delta (calls 28->28, events 0->0, storage 7->7)
+  FAIL  wsol_token.transfer error=no observable write delta (calls 28->28, events 0->0, storage 7->7)
+  FAIL  wsol_token.approve error=no observable write delta (calls 28->28, events 0->0, storage 7->7)
+  PASS  wsol_token.burn sig=0a44f5a5c464cb7ad9259757ec5b06545bed00b3ff7174c9cd1cf05baf6f604c
+  PASS  wsol_token.get_transfer_count sig=9237f1bb84d5bfe8c406cff5799f6aea772e10fb23c3002d39eeefb86a278539
+  FAIL  wsol_token.activity_floor delta=1 (calls 28->29, events 0->0, storage 7->7) required>=5
+  FAIL  wsol_token.token_invariants missing required successful steps: mint,transfer
+
+--- dex_core ---
+  FAIL  dex_core.initialize error=no observable write delta (calls 37->37, events 0->0, storage 72->72)
+  FAIL  dex_core.set_preferred_quote error=no observable write delta (calls 37->37, events 0->0, storage 72->72)
+  FAIL  dex_core.create_pair error=no observable write delta (calls 37->37, events 0->0, storage 72->72)
+  PASS  dex_core.update_pair_fees sig=2da41acd99aa74821a41fd561ca496c830412bc4eb6615aa7fb3ad1af007367d
+  PASS  dex_core.place_order sig=4d18a508157a70a7bb4605acea92f3b70708b0ab0edf4790cc439f43a8c14c6e
+  FAIL  dex_core.modify_order error=no observable write delta (calls 39->39, events 0->0, storage 72->72)
+  FAIL  dex_core.cancel_all_orders error=no observable write delta (calls 39->39, events 0->0, storage 72->72)
+  PASS  dex_core.get_pair_count sig=6b4e6de4b909bfefdfabc314dec1bca690056e4f38725cfe809281abc740bc10
+  FAIL  dex_core.activity_floor delta=2 (calls 37->39, events 0->0, storage 72->72) required>=7
+
+--- dex_amm ---
+  FAIL  dex_amm.initialize error=no observable write delta (calls 38->38, events 0->0, storage 22->22)
+  FAIL  dex_amm.create_pool error=no observable write delta (calls 38->38, events 0->0, storage 22->22)
+  FAIL  dex_amm.add_liquidity error=no observable write delta (calls 38->38, events 0->0, storage 22->22)
+  PASS  dex_amm.swap_exact_in sig=7af6d48ccd790b65c569f02faf5d157204f918425456586237fda131d9f9b9e9
+  PASS  dex_amm.remove_liquidity sig=57b577c11acfabda01d04f8940ed0673370975a04abcf67a1e2bb5fa9d3f0511
+  PASS  dex_amm.get_pool_count sig=a144455c2f38d49f2a5e003e6fbfd6ba511473a15b9a13c58827caa4b5fb5680
+  PASS  dex_amm.get_position_count sig=dfcdac407565ecfaa194b645c66dd1a28258a47a93058a814ab9705c192ce8ba
+  FAIL  dex_amm.activity_floor delta=3 (calls 38->41, events 0->0, storage 22->22) required>=5
+
+--- dex_router ---
+  FAIL  dex_router.initialize error=no observable write delta (calls 39->39, events 0->0, storage 29->29)
+  FAIL  dex_router.set_addresses error=no observable write delta (calls 39->39, events 0->0, storage 29->29)
+  FAIL  dex_router.register_route error=no observable write delta (calls 39->39, events 0->0, storage 29->29)
+  PASS  dex_router.set_route_enabled sig=06affea1dda218723e87a5260d928b3e11b0f8a1a7072a97f9a9291b6312d68a
+  PASS  dex_router.get_best_route sig=c15eafa3761f49d13c40b5957181169740d57b94bcab372a4ecd56249ae0594b
+  PASS  dex_router.get_route_count sig=7c52626455915a7f8ce75085072eef8dd2553e81faff465664d763e1af0f8fd0
+  FAIL  dex_router.activity_floor delta=1 (calls 39->40, events 0->0, storage 29->29) required>=4
+
+--- dex_margin ---
+  FAIL  dex_margin.initialize error=no observable write delta (calls 40->40, events 0->0, storage 27->27)
+  FAIL  dex_margin.set_mark_price error=no observable write delta (calls 40->40, events 0->0, storage 27->27)
+  FAIL  dex_margin.open_position error=no observable write delta (calls 40->40, events 0->0, storage 27->27)
+  FAIL  dex_margin.add_margin error=no observable write delta (calls 40->40, events 0->0, storage 27->27)
+  FAIL  dex_margin.remove_margin error=no observable write delta (calls 40->40, events 0->0, storage 27->27)
+  FAIL  dex_margin.close_position error=no observable write delta (calls 40->40, events 0->0, storage 27->27)
+  PASS  dex_margin.get_margin_stats sig=3b07cd362d573768a877544a4c570ee764fa84b85fcf6bc80367513a32915c4e
+  FAIL  dex_margin.activity_floor delta=0 (calls 40->40, events 0->0, storage 27->27) required>=6
+
+--- dex_rewards ---
+  FAIL  dex_rewards.initialize error=no observable write delta (calls 33->33, events 0->0, storage 6->6)
+  PASS  dex_rewards.set_moltcoin_address sig=1971ac44ca0fa1fca15f2f08b4d41b90c48e691972f2caf402eaaa337612e73e
+  PASS  dex_rewards.set_rewards_pool sig=952c6f3b906e65aabd670578c7be1482e02f49eebf4ce7848f0677c97e3a19a8
+  PASS  dex_rewards.set_reward_rate sig=d42aed417e8e6a258a90de8a1e3d7e420b3a01a15ae2401ea1d3dc6a5ceb299e
+  FAIL  dex_rewards.record_trade error=no observable write delta (calls 36->36, events 0->0, storage 6->6)
+  FAIL  dex_rewards.register_referral error=no observable write delta (calls 36->36, events 0->0, storage 6->6)
+  PASS  dex_rewards.get_total_distributed sig=6424236e7680e70d700ed762cbb6617a51f3a0de8beae963f2a81842a7892e02
+  FAIL  dex_rewards.activity_floor delta=4 (calls 33->37, events 0->0, storage 6->6) required>=6
+
+--- dex_governance ---
+  PASS  dex_governance.initialize sig=4279d578d247d24e3a16b1de8df9b3e091248ca3cdcccd91170c93dea844615d
+  FAIL  dex_governance.set_moltyid_address error=no observable write delta (calls 34->34, events 0->0, storage 13->13)
+  FAIL  dex_governance.set_preferred_quote error=no observable write delta (calls 34->34, events 0->0, storage 13->13)
+  FAIL  dex_governance.set_listing_requirements error=no observable write delta (calls 34->34, events 0->0, storage 13->13)
+  PASS  dex_governance.propose_fee_change sig=ab0f6eb1510268ab88d3c72247d8ca0764d1d7a42d31f3b33d789b4f7b53450a
+  PASS  dex_governance.get_proposal_count sig=ba9825736af4a43c2df589ff3a37bfacc4308edfbd71ba74bf64639f8d5936cd
+  FAIL  dex_governance.activity_floor delta=1 (calls 33->34, events 0->0, storage 13->14) required>=5
+
+--- dex_analytics ---
+  FAIL  dex_analytics.initialize error=no observable write delta (calls 17->17, events 0->0, storage 400->400)
+  FAIL  dex_analytics.record_trade error=no observable write delta (calls 17->17, events 0->0, storage 400->400)
+  PASS  dex_analytics.get_record_count sig=0bd5b49572190aceefb31f68aa80447f4ca96fc2c94f198eadcc6664b32e8b4d
+  PASS  dex_analytics.get_last_price sig=9d4894752acd27707d87c12e13766e391ba1f02b3e5b0d281647682771bb8796
+  PASS  dex_analytics.get_24h_stats sig=a2cf732f6d3aa7a2e5c21c9e9d743c20a032f72644e197573675a0b54e2fe558
+  FAIL  dex_analytics.activity_floor delta=0 (calls 17->17, events 0->0, storage 400->400) required>=2
+  PASS  negative assertion execution floor met (executed=5, required>=5)
+
+===============================================================
+SUMMARY: PASS=95 FAIL=106 SKIP=0
+===============================================================
+REPORT: /Users/johnrobin/.openclaw/workspace/moltchain/tests/artifacts/contracts-write-e2e-report.json
