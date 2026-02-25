@@ -223,6 +223,8 @@ def canonical_contract_name(name: str) -> str:
         "musdtoken": "musd_token",
         "wethtoken": "weth_token",
         "wsoltoken": "wsol_token",
+        "wbnbtoken": "wbnb_token",
+        "shieldedpool": "shielded_pool",
         "predictionmarket": "prediction_market",
         "computemarket": "compute_market",
         "dexcore": "dex_core",
@@ -592,6 +594,8 @@ async def get_contracts_map(conn: Connection) -> Dict[str, PublicKey]:
         "PREDICT": "prediction_market",
         "BOUNTY": "bountyboard",
         "AUCTION": "moltauction",
+        "SHIELDED": "shielded_pool",
+        "WBNB": "wbnb_token",
     }
 
     ALL_NAMES = [
@@ -601,6 +605,7 @@ async def get_contracts_map(conn: Connection) -> Dict[str, PublicKey]:
         "dex_amm", "dex_router", "dex_margin", "dex_rewards",
         "dex_governance", "dex_analytics", "weth_token", "wsol_token",
         "musd_token", "moltpunks", "moltoracle", "moltswap", "bountyboard",
+        "shielded_pool", "wbnb_token",
     ]
 
     discovered: Dict[str, PublicKey] = {}
@@ -1051,6 +1056,16 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {"fn": "get_record_count", "args": {}, "actor": "deployer"},
             {"fn": "get_last_price", "args": {"pair_id": 1}, "actor": "deployer"},
             {"fn": "get_24h_stats", "args": {"pair_id": 1}, "actor": "deployer"},
+        ],
+        "shielded_pool": [
+            {"fn": "initialize", "args": {"admin": provider}, "actor": "deployer"},
+            {"fn": "get_pool_stats", "args": {}, "actor": "deployer"},
+            {"fn": "get_merkle_root", "args": {}, "actor": "deployer"},
+        ],
+        "wbnb_token": [
+            {"fn": "initialize", "args": {"owner": provider}, "actor": "deployer"},
+            {"fn": "mint", "args": {"to": provider, "amount": 1000}, "actor": "deployer"},
+            {"fn": "balance_of", "args": {"account": provider}, "actor": "deployer"},
         ],
     }
 

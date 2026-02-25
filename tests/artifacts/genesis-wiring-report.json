@@ -8,7 +8,7 @@
   "results": [
     {
       "status": "PASS",
-      "msg": "RPC node is reachable (slot=730)",
+      "msg": "RPC node is reachable (slot=804)",
       "detail": ""
     },
     {
@@ -158,7 +158,7 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Router has 16 routes registered (expected >= 10)",
+      "msg": "DEX Router has 14 routes registered (expected >= 10)",
       "detail": ""
     },
     {
@@ -168,7 +168,7 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Router route_count=16 confirmed via RPC stats",
+      "msg": "DEX Router route_count=14 confirmed via RPC stats",
       "detail": ""
     },
     {
@@ -178,7 +178,7 @@
     },
     {
       "status": "PASS",
-      "msg": "MoltBridge storage has 9 entries (wiring likely present)",
+      "msg": "MoltBridge storage has 8 entries (wiring likely present)",
       "detail": ""
     },
     {

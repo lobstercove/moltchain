@@ -1,25 +1,3425 @@
 {
   "summary": {
-    "pass": 2,
-    "fail": 0,
-    "skip": 1
+    "pass": 177,
+    "fail": 502,
+    "skip": 4
   },
-  "elapsed_seconds": 0.0,
+  "elapsed_seconds": 143.1,
   "results": [
     {
       "status": "PASS",
       "msg": "validator healthy",
-      "ts": 1772028865
+      "ts": 1772038175
     },
     {
       "status": "PASS",
-      "msg": "current slot: 4816",
-      "ts": 1772028865
+      "msg": "current slot: 2065",
+      "ts": 1772038175
     },
     {
       "status": "SKIP",
-      "msg": "deployer has no spendable balance; skipping comprehensive write-path in relaxed mode",
-      "ts": 1772028865
+      "msg": "deployer airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.",
+      "ts": 1772038175
+    },
+    {
+      "status": "SKIP",
+      "msg": "secondary airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.",
+      "ts": 1772038175
+    },
+    {
+      "status": "PASS",
+      "msg": "secondary funded via transfer (10 MOLT)",
+      "ts": 1772038176
+    },
+    {
+      "status": "PASS",
+      "msg": "discovered 27/27 contracts",
+      "ts": 1772038176
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.initialize sig=8c472b9680b712c3...",
+      "ts": 1772038181
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.mint sig=69e49ba7c96f6024...",
+      "ts": 1772038186
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.transfer sig=5e4f5b102e309050...",
+      "ts": 1772038192
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.burn sig=606f0d636223f01c...",
+      "ts": 1772038193
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.approve sig=b7aca93b378fa518...",
+      "ts": 1772038198
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.balance_of sig=d6eac130cdbe3e78...",
+      "ts": 1772038199
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.total_supply sig=0e02630d357b0a82...",
+      "ts": 1772038200
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.initialize sig=2880f7ff943679e6...",
+      "ts": 1772038201
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.mint sig=713edbcc7961bc0c...",
+      "ts": 1772038203
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.transfer sig=7f13baade58ccded...",
+      "ts": 1772038207
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.approve sig=4539290f1f261ad1...",
+      "ts": 1772038211
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.burn sig=8c81c04afbb9ca83...",
+      "ts": 1772038214
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.balance_of sig=8ef37b6d8571bffa...",
+      "ts": 1772038215
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.total_supply sig=1a6ec9cb3af9fef6...",
+      "ts": 1772038216
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.allowance sig=30f655506133ff3b...",
+      "ts": 1772038216
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.total_minted sig=b71bc8824024e1f3...",
+      "ts": 1772038221
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.total_burned sig=76bd27bfbbb8ab6d...",
+      "ts": 1772038222
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.transfer_from sig=bc9820a94e36c04e...",
+      "ts": 1772038222
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.emergency_pause sig=957d12e352d8e946...",
+      "ts": 1772038226
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.emergency_unpause sig=f816f6f3e6cd1c67...",
+      "ts": 1772038234
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_transfer_count sig=f22498b62a284200...",
+      "ts": 1772038239
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_attestation_count sig=6b284be54c228cb9...",
+      "ts": 1772038242
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_epoch_remaining sig=c2cfcf60ae9bc6b5...",
+      "ts": 1772038247
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_last_attestation_slot sig=dd1728248d918462...",
+      "ts": 1772038250
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_reserve_ratio sig=4ce1eeba37ee1d25...",
+      "ts": 1772038253
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.attest_reserves sig=30b3013e990ad7fe...",
+      "ts": 1772038265
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.transfer_admin sig=0729d7c718ee57d2...",
+      "ts": 1772038266
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.initialize sig=baa6b6f747b6ce31...",
+      "ts": 1772038269
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.mint sig=ef3ed902f9bbe260...",
+      "ts": 1772038283
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.transfer sig=ee24db820498f46c...",
+      "ts": 1772038286
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.approve sig=73a632cbaceba0cd...",
+      "ts": 1772038287
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.burn sig=37a1548d60611266...",
+      "ts": 1772038288
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.balance_of sig=b1141892b7fab602...",
+      "ts": 1772038292
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.total_supply sig=d7234453ec15e6f4...",
+      "ts": 1772038296
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.allowance sig=13a9b70e040ee49d...",
+      "ts": 1772038297
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.total_minted sig=8e4898e401e1674c...",
+      "ts": 1772038297
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.total_burned sig=2c190ea35ffe5015...",
+      "ts": 1772038298
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.transfer_from sig=97e59ce0825eec1e...",
+      "ts": 1772038300
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.emergency_pause sig=4637b16593187064...",
+      "ts": 1772038301
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.emergency_unpause not confirmed in 15s",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.get_transfer_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.get_attestation_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.get_epoch_remaining error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.get_last_attestation_slot error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.get_reserve_ratio error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.attest_reserves error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "weth_token.transfer_admin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.mint error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.transfer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.approve error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.burn error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.balance_of error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.total_supply error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.allowance error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.total_minted error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.total_burned error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.transfer_from error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.get_transfer_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.get_attestation_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.get_epoch_remaining error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.get_last_attestation_slot error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.get_reserve_ratio error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.attest_reserves error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "wsol_token.transfer_admin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.create_token error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.buy error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.sell error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.get_token_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.get_token_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.get_buy_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.get_graduation_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.set_buy_cooldown error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.set_sell_cooldown error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.set_max_buy error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.set_creator_royalty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.set_dex_addresses error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.withdraw_fees error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.freeze_token error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpump.unfreeze_token error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.deposit error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.borrow error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.repay error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.withdraw error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_protocol_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_account_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_interest_rate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.set_deposit_cap error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.set_reserve_factor error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.withdraw_reserves error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.liquidate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.flash_borrow error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.flash_repay error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_deposit_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_borrow_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_liquidation_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "lobsterlend.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.list_nft error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.get_listing error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.cancel_listing error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.get_marketplace_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.set_marketplace_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.list_nft_with_royalty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.make_offer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.cancel_offer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.buy_nft error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.accept_offer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.mm_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.mm_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltmarket.get_marketplace_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.initialize_ma_admin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.create_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.place_bid error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.set_reserve_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.set_royalty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.get_auction_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.get_collection_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.update_collection_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.cancel_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.finalize_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.make_offer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.accept_offer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.ma_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.ma_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltauction.get_auction_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.add_bridge_validator error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.set_required_confirmations error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.set_request_timeout error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.get_bridge_status error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.remove_bridge_validator error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.lock_tokens error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.submit_mint error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.has_confirmed_mint error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.submit_unlock error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.has_confirmed_unlock error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.is_source_tx_used error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.is_burn_proof_used error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.confirm_mint error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.confirm_unlock error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.cancel_expired_request error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.set_moltyid_address error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.set_identity_gate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.mb_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltbridge.mb_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.register_provider error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.set_storage_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.store_data error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.confirm_storage error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.get_storage_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.get_storage_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.get_provider_stake error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.claim_storage_rewards error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.stake_collateral error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.issue_challenge error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.respond_challenge error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.set_challenge_window error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.set_slash_percent error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.slash_provider error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "reef_storage.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.set_protocol_addresses error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.add_strategy error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.deposit error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.withdraw error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.get_vault_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.get_user_position error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.get_strategy_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.harvest error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.set_deposit_cap error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.set_deposit_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.set_withdrawal_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.set_risk_tier error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.update_strategy_allocation error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.remove_strategy error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.withdraw_protocol_fees error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.cv_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawvault.cv_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.initialize_cp_admin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.set_identity_admin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.set_moltyid_address error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.set_identity_gate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.create_stream error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.create_stream_with_cliff error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.get_stream error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.get_stream_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.get_withdrawable error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.withdraw_from_stream error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.transfer_stream error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.cancel_stream error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.get_stream_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "clawpay.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.register_identity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_identity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_identity_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_endpoint error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_endpoint error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_metadata error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_metadata error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_availability error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_availability error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_rate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_rate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.add_skill error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_skills error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.vouch error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_vouches error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_delegate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_delegate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.revoke_delegate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.update_reputation error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.update_reputation_typed error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_reputation error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_trust_tier error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.update_agent_type error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.deactivate_identity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_agent_profile error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_recovery_guardians error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.register_name error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.resolve_name error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.reverse_resolve error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_achievements error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_attestations error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.add_skill_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_endpoint_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_metadata_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_availability_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.set_rate_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.update_agent_type_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.attest_skill error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.revoke_attestation error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.approve_recovery error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.execute_recovery error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.award_contribution_achievement error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.create_name_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.bid_name_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.get_name_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.finalize_name_auction error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.transfer_name error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.renew_name error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.release_name error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.transfer_name_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.renew_name_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.release_name_as error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.admin_register_reserved_name error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.transfer_admin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.mid_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltyid.mid_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.set_protocol_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.set_platform_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.create_pool error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.add_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.swap error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.swap_a_for_b error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.swap_b_for_a error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.swap_a_for_b_with_deadline error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.swap_b_for_a_with_deadline error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_pool_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_pool_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_reserves error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_liquidity_balance error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_total_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_protocol_fees error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_flash_loan_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_twap_cumulatives error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_twap_snapshot_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.flash_loan_borrow error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.flash_loan_repay error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.flash_loan_abort error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.remove_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.ms_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.ms_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_swap_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_total_volume error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltswap.get_swap_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.register_feed error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.submit_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.get_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.register_feed error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.submit_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.get_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.get_feed_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.get_feed_list error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.set_update_interval error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.add_reporter error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.remove_reporter error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.get_oracle_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.mo_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltoracle.mo_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.set_quorum error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.set_voting_period error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.create_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.cast_vote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_proposal_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_vote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_vote_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.finalize_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.set_timelock_delay error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.execute_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_dao_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_active_proposals error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_total_supply error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.get_treasury_balance error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.veto_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.cancel_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.treasury_transfer error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.dao_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltdao.dao_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.mint_punk error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.transfer_punk error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.get_punk_metadata error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.get_total_supply error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.get_owner_of error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.set_base_uri error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.set_max_supply error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.get_punks_by_owner error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.set_royalty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.balance_of error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.approve error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.burn error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.mp_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.mp_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "moltpunks.get_collection_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.register_provider error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.create_job error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.accept_job error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.submit_result error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.confirm_result error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.get_job_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.get_provider_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.get_job_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.set_platform_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.cm_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.cm_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "compute_market.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.create_bounty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.get_bounty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.get_bounty_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.submit_work error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.approve_submission error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.cancel_bounty error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.set_platform_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.bb_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.bb_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "bountyboard.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.create_pair error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.set_preferred_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.add_allowed_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_allowed_quote_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.remove_allowed_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.update_pair_fees error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_pair_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_preferred_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_pair_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_trade_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_fee_treasury error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.place_order error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_order error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_best_bid error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_best_ask error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_spread error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.modify_order error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.cancel_order error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.cancel_all_orders error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.pause_pair error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.unpause_pair error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_total_volume error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_user_orders error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_core.get_open_order_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.create_pool error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.set_protocol_fee error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.add_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_pool_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_position error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_pool_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_position_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_tvl error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.quote_swap error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.swap_exact_in error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.swap_exact_out error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.collect_fees error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.remove_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_total_volume error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_swap_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_total_fees_collected error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_amm.get_amm_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.record_trade error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_ohlcv error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_24h_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_trader_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_last_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_record_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_trader_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_analytics.get_global_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.set_preferred_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.add_allowed_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.get_allowed_quote_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.remove_allowed_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.set_moltyid_address error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.set_listing_requirements error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.propose_new_pair error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.propose_fee_change error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.vote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.get_proposal_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.get_preferred_quote error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.get_proposal_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.finalize_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.execute_proposal error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.emergency_delist error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.get_governance_stats error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_governance.get_voter_count error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.set_moltcoin_address error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.set_mark_price error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.set_max_leverage error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.set_maintenance_margin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.open_position error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_position_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_margin_ratio error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_tier_info error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.add_margin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.remove_margin error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.liquidate error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.close_position error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.withdraw_insurance error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_total_volume error=RPC Error: No blocks yet",
+      "ts": 1772038316
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_user_positions error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_total_pnl error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_liquidation_count error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_margin.get_margin_stats error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.set_moltcoin_address error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.set_rewards_pool error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.set_reward_rate error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.set_referral_rate error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.register_referral error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.record_trade error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.accrue_lp_rewards error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.claim_trading_rewards error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.claim_lp_rewards error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_pending_rewards error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_trading_tier error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_referral_rate error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_total_distributed error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_trader_count error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_total_volume error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_rewards.get_reward_stats error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.set_addresses error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.register_route error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.get_route_count error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.get_swap_count error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.get_route_info error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.get_best_route error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.set_route_enabled error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.swap error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.multi_hop_swap error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.get_total_volume_routed error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "dex_router.get_router_stats error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.initialize error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.set_moltyid_address error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.set_oracle_address error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.set_musd_address error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.set_dex_gov_address error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.create_market error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_market_count error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_market error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_price error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_outcome_pool error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_pool_reserves error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_platform_stats error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.quote_buy error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.quote_sell error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.add_initial_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.add_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.buy_shares error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.sell_shares error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_price_history error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.mint_complete_set error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.redeem_complete_set error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_position error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_user_markets error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.get_lp_balance error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.withdraw_liquidity error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.submit_resolution error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.challenge_resolution error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.finalize_resolution error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.dao_resolve error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.dao_void error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.redeem_shares error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.reclaim_collateral error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.close_market error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.emergency_pause error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "prediction_market.emergency_unpause error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.rest_price_history count=0 (no trades yet)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexCoreStats -> {'pair_count': 7, 'order_count': 0, 'trade_count': 0, 'total_volume': 0, 'fee_treasury': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexAmmStats -> {'pool_count': 7, 'position_count': 0, 'swap_count': 0, 'total_volume': 0, 'total_fees': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexMarginStats -> {'position_count': 0, 'total_volume': 0, 'liquidation_count': 0, 'total_pnl_profit': 0, 'total_pnl_loss': 0, 'insurance_fund': 0, 'max_leverage': 100, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexRewardsStats -> {'trade_count': 0, 'trader_count': 0, 'total_volume': 0, 'total_distributed': 0, 'epoch': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexRouterStats -> {'route_count': 14, 'swap_count': 0, 'total_volume': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexAnalyticsStats -> {'record_count': 0, 'trader_count': 0, 'total_volume': 0, 'total_candles': 63, 'tracked_pairs': 7, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexGovernanceStats -> {'proposal_count': 0, 'total_votes': 0, 'voter_count': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltswapStats -> {'swap_count': 0, 'volume_a': 0, 'volume_b': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getLobsterLendStats -> {'total_deposits': 0, 'total_borrows': 0, 'reserves': 0, 'deposit_count': 0, 'borrow_count': 0, 'liquidation_count': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getClawPayStats -> {'stream_count': 0, 'total_streamed': 0, 'total_withdrawn': 0, 'cancel_count': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getBountyBoardStats -> {'bounty_count': 0, 'completed_count': 0, 'reward_volume': 0, 'cancel_count': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getComputeMarketStats -> {'job_count': 0, 'completed_count': 0, 'payment_volume': 0, 'dispute_count': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getReefStorageStats -> {'data_count': 0, 'total_bytes': 0, 'challenge_count': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltMarketStats -> {'listing_count': 0, 'sale_count': 0, 'sale_volume': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltAuctionStats -> {'auction_count': 0, 'total_volume': 0, 'total_sales': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltPunksStats -> {'total_minted': 0, 'transfer_count': 0, 'burn_count': 0, 'paused': False}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/core -> {'pairCount': 7, 'orderCount': 0, 'tradeCount': 0, 'totalVolume': 0, 'feeTreasury': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/amm -> {'poolCount': 7, 'positionCount': 0, 'swapCount': 0, 'totalVolume': 0, 'totalFees': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/margin -> {'positionCount': 0, 'totalVolume': 0, 'liquidationCount': 0, 'insuranceFund': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/router -> {'routeCount': 14, 'swapCount': 0, 'totalVolume': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/rewards -> {'tradeCount': 0, 'traderCount': 0, 'totalVolume': 0, 'totalDistributed': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/analytics -> {'recordCount': 0, 'traderCount': 0, 'totalVolume': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/governance -> {'proposalCount': 0, 'activeProposals': 0, 'totalVotes': 0, 'voterCount': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/moltswap -> {'swapCount': 0, 'volumeA': 0, 'volumeB': 0}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getBlock -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getLatestBlock -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "rpc.getAccount error={'code': -32001, 'message': 'Account not found'}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getAccountInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTransactionsByAddress -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getAccountTxCount -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getRecentTransactions -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTokenAccounts -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTotalBurned -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getValidators -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMetrics -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTreasuryInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getGenesisAccounts -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getFeeConfig -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getRentParams -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getPeers -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getNetworkInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getClusterInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getValidatorInfo accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getValidatorPerformance accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getChainStatus -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getStakingStatus -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getStakingRewards -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getStakingPosition -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getReefStakePoolInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getUnstakingQueue -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getRewardAdjustmentInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getAllContracts -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "rpc.getContractInfo error={'code': -32001, 'message': 'Contract not found'}",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getContractLogs -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getPrograms -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getProgramStats accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdStats -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdIdentity -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdReputation -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdSkills -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdProfile -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdAchievements -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltyIdAgentDirectory -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.resolveMoltName -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.searchMoltNames -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getEvmRegistration -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getSymbolRegistry -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getCollection accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getNFTsByOwner -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getNFTsByCollection accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getNFTActivity -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMarketListings -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMarketSales -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTokenBalance accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTokenHolders accepted (code=-32602)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getTokenTransfers -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getPredictionMarketStats -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getPredictionMarkets -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getPredictionLeaderboard -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getPredictionTrending -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/pairs -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/tickers -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/pools -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/orders accepted (HTTP 400)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/leaderboard -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/routes -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/governance/proposals -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/prediction-market/stats -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/prediction-market/markets -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/prediction-market/leaderboard -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "rest.GET/api/v1/prediction-market/trending -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(Slots) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(Blocks) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(Transactions) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(Validators) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(Epochs) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(NftMints) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(NftTransfers) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(MarketListings) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(MarketSales) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(BridgeLocks) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(BridgeMints) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(Governance) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "ws.subscribe(TokenBalance) -> handshake returned non-101 (WS may not be enabled)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getAccountInfo -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getBalance -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getBlockHeight accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getBlockTime accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getEpochInfo accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getSlot -> ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getVersion accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getHealth accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getRecentBlockhash accepted (code=-32001)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getSignaturesForAddress accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getTransaction accepted (code=-32001)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getMinimumBalanceForRentExemption accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "sol_compat.getFeeForMessage accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_blockNumber accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_chainId accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_getBalance accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_getBlockByNumber accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_gasPrice accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.net_version accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.web3_clientVersion accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_getCode accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "evm_compat.eth_estimateGas accepted (code=-32601)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.binary zk-prove found",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.keys found at /Users/johnrobin/.moltchain/zk",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.rpc.getShieldedPoolState total=0 count=0",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.rpc.getShieldedMerkleRoot root=86c365bf02da2998...",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.rest.pool balance=0",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.prove.shield commitment=e3b753311dd15bcd...",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "zk.tx.shield error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "zk.rpc.getShieldedCommitments expected >=1 got=0",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.rest.commitments count=0",
+      "ts": 1772038317
+    },
+    {
+      "status": "SKIP",
+      "msg": "zk.rpc.getShieldedMerklePath skip (RPC Error: Commitment index 0 out of range (pool has 0 commitments))",
+      "ts": 1772038317
+    },
+    {
+      "status": "SKIP",
+      "msg": "zk.rest.merkle-path skip (HTTP Error 404: Not Found)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.verify.zero_amount_shield rejected (Exception)",
+      "ts": 1772038317
+    },
+    {
+      "status": "PASS",
+      "msg": "zk.rest.merkle-root ok",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "zk.transfer.shield_b error=RPC Error: No blocks yet",
+      "ts": 1772038317
+    },
+    {
+      "status": "FAIL",
+      "msg": "zk.transfer.shield_c error=RPC Error: No blocks yet",
+      "ts": 1772038318
     }
   ]
 }
