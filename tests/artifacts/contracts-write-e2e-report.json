@@ -1,8 +1,8 @@
 {
   "rpc_url": "http://127.0.0.1:8899",
-  "strict_write_assertions": false,
-  "require_full_write_activity": false,
-  "enforce_domain_assertions": false,
+  "strict_write_assertions": true,
+  "require_full_write_activity": true,
+  "enforce_domain_assertions": true,
   "enable_negative_assertions": true,
   "require_negative_reason_match": true,
   "require_negative_code_match": false,
@@ -10,12 +10,1400 @@
   "min_negative_assertions_executed": 5,
   "require_expected_contract_set": true,
   "expected_contracts_file": "/Users/johnrobin/.openclaw/workspace/moltchain/tests/expected-contracts.json",
-  "contract_set_diff": {},
-  "summary": {
-    "pass": 3,
-    "fail": 0,
-    "skip": 1
+  "contract_set_diff": {
+    "expected_count": 29,
+    "discovered_count": 27,
+    "missing_expected": [
+      "shielded_pool",
+      "wbnb_token"
+    ],
+    "unexpected_discovered": []
   },
-  "results": [],
-  "generated_at": 1772028618
+  "summary": {
+    "pass": 200,
+    "fail": 1,
+    "skip": 0
+  },
+  "results": [
+    {
+      "contract": "global",
+      "action": "expected_contract_set",
+      "status": "FAIL",
+      "detail": "missing=['shielded_pool', 'wbnb_token']",
+      "timestamp": 1772034128
+    },
+    {
+      "contract": "moltcoin",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=0ae8f0701f82d4aa8ad741330f88e363eae17fdde59de0193457d49b7a7cbd7e",
+      "timestamp": 1772034128
+    },
+    {
+      "contract": "moltcoin",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=76127db34e42394345467a2dbf2f4cb48e17eb133e78b20a34663998c71075aa",
+      "timestamp": 1772034129
+    },
+    {
+      "contract": "moltcoin",
+      "action": "transfer",
+      "status": "PASS",
+      "detail": "sig=114084192282f753acea1a0e42149af3c231529dd4bc02700ceb69d1e00f8588",
+      "timestamp": 1772034131
+    },
+    {
+      "contract": "moltcoin",
+      "action": "burn",
+      "status": "PASS",
+      "detail": "sig=cf934952cbef0442ffc4b95dd86142ef1d1e3f106da02b117de630ec2c6d581a",
+      "timestamp": 1772034131
+    },
+    {
+      "contract": "moltcoin",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=4,required=4",
+      "timestamp": 1772034131
+    },
+    {
+      "contract": "moltcoin",
+      "action": "token_invariants",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0",
+      "timestamp": 1772034131
+    },
+    {
+      "contract": "clawpump",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=00e124ed2abb5096b73095a9c5e29c4b1d3b9b1ae51f8e010a097af74a5fb27f",
+      "timestamp": 1772034133
+    },
+    {
+      "contract": "clawpump",
+      "action": "create_token",
+      "status": "PASS",
+      "detail": "sig=fd603c74b607c2fcf905c16fb80ca866b5544e92dca7bcae8b79deed03ad3763",
+      "timestamp": 1772034134
+    },
+    {
+      "contract": "clawpump",
+      "action": "buy",
+      "status": "PASS",
+      "detail": "sig=7ac1a3612001f33ae77803b2cdec07c490df183016ebd76516d15d2af89c9417",
+      "timestamp": 1772034135
+    },
+    {
+      "contract": "clawpump",
+      "action": "get_platform_stats",
+      "status": "PASS",
+      "detail": "sig=6fc2b5440570629118f4d9734592c804a8fab2b7b9881b5d8f2a0a893872ea8d",
+      "timestamp": 1772034135
+    },
+    {
+      "contract": "clawpump",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1772034135
+    },
+    {
+      "contract": "clawpump",
+      "action": "launch_token_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0",
+      "timestamp": 1772034135
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=1e723f2f8b30c0eb804449f0d3765911618c728cb206442d8d3cbe0a9e65d3e7",
+      "timestamp": 1772034136
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "deposit",
+      "status": "PASS",
+      "detail": "sig=1e2e3b190669c7ab6c79611e7ab482c34ce8347d82cf146ef22a9afdc82ef4f4",
+      "timestamp": 1772034137
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "borrow",
+      "status": "PASS",
+      "detail": "sig=4791b7a7a4788dc932cd0f7e16c0ec494973f82a679a8b33f343c3ef8248c5e4",
+      "timestamp": 1772034137
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "repay",
+      "status": "PASS",
+      "detail": "sig=671d2a95bcbd0d239999b52050ad62540e3fa3fbbf94af94a0f01b139b6ddd91",
+      "timestamp": 1772034142
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "get_protocol_stats",
+      "status": "PASS",
+      "detail": "sig=22d52dff0f879bd74bd9229268a61dee91db1acb999bee1ee904be4691a8c99c",
+      "timestamp": 1772034145
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=5,required=4",
+      "timestamp": 1772034145
+    },
+    {
+      "contract": "lobsterlend",
+      "action": "lending_credit_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=5, events_delta=0, storage_delta=0",
+      "timestamp": 1772034145
+    },
+    {
+      "contract": "moltmarket",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=840a8667e75ebe14473d15a16d82198967ef8923d85635289cd0ae5f8fdb8298",
+      "timestamp": 1772034146
+    },
+    {
+      "contract": "moltmarket",
+      "action": "list_nft",
+      "status": "PASS",
+      "detail": "sig=6acb9267920284021e08f02a256c80081c8a11bd98f410d2577c08e4d4a43123",
+      "timestamp": 1772034147
+    },
+    {
+      "contract": "moltmarket",
+      "action": "cancel_listing",
+      "status": "PASS",
+      "detail": "sig=611afd68368c14ed9382fadaeb7f866e9e3b4d4ce1a0b5cd6d3a4a59c0bd579a",
+      "timestamp": 1772034149
+    },
+    {
+      "contract": "moltmarket",
+      "action": "get_marketplace_stats",
+      "status": "PASS",
+      "detail": "sig=680c597bc69cd0c6caa7a44f09ed531c1a7f4f66520633340d31b1320a5c696b",
+      "timestamp": 1772034150
+    },
+    {
+      "contract": "moltmarket",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1772034150
+    },
+    {
+      "contract": "moltmarket",
+      "action": "market_listing_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0",
+      "timestamp": 1772034150
+    },
+    {
+      "contract": "moltauction",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=1c792229c386cc69c5a19af7a0bb1cc99435b593d0987697872de3bddd088fb9",
+      "timestamp": 1772034150
+    },
+    {
+      "contract": "moltauction",
+      "action": "create_auction",
+      "status": "PASS",
+      "detail": "sig=d726b48b8b395ae3f5ef5b01922347c22012e98ada868acd4d6ad0f7924c2b4e",
+      "timestamp": 1772034155
+    },
+    {
+      "contract": "moltauction",
+      "action": "place_bid",
+      "status": "PASS",
+      "detail": "sig=7f273ba9f468c07ab3751fc283a80bc1b69b481d71788108607ef0d404301f9a",
+      "timestamp": 1772034155
+    },
+    {
+      "contract": "moltauction",
+      "action": "cancel_auction",
+      "status": "PASS",
+      "detail": "sig=48d67abc0db7c5fd063b3fb5f7aae4f6b2fe85be8865f639e43db20bacc92027",
+      "timestamp": 1772034157
+    },
+    {
+      "contract": "moltauction",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=4,required=4",
+      "timestamp": 1772034157
+    },
+    {
+      "contract": "moltauction",
+      "action": "auction_bid_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0",
+      "timestamp": 1772034157
+    },
+    {
+      "contract": "moltbridge",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=77d5f90c1c589d75dd813ac1683fa211ac0457cb87831b680d6b176514e07674",
+      "timestamp": 1772034158
+    },
+    {
+      "contract": "moltbridge",
+      "action": "set_required_confirmations",
+      "status": "PASS",
+      "detail": "sig=f46d52a3d8790a626d176fc835faa6d57369f5b0f80961a54a5493d4f636dc1f",
+      "timestamp": 1772034159
+    },
+    {
+      "contract": "moltbridge",
+      "action": "set_request_timeout",
+      "status": "PASS",
+      "detail": "sig=a76475104e623c95615ca530ae101af7580163129d15f0667520344e57459e0e",
+      "timestamp": 1772034164
+    },
+    {
+      "contract": "moltbridge",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1772034164
+    },
+    {
+      "contract": "moltbridge",
+      "action": "bridge_admin_config",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=3, events_delta=0, storage_delta=0",
+      "timestamp": 1772034164
+    },
+    {
+      "contract": "reef_storage",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=855d89c208f2770b20a25016fabf9b488f7112f031bde7e071c6d927c3471dad",
+      "timestamp": 1772034170
+    },
+    {
+      "contract": "reef_storage",
+      "action": "register_provider",
+      "status": "PASS",
+      "detail": "sig=6ee7b7180230eb5d4fe2199640904233e40a8c2afbb9906a7a817963da2f3474",
+      "timestamp": 1772034171
+    },
+    {
+      "contract": "reef_storage",
+      "action": "set_storage_price",
+      "status": "PASS",
+      "detail": "sig=938398de5dfe286998e560709b9fd6dac984a8fcd62e2d7c7ba6866a71c9f8ff",
+      "timestamp": 1772034175
+    },
+    {
+      "contract": "reef_storage",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1772034175
+    },
+    {
+      "contract": "reef_storage",
+      "action": "storage_provider_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=3, events_delta=0, storage_delta=0",
+      "timestamp": 1772034175
+    },
+    {
+      "contract": "clawvault",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=b2441f93bf557f18a03f29b133524bc9bbbf9592beac879e8697d6a0a771e3c5",
+      "timestamp": 1772034176
+    },
+    {
+      "contract": "clawvault",
+      "action": "deposit",
+      "status": "PASS",
+      "detail": "sig=6fbe01ced6b20ac09bcbaaffb0d2538924403c1c477f125418d88835f80eefd7",
+      "timestamp": 1772034177
+    },
+    {
+      "contract": "clawvault",
+      "action": "withdraw",
+      "status": "PASS",
+      "detail": "sig=22d975fa3c41a89aaaffa99d6d6d5763437827e9a17919533a661bc2128a2553",
+      "timestamp": 1772034177
+    },
+    {
+      "contract": "clawvault",
+      "action": "get_vault_stats",
+      "status": "PASS",
+      "detail": "sig=4223cd53593f46ea01a2ed0c080c6826db9bb4c149fc411d707620e5eaf1a589",
+      "timestamp": 1772034182
+    },
+    {
+      "contract": "clawvault",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1772034182
+    },
+    {
+      "contract": "clawvault",
+      "action": "vault_roundtrip_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0",
+      "timestamp": 1772034182
+    },
+    {
+      "contract": "clawpay",
+      "action": "initialize_cp_admin",
+      "status": "PASS",
+      "detail": "sig=316020833fd828fe8ad9aa97db741b26410e5db17db7511886918b00eba3f7de",
+      "timestamp": 1772034185
+    },
+    {
+      "contract": "clawpay",
+      "action": "create_stream",
+      "status": "PASS",
+      "detail": "sig=a045df9884e4fe63947519732ed1aa859b375caaae37e3949bb9d282c11d4ab4",
+      "timestamp": 1772034185
+    },
+    {
+      "contract": "clawpay",
+      "action": "get_stream_info",
+      "status": "PASS",
+      "detail": "sig=0fbc451cf82a26d110033f2af096d8b55ee04a7ec86a541cf75ad867e7f36bc9",
+      "timestamp": 1772034186
+    },
+    {
+      "contract": "clawpay",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=3,required=2",
+      "timestamp": 1772034186
+    },
+    {
+      "contract": "moltyid",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=75e11ca1a31dc8f03bb3013074a2d7a75c58aa6a81f4795c81f232add45c9494",
+      "timestamp": 1772034189
+    },
+    {
+      "contract": "moltyid",
+      "action": "register_identity",
+      "status": "PASS",
+      "detail": "sig=2b464e6da94320605ee5ebafa7e63ce47699ad5a8e4d12c1231e3b7ebce12c83",
+      "timestamp": 1772034189
+    },
+    {
+      "contract": "moltyid",
+      "action": "set_endpoint",
+      "status": "PASS",
+      "detail": "sig=abaf946dadcdce5bfd6db1d8878602bd755d8acb117118a3cfec643a282c9240",
+      "timestamp": 1772034190
+    },
+    {
+      "contract": "moltyid",
+      "action": "set_metadata",
+      "status": "PASS",
+      "detail": "sig=3b26ec4fb5d2ca23c60c2a7fb8768361465a6ea91734530dbebce82915e2e39f",
+      "timestamp": 1772034191
+    },
+    {
+      "contract": "moltyid",
+      "action": "set_availability",
+      "status": "PASS",
+      "detail": "sig=6e7be91a159bed4fc765189c1885e402d5c859e884b5a13193bf776d6a095c4d",
+      "timestamp": 1772034192
+    },
+    {
+      "contract": "moltyid",
+      "action": "set_rate",
+      "status": "PASS",
+      "detail": "sig=93df2b7f059456d2e037087f32b9de8c2f80e8be4a237e94b0b24f5d2357ea76",
+      "timestamp": 1772034192
+    },
+    {
+      "contract": "moltyid",
+      "action": "add_skill",
+      "status": "PASS",
+      "detail": "sig=a932c9176a288a5239971d1de2fc9826a66594b1e0ab86702e0b8f461b924c0c",
+      "timestamp": 1772034193
+    },
+    {
+      "contract": "moltyid",
+      "action": "vouch",
+      "status": "PASS",
+      "detail": "sig=9efc5823843f96c03ad444a6ecf2858e65da135737cb1af69b44cd2d5cfe83a4",
+      "timestamp": 1772034193
+    },
+    {
+      "contract": "moltyid",
+      "action": "set_delegate",
+      "status": "PASS",
+      "detail": "sig=1e024dac9d514cd112f0d310c78099d30009d5d4a74074040929ac9611cebde2",
+      "timestamp": 1772034199
+    },
+    {
+      "contract": "moltyid",
+      "action": "revoke_delegate",
+      "status": "PASS",
+      "detail": "sig=c2ee17ff4940ccc58e11a1e460ffa972cef3219a1369c7f0e49a4efbaa342b5e",
+      "timestamp": 1772034202
+    },
+    {
+      "contract": "moltyid",
+      "action": "register_identity",
+      "status": "PASS",
+      "detail": "sig=009bade8cc8fe505d8aa7af58d81601cdb016e12119b33c9c169d8061ed225aa",
+      "timestamp": 1772034202
+    },
+    {
+      "contract": "moltyid",
+      "action": "get_agent_profile",
+      "status": "PASS",
+      "detail": "sig=7dee8ce0acb24951fd978c9284d35d4e0dfa194d67d48dbb54e488844ef43ca6",
+      "timestamp": 1772034203
+    },
+    {
+      "contract": "moltyid",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=12,required=10",
+      "timestamp": 1772034203
+    },
+    {
+      "contract": "moltyid",
+      "action": "identity_lifecycle_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=12, events_delta=0, storage_delta=0",
+      "timestamp": 1772034203
+    },
+    {
+      "contract": "moltdao",
+      "action": "initialize_dao",
+      "status": "PASS",
+      "detail": "sig=9c12c60d7592fd373b65b8e8f9e15825feccdc7c9fd9e940a84bdf9e3288dde9",
+      "timestamp": 1772034203
+    },
+    {
+      "contract": "moltdao",
+      "action": "create_proposal_typed",
+      "status": "PASS",
+      "detail": "sig=4fb3e13334b9fcb2007c255a7903005cd361dc38bb4e2583904c0eeeb6a9b4a3",
+      "timestamp": 1772034204
+    },
+    {
+      "contract": "moltdao",
+      "action": "vote",
+      "status": "PASS",
+      "detail": "sig=c9cceebbd1f96fd9634109b03b501b12fb2f2c831b4e53321ebbb2e68011fcfa",
+      "timestamp": 1772034204
+    },
+    {
+      "contract": "moltdao",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1772034204
+    },
+    {
+      "contract": "moltdao",
+      "action": "dao_governance_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=3, events_delta=0, storage_delta=0",
+      "timestamp": 1772034204
+    },
+    {
+      "contract": "prediction_market",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=20bbea09bfcfce914aa52c87fca1441530f586e9d0ed3cc738aa8a523dc60907",
+      "timestamp": 1772034205
+    },
+    {
+      "contract": "prediction_market",
+      "action": "set_moltyid_address",
+      "status": "PASS",
+      "detail": "sig=a5b0f018402af6cc62ca37dfb6ed269d5cb53ee638d43182bfa4f544d13fb5e4",
+      "timestamp": 1772034205
+    },
+    {
+      "contract": "prediction_market",
+      "action": "set_musd_address",
+      "status": "PASS",
+      "detail": "sig=3cb384246e1a2da9a6347d10aa7eae6c02e1860b30618d591e5f06d7762cd237",
+      "timestamp": 1772034206
+    },
+    {
+      "contract": "prediction_market",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=3,required=3",
+      "timestamp": 1772034206
+    },
+    {
+      "contract": "prediction_market",
+      "action": "prediction_admin_wiring",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=3, events_delta=0, storage_delta=0",
+      "timestamp": 1772034206
+    },
+    {
+      "contract": "compute_market",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=baf03c16b66f77864ff23d634f77ec3f05a7560b0d9a586749cb4410b2c55eb3",
+      "timestamp": 1772034207
+    },
+    {
+      "contract": "compute_market",
+      "action": "register_provider",
+      "status": "PASS",
+      "detail": "sig=e4a5ee4d1db4a1cdb63eaed53451f7df636ad8bf98e452a837f59d23529effdd",
+      "timestamp": 1772034208
+    },
+    {
+      "contract": "compute_market",
+      "action": "submit_job",
+      "status": "PASS",
+      "detail": "sig=1dda1d94b8d272d106fb9ee6c7410acd7b52be6abae49af2dadc0bcf08291461",
+      "timestamp": 1772034209
+    },
+    {
+      "contract": "compute_market",
+      "action": "get_job",
+      "status": "PASS",
+      "detail": "sig=e08990a392b21979a3708c0b407b1a56aa56b94af097f52c4a1c795c24b3bfd8",
+      "timestamp": 1772034210
+    },
+    {
+      "contract": "compute_market",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=4,required=3",
+      "timestamp": 1772034210
+    },
+    {
+      "contract": "compute_market",
+      "action": "compute_job_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=4, events_delta=0, storage_delta=0",
+      "timestamp": 1772034210
+    },
+    {
+      "contract": "bountyboard",
+      "action": "set_identity_admin",
+      "status": "PASS",
+      "detail": "sig=71654098fab7da1f443544050e6cb66933afd86362bff3271602dc82fb390eea",
+      "timestamp": 1772034212
+    },
+    {
+      "contract": "bountyboard",
+      "action": "set_moltyid_address",
+      "status": "PASS",
+      "detail": "sig=c4891f1c1697baf2cd285633e23c23aa75c32b24ce689efb164a9edae5199707",
+      "timestamp": 1772034212
+    },
+    {
+      "contract": "bountyboard",
+      "action": "set_token_address",
+      "status": "PASS",
+      "detail": "sig=5bd55193f62903b7527a8f1b4f4bb39315d802f6ddd1c05fad51d263209abbdf",
+      "timestamp": 1772034213
+    },
+    {
+      "contract": "bountyboard",
+      "action": "create_bounty",
+      "status": "PASS",
+      "detail": "sig=37156d57a2453e56f5d706e0ebb4a4d0486e7842bad158502fbffe1adfa70986",
+      "timestamp": 1772034214
+    },
+    {
+      "contract": "bountyboard",
+      "action": "submit_work",
+      "status": "PASS",
+      "detail": "sig=11b08c0ec053fe45b3ff8127a6d800e3a71190a9c219dff426bfe77ca7b0cbd2",
+      "timestamp": 1772034218
+    },
+    {
+      "contract": "bountyboard",
+      "action": "get_bounty",
+      "status": "PASS",
+      "detail": "sig=c209139d48d09a186e0abaac51282ccd15d1f046ca060270e85bfb24b7834084",
+      "timestamp": 1772034222
+    },
+    {
+      "contract": "bountyboard",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1772034222
+    },
+    {
+      "contract": "bountyboard",
+      "action": "bounty_submission_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=6, events_delta=0, storage_delta=0",
+      "timestamp": 1772034222
+    },
+    {
+      "contract": "moltoracle",
+      "action": "initialize_oracle",
+      "status": "PASS",
+      "detail": "sig=ba5b500410a406712e4ca014637ab1b0b2161dd88e9492a388277591b24e88f7",
+      "timestamp": 1772034223
+    },
+    {
+      "contract": "moltoracle",
+      "action": "add_price_feeder",
+      "status": "PASS",
+      "detail": "sig=8df1ec898125bf999f62cd5dc82b25ebba4b1a4676c2709edce3fd1e756e4b77",
+      "timestamp": 1772034225
+    },
+    {
+      "contract": "moltoracle",
+      "action": "submit_price",
+      "status": "PASS",
+      "detail": "sig=96884af18f7ce5b77b7f56ca2102f6a6993041f03b7247e4db2a913e8495ef6b",
+      "timestamp": 1772034226
+    },
+    {
+      "contract": "moltoracle",
+      "action": "submit_price",
+      "status": "PASS",
+      "detail": "sig=fc24f4b5a04b749813368e7f37406c9c1c2d1d5980ac0b35f1e3c4f5ac3da269",
+      "timestamp": 1772034226
+    },
+    {
+      "contract": "moltoracle",
+      "action": "commit_randomness",
+      "status": "PASS",
+      "detail": "sig=2abe2e59019d036922f0ebfe00fedddfaf566f7e53bcc2768df16683de157184",
+      "timestamp": 1772034227
+    },
+    {
+      "contract": "moltoracle",
+      "action": "request_randomness",
+      "status": "PASS",
+      "detail": "sig=1a3d105353d0f76ad9f77473371a77aac43139167c99debec17b63873e4ea00f",
+      "timestamp": 1772034229
+    },
+    {
+      "contract": "moltoracle",
+      "action": "get_oracle_stats",
+      "status": "PASS",
+      "detail": "sig=fea845040b139f5efbe8c7084d7f8daebd5ccc31da6f8f521f49e57eed6b9ecb",
+      "timestamp": 1772034229
+    },
+    {
+      "contract": "moltoracle",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=7,required=5",
+      "timestamp": 1772034229
+    },
+    {
+      "contract": "moltoracle",
+      "action": "oracle_freshness_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=7, events_delta=0, storage_delta=0",
+      "timestamp": 1772034229
+    },
+    {
+      "contract": "moltoracle",
+      "action": "oracle_signal_delta",
+      "status": "PASS",
+      "detail": "calls_delta=7, events_delta=0",
+      "timestamp": 1772034229
+    },
+    {
+      "contract": "moltpunks",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=1565dcdb0356330c681689d4c26cad8b8d5c0c7d2304b44d7c37458d45e2b278",
+      "timestamp": 1772034232
+    },
+    {
+      "contract": "moltpunks",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=bff34046662278129d8b481f04d921a7e737c8eafcbb5a946ffecde0bea294a2",
+      "timestamp": 1772034232
+    },
+    {
+      "contract": "moltpunks",
+      "action": "transfer",
+      "status": "PASS",
+      "detail": "sig=9d89f5ca5ab0bdb171b24f3c08c4e44931bcab1e5a45efe90e0603b292ecd100",
+      "timestamp": 1772034236
+    },
+    {
+      "contract": "moltpunks",
+      "action": "approve",
+      "status": "PASS",
+      "detail": "sig=183bc022685ec79604257a5563fd6fa01894663e10a03941f280649e8a76c3e5",
+      "timestamp": 1772034237
+    },
+    {
+      "contract": "moltpunks",
+      "action": "transfer_from",
+      "status": "PASS",
+      "detail": "sig=4dbac5d3364a0cfe38d81306aaec79bdd5a448da11fe1c8f3e2705a51a4adbbb",
+      "timestamp": 1772034239
+    },
+    {
+      "contract": "moltpunks",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=d37f2a79188a0a78519c9e359856436737a2cf9e95696712e7d5b912ad2f98ae",
+      "timestamp": 1772034241
+    },
+    {
+      "contract": "moltpunks",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=6,required=4",
+      "timestamp": 1772034241
+    },
+    {
+      "contract": "moltpunks",
+      "action": "nft_ownership_flow",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=6, events_delta=0, storage_delta=0",
+      "timestamp": 1772034241
+    },
+    {
+      "contract": "moltswap",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=4d502892bcab6769d0c77986575f148146fbb45a7bc56d4ea043ca6885849b0d",
+      "timestamp": 1772034246
+    },
+    {
+      "contract": "moltswap",
+      "action": "set_identity_admin",
+      "status": "PASS",
+      "detail": "sig=fccfd0f72c30a34520b48c54db2fbe549a2857ba71f4a8d9251ced53f8ed9e94",
+      "timestamp": 1772034247
+    },
+    {
+      "contract": "moltswap",
+      "action": "add_liquidity",
+      "status": "PASS",
+      "detail": "sig=7dbac244eb125bebb200d990c9bdcc66a9ed5f69054a4529175094898edf9785",
+      "timestamp": 1772034248
+    },
+    {
+      "contract": "moltswap",
+      "action": "swap_a_for_b",
+      "status": "PASS",
+      "detail": "sig=28ff41379fbc9383ebe8f9bdca55f94cba6d2ae4c1fc1a958cd6aa9b9926dfdc",
+      "timestamp": 1772034248
+    },
+    {
+      "contract": "moltswap",
+      "action": "set_protocol_fee",
+      "status": "PASS",
+      "detail": "sig=c9b291bedc8fc84047cbdd779ceabc0dd3a28479f96195101294348ba4278987",
+      "timestamp": 1772034252
+    },
+    {
+      "contract": "moltswap",
+      "action": "set_protocol_fee",
+      "status": "PASS",
+      "detail": "sig=d2d91a52984e68496e5a9d36be36c28844532eb8543c9bacf6b7471ac9a41336",
+      "timestamp": 1772034253
+    },
+    {
+      "contract": "moltswap",
+      "action": "ms_pause",
+      "status": "PASS",
+      "detail": "sig=61605403df489d864a8fd775c781f7e11336697544fb63da9ddd66ceaa7eb87b",
+      "timestamp": 1772034255
+    },
+    {
+      "contract": "moltswap",
+      "action": "ms_unpause",
+      "status": "PASS",
+      "detail": "sig=15a85063f6100ffd0a59e723e6a5afa4285ed48db82ef8bf410801e48e1bb69f",
+      "timestamp": 1772034258
+    },
+    {
+      "contract": "moltswap",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=8,required=7",
+      "timestamp": 1772034258
+    },
+    {
+      "contract": "moltswap",
+      "action": "swap_reserve_movement",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=8, events_delta=0, storage_delta=0",
+      "timestamp": 1772034258
+    },
+    {
+      "contract": "musd_token",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=b191161337133e36b111e5ef981516eb71b3553f9a04d35e5cbc23d8b74563cb",
+      "timestamp": 1772034259
+    },
+    {
+      "contract": "musd_token",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=74b3e54f2815b038c8b887566e9fc2a308472de76dbc0a5850295988cc41e34b",
+      "timestamp": 1772034260
+    },
+    {
+      "contract": "musd_token",
+      "action": "transfer",
+      "status": "PASS",
+      "detail": "sig=59d91b4e6a604576232232eef99910662a98d1f35f5bcb7fd4039ea4f9f6dd33",
+      "timestamp": 1772034261
+    },
+    {
+      "contract": "musd_token",
+      "action": "approve",
+      "status": "PASS",
+      "detail": "sig=9185014b44f7237353ad0d638005ce2932abb0edbae524102c0ef89cb3dbc333",
+      "timestamp": 1772034264
+    },
+    {
+      "contract": "musd_token",
+      "action": "burn",
+      "status": "PASS",
+      "detail": "sig=84aae3fe974e10168161b32f080aad77f86f10194b4932981d982eb64ab3e62e",
+      "timestamp": 1772034265
+    },
+    {
+      "contract": "musd_token",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=d5543de8a96bc49b075eebe60b5e65cc5d7178c39aea0954f5815afc533b8dc6",
+      "timestamp": 1772034267
+    },
+    {
+      "contract": "musd_token",
+      "action": "get_transfer_count",
+      "status": "PASS",
+      "detail": "sig=bb7967d80d0edc0d26d6baa336b4ae191c98bbbe4b232ae9d0a425349f974762",
+      "timestamp": 1772034267
+    },
+    {
+      "contract": "musd_token",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=7,required=5",
+      "timestamp": 1772034267
+    },
+    {
+      "contract": "musd_token",
+      "action": "token_invariants",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=7, events_delta=0, storage_delta=0",
+      "timestamp": 1772034267
+    },
+    {
+      "contract": "weth_token",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=8a82c44d991715d15df9e9961c16ac93380828cba74b301fcfbe1edb0f69c5ca",
+      "timestamp": 1772034269
+    },
+    {
+      "contract": "weth_token",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=086502b7fa2f38029ae81417bd7f4cd8d16a0bc20328b2188b6d6f876edfc35f",
+      "timestamp": 1772034270
+    },
+    {
+      "contract": "weth_token",
+      "action": "transfer",
+      "status": "PASS",
+      "detail": "sig=f3a8a7c250d3bc66deae65828d8a7c8144f263ed73ccbcc19692c6e315689241",
+      "timestamp": 1772034271
+    },
+    {
+      "contract": "weth_token",
+      "action": "approve",
+      "status": "PASS",
+      "detail": "sig=2ff3e54abca004f67f8bcb9972807fec032f49658fcdc19c2b605fe0564f5b49",
+      "timestamp": 1772034272
+    },
+    {
+      "contract": "weth_token",
+      "action": "burn",
+      "status": "PASS",
+      "detail": "sig=8e55cb6a656bd76003c2aaca9a3300727e61dcddc192b6e9d824ef60680bdd5c",
+      "timestamp": 1772034272
+    },
+    {
+      "contract": "weth_token",
+      "action": "get_transfer_count",
+      "status": "PASS",
+      "detail": "sig=f40e399dcb9dfd09957d1e2356286b6aed8f636758a5f6a9660876073be1e9fa",
+      "timestamp": 1772034273
+    },
+    {
+      "contract": "weth_token",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1772034273
+    },
+    {
+      "contract": "weth_token",
+      "action": "token_invariants",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=6, events_delta=0, storage_delta=0",
+      "timestamp": 1772034273
+    },
+    {
+      "contract": "wsol_token",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=c5014b4191efaf8b872d56c652fb3eaf576b8f14e00750362d2ec75171c6f4de",
+      "timestamp": 1772034274
+    },
+    {
+      "contract": "wsol_token",
+      "action": "mint",
+      "status": "PASS",
+      "detail": "sig=33e1c2b076fab9503e7315e2c9127aa29d1f6e02c6f7f3ad31a734084db58e01",
+      "timestamp": 1772034275
+    },
+    {
+      "contract": "wsol_token",
+      "action": "transfer",
+      "status": "PASS",
+      "detail": "sig=159abc74c71354f036b59f579b20dec6466a7f1937059834da66b9ae87fc4574",
+      "timestamp": 1772034275
+    },
+    {
+      "contract": "wsol_token",
+      "action": "approve",
+      "status": "PASS",
+      "detail": "sig=2564e1ad53adb8f2c7e4d5f3cc640ad996a2fd5c359122bbe1e4230c3c62c649",
+      "timestamp": 1772034279
+    },
+    {
+      "contract": "wsol_token",
+      "action": "burn",
+      "status": "PASS",
+      "detail": "sig=547c5fbf93cc9802e69c84a1c9bf4adedf125766950cab0be52d0710b6ab9c8d",
+      "timestamp": 1772034279
+    },
+    {
+      "contract": "wsol_token",
+      "action": "get_transfer_count",
+      "status": "PASS",
+      "detail": "sig=d4b9dc249e3f144ef8882cd6cedf74c392bb547e2fa887a7572fb33f9bc52a22",
+      "timestamp": 1772034280
+    },
+    {
+      "contract": "wsol_token",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1772034280
+    },
+    {
+      "contract": "wsol_token",
+      "action": "token_invariants",
+      "status": "PASS",
+      "detail": "required steps satisfied, calls_delta=6, events_delta=0, storage_delta=0",
+      "timestamp": 1772034280
+    },
+    {
+      "contract": "dex_core",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=4050c5b4de9027aecc461801ba56eb8077444c566d504c14d104ec83e711f69f",
+      "timestamp": 1772034280
+    },
+    {
+      "contract": "dex_core",
+      "action": "set_preferred_quote",
+      "status": "PASS",
+      "detail": "sig=b3ecef434251ccd2396411cf47aea3421568ea5a0426cfdb929feadba6f92373",
+      "timestamp": 1772034281
+    },
+    {
+      "contract": "dex_core",
+      "action": "create_pair",
+      "status": "PASS",
+      "detail": "sig=809aabb51180ed81f369181dcf86feaf21e10093b1e9fffb1e028775f5cec24f",
+      "timestamp": 1772034282
+    },
+    {
+      "contract": "dex_core",
+      "action": "update_pair_fees",
+      "status": "PASS",
+      "detail": "sig=64bd3464eed3ab1a0cd27bb24c067f482e1ad3ddbd2b869ada0b40dc5351f86f",
+      "timestamp": 1772034285
+    },
+    {
+      "contract": "dex_core",
+      "action": "place_order",
+      "status": "PASS",
+      "detail": "sig=3d3fd97b0d3c75e029e89f5077b021f0c39bf9d2aa697252eddb6a867b68601f",
+      "timestamp": 1772034286
+    },
+    {
+      "contract": "dex_core",
+      "action": "modify_order",
+      "status": "PASS",
+      "detail": "sig=c57b7681661a4de6419395d5016532ad918abdddb633fb9e1c4dcd76bc0a22f3",
+      "timestamp": 1772034286
+    },
+    {
+      "contract": "dex_core",
+      "action": "cancel_all_orders",
+      "status": "PASS",
+      "detail": "sig=a3711df0026bea00d4c5346343d5bd506fd45458fd46ce83b6507df13c7137f0",
+      "timestamp": 1772034287
+    },
+    {
+      "contract": "dex_core",
+      "action": "get_pair_count",
+      "status": "PASS",
+      "detail": "sig=9c49faa161274df148724dbe972fb0e693f4dd08bb92c16e1b9d828f794b0499",
+      "timestamp": 1772034287
+    },
+    {
+      "contract": "dex_core",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=8,required=7",
+      "timestamp": 1772034287
+    },
+    {
+      "contract": "dex_amm",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=04cfe96a7194be8d86169b0e7745f83bc4e92b4b2ae9f09e52aec23d0eb686b0",
+      "timestamp": 1772034289
+    },
+    {
+      "contract": "dex_amm",
+      "action": "create_pool",
+      "status": "PASS",
+      "detail": "sig=5eec35e94c0a37d1ba23d1fd37a9897a07cda6e7be90e049533ee16acec36bed",
+      "timestamp": 1772034291
+    },
+    {
+      "contract": "dex_amm",
+      "action": "add_liquidity",
+      "status": "PASS",
+      "detail": "sig=e7084c4e3e0d6b16da370cb08324a724bb619b6b926afbcef8d35b2f260c1cef",
+      "timestamp": 1772034293
+    },
+    {
+      "contract": "dex_amm",
+      "action": "swap_exact_in",
+      "status": "PASS",
+      "detail": "sig=4f2bf616ed413dd0cbb5234d7606dfb50b63e4254604c34aaea88fd6bc446812",
+      "timestamp": 1772034294
+    },
+    {
+      "contract": "dex_amm",
+      "action": "remove_liquidity",
+      "status": "PASS",
+      "detail": "sig=f5ef0a4eea731c2bd14373a66c7d74e6bb181516a199ddad14df54bbf7bf6707",
+      "timestamp": 1772034294
+    },
+    {
+      "contract": "dex_amm",
+      "action": "get_pool_count",
+      "status": "PASS",
+      "detail": "sig=68339f3e35b675d8204e46ff5f722c08148650378379ca1f6767a850df3d5303",
+      "timestamp": 1772034295
+    },
+    {
+      "contract": "dex_amm",
+      "action": "get_position_count",
+      "status": "PASS",
+      "detail": "sig=5b3e554452f32d16a5d8bbaabe8b15c608cb4b3bcfea209af44e4f6a82e01b9c",
+      "timestamp": 1772034295
+    },
+    {
+      "contract": "dex_amm",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=7,required=5",
+      "timestamp": 1772034295
+    },
+    {
+      "contract": "dex_router",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=06256463d991e38bb850ce313f919292150f686860395313ec1ee3a82c6254bb",
+      "timestamp": 1772034296
+    },
+    {
+      "contract": "dex_router",
+      "action": "set_addresses",
+      "status": "PASS",
+      "detail": "sig=296eb15bc92ee70e4f79ba96cb19b045fd46990127b739504948bc7b205b6efb",
+      "timestamp": 1772034296
+    },
+    {
+      "contract": "dex_router",
+      "action": "register_route",
+      "status": "PASS",
+      "detail": "sig=f88491e09ba605ebe5e6c8ace37c3332f901434b3f9b2be5427649d7c38cd8ea",
+      "timestamp": 1772034297
+    },
+    {
+      "contract": "dex_router",
+      "action": "set_route_enabled",
+      "status": "PASS",
+      "detail": "sig=3bf2e4b82983c37e406cee30dbd35080636c55d6eefd6f041cc6f3e832ce0538",
+      "timestamp": 1772034298
+    },
+    {
+      "contract": "dex_router",
+      "action": "get_best_route",
+      "status": "PASS",
+      "detail": "sig=435b658a89e1374fb43d28c492d33b5171fecd7fe53de52521fdf9c01a2ec067",
+      "timestamp": 1772034299
+    },
+    {
+      "contract": "dex_router",
+      "action": "get_route_count",
+      "status": "PASS",
+      "detail": "sig=07799a2bf6ccb002296d2902e337e9f1de6c27ef3debeb825b504e5cfd358ffb",
+      "timestamp": 1772034302
+    },
+    {
+      "contract": "dex_router",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=6,required=4",
+      "timestamp": 1772034302
+    },
+    {
+      "contract": "dex_margin",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=57514e215e816571cb6dd11a4959743fb5b86b0d97036d6a785329a81a85d830",
+      "timestamp": 1772034305
+    },
+    {
+      "contract": "dex_margin",
+      "action": "set_mark_price",
+      "status": "PASS",
+      "detail": "sig=631200b69fd48ef530bd2f88d23eb995aaaf89f4874ef44ebdc4fd81773014d9",
+      "timestamp": 1772034305
+    },
+    {
+      "contract": "dex_margin",
+      "action": "open_position",
+      "status": "PASS",
+      "detail": "sig=43101a0acc0a05ebfc251bb1a0eac159536616e24296a8fd5a335e34889874a2",
+      "timestamp": 1772034306
+    },
+    {
+      "contract": "dex_margin",
+      "action": "add_margin",
+      "status": "PASS",
+      "detail": "sig=1b57f0b4f17034ae47df5827c885ec63fe6156793911b2a2c43a0361c67b9a0c",
+      "timestamp": 1772034307
+    },
+    {
+      "contract": "dex_margin",
+      "action": "remove_margin",
+      "status": "PASS",
+      "detail": "sig=ea47e51ce4a79ecb539b6003624e151be2d4d7d9b56a6e7abc04c3453fc599e6",
+      "timestamp": 1772034307
+    },
+    {
+      "contract": "dex_margin",
+      "action": "close_position",
+      "status": "PASS",
+      "detail": "sig=0c4dba25ab72775c6362b40a233dd057ec0d87a69cd9347cd51e5973527405e0",
+      "timestamp": 1772034308
+    },
+    {
+      "contract": "dex_margin",
+      "action": "get_margin_stats",
+      "status": "PASS",
+      "detail": "sig=cb981916fdf0dd98a8bf96e0d9470557763d88070cd9beb6a4467c7a61f2666b",
+      "timestamp": 1772034309
+    },
+    {
+      "contract": "dex_margin",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=7,required=6",
+      "timestamp": 1772034309
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=d1a50aaa1585ee153ab62f5de2b90770c8a8d68531d696964ef78fbdbfe816f6",
+      "timestamp": 1772034314
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "set_moltcoin_address",
+      "status": "PASS",
+      "detail": "sig=f4abace4d62aa62ccfd0c2a71ed1369b79dc3d8e7f57c40552f024dfbf9a0ceb",
+      "timestamp": 1772034315
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "set_rewards_pool",
+      "status": "PASS",
+      "detail": "sig=7a1420d9dbcd429fc18b4a253ddacdca73e6c85149cbf095d7ad5cebc0cad6ae",
+      "timestamp": 1772034315
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "set_reward_rate",
+      "status": "PASS",
+      "detail": "sig=ac412acc3be1390e8b5ea08947813b1aab18db4d2d5bb2bd75a5cc0c2181daf4",
+      "timestamp": 1772034317
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "record_trade",
+      "status": "PASS",
+      "detail": "sig=ba48fb7abce9f528411f4bfe76af42888c936cb498e4c35fc152a19b78a63b74",
+      "timestamp": 1772034319
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "register_referral",
+      "status": "PASS",
+      "detail": "sig=e4b655c7cbbe01d316bf349440eee93f196d6f504f22a0acc66acc56415150ac",
+      "timestamp": 1772034319
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "get_total_distributed",
+      "status": "PASS",
+      "detail": "sig=b4bcb7934875be747135bb6e9631926aad0e8c15301ca7d50ae1bcd66397f15b",
+      "timestamp": 1772034320
+    },
+    {
+      "contract": "dex_rewards",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=7,required=6",
+      "timestamp": 1772034320
+    },
+    {
+      "contract": "dex_governance",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=4dc9f955aca69d208ca5a69305f722b5aea90aa7cd1d47fda40a4abd068e1019",
+      "timestamp": 1772034320
+    },
+    {
+      "contract": "dex_governance",
+      "action": "set_moltyid_address",
+      "status": "PASS",
+      "detail": "sig=82116572c23c6e35b8ae7c8312755593d31eabb1d2d2601c62bf690fafe4b4da",
+      "timestamp": 1772034322
+    },
+    {
+      "contract": "dex_governance",
+      "action": "set_preferred_quote",
+      "status": "PASS",
+      "detail": "sig=7179c2f73327719525b2707dad4420a58d4dc9e490e8e040f3828a827df4cf38",
+      "timestamp": 1772034323
+    },
+    {
+      "contract": "dex_governance",
+      "action": "set_listing_requirements",
+      "status": "PASS",
+      "detail": "sig=ab8ae883fc57c44d45190d426b0a833b14f4752f4efa8d78efe85abb7b690524",
+      "timestamp": 1772034327
+    },
+    {
+      "contract": "dex_governance",
+      "action": "propose_fee_change",
+      "status": "PASS",
+      "detail": "sig=7dceb51926ad3258c51d8bec359b2d59291d8211b1c8b2a4ae19e9555a75b893",
+      "timestamp": 1772034329
+    },
+    {
+      "contract": "dex_governance",
+      "action": "get_proposal_count",
+      "status": "PASS",
+      "detail": "sig=bdd55d83023403b596992b0420e2ca9b60f0f0298cad5fb22be5ec36ea8b18c4",
+      "timestamp": 1772034331
+    },
+    {
+      "contract": "dex_governance",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=6,required=5",
+      "timestamp": 1772034331
+    },
+    {
+      "contract": "dex_analytics",
+      "action": "initialize",
+      "status": "PASS",
+      "detail": "sig=a4967568bf52a513ce7b84889e405e55d55531a20502c2f15772f7e4c85bb770",
+      "timestamp": 1772034332
+    },
+    {
+      "contract": "dex_analytics",
+      "action": "record_trade",
+      "status": "PASS",
+      "detail": "sig=f8439ddf620e1df5f0d06263a26885bd345807de4693be81125bf10f99f944e9",
+      "timestamp": 1772034333
+    },
+    {
+      "contract": "dex_analytics",
+      "action": "get_record_count",
+      "status": "PASS",
+      "detail": "sig=250f39c9bb188ee72ed5ce9160cbcda0358d7eae1ffb350f1732e36910e7948f",
+      "timestamp": 1772034333
+    },
+    {
+      "contract": "dex_analytics",
+      "action": "get_last_price",
+      "status": "PASS",
+      "detail": "sig=fd00c174a7103b3fe558bdf9a15378b6269cd04381f5dc6bb15e946b379442d3",
+      "timestamp": 1772034334
+    },
+    {
+      "contract": "dex_analytics",
+      "action": "get_24h_stats",
+      "status": "PASS",
+      "detail": "sig=1bf3469967a9cc9d248b176366838384167fa380aa3690f445b10131d7cb8779",
+      "timestamp": 1772034334
+    },
+    {
+      "contract": "dex_analytics",
+      "action": "activity_floor",
+      "status": "PASS",
+      "detail": "delta=5,required=2",
+      "timestamp": 1772034334
+    },
+    {
+      "contract": "global",
+      "action": "negative_assertion_floor",
+      "status": "PASS",
+      "detail": "executed=5,required=5",
+      "timestamp": 1772034334
+    }
+  ],
+  "generated_at": 1772034334
 }

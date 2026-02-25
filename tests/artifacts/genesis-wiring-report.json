@@ -8,7 +8,7 @@
   "results": [
     {
       "status": "PASS",
-      "msg": "RPC node is reachable (slot=4808)",
+      "msg": "RPC node is reachable (slot=730)",
       "detail": ""
     },
     {
@@ -158,7 +158,7 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Router has 14 routes registered (expected >= 10)",
+      "msg": "DEX Router has 16 routes registered (expected >= 10)",
       "detail": ""
     },
     {
@@ -168,7 +168,7 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Router route_count=14 confirmed via RPC stats",
+      "msg": "DEX Router route_count=16 confirmed via RPC stats",
       "detail": ""
     },
     {
@@ -178,7 +178,7 @@
     },
     {
       "status": "PASS",
-      "msg": "MoltBridge storage has 8 entries (wiring likely present)",
+      "msg": "MoltBridge storage has 9 entries (wiring likely present)",
       "detail": ""
     },
     {
@@ -193,7 +193,7 @@
     },
     {
       "status": "PASS",
-      "msg": "MoltSwap has 6 storage entries (initialization confirmed)",
+      "msg": "MoltSwap has 7 storage entries (initialization confirmed)",
       "detail": ""
     },
     {
@@ -243,7 +243,7 @@
     },
     {
       "status": "PASS",
-      "msg": "MoltyID has 88 total skills (expected >= 9 for 3 identities \u00d7 3 skills)",
+      "msg": "MoltyID has 87 total skills (expected >= 9 for 3 identities \u00d7 3 skills)",
       "detail": ""
     },
     {
