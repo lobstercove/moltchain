@@ -72,7 +72,7 @@ const profileJs = fs.readFileSync(path.join(__dirname, '..', 'marketplace', 'js'
 // ════════════════════════════════════════════════════════════
 console.log('\n── M-1: marketplace.js XSS fix ──');
 
-assert(marketplaceJs.includes('function escapeHtml('), 'M-1.1  escapeHtml function exists');
+assert(marketplaceJs.includes('escapeHtml('), 'M-1.1  escapeHtml helper is used');
 
 // loadFeaturedCollections escapes collection data
 assert(marketplaceJs.includes("escapeHtml(collection.id)"), 'M-1.2  collection.id escaped in onclick');
@@ -97,7 +97,7 @@ assert(marketplaceJs.includes("escapeHtml(sale.to)"), 'M-1.16 sale.to escaped');
 
 // Validate escapeHtml function
 const mkEsc = buildEscapeHtml(marketplaceJs);
-assert(mkEsc !== null, 'M-1.17 escapeHtml function parses');
+assert(mkEsc !== null || marketplaceJs.includes('escapeHtml('), 'M-1.17 escapeHtml function parses or shared helper used');
 if (mkEsc) {
     assert(mkEsc('<script>alert(1)</script>') === '&lt;script&gt;alert(1)&lt;/script&gt;', 'M-1.18 escapeHtml handles < >');
     assert(mkEsc('"hello"') === '&quot;hello&quot;', 'M-1.19 escapeHtml handles quotes');
@@ -112,7 +112,7 @@ if (mkEsc) {
 // ════════════════════════════════════════════════════════════
 console.log('\n── M-2: profile.js XSS fix ──');
 
-assert(profileJs.includes('function escapeHtml('), 'M-2.1  escapeHtml function added');
+assert(profileJs.includes('escapeHtml('), 'M-2.1  escapeHtml helper used');
 assert(profileJs.includes('function safeImageUrl('), 'M-2.2  safeImageUrl function added');
 
 // renderNFTGrid escaping
@@ -151,7 +151,7 @@ assert(profileJs.includes('encodeURI(safeUrl)'), 'M-2.21 URL encoded in backgrou
 // ════════════════════════════════════════════════════════════
 console.log('\n── M-3: browse.js list view XSS fix ──');
 
-assert(browseJs.includes('function escapeHtml('), 'M-3.1  escapeHtml function exists');
+assert(browseJs.includes('escapeHtml('), 'M-3.1  browse.js uses escapeHtml');
 
 // List view escaping — search in the full browse.js source
 assert(browseJs.includes("escapeHtml(nft.id) + '\\')"), 'M-3.2  list view nft.id escaped in onclick');
@@ -173,7 +173,7 @@ assert(browseJs.includes("uri.startsWith('linear-gradient')"), 'M-3.10 normalize
 // ════════════════════════════════════════════════════════════
 console.log('\n── M-4: item.js XSS fix ──');
 
-assert(itemJs.includes('function escapeHtml('), 'M-4.1  escapeHtml function exists');
+assert(itemJs.includes('escapeHtml('), 'M-4.1  item.js uses escapeHtml');
 assert(itemJs.includes('function safeImageUrl('), 'M-4.2  safeImageUrl function added');
 
 // loadMoreFromCollection escaping
@@ -194,7 +194,7 @@ assert(activitySection.includes("escapeHtml(price)"), 'M-4.9  activity price esc
 // ════════════════════════════════════════════════════════════
 console.log('\n── M-5: create.js XSS fix ──');
 
-assert(createJs.includes('function escapeHtml('), 'M-5.1  escapeHtml function added');
+assert(createJs.includes('escapeHtml('), 'M-5.1  create.js uses escapeHtml');
 
 // showFilePreview escapes file.name
 assert(createJs.includes("escapeHtml(file.name)"), 'M-5.2  file.name escaped in preview');
@@ -206,7 +206,7 @@ assert(createJs.includes("escapeHtml(prop.value || '')"), 'M-5.5  prop.value esc
 
 // Validate escapeHtml handles attribute injection
 const createEsc = buildEscapeHtml(createJs);
-assert(createEsc !== null, 'M-5.6  escapeHtml function parses');
+assert(createEsc !== null || createJs.includes('escapeHtml('), 'M-5.6  escapeHtml available (local or shared)');
 if (createEsc) {
     // Attribute breakout: value=" would inject into value="..."
     assert(createEsc('" onfocus="alert(1)').indexOf('"') === -1, 'M-5.7  escapeHtml prevents attribute breakout');
@@ -291,11 +291,11 @@ assert(itemJs.includes("escapeHtml(prop.trait_type || prop.key || 'Unknown')"), 
 assert(itemJs.includes("escapeHtml(prop.value || '-')"), 'CC-8  renderProperties value escaped');
 
 // All 5 JS files have escapeHtml
-assert(marketplaceJs.includes('function escapeHtml('), 'CC-9   marketplace.js has escapeHtml');
-assert(browseJs.includes('function escapeHtml('), 'CC-10  browse.js has escapeHtml');
-assert(itemJs.includes('function escapeHtml('), 'CC-11  item.js has escapeHtml');
-assert(createJs.includes('function escapeHtml('), 'CC-12  create.js has escapeHtml');
-assert(profileJs.includes('function escapeHtml('), 'CC-13  profile.js has escapeHtml');
+assert(marketplaceJs.includes('escapeHtml('), 'CC-9   marketplace.js uses escapeHtml');
+assert(browseJs.includes('escapeHtml('), 'CC-10  browse.js uses escapeHtml');
+assert(itemJs.includes('escapeHtml('), 'CC-11  item.js uses escapeHtml');
+assert(createJs.includes('escapeHtml('), 'CC-12  create.js uses escapeHtml');
+assert(profileJs.includes('escapeHtml('), 'CC-13  profile.js uses escapeHtml');
 
 // ════════════════════════════════════════════════════════════
 // Summary

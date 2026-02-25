@@ -165,8 +165,8 @@ test('E-2.5 full.js escapes achievement names in identity tab', () => {
   assert.ok(fullSrc.includes('escapeHtmlExt(def.name)'), 'achievement name not escaped');
 });
 
-test('E-2.6 full.js escapes data.name in .molt name section', () => {
-  assert.ok(fullSrc.includes("escapeHtmlExt(data.name.endsWith('.molt')"), 'data.name not escaped in .molt section');
+test('E-2.6 full.js escapes data.moltName in .molt name section', () => {
+  assert.ok(fullSrc.includes("escapeHtmlExt(data.moltName.endsWith('.molt')"), 'data.moltName not escaped in .molt section');
 });
 
 test('E-2.7 full.js escapes data.endpoint in agent service section', () => {

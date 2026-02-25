@@ -12,13 +12,13 @@
 4. Funds each wallet from treasury with `1000 MOLT` (configurable).
 5. Executes a real transfer between actor wallets.
 6. Runs integrated suites:
-   - `test-rpc-comprehensive.sh`
-   - `test-websocket.sh`
+   - `tests/test-rpc-comprehensive.sh`
+   - `tests/test-websocket.sh`
    - `tests/live-e2e-test.sh`
    - `tests/services-deep-e2e.sh`
    - `tests/contracts-write-e2e.py`
-   - `test-contract-deployment.sh`
-   - `test-cli-comprehensive.sh`
+   - `tests/test-contract-deployment.sh`
+   - `tests/test-cli-comprehensive.sh`
    - optional: `scripts/test-all-sdks.sh`
 7. Fails the gate on any failing stage.
 

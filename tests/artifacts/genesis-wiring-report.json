@@ -8,7 +8,7 @@
   "results": [
     {
       "status": "PASS",
-      "msg": "RPC node is reachable (slot=594)",
+      "msg": "RPC node is reachable (slot=4808)",
       "detail": ""
     },
     {
@@ -148,17 +148,17 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Core has 5 trading pairs (expected >= 5)",
+      "msg": "DEX Core has 7 trading pairs (expected >= 5)",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "DEX AMM has 6 pools (expected >= 5)",
+      "msg": "DEX AMM has 7 pools (expected >= 5)",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "DEX Router has 11 routes registered (expected >= 10)",
+      "msg": "DEX Router has 14 routes registered (expected >= 10)",
       "detail": ""
     },
     {
@@ -168,7 +168,7 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Router route_count=11 confirmed via RPC stats",
+      "msg": "DEX Router route_count=14 confirmed via RPC stats",
       "detail": ""
     },
     {
@@ -183,17 +183,17 @@
     },
     {
       "status": "PASS",
-      "msg": "MoltDAO has 8 storage entries (initialization confirmed)",
+      "msg": "MoltDAO has MoltyID address configured",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "MoltDAO stats accessible: proposals=1",
+      "msg": "MoltDAO stats accessible: proposals=0",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "MoltSwap has 13 storage entries (initialization confirmed)",
+      "msg": "MoltSwap has 6 storage entries (initialization confirmed)",
       "detail": ""
     },
     {
@@ -203,7 +203,7 @@
     },
     {
       "status": "PASS",
-      "msg": "Reef Storage has 4 storage entries (initialization confirmed)",
+      "msg": "Reef Storage has MOLT token address configured",
       "detail": ""
     },
     {
@@ -213,7 +213,7 @@
     },
     {
       "status": "PASS",
-      "msg": "LobsterLend has 6 storage entries (initialization confirmed)",
+      "msg": "LobsterLend has MOLT token address configured",
       "detail": ""
     },
     {
@@ -223,27 +223,27 @@
     },
     {
       "status": "PASS",
-      "msg": "DEX Margin has 5 mark prices set (expected >= 5)",
+      "msg": "DEX Margin has 7 mark prices set (expected >= 5)",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "DEX Margin has 5 margin-enabled pairs (expected >= 5)",
+      "msg": "DEX Margin has 7 margin-enabled pairs (expected >= 5)",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "DEX Margin has 5 index prices set (expected >= 5)",
+      "msg": "DEX Margin has 7 index prices set (expected >= 5)",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "DEX Margin stats accessible: positions=1",
+      "msg": "DEX Margin stats accessible: positions=0",
       "detail": ""
     },
     {
       "status": "PASS",
-      "msg": "MoltyID has 84 total skills (expected >= 9 for 3 identities \u00d7 3 skills)",
+      "msg": "MoltyID has 88 total skills (expected >= 9 for 3 identities \u00d7 3 skills)",
       "detail": ""
     },
     {

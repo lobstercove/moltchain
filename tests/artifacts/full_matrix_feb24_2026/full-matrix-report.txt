@@ -1,0 +1,39 @@
+[1/37] PASS (1s) bash tests/test-rpc-comprehensive.sh
+[2/37] PASS (0s) bash tests/test-websocket.sh
+[3/37] PASS (0s) bash tests/test-cli-comprehensive.sh
+[4/37] PASS (30s) bash tests/live-e2e-test.sh
+[5/37] PASS (8s) REQUIRE_ALL_CONTRACTS=0 bash tests/services-deep-e2e.sh
+[6/37] PASS (0s) REQUIRE_FULL_WRITE_ACTIVITY=0 STRICT_WRITE_ASSERTIONS=0 ENFORCE_DOMAIN_ASSERTIONS=0 MIN_CONTRACT_ACTIVITY_DELTA=0 python3 tests/contracts-write-e2e.py
+[7/37] PASS (0s) bash tests/test-contract-deployment.sh
+[8/37] PASS (5s) bash scripts/test-all-sdks.sh
+[9/37] PASS (25s) node tests/e2e-dex.js
+[10/37] PASS (1s) python3 tests/e2e-dex-trading.py
+[11/37] PASS (49s) node tests/e2e-launchpad.js
+[12/37] PASS (39s) node tests/e2e-prediction.js
+[13/37] PASS (78s) node tests/e2e-volume.js
+[14/37] PASS (3s) bash tests/test-dex-api-comprehensive.sh
+[15/37] PASS (10s) node tests/test-ws-dex.js
+[16/37] PASS (0s) node tests/test_wallet_audit.js
+[17/37] PASS (0s) node tests/test_wallet_extension_audit.js
+[18/37] PASS (1s) node tests/test_marketplace_audit.js
+[19/37] PASS (0s) node tests/test_developers_audit.js
+[20/37] PASS (0s) node tests/test_website_audit.js
+[21/37] PASS (0s) node tests/test_cross_cutting_audit.js
+[22/37] PASS (0s) node tests/test_coverage_audit.js
+[23/37] PASS (0s) python3 tests/e2e-genesis-wiring.py
+[24/37] PASS (36s) bash tests/multi-validator-e2e.sh
+[25/37] PASS (0s) python3 tests/comprehensive-e2e.py
+[26/37] PASS (0s) python3 tests/comprehensive-e2e-parallel.py
+[27/37] PASS (89s) python3 tests/e2e-websocket-upgrade.py
+[28/37] PASS (0s) python3 tests/load-test-5k-traders.py
+[29/37] PASS (20s) bash tests/launch-3v.sh
+[30/37] PASS (61s) python3 sdk/python/test_sdk_live.py
+[31/37] PASS (6s) python3 sdk/python/test_websocket_sdk.py
+[32/37] PASS (19s) python3 sdk/python/test_websocket_simple.py
+[33/37] PASS (0s) python3 sdk/python/test_cross_sdk_compat.py
+[34/37] PASS (1s) npx --yes ts-node sdk/js/test-all-features.ts
+[35/37] PASS (0s) node sdk/js/test_cross_sdk_compat.js
+[36/37] PASS (11s) node sdk/js/test-subscriptions.js
+[37/37] PASS (1s) cargo run --manifest-path sdk/rust/Cargo.toml --example test_transactions
+TOTAL=37 PASS=37 FAIL=0
+LOG=tests/artifacts/full_matrix_feb24_2026/full-matrix.log

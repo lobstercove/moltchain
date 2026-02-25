@@ -91,9 +91,9 @@ jobs:
           ./target/release/moltchain-validator &
           sleep 5  # wait for startup
       - name: Run RPC integration tests
-        run: bash test-rpc-comprehensive.sh
+        run: bash tests/test-rpc-comprehensive.sh
       - name: Run CLI integration tests
-        run: bash test-cli-comprehensive.sh
+        run: bash tests/test-cli-comprehensive.sh
 
   wasm-contracts:
     name: WASM Contract Builds
