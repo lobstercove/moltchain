@@ -5,16 +5,16 @@
   "successful": 15000,
   "failed": 0,
   "success_rate_pct": 100.0,
-  "duration_s": 35.0,
-  "throughput_tps": 428.5,
+  "duration_s": 43.16,
+  "throughput_tps": 347.6,
   "latency_ms": {
-    "min": 502.7,
-    "avg": 879.6,
-    "median": 635.9,
-    "p95": 1816.9,
-    "p99": 2071.4,
-    "max": 2228.1
+    "min": 613.3,
+    "avg": 1083.0,
+    "median": 757.9,
+    "p95": 2239.0,
+    "p99": 2695.9,
+    "max": 4315.5
   },
   "funded_traders": 5000,
-  "timestamp": "2026-03-01T20:05:30"
+  "timestamp": "2026-03-01T22:30:54"
 }
