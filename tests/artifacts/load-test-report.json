@@ -1,20 +1,20 @@
 {
-  "traders": 67,
+  "traders": 5000,
   "txs_per_trader": 3,
-  "total_txs": 201,
-  "successful": 201,
+  "total_txs": 15000,
+  "successful": 15000,
   "failed": 0,
   "success_rate_pct": 100.0,
-  "duration_s": 0.44,
-  "throughput_tps": 454.6,
+  "duration_s": 36.77,
+  "throughput_tps": 408.0,
   "latency_ms": {
-    "min": 65.4,
-    "avg": 112.5,
-    "median": 83.1,
-    "p95": 228.3,
-    "p99": 254.1,
-    "max": 262.8
+    "min": 527.3,
+    "avg": 925.8,
+    "median": 674.0,
+    "p95": 1960.6,
+    "p99": 2232.1,
+    "max": 2446.4
   },
-  "funded_traders": 67,
-  "timestamp": "2026-02-24T23:19:52"
+  "funded_traders": 5000,
+  "timestamp": "2026-02-28T21:48:01"
 }

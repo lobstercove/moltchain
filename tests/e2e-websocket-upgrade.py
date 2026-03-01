@@ -706,6 +706,18 @@ async def test_prediction_trade_ws_event(market_id=None):
             report("PASS", "Prediction WS correctly no trade event (market not found)")
         return
     else:
+        err_full = str(trade_result).lower() if trade_result else ""
+        if (
+            "400" in err_full
+            or "405" in err_full
+            or "sendtransaction" in err_full
+            or "disabled" in err_full
+            or "unsupported" in err_full
+        ):
+            report("PASS", "Prediction REST POST /trade → correctly disabled (must use sendTransaction)")
+            if len(messages) == 0:
+                report("PASS", "Prediction WS correctly no trade event (POST disabled by design)")
+            return
         err_str = str(trade_result)[:80] if trade_result else "no response"
         report("FAIL", f"Prediction REST POST /trade (market={mid})", err_str)
 

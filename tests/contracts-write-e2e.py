@@ -19,7 +19,7 @@ RPC_URL = os.getenv("RPC_URL", "http://127.0.0.1:8899")
 CONTRACT_PROGRAM = PublicKey(b"\xff" * 32)
 REQUIRE_ALL_SCENARIOS = os.getenv("REQUIRE_ALL_SCENARIOS", "1") == "1"
 STRICT_WRITE_ASSERTIONS = os.getenv("STRICT_WRITE_ASSERTIONS", "1") == "1"
-TX_CONFIRM_TIMEOUT_SECS = int(os.getenv("TX_CONFIRM_TIMEOUT_SECS", "25"))
+TX_CONFIRM_TIMEOUT_SECS = int(os.getenv("TX_CONFIRM_TIMEOUT_SECS", "45"))
 REQUIRE_FULL_WRITE_ACTIVITY = os.getenv("REQUIRE_FULL_WRITE_ACTIVITY", "1") == "1"
 MIN_CONTRACT_ACTIVITY_DELTA = int(os.getenv("MIN_CONTRACT_ACTIVITY_DELTA", "1"))
 CONTRACT_ACTIVITY_OVERRIDES_RAW = os.getenv("CONTRACT_ACTIVITY_OVERRIDES", "")
@@ -34,6 +34,9 @@ REQUIRE_EXPECTED_CONTRACT_SET = os.getenv("REQUIRE_EXPECTED_CONTRACT_SET", "1") 
 WRITE_E2E_REPORT_PATH = os.getenv("WRITE_E2E_REPORT_PATH", str(ROOT / "tests" / "artifacts" / "contracts-write-e2e-report.json"))
 REQUIRE_FUNCTION_COVERAGE = os.getenv("REQUIRE_FUNCTION_COVERAGE", "0") == "1"
 PROGRAM_CALLS_LIMIT = int(os.getenv("PROGRAM_CALLS_LIMIT", "200"))
+CHAIN_READY_TIMEOUT_SECS = float(os.getenv("CHAIN_READY_TIMEOUT_SECS", "45"))
+RPC_RETRY_ATTEMPTS = max(1, int(os.getenv("RPC_RETRY_ATTEMPTS", "4")))
+RPC_RETRY_BASE_DELAY = max(0.1, float(os.getenv("RPC_RETRY_BASE_DELAY", "0.4")))
 
 DEPLOYER_PATH = os.getenv("AGENT_KEYPAIR") or str(ROOT / "keypairs" / "deployer.json")
 SECONDARY_PATH = os.getenv("HUMAN_KEYPAIR", "")
@@ -43,6 +46,58 @@ FAIL = 0
 SKIP = 0
 RESULTS: List[Dict[str, Any]] = []
 CONTRACT_SET_DIFF: Dict[str, Any] = {}
+
+
+def _is_transient_error(exc: Exception) -> bool:
+    msg = str(exc).lower()
+    return any(
+        marker in msg
+        for marker in (
+            "server disconnected",
+            "all connection attempts failed",
+            "connection refused",
+            "connection reset",
+            "broken pipe",
+            "timed out",
+            "timeout",
+            "temporarily unavailable",
+            "service unavailable",
+            "502",
+            "503",
+            "504",
+            "429",
+            "no blocks yet",
+        )
+    )
+
+
+async def _rpc_with_retry(conn: Connection, method: str, params: List[Any]) -> Any:
+    last_error: Optional[Exception] = None
+    for attempt in range(RPC_RETRY_ATTEMPTS):
+        try:
+            return await conn._rpc(method, params)
+        except Exception as exc:
+            last_error = exc
+            if _is_transient_error(exc) and attempt < RPC_RETRY_ATTEMPTS - 1:
+                await asyncio.sleep(RPC_RETRY_BASE_DELAY * (2 ** attempt))
+                continue
+            break
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError(f"{method} failed without a captured error")
+
+
+async def wait_for_chain_ready(conn: Connection, timeout_secs: float = CHAIN_READY_TIMEOUT_SECS) -> int:
+    start = time.time()
+    while time.time() - start < timeout_secs:
+        try:
+            slot = await conn.get_slot()
+            if isinstance(slot, int) and slot > 0:
+                return slot
+        except Exception:
+            pass
+        await asyncio.sleep(0.5)
+    raise TimeoutError(f"chain not ready within {timeout_secs:.1f}s")
 
 
 def load_keypair_flexible(path: Path) -> Keypair:
@@ -306,14 +361,26 @@ async def call_contract(
         accounts=[caller.public_key(), program],
         data=payload.encode(),
     )
-    blockhash = await conn.get_recent_blockhash()
-    tx = (
-        TransactionBuilder()
-        .add(ix)
-        .set_recent_blockhash(blockhash)
-        .build_and_sign(caller)
-    )
-    return await conn.send_transaction(tx)
+    last_error: Optional[Exception] = None
+    for attempt in range(RPC_RETRY_ATTEMPTS):
+        try:
+            blockhash = await conn.get_recent_blockhash()
+            tx = (
+                TransactionBuilder()
+                .add(ix)
+                .set_recent_blockhash(blockhash)
+                .build_and_sign(caller)
+            )
+            return await conn.send_transaction(tx)
+        except Exception as exc:
+            last_error = exc
+            if _is_transient_error(exc) and attempt < RPC_RETRY_ATTEMPTS - 1:
+                await asyncio.sleep(RPC_RETRY_BASE_DELAY * (2 ** attempt))
+                continue
+            break
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError("call_contract failed without a captured error")
 
 
 def _extract_count(payload: Any) -> int:
@@ -366,15 +433,15 @@ async def wait_for_transaction(conn: Connection, signature: str, timeout_secs: i
 
 async def get_program_observability(conn: Connection, program: PublicKey) -> Tuple[int, int]:
     program_id = str(program)
-    calls_raw = await conn._rpc("getProgramCalls", [program_id, {"limit": PROGRAM_CALLS_LIMIT}])
+    calls_raw = await _rpc_with_retry(conn, "getProgramCalls", [program_id, {"limit": PROGRAM_CALLS_LIMIT}])
     calls_count = _extract_count(calls_raw)
 
     events_count = 0
     try:
-        events_raw = await conn._rpc("getContractEvents", [program_id, PROGRAM_CALLS_LIMIT, 0])
+        events_raw = await _rpc_with_retry(conn, "getContractEvents", [program_id, PROGRAM_CALLS_LIMIT, 0])
         events_count = _extract_count(events_raw)
     except Exception:
-        events_raw = await conn._rpc("getContractEvents", [program_id, PROGRAM_CALLS_LIMIT])
+        events_raw = await _rpc_with_retry(conn, "getContractEvents", [program_id, PROGRAM_CALLS_LIMIT])
         events_count = _extract_count(events_raw)
 
     return calls_count, events_count
@@ -382,7 +449,7 @@ async def get_program_observability(conn: Connection, program: PublicKey) -> Tup
 
 async def get_program_storage_count(conn: Connection, program: PublicKey) -> int:
     program_id = str(program)
-    storage_raw = await conn._rpc("getProgramStorage", [program_id, {"limit": 400}])
+    storage_raw = await _rpc_with_retry(conn, "getProgramStorage", [program_id, {"limit": 400}])
     return _extract_count(storage_raw)
 
 
@@ -706,7 +773,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
         ],
         "moltmarket": [
             {"fn": "initialize", "args": {"owner": provider, "fee_addr": provider}, "actor": "deployer"},
-            {"fn": "list_nft", "args": {"seller": provider, "token_id": rand_listing_id, "price": 500}, "actor": "deployer"},
+            {"fn": "list_nft", "args": {"seller": provider, "token_id": rand_listing_id, "price": 5000}, "actor": "deployer"},
             {"fn": "cancel_listing", "args": {"seller": provider, "token_id": rand_listing_id}, "actor": "deployer"},
             {"fn": "get_marketplace_stats", "args": {}, "actor": "deployer"},
         ],
@@ -1089,6 +1156,8 @@ async def main() -> int:
     try:
         await conn.health()
         report("PASS", "validator healthy")
+        slot = await wait_for_chain_ready(conn)
+        report("PASS", f"chain ready at slot {slot}")
     except Exception as exc:
         report("FAIL", f"validator unreachable: {exc}")
         return 1

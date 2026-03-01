@@ -36,6 +36,10 @@ const homeHtmlSrc = fs.readFileSync(path.join(extRoot, 'pages', 'home.html'), 'u
 const txServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'tx-service.js'), 'utf8');
 const bridgeServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'bridge-service.js'), 'utf8');
 const providerRouterSrc = fs.readFileSync(path.join(extRoot, 'core', 'provider-router.js'), 'utf8');
+const wsServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'ws-service.js'), 'utf8');
+const serviceWorkerSrc = fs.readFileSync(path.join(extRoot, 'background', 'service-worker.js'), 'utf8');
+const contentScriptSrc = fs.readFileSync(path.join(extRoot, 'content', 'content-script.js'), 'utf8');
+const inpageProviderSrc = fs.readFileSync(path.join(extRoot, 'content', 'inpage-provider.js'), 'utf8');
 
 // ── Extract escapeHtml / escapeHtmlExt from source files ──
 function extractEscapeHtml(src, fnName) {
@@ -451,6 +455,80 @@ test('CC-7 safeImageUrl blocks vbscript protocol', () => {
 test('CC-8 safeImageUrl allows ipfs protocol', () => {
   const result = safeImageUrl('ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi');
   assert.ok(result.startsWith('ipfs://'), 'ipfs URL should be allowed');
+});
+
+test('CC-9 popup shield panel uses canonical getShieldedPoolState with fallback', () => {
+  assert.ok(popupSrc.includes("rpc.call('getShieldedPoolState'"), 'popup shield panel must call getShieldedPoolState');
+  assert.ok(popupSrc.includes("rpc.call('getShieldedPoolStats'"), 'popup shield panel should keep getShieldedPoolStats fallback');
+});
+
+test('CC-10 popup shield panel has deterministic seed init (no placeholder-only path)', () => {
+  assert.ok(popupSrc.includes('deriveShieldedSeedFromWallet(wallet)'), 'popup should derive seed from wallet context');
+  assert.ok(popupSrc.includes('await initShieldedPopup(seed);'), 'popup should initialize shielded state when seed is derived');
+});
+
+test('CC-11 popup delete flow wipes encrypted key material', () => {
+  assert.ok(popupSrc.includes("wipeWallet.encryptedKey = wipeString(wipeWallet.encryptedKey) || null;"), 'popup delete must wipe encryptedKey');
+  assert.ok(popupSrc.includes('resetShieldedPopupState();'), 'popup delete should reset in-memory shielded state');
+});
+
+test('CC-12 ws-service events are forwarded to popup runtime handlers', () => {
+  assert.ok(wsServiceSrc.includes("msg.method === 'subscription'"), 'ws-service should parse subscription notifications');
+  assert.ok(wsServiceSrc.includes("type: 'account-change'"), 'ws-service should emit account-change events');
+  assert.ok(serviceWorkerSrc.includes("type: 'MOLT_WS_EVENT'"), 'service-worker should forward WS events to runtime listeners');
+  assert.ok(popupSrc.includes("message?.type === 'MOLT_WS_EVENT'"), 'popup should react to forwarded WS events');
+});
+
+test('CC-13 content script uses event-driven provider refresh (no 2s polling loop)', () => {
+  assert.ok(!contentScriptSrc.includes('setInterval(() => {\n      checkProviderStateAndEmit();\n    }, 2000);'),
+    'content-script should not use fixed 2s provider polling');
+  assert.ok(contentScriptSrc.includes("message?.type === 'MOLT_PROVIDER_STATE_DIRTY'"),
+    'content-script should refresh on provider state dirty messages');
+  assert.ok(contentScriptSrc.includes('document.addEventListener(\'visibilitychange\''),
+    'content-script should refresh on visibility changes');
+});
+
+test('CC-14 window.ethereum shim is namespace-restricted (no broad moltwallet spread)', () => {
+  assert.ok(!inpageProviderSrc.includes('...window.moltwallet'), 'window.ethereum must not spread full moltwallet surface');
+  assert.ok(inpageProviderSrc.includes('/^(eth_|net_|web3_|wallet_)/.test(method)'), 'window.ethereum request should enforce allowed method namespaces');
+  assert.ok(inpageProviderSrc.includes('Unsupported window.ethereum method'), 'window.ethereum should reject unsupported method names');
+});
+
+test('CC-15 popup uses live oracle feed for MOLT USD display (no fixed $0.10)', () => {
+  assert.ok(popupSrc.includes('/oracle/prices'), 'popup should fetch oracle prices endpoint');
+  assert.ok(popupSrc.includes("String(feed?.asset || '').toUpperCase() === 'MOLT'"), 'popup should select MOLT oracle feed');
+  assert.ok(!popupSrc.includes('(balanceMolt * 0.10)'), 'popup should not use hardcoded 0.10 MOLT price');
+});
+
+test('CC-16 provider router prunes expired pending approvals and stale finalized requests', () => {
+  assert.ok(providerRouterSrc.includes('const FINALIZED_REQUEST_TTL_MS = 5 * 60 * 1000;'),
+    'provider router should define finalized request cleanup TTL');
+  assert.ok(providerRouterSrc.includes("request.finalized = { ok: false, error: 'Approval timed out' };"),
+    'provider router should finalize expired pending approvals as timed out');
+  assert.ok(providerRouterSrc.includes('pendingRequests.delete(requestId);'),
+    'provider router should delete stale finalized requests during pruning');
+  assert.ok(providerRouterSrc.includes('if (!request || request.finalized) return null;'),
+    'provider router should hide finalized requests from pending lookup');
+});
+
+test('CC-17 provider router applies TTL expiry to approved origins', () => {
+  assert.ok(providerRouterSrc.includes("const APPROVED_ORIGINS_META_KEY = 'moltApprovedOriginsMeta';"),
+    'provider router should persist approved-origin metadata key');
+  assert.ok(providerRouterSrc.includes('const APPROVED_ORIGIN_TTL_MS = 30 * 24 * 60 * 60 * 1000;'),
+    'provider router should define approved-origin TTL');
+  assert.ok(providerRouterSrc.includes('async function pruneApprovedOrigins('),
+    'provider router should prune expired approved origins');
+  assert.ok(providerRouterSrc.includes('meta[origin] = Date.now() + APPROVED_ORIGIN_TTL_MS;'),
+    'provider router should stamp origin approvals with expiry');
+});
+
+test('CC-18 provider router reuses shared tx-service message serializer', () => {
+  assert.ok(providerRouterSrc.includes("import { serializeMessageForSigning } from './tx-service.js';"),
+    'provider router should import serializeMessageForSigning from tx-service');
+  assert.ok(providerRouterSrc.includes('return serializeMessageForSigning(normalizedMessage);'),
+    'provider router should serialize message bytes via tx-service helper');
+  assert.ok(txServiceSrc.includes('export function serializeMessageForSigning(message)'),
+    'tx-service should export canonical serializeMessageForSigning helper');
 });
 
 // ============================================================================

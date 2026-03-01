@@ -40,10 +40,21 @@ async function testAsync(name, fn) {
 const fs = require('fs');
 const path = require('path');
 
+function readFirstExisting(paths) {
+    for (const filePath of paths) {
+        if (fs.existsSync(filePath)) {
+            return fs.readFileSync(filePath, 'utf8');
+        }
+    }
+    throw new Error(`No existing path found: ${paths.join(', ')}`);
+}
+
 const cryptoSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'crypto.js'), 'utf8');
 const walletSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'wallet.js'), 'utf8');
+const walletSharedUtilsSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'shared', 'utils.js'), 'utf8');
 const shieldedSrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'shielded.js'), 'utf8');
 const identitySrc = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'js', 'identity.js'), 'utf8');
+const moltyidAbi = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'contracts', 'moltyid', 'abi.json'), 'utf8'));
 const walletHtml = fs.readFileSync(path.join(__dirname, '..', 'wallet', 'index.html'), 'utf8');
 const explorerAddressSrc = fs.readFileSync(path.join(__dirname, '..', 'explorer', 'js', 'address.js'), 'utf8');
 
@@ -215,7 +226,9 @@ test('rejects 63-char hex string', () => {
 });
 
 test('wallet.js has hex validation regex in importWalletPrivateKey', () => {
-    assert(walletSrc.includes('/^[0-9a-fA-F]{64}$/'), 'Must have hex validation regex');
+    assert(walletSrc.includes('/^[0-9a-fA-F]+$/'), 'Must validate private key characters as hex');
+    assert(walletSrc.includes('Invalid private key length (must be 64 or 128 hex characters)'),
+        'Must enforce accepted private key length constraints');
 });
 
 // ---- W-4: Auto-lock "Never" bug ----
@@ -358,10 +371,14 @@ test('isValidMnemonic rejects non-wordlist words', () => {
     assert.strictEqual(MoltCrypto.isValidMnemonic('abandon xyzzy abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon'), false);
 });
 
-test('isValidMnemonic accepts 12 valid BIP39 words', () => {
-    // Use words from the wordlist (word-level check still passes without checksum)
+test('isValidMnemonic accepts valid BIP39 checksum mnemonic', () => {
     const mnemonic = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
     assert.strictEqual(MoltCrypto.isValidMnemonic(mnemonic), true);
+});
+
+test('isValidMnemonic rejects invalid BIP39 checksum mnemonic', () => {
+    const invalid = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon ability';
+    assert.strictEqual(MoltCrypto.isValidMnemonic(invalid), false);
 });
 
 test('isValidMnemonicAsync exists for full checksum validation', () => {
@@ -517,8 +534,10 @@ test('encryptPrivateKey uses AES-256-GCM + PBKDF2', () => {
 
 // AUDIT-FIX H6-01: Verify no fake address generation from random bytes
 test('wallet-connect.js does not generate fake addresses from random bytes', () => {
-    const walletConnectSrc = fs.readFileSync(
-        path.join(__dirname, '..', 'shared', 'wallet-connect.js'), 'utf8');
+    const walletConnectSrc = readFirstExisting([
+        path.join(__dirname, '..', 'shared', 'wallet-connect.js'),
+        path.join(__dirname, '..', 'dex', 'shared', 'wallet-connect.js'),
+    ]);
     // The old vulnerability: generating random bytes and encoding as base58 to create a fake address
     // Pattern: var bytes = new Uint8Array(32); crypto.getRandomValues(bytes); ... chars[bytes[i % 32] % chars.length]
     const hasFakeAddrPattern = walletConnectSrc.includes("chars[bytes[i % 32] % chars.length]");
@@ -568,9 +587,9 @@ test('publicKeyToAddress produces base58 string', () => {
 console.log('\nIntegration: Bincode serializer');
 
 test('serializeMessageBincode validates blockhash format', () => {
-    // Extract serializeMessageBincode from wallet.js
-    const fnMatch = walletSrc.match(/function serializeMessageBincode\(message\)[\s\S]*?^}/m);
-    assert(fnMatch, 'serializeMessageBincode must exist');
+    // Extract serializeMessageBincode from shared utils (single source of truth)
+    const fnMatch = walletSharedUtilsSrc.match(/function serializeMessageBincode\(message\)[\s\S]*?^}/m);
+    assert(fnMatch, 'serializeMessageBincode must exist in shared/utils.js');
     
     // Create the function by eval'ing the full declaration and returning a reference
     const serializeMessageBincode = (new Function(fnMatch[0] + '\nreturn serializeMessageBincode;'))();
@@ -597,6 +616,170 @@ test('serializeMessageBincode validates blockhash format', () => {
         assert(e.message.includes('Invalid') || e.message.includes('missing'),
             'Error must mention validation');
     }
+
+    assert(!walletSrc.includes('function serializeMessageBincode(message)'),
+        'wallet.js should reuse shared/utils serializer instead of a local duplicate');
+});
+
+console.log('\nW-13: Shielded RPC method wiring');
+
+test('shielded.js prefers isNullifierSpent over legacy checkNullifier', () => {
+    assert(shieldedSrc.includes("rpc.call('isNullifierSpent'"), 'shielded.js should call isNullifierSpent');
+});
+
+test('shielded.js keeps fallback compatibility to checkNullifier', () => {
+    assert(shieldedSrc.includes("rpc.call('checkNullifier'"), 'shielded.js should keep checkNullifier fallback');
+});
+
+console.log('\nW-14: Wallet delete secure wipe wiring');
+
+test('wallet.js defines wipeSensitiveWalletData helper', () => {
+    assert(walletSrc.includes('function wipeSensitiveWalletData(wallet)'), 'wipeSensitiveWalletData helper missing');
+});
+
+test('wallet.js wipes encrypted key material before deletion', () => {
+    assert(walletSrc.includes('wipeSensitiveWalletData(wipeTarget);'), 'delete flow must invoke wipeSensitiveWalletData');
+    assert(walletSrc.includes('wallet.encryptedKey = wipeString(wallet.encryptedKey) || null;'), 'encryptedKey wipe missing');
+});
+
+console.log('\nW-15: Activity pagination cursor wiring');
+
+test('wallet.js activity pagination prefers RPC has_more + next_before_slot', () => {
+    assert(walletSrc.includes('result.has_more'), 'activity pagination should consume RPC has_more');
+    assert(walletSrc.includes('result.next_before_slot'), 'activity pagination should consume RPC next_before_slot');
+});
+
+test('wallet.js activity pagination falls back safely for legacy responses', () => {
+    assert(walletSrc.includes('Legacy fallback: infer pagination from page size + last tx slot'),
+        'activity pagination should retain legacy fallback behavior');
+});
+
+console.log('\nW-16: Unshield recipient address validation');
+
+test('shielded.js validates recipient address before unshield', () => {
+    assert(shieldedSrc.includes('!window.MoltCrypto || !window.MoltCrypto.isValidAddress(recipient)'),
+        'confirmUnshield should validate recipient address');
+    assert(shieldedSrc.includes('showToast(\'Enter a valid recipient address\')'),
+        'invalid recipient should show explicit validation toast');
+});
+
+console.log('\nW-17: MoltyID set_rate ABI encoding validation');
+
+test('identity.js set_rate encoder matches MoltyID ABI pointer+u64 layout', () => {
+    const setRate = (moltyidAbi.functions || []).find((fn) => fn.name === 'set_rate');
+    assert(setRate, 'MoltyID ABI must expose set_rate');
+    assert.strictEqual(setRate.opcode, 41, 'set_rate opcode should be 41');
+    assert.deepStrictEqual(
+        (setRate.params || []).map((p) => p.type),
+        ['Pubkey', 'u64'],
+        'set_rate ABI params must be [Pubkey, u64]'
+    );
+
+    assert(identitySrc.includes("case 'set_rate':"), 'identity.js must implement set_rate encoding branch');
+    assert(identitySrc.includes('const data = new Uint8Array(32 + 8);'), 'set_rate args must allocate 32-byte pubkey + 8-byte u64');
+    assert(identitySrc.includes('data.set(callerPubkey, 0);'), 'set_rate args must place caller pubkey at offset 0');
+    assert(identitySrc.includes('data.set(u64LE(params.molt_per_unit || 0), 32);'), 'set_rate args must place rate u64 at offset 32');
+    assert(identitySrc.includes('return data; // no layout prefix'), 'set_rate encoding must use raw pointer+u64 args without layout prefix');
+});
+
+test('identity.js set_rate update path submits molt_per_unit in shell units', () => {
+    assert(identitySrc.includes("buildContractCall('set_rate', { molt_per_unit: newRateShells }, values.password)"),
+        'identity edit flow must pass set_rate as molt_per_unit shells');
+});
+
+console.log('\nW-18: Wallet low-priority UX wiring');
+
+test('wallet index send fee display is dynamic (no hardcoded 0.001 text)', () => {
+    assert(walletHtml.includes('id="sendNetworkFeeDisplay"'), 'send modal should expose dynamic fee display id');
+    assert(!walletHtml.includes('<span>0.001 MOLT</span>'), 'send modal should not hardcode 0.001 MOLT fee text');
+});
+
+test('wallet.js fetches getFeeConfig and applies dynamic send fee', () => {
+    assert(walletSrc.includes("rpc.call('getFeeConfig'"), 'wallet should request getFeeConfig for dynamic fee');
+    assert(walletSrc.includes('function getNetworkBaseFeeMolt()'), 'wallet should centralize dynamic fee accessor');
+    assert(walletSrc.includes('updateSendFeeEstimateUI()'), 'wallet should update send fee display from dynamic fee config');
+});
+
+test('wallet.js activity timestamp uses formatTime helper', () => {
+    assert(walletSrc.includes('const date = tx.timestamp ? formatTime(tx.timestamp) : \''),
+        'wallet activity should use formatTime helper instead of raw timestamp conversion');
+});
+
+test('wallet.js activity explorer links use MOLT_CONFIG.explorer base', () => {
+    assert(walletSrc.includes('MOLT_CONFIG.explorer'), 'wallet activity links should use configured explorer base');
+    assert(walletSrc.includes('/transaction.html?sig='), 'wallet activity links should keep transaction route');
+});
+
+console.log('\nW-19: Staking validator fetch optimization');
+
+test('wallet.js caches validator list for staking tab reuse', () => {
+    assert(walletSrc.includes('const STAKING_VALIDATORS_CACHE_TTL_MS = 30 * 1000;'),
+        'wallet should define staking validators cache TTL');
+    assert(walletSrc.includes('async function getStakingValidators()'),
+        'wallet should centralize staking validator fetch in cache-aware helper');
+    assert(walletSrc.includes('const validators = await getStakingValidators();'),
+        'loadStaking should use cached validator helper instead of direct refetch');
+});
+
+console.log('\nW-20: EVM receive address registration gating');
+
+test('wallet receive view hides EVM address until registration exists', () => {
+    assert(walletSrc.includes('const evmAddress = await getRegisteredEvmAddress(wallet.address);'),
+        'receive flow should resolve EVM address from on-chain registration status');
+    assert(walletSrc.includes("evmAddressSection.style.display = 'none';"),
+        'receive flow should hide EVM address section when not yet registered');
+    assert(walletSrc.includes("evmAddressInfo.style.display = 'block';"),
+        'receive flow should display registration hint when EVM address is unavailable');
+    assert(walletHtml.includes('id="evmAddressSection"'),
+        'receive modal should expose EVM section id for conditional visibility');
+    assert(walletHtml.includes('id="evmAddressInfo"'),
+        'receive modal should expose EVM registration hint container');
+});
+
+console.log('\nW-21: Name auction bid units and args wiring');
+
+test('identity.js bid_name_auction passes bid_amount in MOLT and converts to shell units', () => {
+    assert(identitySrc.includes('bid_amount: bidAmount'),
+        'identity bid flow should pass bid_amount into bid_name_auction args');
+    assert(identitySrc.includes('Math.floor((params.bid_amount || 0) * 1_000_000_000)'),
+        'bid_name_auction encoder should convert bid_amount MOLT into shell units');
+    assert(identitySrc.includes("buildContractCall('bid_name_auction'"),
+        'identity bid flow should invoke bid_name_auction contract call');
+});
+
+console.log('\nW-22: Shielded key derivation + note confidentiality hardening');
+
+test('wallet.js derives shielded seed from decrypted secret material (not public address)', () => {
+    assert(walletSrc.includes('async function initShieldedForActiveWallet()'),
+        'wallet should define shielded init helper for active wallet');
+    assert(walletSrc.includes('MoltCrypto.decryptPrivateKey(wallet.encryptedKey, password)'),
+        'shielded init should decrypt secret key material using wallet password');
+    assert(walletSrc.includes('moltchain-shielded-spending-seed-v1'),
+        'shielded seed derivation should include domain-separated seed context');
+    assert(!walletSrc.includes("wallet.address + ':shielded'"),
+        'shielded seed must not be derived from public address');
+});
+
+test('shielded.js encrypts notes with AES-GCM and keeps legacy decrypt fallback', () => {
+    assert(shieldedSrc.includes("{ name: 'AES-GCM' }"),
+        'shielded note encryption should use AES-GCM');
+    assert(shieldedSrc.includes('NOTE_ENCRYPTION_V1_PREFIX'),
+        'shielded notes should carry an explicit encryption version prefix');
+    assert(shieldedSrc.includes("entry.encrypted_note.startsWith(NOTE_ENCRYPTION_V1_PREFIX)"),
+        'shielded decrypt should parse AES-GCM note format');
+    assert(shieldedSrc.includes('Legacy compatibility: decrypt historical XOR-encrypted notes.'),
+        'shielded decrypt should preserve compatibility for legacy XOR notes');
+});
+
+test('shielded.js stores encrypted shielded-note payload in localStorage', () => {
+    assert(shieldedSrc.includes('async function deriveShieldedStorageKey()'),
+        'shielded storage should derive an encryption key from shielded state keys');
+    assert(shieldedSrc.includes('ciphertext'),
+        'shielded storage payload should include ciphertext field');
+    assert(shieldedSrc.includes('version: SHIELDED_STORAGE_VERSION'),
+        'shielded storage payload should be versioned for future migrations');
+    assert(shieldedSrc.includes('Legacy migration path: previous plaintext object format.'),
+        'shielded storage loader should migrate legacy plaintext data to encrypted format');
 });
 
 // ============================================================================
