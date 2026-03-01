@@ -1,39 +1,6757 @@
 {
   "summary": {
-    "pass": 2,
+    "pass": 566,
     "fail": 0,
-    "skip": 1
+    "skip": 0
   },
-  "parallel_seconds": 0.0,
-  "total_seconds": 0.0,
-  "throughput_tps": 0,
-  "contract_times": {},
-  "slowest_20": [],
+  "parallel_seconds": 29.4,
+  "total_seconds": 29.7,
+  "throughput_tps": 18.17,
+  "contract_times": {
+    "moltyid": 20.1,
+    "moltswap": 11.79,
+    "prediction_market": 11.43,
+    "dex_core": 10.5,
+    "moltbridge": 8.51,
+    "clawpump": 8.46,
+    "moltdao": 8.35,
+    "musd_token": 8.02,
+    "lobsterlend": 8.02,
+    "wsol_token": 7.52,
+    "clawvault": 7.5,
+    "dex_governance": 7.36,
+    "dex_amm": 7.35,
+    "reef_storage": 6.93,
+    "dex_rewards": 6.73,
+    "moltauction": 6.7,
+    "moltoracle": 6.56,
+    "dex_margin": 6.56,
+    "compute_market": 5.78,
+    "moltpunks": 5.73,
+    "weth_token": 5.53,
+    "dex_router": 5.28,
+    "moltmarket": 4.93,
+    "clawpay": 4.69,
+    "bountyboard": 4.37,
+    "dex_analytics": 3.82,
+    "moltcoin": 3.29
+  },
+  "slowest_20": [
+    {
+      "test": "moltoracle.submit_price",
+      "elapsed": 0.539,
+      "status": "PASS"
+    },
+    {
+      "test": "clawvault.cv_pause",
+      "elapsed": 0.538,
+      "status": "PASS"
+    },
+    {
+      "test": "moltpunks.get_punks_by_owner",
+      "elapsed": 0.532,
+      "status": "PASS"
+    },
+    {
+      "test": "moltswap.create_pool",
+      "elapsed": 0.528,
+      "status": "PASS"
+    },
+    {
+      "test": "moltdao.get_proposal_count",
+      "elapsed": 0.528,
+      "status": "PASS"
+    },
+    {
+      "test": "moltswap.swap_a_for_b_with_deadline",
+      "elapsed": 0.524,
+      "status": "PASS"
+    },
+    {
+      "test": "moltcoin.mint",
+      "elapsed": 0.52,
+      "status": "PASS"
+    },
+    {
+      "test": "moltoracle.submit_price",
+      "elapsed": 0.519,
+      "status": "PASS"
+    },
+    {
+      "test": "musd_token.transfer",
+      "elapsed": 0.517,
+      "status": "PASS"
+    },
+    {
+      "test": "moltyid.get_availability",
+      "elapsed": 0.517,
+      "status": "PASS"
+    },
+    {
+      "test": "compute_market.get_provider_info",
+      "elapsed": 0.516,
+      "status": "PASS"
+    },
+    {
+      "test": "clawvault.set_deposit_cap",
+      "elapsed": 0.515,
+      "status": "PASS"
+    },
+    {
+      "test": "moltdao.get_vote_count",
+      "elapsed": 0.515,
+      "status": "PASS"
+    },
+    {
+      "test": "dex_core.add_allowed_quote",
+      "elapsed": 0.515,
+      "status": "PASS"
+    },
+    {
+      "test": "bountyboard.get_bounty",
+      "elapsed": 0.514,
+      "status": "PASS"
+    },
+    {
+      "test": "moltauction.create_auction",
+      "elapsed": 0.513,
+      "status": "PASS"
+    },
+    {
+      "test": "moltoracle.get_feed_list",
+      "elapsed": 0.512,
+      "status": "PASS"
+    },
+    {
+      "test": "compute_market.get_job_info",
+      "elapsed": 0.51,
+      "status": "PASS"
+    },
+    {
+      "test": "wsol_token.mint",
+      "elapsed": 0.509,
+      "status": "PASS"
+    },
+    {
+      "test": "lobsterlend.deposit",
+      "elapsed": 0.509,
+      "status": "PASS"
+    }
+  ],
   "latency": {
-    "min": 0,
-    "avg": 0,
-    "median": 0,
-    "max": 0
+    "min": 0.007,
+    "avg": 0.377,
+    "median": 0.384,
+    "max": 0.539
   },
   "results": [
     {
       "status": "PASS",
       "msg": "validator healthy",
-      "ts": 1772038318,
+      "ts": 1772300707,
       "elapsed": 0.0
     },
     {
       "status": "PASS",
-      "msg": "current slot: 0",
-      "ts": 1772038318,
+      "msg": "current slot: 952",
+      "ts": 1772300707,
       "elapsed": 0.0
     },
     {
-      "status": "SKIP",
-      "msg": "deployer has no spendable balance; skipping parallel write-path in relaxed mode",
-      "ts": 1772038318,
+      "status": "PASS",
+      "msg": "deployer airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.",
+      "ts": 1772300707,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "secondary airdrop skipped: RPC Error: requestAirdrop is disabled in multi-validator mode (3 validators active). Submit a signed transaction via sendTransaction instead.",
+      "ts": 1772300707,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "secondary funded via V1 transfer (10000000000 shells), sig=b25b548e61eef66b...",
+      "ts": 1772300707,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "discovered 27/27 contracts",
+      "ts": 1772300707,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.initialize sig=affaa48a9de29b28...",
+      "ts": 1772300707,
+      "elapsed": 0.018
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.initialize sig=b67b87438a901799...",
+      "ts": 1772300708,
+      "elapsed": 0.338
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.initialize sig=da8d0d25f58c031b...",
+      "ts": 1772300708,
+      "elapsed": 0.347
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.initialize sig=65d7ae45eeb281d9...",
+      "ts": 1772300708,
+      "elapsed": 0.349
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.initialize sig=09be7ef4850a831a...",
+      "ts": 1772300708,
+      "elapsed": 0.351
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.mint sig=51d3d4f5be97f0f1...",
+      "ts": 1772300708,
+      "elapsed": 0.015
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.initialize sig=80e2ffe7909195e5...",
+      "ts": 1772300708,
+      "elapsed": 0.354
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.list_nft sig=2a1fe351b4b862e2...",
+      "ts": 1772300708,
+      "elapsed": 0.361
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.initialize sig=e4fe85bc31738173...",
+      "ts": 1772300708,
+      "elapsed": 0.384
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.initialize sig=cf756ed042a21932...",
+      "ts": 1772300708,
+      "elapsed": 0.384
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.initialize sig=a9d14a8056b092f4...",
+      "ts": 1772300708,
+      "elapsed": 0.385
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.mint sig=8cd75b0253f1b288...",
+      "ts": 1772300708,
+      "elapsed": 0.508
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.mint sig=bbe3df3048344a1b...",
+      "ts": 1772300708,
+      "elapsed": 0.509
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.initialize_ma_admin sig=49b73e7bbb90d728...",
+      "ts": 1772300708,
+      "elapsed": 0.507
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.get_listing sig=f86d42ef07ca2ec5...",
+      "ts": 1772300708,
+      "elapsed": 0.487
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.mint sig=a028029cdc1038a1...",
+      "ts": 1772300708,
+      "elapsed": 0.52
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.transfer sig=73030800de3fa58e...",
+      "ts": 1772300708,
+      "elapsed": 0.517
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.add_bridge_validator sig=28271c678509105f...",
+      "ts": 1772300708,
+      "elapsed": 0.491
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.cancel_listing sig=4f260553cafad237...",
+      "ts": 1772300708,
+      "elapsed": 0.021
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.create_token sig=584de7a4b15559aa...",
+      "ts": 1772300708,
+      "elapsed": 0.505
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.deposit sig=c081443f67e603cf...",
+      "ts": 1772300708,
+      "elapsed": 0.509
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.transfer sig=33cfaf559f917ec7...",
+      "ts": 1772300708,
+      "elapsed": 0.164
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.approve sig=8a2dd7a60cb16792...",
+      "ts": 1772300709,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.transfer sig=eaed2c730138b77d...",
+      "ts": 1772300709,
+      "elapsed": 0.502
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.transfer sig=ad8a1741ecd6be1b...",
+      "ts": 1772300709,
+      "elapsed": 0.499
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.approve sig=ee907ba6031e66b7...",
+      "ts": 1772300709,
+      "elapsed": 0.499
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.create_auction sig=3fddec1558a24bb1...",
+      "ts": 1772300709,
+      "elapsed": 0.513
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.buy sig=96eb747c94908652...",
+      "ts": 1772300709,
+      "elapsed": 0.487
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.set_required_confirmations sig=74d87a2cfdbdb509...",
+      "ts": 1772300709,
+      "elapsed": 0.503
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.borrow sig=4bf403654a9ef2d9...",
+      "ts": 1772300709,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.get_marketplace_stats sig=96a01dc5216b01b4...",
+      "ts": 1772300709,
+      "elapsed": 0.505
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.burn sig=ed9c6a0201dc0a8e...",
+      "ts": 1772300709,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.balance_of sig=de3994c7a799997e...",
+      "ts": 1772300709,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.approve sig=5059675630a0e11b...",
+      "ts": 1772300709,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.burn sig=f0acdf656803cbc7...",
+      "ts": 1772300709,
+      "elapsed": 0.486
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.burn sig=ed3e8d4a0c0c9795...",
+      "ts": 1772300709,
+      "elapsed": 0.496
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.sell sig=137fe5bd084b3c9b...",
+      "ts": 1772300709,
+      "elapsed": 0.492
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.set_request_timeout sig=8b53e7c457706e6f...",
+      "ts": 1772300709,
+      "elapsed": 0.494
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.place_bid sig=6ebfd9d76177b81c...",
+      "ts": 1772300709,
+      "elapsed": 0.503
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.repay sig=aeda54227b098c3f...",
+      "ts": 1772300709,
+      "elapsed": 0.497
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.set_marketplace_fee sig=e81acd4aaab6da92...",
+      "ts": 1772300709,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.total_supply sig=1b2fe0d953137183...",
+      "ts": 1772300709,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.allowance sig=029513246e57b334...",
+      "ts": 1772300710,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.burn sig=8dd3650e30301710...",
+      "ts": 1772300710,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.balance_of sig=daaa454869cebd6e...",
+      "ts": 1772300710,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.approve sig=fea707f1f4ef1c71...",
+      "ts": 1772300710,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.get_token_info sig=6542a674bdff39f7...",
+      "ts": 1772300710,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.get_bridge_status sig=d0a2610c4a956132...",
+      "ts": 1772300710,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.list_nft_with_royalty sig=9ab73c96b5caedfe...",
+      "ts": 1772300710,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.set_reserve_price sig=31483ca9d8234ebb...",
+      "ts": 1772300710,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.withdraw sig=a97fede4134e3d52...",
+      "ts": 1772300710,
+      "elapsed": 0.487
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.total_minted sig=645eb479eb3d1355...",
+      "ts": 1772300710,
+      "elapsed": 0.166
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.total_burned sig=0cfd9c5c16229769...",
+      "ts": 1772300710,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.balance_of sig=105c11f5eca16411...",
+      "ts": 1772300710,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.total_supply sig=e444647112e8987e...",
+      "ts": 1772300710,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.balance_of sig=ef5edf153f8b4fc8...",
+      "ts": 1772300710,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.get_token_count sig=a9564e2bc6ff1cd7...",
+      "ts": 1772300710,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.remove_bridge_validator sig=a6d293a26c10873f...",
+      "ts": 1772300710,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.make_offer sig=fdae05688f77763f...",
+      "ts": 1772300710,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.set_royalty sig=02505f05be119798...",
+      "ts": 1772300710,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_protocol_stats sig=8b3f0de96518b251...",
+      "ts": 1772300710,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.transfer_from sig=4a44aadc06fd0f93...",
+      "ts": 1772300710,
+      "elapsed": 0.164
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.total_supply sig=e179f559610858fa...",
+      "ts": 1772300710,
+      "elapsed": 0.169
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.emergency_pause sig=c66c0aed0e8cebaa...",
+      "ts": 1772300711,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.allowance sig=8c67b9d17c761a26...",
+      "ts": 1772300711,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "moltcoin.total_supply sig=11239248a9a6fa55...",
+      "ts": 1772300711,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.allowance sig=a61d3337bdc0b925...",
+      "ts": 1772300711,
+      "elapsed": 0.489
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.get_platform_stats sig=fd9e937de039a282...",
+      "ts": 1772300711,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.lock_tokens sig=e5aa3b1a88200d68...",
+      "ts": 1772300711,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.cancel_offer sig=340c6d0c12861c15...",
+      "ts": 1772300711,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_account_info sig=735cfd576d3ec6e3...",
+      "ts": 1772300711,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.get_auction_info sig=63b0170e7cb107de...",
+      "ts": 1772300711,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.buy_nft sig=7c68e2edf27b3960...",
+      "ts": 1772300711,
+      "elapsed": 0.324
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_interest_rate sig=9d0f9cdada41fa15...",
+      "ts": 1772300711,
+      "elapsed": 0.327
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.get_collection_stats sig=09886ffdd08ba035...",
+      "ts": 1772300711,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.set_deposit_cap sig=cd7cb69dffd4154b...",
+      "ts": 1772300711,
+      "elapsed": 0.014
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.emergency_unpause sig=84f5c96997b1104b...",
+      "ts": 1772300711,
+      "elapsed": 0.485
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.total_minted sig=0a09aac40a22091d...",
+      "ts": 1772300711,
+      "elapsed": 0.491
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.total_minted sig=3a3794837be1b5b6...",
+      "ts": 1772300711,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.initialize sig=4a5c6fa69c9d8b00...",
+      "ts": 1772300711,
+      "elapsed": 0.493
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.get_buy_quote sig=e3e7312b6664937a...",
+      "ts": 1772300711,
+      "elapsed": 0.489
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.submit_mint sig=8c6ead4dffe115f8...",
+      "ts": 1772300711,
+      "elapsed": 0.489
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.accept_offer sig=553cc4bbad444821...",
+      "ts": 1772300711,
+      "elapsed": 0.164
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.update_collection_stats sig=31e82d5340c62685...",
+      "ts": 1772300711,
+      "elapsed": 0.168
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.get_transfer_count sig=55282515ffd7b85d...",
+      "ts": 1772300711,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.total_burned sig=c29ef4b922a470e4...",
+      "ts": 1772300711,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.total_burned sig=ccc079828c97b0a8...",
+      "ts": 1772300711,
+      "elapsed": 0.325
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.register_provider sig=90e300018e5e7f76...",
+      "ts": 1772300711,
+      "elapsed": 0.324
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.get_graduation_info sig=6e58225987ab9d39...",
+      "ts": 1772300711,
+      "elapsed": 0.33
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.has_confirmed_mint sig=6559a78404bb8d6c...",
+      "ts": 1772300711,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.mm_pause sig=3216b5bcd258aa9d...",
+      "ts": 1772300711,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.set_reserve_factor sig=3fba00494f71d346...",
+      "ts": 1772300711,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.cancel_auction sig=33a4db889bed151c...",
+      "ts": 1772300711,
+      "elapsed": 0.318
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.get_attestation_count sig=3c75a2c946f5b8c9...",
+      "ts": 1772300711,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.transfer_from sig=9ec4af364a194787...",
+      "ts": 1772300711,
+      "elapsed": 0.161
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.get_epoch_remaining sig=f4da85fe22043ad5...",
+      "ts": 1772300712,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.emergency_pause sig=8595b07081060498...",
+      "ts": 1772300712,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.transfer_from sig=bb2a66251c2ea5e3...",
+      "ts": 1772300712,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.set_storage_price sig=707f80fe10d87de0...",
+      "ts": 1772300712,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.set_buy_cooldown sig=997f584a8796c24b...",
+      "ts": 1772300712,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.mm_unpause sig=0e134fd60f9b3d8c...",
+      "ts": 1772300712,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.finalize_auction sig=a7ef6d7371b638b1...",
+      "ts": 1772300712,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.submit_unlock sig=8cc7932bb51262cb...",
+      "ts": 1772300712,
+      "elapsed": 0.492
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.pause sig=eab11970d1058018...",
+      "ts": 1772300712,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.get_last_attestation_slot sig=35b7a36c2817be92...",
+      "ts": 1772300712,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "moltmarket.get_marketplace_stats sig=7e313df0191ed84c...",
+      "ts": 1772300712,
+      "elapsed": 0.324
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.unpause sig=dec5d66b6aff73ba...",
+      "ts": 1772300712,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.make_offer sig=5391f118b14a1892...",
+      "ts": 1772300712,
+      "elapsed": 0.328
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.has_confirmed_unlock sig=c52defa105ddb97e...",
+      "ts": 1772300712,
+      "elapsed": 0.327
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.get_reserve_ratio sig=e422a810086e22c1...",
+      "ts": 1772300712,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.emergency_unpause sig=08faefae97cf697b...",
+      "ts": 1772300712,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.emergency_pause sig=10983d034e39db79...",
+      "ts": 1772300712,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.store_data sig=e672781a28dbc43f...",
+      "ts": 1772300712,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.set_sell_cooldown sig=1f2a9ef920ee00e4...",
+      "ts": 1772300712,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.attest_reserves sig=6523c4fba68ac7e9...",
+      "ts": 1772300713,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.get_transfer_count sig=cd3a53fc798cc695...",
+      "ts": 1772300713,
+      "elapsed": 0.325
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.emergency_unpause sig=c2c0ca06d981799b...",
+      "ts": 1772300713,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.confirm_storage sig=0d6b7ace22e8c1d5...",
+      "ts": 1772300713,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.set_max_buy sig=e699dc5a1b98e01d...",
+      "ts": 1772300713,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.initialize sig=a0ff9fda43222d29...",
+      "ts": 1772300713,
+      "elapsed": 0.479
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.is_source_tx_used sig=9be077332dcf7c4b...",
+      "ts": 1772300713,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.accept_offer sig=c6e9a99b97c6572d...",
+      "ts": 1772300713,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.withdraw_reserves sig=30fa8c803f5b1f56...",
+      "ts": 1772300713,
+      "elapsed": 0.485
+    },
+    {
+      "status": "PASS",
+      "msg": "weth_token.transfer_admin sig=3b77f755337e3d8e...",
+      "ts": 1772300713,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.initialize_cp_admin sig=7696facba4e3ce6f...",
+      "ts": 1772300713,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.get_attestation_count sig=ff880d6e2074c88f...",
+      "ts": 1772300713,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_transfer_count sig=2f75faa251831f3b...",
+      "ts": 1772300713,
+      "elapsed": 0.479
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.get_storage_info sig=761b147e04ca8631...",
+      "ts": 1772300713,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.set_creator_royalty sig=97b853bb078df005...",
+      "ts": 1772300713,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.set_protocol_addresses sig=2c7033882cb34ee0...",
+      "ts": 1772300713,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.is_burn_proof_used sig=d98c76a933dada3a...",
+      "ts": 1772300713,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.liquidate sig=4478dcbf9b914046...",
+      "ts": 1772300713,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.ma_pause sig=0c7bd1f886c262e4...",
+      "ts": 1772300713,
+      "elapsed": 0.485
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.set_identity_admin sig=9df68a2500e4b07c...",
+      "ts": 1772300713,
+      "elapsed": 0.327
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.get_epoch_remaining sig=ff4c110d4c965f9f...",
+      "ts": 1772300713,
+      "elapsed": 0.332
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_attestation_count sig=2726931ddbd70398...",
+      "ts": 1772300713,
+      "elapsed": 0.329
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.get_storage_price sig=ff2e87d268f96c10...",
+      "ts": 1772300713,
+      "elapsed": 0.326
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.set_dex_addresses sig=4afb4426f2def8dd...",
+      "ts": 1772300713,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.add_strategy sig=3bc06bbccd83b30d...",
+      "ts": 1772300713,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.confirm_mint sig=5c8e9648aa08d9f9...",
+      "ts": 1772300713,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.flash_borrow sig=46ab7f3ca12a1589...",
+      "ts": 1772300713,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.ma_unpause sig=ab66bd575a857e5c...",
+      "ts": 1772300713,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.set_moltyid_address sig=f1b03711d94675b0...",
+      "ts": 1772300714,
+      "elapsed": 0.161
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.set_identity_gate sig=bd04cbb397c30f12...",
+      "ts": 1772300714,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.get_last_attestation_slot sig=d153b7c9e07e8353...",
+      "ts": 1772300714,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_epoch_remaining sig=a573280fbc9c3a97...",
+      "ts": 1772300714,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.get_provider_stake sig=2903265b9397fc50...",
+      "ts": 1772300714,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.create_stream sig=c903c4f0710d3746...",
+      "ts": 1772300714,
+      "elapsed": 0.013
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.pause sig=42933355e2450441...",
+      "ts": 1772300714,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.deposit sig=eafe343f4f039d9d...",
+      "ts": 1772300714,
+      "elapsed": 0.495
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.confirm_unlock sig=00342fb236d09fa6...",
+      "ts": 1772300714,
+      "elapsed": 0.49
+    },
+    {
+      "status": "PASS",
+      "msg": "moltauction.get_auction_stats sig=068b31c3cbc03372...",
+      "ts": 1772300714,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.flash_repay sig=7af405fc702b3356...",
+      "ts": 1772300714,
+      "elapsed": 0.487
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.get_reserve_ratio sig=2a4745cde1c9cc63...",
+      "ts": 1772300714,
+      "elapsed": 0.176
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_last_attestation_slot sig=0c4c5aadb9bbc71b...",
+      "ts": 1772300714,
+      "elapsed": 0.18
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.cancel_expired_request sig=cb90ce44e2cf2a95...",
+      "ts": 1772300714,
+      "elapsed": 0.342
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_deposit_count sig=858881a7378f5fbe...",
+      "ts": 1772300714,
+      "elapsed": 0.338
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.create_stream_with_cliff sig=f4727b77569dc8fa...",
+      "ts": 1772300714,
+      "elapsed": 0.495
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.unpause sig=69118f6edf314653...",
+      "ts": 1772300714,
+      "elapsed": 0.494
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.claim_storage_rewards sig=0f04dfac0b9ed5c2...",
+      "ts": 1772300714,
+      "elapsed": 0.508
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.attest_reserves sig=d912c64184fda207...",
+      "ts": 1772300714,
+      "elapsed": 0.335
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.withdraw sig=16a39569564c3fab...",
+      "ts": 1772300714,
+      "elapsed": 0.493
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.get_reserve_ratio sig=e6a1af0f42e46b9f...",
+      "ts": 1772300714,
+      "elapsed": 0.337
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.initialize sig=48d8445901f5b3f5...",
+      "ts": 1772300714,
+      "elapsed": 0.497
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.set_moltyid_address sig=7b7291ca80f63e31...",
+      "ts": 1772300714,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_borrow_count sig=fd1604be0bbe8342...",
+      "ts": 1772300714,
+      "elapsed": 0.168
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.stake_collateral sig=6acc3e7679828f93...",
+      "ts": 1772300715,
+      "elapsed": 0.334
+    },
+    {
+      "status": "PASS",
+      "msg": "wsol_token.transfer_admin sig=9721121353e4ca0e...",
+      "ts": 1772300715,
+      "elapsed": 0.338
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.attest_reserves sig=63f3a8efc847e2ec...",
+      "ts": 1772300715,
+      "elapsed": 0.333
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.get_vault_stats sig=0f519510a872e673...",
+      "ts": 1772300715,
+      "elapsed": 0.342
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.register_identity sig=a7470f5e6c12ef31...",
+      "ts": 1772300715,
+      "elapsed": 0.334
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_liquidation_count sig=3b08ff6d5d1ec2db...",
+      "ts": 1772300715,
+      "elapsed": 0.327
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.set_identity_gate sig=7dbc735f5c38f439...",
+      "ts": 1772300715,
+      "elapsed": 0.34
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.get_stream sig=fdbb1e3cdd2d4aba...",
+      "ts": 1772300715,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.withdraw_fees sig=27d333a2eea45f33...",
+      "ts": 1772300715,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.get_stream_info sig=78a869c3bc116124...",
+      "ts": 1772300715,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.freeze_token sig=07cdf8ee2ed2b73e...",
+      "ts": 1772300715,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.issue_challenge sig=862ea3782f40e9aa...",
+      "ts": 1772300715,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.initialize sig=f3b1408e97ba890a...",
+      "ts": 1772300715,
+      "elapsed": 0.486
+    },
+    {
+      "status": "PASS",
+      "msg": "musd_token.transfer_admin sig=dce00dfc63897e40...",
+      "ts": 1772300715,
+      "elapsed": 0.494
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.get_user_position sig=1cc11dea18ef7465...",
+      "ts": 1772300715,
+      "elapsed": 0.487
+    },
+    {
+      "status": "PASS",
+      "msg": "lobsterlend.get_platform_stats sig=e4f0a5be493091f8...",
+      "ts": 1772300715,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_identity sig=4fccd2e52b1249d5...",
+      "ts": 1772300715,
+      "elapsed": 0.491
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.mb_pause sig=8a871152fd0833bf...",
+      "ts": 1772300715,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.get_withdrawable sig=43b5050de4357867...",
+      "ts": 1772300715,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.withdraw_from_stream sig=0c920339a3d46c75...",
+      "ts": 1772300716,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpump.unfreeze_token sig=0e0dca479ebebbb1...",
+      "ts": 1772300716,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.respond_challenge sig=614c76d7939ee423...",
+      "ts": 1772300716,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.initialize sig=728649263efe1949...",
+      "ts": 1772300716,
+      "elapsed": 0.012
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.set_protocol_fee sig=6b52a3b3deedd1b2...",
+      "ts": 1772300716,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.initialize sig=5653f208f1ff455e...",
+      "ts": 1772300716,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "moltbridge.mb_unpause sig=fc68632b3e951706...",
+      "ts": 1772300716,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_identity_count sig=460e1f84ae28abb8...",
+      "ts": 1772300716,
+      "elapsed": 0.49
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.get_strategy_info sig=3f014d95bdbf5486...",
+      "ts": 1772300716,
+      "elapsed": 0.495
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.initialize sig=2368d0f8cba3b79f...",
+      "ts": 1772300716,
+      "elapsed": 0.493
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.transfer_stream sig=a7fd8f56aeaa9f0f...",
+      "ts": 1772300716,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.cancel_stream sig=ca27f9eb1dc4d5b7...",
+      "ts": 1772300716,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.set_challenge_window sig=2f065cd0b1fb1021...",
+      "ts": 1772300716,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.mint_punk sig=d3d35a6028628f4d...",
+      "ts": 1772300716,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.set_platform_fee sig=3fe1d1d7de325947...",
+      "ts": 1772300716,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.register_feed sig=6477865c45ba7ad5...",
+      "ts": 1772300716,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.initialize sig=e37d4da897e7d97f...",
+      "ts": 1772300716,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_endpoint sig=dd7538c0fc6312c3...",
+      "ts": 1772300716,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.harvest sig=b936d4f91b716ad3...",
+      "ts": 1772300716,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.set_quorum sig=81031bf04259c155...",
+      "ts": 1772300716,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.pause sig=394c02bc24986c39...",
+      "ts": 1772300716,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.unpause sig=ccd879cd18d5a98f...",
+      "ts": 1772300717,
+      "elapsed": 0.318
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.set_slash_percent sig=c6550f072634bc2b...",
+      "ts": 1772300717,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.transfer_punk sig=71b1032090ec1f80...",
+      "ts": 1772300717,
+      "elapsed": 0.498
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.create_pool sig=0375f967ccdbb91c...",
+      "ts": 1772300717,
+      "elapsed": 0.528
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.register_provider sig=b19c97fedc52cdaa...",
+      "ts": 1772300717,
+      "elapsed": 0.507
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.submit_price sig=931083d5f8d6ce37...",
+      "ts": 1772300717,
+      "elapsed": 0.519
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_endpoint sig=5fac3560b6cfef93...",
+      "ts": 1772300717,
+      "elapsed": 0.506
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.set_voting_period sig=67b3e8290c75c38e...",
+      "ts": 1772300717,
+      "elapsed": 0.508
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.set_deposit_cap sig=38c20b3516492c04...",
+      "ts": 1772300717,
+      "elapsed": 0.515
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.add_liquidity sig=df55537cce4eca2b...",
+      "ts": 1772300717,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.create_job sig=f3886e336e9de684...",
+      "ts": 1772300717,
+      "elapsed": 0.325
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.get_price sig=0c3e916764553295...",
+      "ts": 1772300717,
+      "elapsed": 0.329
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_metadata sig=d5d7f96468b2e887...",
+      "ts": 1772300717,
+      "elapsed": 0.327
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.create_proposal sig=1b0c7442966e2583...",
+      "ts": 1772300717,
+      "elapsed": 0.325
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.set_deposit_fee sig=f36d646f47e0e28d...",
+      "ts": 1772300717,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.get_stream_count sig=4597cd0d0ce732e1...",
+      "ts": 1772300717,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.slash_provider sig=1b4c6e60b79ebc10...",
+      "ts": 1772300717,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.get_punk_metadata sig=5a5636be80eecf09...",
+      "ts": 1772300717,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "clawpay.get_platform_stats sig=56c0ae7aad07e3b0...",
+      "ts": 1772300717,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "reef_storage.get_platform_stats sig=d2fdd1fe4285dd3e...",
+      "ts": 1772300717,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.get_total_supply sig=42fab55f8c7c4342...",
+      "ts": 1772300717,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.swap sig=78820f0430d463f3...",
+      "ts": 1772300718,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.accept_job sig=c8d586730f6c15f1...",
+      "ts": 1772300718,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.register_feed sig=2b24763522e02501...",
+      "ts": 1772300718,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.cast_vote sig=770085d78cc2f80d...",
+      "ts": 1772300718,
+      "elapsed": 0.479
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_metadata sig=90e7afe69c0e2b2b...",
+      "ts": 1772300718,
+      "elapsed": 0.487
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.set_withdrawal_fee sig=215386e84aea980c...",
+      "ts": 1772300718,
+      "elapsed": 0.484
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.initialize sig=f2d365645053d758...",
+      "ts": 1772300718,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.set_risk_tier sig=f3ece513956a3fbe...",
+      "ts": 1772300718,
+      "elapsed": 0.377
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_availability sig=057d36a6192b4a58...",
+      "ts": 1772300718,
+      "elapsed": 0.381
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_proposal sig=61bbd42456d55831...",
+      "ts": 1772300718,
+      "elapsed": 0.387
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.create_bounty sig=c9a8356967750fd0...",
+      "ts": 1772300718,
+      "elapsed": 0.329
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.initialize sig=88ffd8cb1640da0a...",
+      "ts": 1772300718,
+      "elapsed": 0.496
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.get_owner_of sig=11f75af3c0f8e9fb...",
+      "ts": 1772300718,
+      "elapsed": 0.489
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.update_strategy_allocation sig=931d09221bf40038...",
+      "ts": 1772300718,
+      "elapsed": 0.041
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.swap_a_for_b sig=5cf1dadfccb62026...",
+      "ts": 1772300718,
+      "elapsed": 0.508
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.submit_result sig=ca651d7292f7aa45...",
+      "ts": 1772300718,
+      "elapsed": 0.503
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.submit_price sig=7bc959dc3ffb7532...",
+      "ts": 1772300718,
+      "elapsed": 0.539
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.swap_b_for_a sig=1a8e086270724975...",
+      "ts": 1772300718,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.confirm_result sig=38f31d4581c51697...",
+      "ts": 1772300718,
+      "elapsed": 0.328
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.get_price sig=de1aa34a89cccb6c...",
+      "ts": 1772300718,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_availability sig=13ea2be58d748ea5...",
+      "ts": 1772300718,
+      "elapsed": 0.517
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.get_bounty sig=df428a3785e9c2f3...",
+      "ts": 1772300718,
+      "elapsed": 0.514
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.create_pair sig=830f09fb9f3d8136...",
+      "ts": 1772300718,
+      "elapsed": 0.504
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_proposal_count sig=2e1e9f651ea8628a...",
+      "ts": 1772300718,
+      "elapsed": 0.528
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.remove_strategy sig=d0f50d379f03d993...",
+      "ts": 1772300718,
+      "elapsed": 0.494
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.set_base_uri sig=a16bda8a10a619c2...",
+      "ts": 1772300718,
+      "elapsed": 0.502
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_rate sig=2d84212bf8dae43b...",
+      "ts": 1772300719,
+      "elapsed": 0.332
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.get_bounty_count sig=d715ab8361e3f6e6...",
+      "ts": 1772300719,
+      "elapsed": 0.336
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_vote sig=9d547cde565fb789...",
+      "ts": 1772300719,
+      "elapsed": 0.335
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.set_preferred_quote sig=5f1ddaee8719a55c...",
+      "ts": 1772300719,
+      "elapsed": 0.34
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.withdraw_protocol_fees sig=eb2ee23d34017b3a...",
+      "ts": 1772300719,
+      "elapsed": 0.342
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.set_max_supply sig=a18954848ace393a...",
+      "ts": 1772300719,
+      "elapsed": 0.336
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.swap_a_for_b_with_deadline sig=bfdbd7b9e34b1c4e...",
+      "ts": 1772300719,
+      "elapsed": 0.524
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.get_job_info sig=ef31e1698dc5d120...",
+      "ts": 1772300719,
+      "elapsed": 0.51
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.get_feed_count sig=3339ee8454e6f3f1...",
+      "ts": 1772300719,
+      "elapsed": 0.485
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_rate sig=c90973a23b6fc843...",
+      "ts": 1772300719,
+      "elapsed": 0.164
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.add_skill sig=fb90b0c1a1099412...",
+      "ts": 1772300719,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.submit_work sig=bf843a5978a080a9...",
+      "ts": 1772300719,
+      "elapsed": 0.483
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_vote_count sig=18a83db81e41a1ce...",
+      "ts": 1772300719,
+      "elapsed": 0.515
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.add_allowed_quote sig=e6e105b6b7c032b6...",
+      "ts": 1772300719,
+      "elapsed": 0.515
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.get_punks_by_owner sig=44c6b2ed6110cf31...",
+      "ts": 1772300719,
+      "elapsed": 0.532
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.cv_pause sig=e8348b016f578298...",
+      "ts": 1772300719,
+      "elapsed": 0.538
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.swap_b_for_a_with_deadline sig=2bb2520dfa7df587...",
+      "ts": 1772300719,
+      "elapsed": 0.501
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.get_provider_info sig=5e956be986398b9c...",
+      "ts": 1772300719,
+      "elapsed": 0.516
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.get_feed_list sig=f47e6f5a9365cd06...",
+      "ts": 1772300719,
+      "elapsed": 0.512
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.set_royalty sig=a12460ab101b88bf...",
+      "ts": 1772300720,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "clawvault.cv_unpause sig=ae1925183c66551c...",
+      "ts": 1772300720,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_pool_info sig=a593cf70dd744c2e...",
+      "ts": 1772300720,
+      "elapsed": 0.349
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.set_update_interval sig=09172cd38f8f33eb...",
+      "ts": 1772300720,
+      "elapsed": 0.338
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.get_job_count sig=7859e682402d630e...",
+      "ts": 1772300720,
+      "elapsed": 0.343
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_skills sig=61ee38b8bf93b987...",
+      "ts": 1772300720,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.approve_submission sig=0cef8fa7b675256e...",
+      "ts": 1772300720,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.finalize_proposal sig=285648d0cd79560e...",
+      "ts": 1772300720,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_allowed_quote_count sig=35c0d8342c22061e...",
+      "ts": 1772300720,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.balance_of sig=4d1b702de82e38bc...",
+      "ts": 1772300720,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.initialize sig=49a6ed5466da62f0...",
+      "ts": 1772300720,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.set_timelock_delay sig=11c4339308e4251e...",
+      "ts": 1772300720,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.remove_allowed_quote sig=e81e121a251a4c53...",
+      "ts": 1772300720,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.approve sig=0ba985a6b725e5d1...",
+      "ts": 1772300720,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.create_pool sig=aee20c63bfb0b70c...",
+      "ts": 1772300720,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_pool_count sig=7599cbabf6f73cf6...",
+      "ts": 1772300720,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.add_reporter sig=16b1f104e52bb0df...",
+      "ts": 1772300720,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.set_platform_fee sig=ff645bc06b2c9074...",
+      "ts": 1772300720,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.vouch sig=6af0bb4639a3f4cb...",
+      "ts": 1772300720,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.cancel_bounty sig=e315f297f5b40ab6...",
+      "ts": 1772300720,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.execute_proposal sig=22ceafeedc4f203a...",
+      "ts": 1772300720,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.update_pair_fees sig=912ffcf4d374006b...",
+      "ts": 1772300720,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_quote sig=dd92bc938b13e344...",
+      "ts": 1772300721,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.remove_reporter sig=4d074ea512db4f2f...",
+      "ts": 1772300721,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.cm_pause sig=36d5acafc4eaa515...",
+      "ts": 1772300721,
+      "elapsed": 0.342
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_vouches sig=b039a14e8fa76426...",
+      "ts": 1772300721,
+      "elapsed": 0.339
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.set_platform_fee sig=2a2f7599f2b915f8...",
+      "ts": 1772300721,
+      "elapsed": 0.334
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_dao_stats sig=c5ec4458c6ba6283...",
+      "ts": 1772300721,
+      "elapsed": 0.339
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_pair_count sig=d19b812fbab75b5c...",
+      "ts": 1772300721,
+      "elapsed": 0.336
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.burn sig=202b6031cf2b78e2...",
+      "ts": 1772300721,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.set_protocol_fee sig=56387b887b8e2ce7...",
+      "ts": 1772300721,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_reserves sig=e402ac8b843cf06c...",
+      "ts": 1772300721,
+      "elapsed": 0.164
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.mp_pause sig=49fd0833c9299e49...",
+      "ts": 1772300721,
+      "elapsed": 0.335
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_preferred_quote sig=b49bb97ac921e697...",
+      "ts": 1772300721,
+      "elapsed": 0.336
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.add_liquidity sig=a028755b35045727...",
+      "ts": 1772300721,
+      "elapsed": 0.334
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_liquidity_balance sig=287e5e87290c8457...",
+      "ts": 1772300721,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.get_oracle_stats sig=14bdfd8bdc2072ef...",
+      "ts": 1772300721,
+      "elapsed": 0.502
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.bb_pause sig=273062daad503d7d...",
+      "ts": 1772300721,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_delegate sig=b2d6c2cc8e0e4f33...",
+      "ts": 1772300721,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.cm_unpause sig=5c29b128f8135449...",
+      "ts": 1772300721,
+      "elapsed": 0.49
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_active_proposals sig=2b014cec18689d04...",
+      "ts": 1772300721,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.mp_unpause sig=4f3eca5544531e27...",
+      "ts": 1772300721,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_pair_info sig=9804f74cc416e5ea...",
+      "ts": 1772300721,
+      "elapsed": 0.168
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_pool_info sig=bfd0ebc34429f9e4...",
+      "ts": 1772300721,
+      "elapsed": 0.167
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_total_supply sig=43a64e1826d2e83c...",
+      "ts": 1772300721,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "moltpunks.get_collection_stats sig=0c7376a495f82e13...",
+      "ts": 1772300721,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_trade_count sig=9527c63cc445021d...",
+      "ts": 1772300721,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_position sig=75d0cb9a83267a6c...",
+      "ts": 1772300721,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_total_liquidity sig=f27dbd4b34a09ad2...",
+      "ts": 1772300721,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.mo_pause sig=41a24bbfdaec2cf1...",
+      "ts": 1772300721,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.bb_unpause sig=692402baffd4dc72...",
+      "ts": 1772300722,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_delegate sig=f19574c99d043f0a...",
+      "ts": 1772300722,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "compute_market.get_platform_stats sig=ba271f9294e696f8...",
+      "ts": 1772300722,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.get_treasury_balance sig=a6f9a587082c7c5b...",
+      "ts": 1772300722,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "moltoracle.mo_unpause sig=0f39d316c8b31435...",
+      "ts": 1772300722,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "bountyboard.get_platform_stats sig=34379ce1ddd2e0d8...",
+      "ts": 1772300722,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.revoke_delegate sig=3626a6deff736fa6...",
+      "ts": 1772300722,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.initialize sig=26448ce64a35783d...",
+      "ts": 1772300722,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.veto_proposal sig=3e5b980a4acedec5...",
+      "ts": 1772300722,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.initialize sig=d1de6d5253093f2b...",
+      "ts": 1772300722,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_fee_treasury sig=15e0eb8482ae2f0a...",
+      "ts": 1772300722,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_pool_count sig=180a2c6161c3ea64...",
+      "ts": 1772300722,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_protocol_fees sig=35c557babc987141...",
+      "ts": 1772300722,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.initialize sig=9b1fb82256590a15...",
+      "ts": 1772300722,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.record_trade sig=29c1caa4faf3c049...",
+      "ts": 1772300722,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.place_order sig=a2b420f70fbb817b...",
+      "ts": 1772300722,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_position_count sig=186052eae3997c26...",
+      "ts": 1772300722,
+      "elapsed": 0.318
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_flash_loan_fee sig=cb2cfe0a6c6ec5f8...",
+      "ts": 1772300722,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.set_moltcoin_address sig=1164bcdc325bdee4...",
+      "ts": 1772300722,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.initialize sig=647a9dbab6be0a8d...",
+      "ts": 1772300722,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.set_preferred_quote sig=714d1ea30d5caed9...",
+      "ts": 1772300722,
+      "elapsed": 0.47
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.update_reputation sig=28fe45052556a05f...",
+      "ts": 1772300722,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.cancel_proposal sig=a5fc51e5175818b1...",
+      "ts": 1772300722,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.set_moltcoin_address sig=9351eca689eed514...",
+      "ts": 1772300723,
+      "elapsed": 0.338
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.add_allowed_quote sig=ab8999590fcba67a...",
+      "ts": 1772300723,
+      "elapsed": 0.336
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.update_reputation_typed sig=123f006c2c32a4d9...",
+      "ts": 1772300723,
+      "elapsed": 0.338
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.treasury_transfer sig=99c053e6207956fe...",
+      "ts": 1772300723,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_ohlcv sig=5d9406d148aadb5f...",
+      "ts": 1772300723,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_order sig=52462efa1d6c836a...",
+      "ts": 1772300723,
+      "elapsed": 0.477
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_tvl sig=9cd885d7b05f09dd...",
+      "ts": 1772300723,
+      "elapsed": 0.479
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_twap_cumulatives sig=d127a7d3ed936672...",
+      "ts": 1772300723,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.set_mark_price sig=cc5fc2574132b385...",
+      "ts": 1772300723,
+      "elapsed": 0.481
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.set_rewards_pool sig=5b877f3e3c6c3f34...",
+      "ts": 1772300723,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.get_allowed_quote_count sig=63ee7a1939b52902...",
+      "ts": 1772300723,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.set_max_leverage sig=b3e7c14cb39dd541...",
+      "ts": 1772300723,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.set_reward_rate sig=93455ef39b87409b...",
+      "ts": 1772300723,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_reputation sig=74c8f07bd065b59a...",
+      "ts": 1772300723,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.remove_allowed_quote sig=66d12a93a08dc99a...",
+      "ts": 1772300723,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.dao_pause sig=70c1fe6f6262b7ff...",
+      "ts": 1772300723,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_24h_stats sig=cf750079669784d9...",
+      "ts": 1772300723,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_best_bid sig=af70cd2d3fb097a9...",
+      "ts": 1772300723,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.quote_swap sig=3a402e4bffc730eb...",
+      "ts": 1772300723,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_twap_snapshot_count sig=876036c983d39277...",
+      "ts": 1772300723,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.set_maintenance_margin sig=448ce5e3cb1fa429...",
+      "ts": 1772300723,
+      "elapsed": 0.161
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.set_referral_rate sig=b3c9cae9a24b396d...",
+      "ts": 1772300723,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.flash_loan_borrow sig=d74f276c414aceff...",
+      "ts": 1772300724,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.open_position sig=da0bc0e6928d7c52...",
+      "ts": 1772300724,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.register_referral sig=adcc19653ea8f845...",
+      "ts": 1772300724,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_trust_tier sig=a45f2a0a4a4e9966...",
+      "ts": 1772300724,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.set_moltyid_address sig=29fa139ef05008fc...",
+      "ts": 1772300724,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltdao.dao_unpause sig=22c98545e898993f...",
+      "ts": 1772300724,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_trader_stats sig=1540690a88b0a039...",
+      "ts": 1772300724,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_best_ask sig=488882aa90eb336e...",
+      "ts": 1772300724,
+      "elapsed": 0.47
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.swap_exact_in sig=62e31f764197a15f...",
+      "ts": 1772300724,
+      "elapsed": 0.469
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.flash_loan_repay sig=725c34f08400a4a6...",
+      "ts": 1772300724,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_position_info sig=03a26dbd9c5220f5...",
+      "ts": 1772300724,
+      "elapsed": 0.16
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_last_price sig=7dd2c13953d12232...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_spread sig=838ab749bade5895...",
+      "ts": 1772300724,
+      "elapsed": 0.313
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.swap_exact_out sig=a2d14beca25c2a50...",
+      "ts": 1772300724,
+      "elapsed": 0.314
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.flash_loan_abort sig=819265e695210c30...",
+      "ts": 1772300724,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_margin_ratio sig=4a6edba098986e42...",
+      "ts": 1772300724,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.record_trade sig=27cb6f501382de07...",
+      "ts": 1772300724,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.update_agent_type sig=aaee924eea0158f8...",
+      "ts": 1772300724,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.set_listing_requirements sig=887f80e2c75c3995...",
+      "ts": 1772300724,
+      "elapsed": 0.47
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.initialize sig=15cb7d516975f80f...",
+      "ts": 1772300724,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_record_count sig=8f307d8230b7bdcf...",
+      "ts": 1772300724,
+      "elapsed": 0.159
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.modify_order sig=f3d2918a04888e01...",
+      "ts": 1772300724,
+      "elapsed": 0.159
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.collect_fees sig=37cd0eef12c36deb...",
+      "ts": 1772300724,
+      "elapsed": 0.158
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.accrue_lp_rewards sig=d329d28a28f6d65b...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.deactivate_identity sig=9c09d5e9f6c34010...",
+      "ts": 1772300724,
+      "elapsed": 0.314
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.propose_new_pair sig=e896520a2b6c9d00...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.set_addresses sig=1e77d41855571da0...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.emergency_pause sig=133e3c77cc39c988...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.cancel_order sig=88ce071f88a4e41d...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.remove_liquidity sig=ff8581b22fc031a7...",
+      "ts": 1772300724,
+      "elapsed": 0.315
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.remove_liquidity sig=9ac406a52e24c048...",
+      "ts": 1772300724,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_tier_info sig=544d433f59ff06c1...",
+      "ts": 1772300725,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.ms_pause sig=e6890bb95d16a847...",
+      "ts": 1772300725,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.add_margin sig=c5dd221e362e38ed...",
+      "ts": 1772300725,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.claim_trading_rewards sig=0758df79b147b35d...",
+      "ts": 1772300725,
+      "elapsed": 0.47
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_agent_profile sig=0a0fc170feff2e0d...",
+      "ts": 1772300725,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.propose_fee_change sig=c95689283725c7ba...",
+      "ts": 1772300725,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.register_route sig=9b5592358690ec71...",
+      "ts": 1772300725,
+      "elapsed": 0.469
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.emergency_unpause sig=e80dcdc69c8f2416...",
+      "ts": 1772300725,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.cancel_all_orders sig=00fda069620fa32b...",
+      "ts": 1772300725,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.emergency_pause sig=86d4cad285d08c30...",
+      "ts": 1772300725,
+      "elapsed": 0.469
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.get_route_count sig=cf654e79e0de4a8f...",
+      "ts": 1772300725,
+      "elapsed": 0.32
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_trader_count sig=f673ee7a84037430...",
+      "ts": 1772300725,
+      "elapsed": 0.334
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_analytics.get_global_stats sig=317414d47c26a2e8...",
+      "ts": 1772300725,
+      "elapsed": 0.007
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.pause_pair sig=60881f2aaf4fd3d4...",
+      "ts": 1772300725,
+      "elapsed": 0.35
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.emergency_unpause sig=80e2d9b62cfd5796...",
+      "ts": 1772300725,
+      "elapsed": 0.35
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.ms_unpause sig=336f02cb4fb7b0d3...",
+      "ts": 1772300725,
+      "elapsed": 0.491
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.remove_margin sig=07da0bad46d21e28...",
+      "ts": 1772300725,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.claim_lp_rewards sig=ea5802f0a9e54459...",
+      "ts": 1772300725,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_recovery_guardians sig=9620f6c9fd775516...",
+      "ts": 1772300725,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.vote sig=2911e42f64885792...",
+      "ts": 1772300725,
+      "elapsed": 0.47
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.get_swap_count sig=93e67f0bcbb2d769...",
+      "ts": 1772300725,
+      "elapsed": 0.158
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.liquidate sig=c74ea785c7ddbb2e...",
+      "ts": 1772300726,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_pending_rewards sig=ea8f69aeac08fc97...",
+      "ts": 1772300726,
+      "elapsed": 0.332
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.close_position sig=a4259436cef6b3f1...",
+      "ts": 1772300726,
+      "elapsed": 0.015
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.register_name sig=54c6ed4d4c0fd578...",
+      "ts": 1772300726,
+      "elapsed": 0.324
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.get_proposal_count sig=3aa230371767ca1e...",
+      "ts": 1772300726,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.get_route_info sig=a66851fa13e526e8...",
+      "ts": 1772300726,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.initialize sig=8bfa0ce695e79714...",
+      "ts": 1772300726,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.unpause_pair sig=3a95b15df999c505...",
+      "ts": 1772300726,
+      "elapsed": 0.479
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_total_volume sig=8a26f5c251f37b23...",
+      "ts": 1772300726,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_swap_count sig=9fad997d7884e8d5...",
+      "ts": 1772300726,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_trading_tier sig=b1051e3f359e638d...",
+      "ts": 1772300726,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.withdraw_insurance sig=23d6908c74db2388...",
+      "ts": 1772300726,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.get_best_route sig=31c96cf8d52919b3...",
+      "ts": 1772300726,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.resolve_name sig=1bf05789a50cae4e...",
+      "ts": 1772300726,
+      "elapsed": 0.486
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.get_preferred_quote sig=6804b81fa750736e...",
+      "ts": 1772300726,
+      "elapsed": 0.486
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_referral_rate sig=b60a5980831c65e6...",
+      "ts": 1772300726,
+      "elapsed": 0.327
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.set_moltyid_address sig=2c2f5bbaf0070abd...",
+      "ts": 1772300726,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.emergency_pause sig=6cfc59b941414007...",
+      "ts": 1772300726,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_swap_count sig=5a1a099d8dbdec7e...",
+      "ts": 1772300726,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_total_volume sig=68e1395096c7eeac...",
+      "ts": 1772300726,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.set_oracle_address sig=c3ba9e402a398b38...",
+      "ts": 1772300727,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.emergency_unpause sig=940e53782fe25f40...",
+      "ts": 1772300727,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_total_fees_collected sig=c349851cb3d31e03...",
+      "ts": 1772300727,
+      "elapsed": 0.317
+    },
+    {
+      "status": "PASS",
+      "msg": "moltswap.get_swap_stats sig=0b39990740c496eb...",
+      "ts": 1772300727,
+      "elapsed": 0.318
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.emergency_pause sig=52af02a195d284d9...",
+      "ts": 1772300727,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.reverse_resolve sig=2e7e18a3055bc5a4...",
+      "ts": 1772300727,
+      "elapsed": 0.486
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.get_proposal_info sig=3d80f99e28867f19...",
+      "ts": 1772300727,
+      "elapsed": 0.495
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.set_route_enabled sig=45fc4840bf163dfb...",
+      "ts": 1772300727,
+      "elapsed": 0.497
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_total_distributed sig=ef68ccf5df715e1b...",
+      "ts": 1772300727,
+      "elapsed": 0.494
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.set_musd_address sig=1f419ae4706265a4...",
+      "ts": 1772300727,
+      "elapsed": 0.161
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.finalize_proposal sig=af9739ce18674094...",
+      "ts": 1772300727,
+      "elapsed": 0.318
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.swap sig=6422d0b34cc59ad0...",
+      "ts": 1772300727,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.emergency_pause sig=9a84cb41f48d1b4c...",
+      "ts": 1772300727,
+      "elapsed": 0.329
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.set_dex_gov_address sig=82d7afd8fa576770...",
+      "ts": 1772300727,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_total_volume sig=bae54712c325ab42...",
+      "ts": 1772300727,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_amm.get_amm_stats sig=3ae4c14b4994504c...",
+      "ts": 1772300727,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.emergency_unpause sig=faead247c43ddb90...",
+      "ts": 1772300727,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_achievements sig=578442eb9cc048fc...",
+      "ts": 1772300727,
+      "elapsed": 0.474
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.execute_proposal sig=ec9d4b02720ea13f...",
+      "ts": 1772300727,
+      "elapsed": 0.161
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.multi_hop_swap sig=8e6818ba38ea1da0...",
+      "ts": 1772300727,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_total_volume sig=8fdf7903c6c6ac42...",
+      "ts": 1772300727,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_attestations sig=58efd3b8a7696805...",
+      "ts": 1772300727,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.emergency_delist sig=b1dfd8c8b86b30aa...",
+      "ts": 1772300727,
+      "elapsed": 0.316
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.emergency_unpause sig=284987c43ca1c625...",
+      "ts": 1772300727,
+      "elapsed": 0.472
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.emergency_pause sig=e3dcb44640e6fd44...",
+      "ts": 1772300727,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.create_market sig=5722b310cc5caaba...",
+      "ts": 1772300727,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_user_orders sig=bc79301b6eb6b706...",
+      "ts": 1772300727,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_user_positions sig=2eddb696b5529e67...",
+      "ts": 1772300728,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.add_skill_as sig=997f902c2289e243...",
+      "ts": 1772300728,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_total_pnl sig=d60656a25787c3df...",
+      "ts": 1772300728,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_endpoint_as sig=fa078f99979e644c...",
+      "ts": 1772300728,
+      "elapsed": 0.319
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.emergency_pause sig=bfae0b8c361a5a39...",
+      "ts": 1772300728,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_trader_count sig=cf8004aac8694feb...",
+      "ts": 1772300728,
+      "elapsed": 0.471
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.emergency_unpause sig=220e0ed5d59ede85...",
+      "ts": 1772300728,
+      "elapsed": 0.475
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_market_count sig=922220a0a291c68b...",
+      "ts": 1772300728,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_core.get_open_order_count sig=81d63ee7aa0b037c...",
+      "ts": 1772300728,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_liquidation_count sig=06890cef302dc356...",
+      "ts": 1772300728,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_metadata_as sig=02e084549a43d99b...",
+      "ts": 1772300728,
+      "elapsed": 0.167
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_margin.get_margin_stats sig=62fded4a806cef93...",
+      "ts": 1772300728,
+      "elapsed": 0.323
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.emergency_unpause sig=1c23e3e18890e4fa...",
+      "ts": 1772300728,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_total_volume sig=ff133a1a1e6e7df6...",
+      "ts": 1772300728,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_availability_as sig=6dd82475281b3a53...",
+      "ts": 1772300728,
+      "elapsed": 0.324
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.get_total_volume_routed sig=e88a3e409aa3a877...",
+      "ts": 1772300728,
+      "elapsed": 0.48
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_market sig=2e41d55f85098055...",
+      "ts": 1772300728,
+      "elapsed": 0.476
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_rewards.get_reward_stats sig=f16e92a167a2f283...",
+      "ts": 1772300729,
+      "elapsed": 0.167
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.get_governance_stats sig=1aa5196568a01238...",
+      "ts": 1772300729,
+      "elapsed": 0.168
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_governance.get_voter_count sig=a48aa9962a1564e7...",
+      "ts": 1772300729,
+      "elapsed": 0.33
+    },
+    {
+      "status": "PASS",
+      "msg": "dex_router.get_router_stats sig=9a6bab5e41151506...",
+      "ts": 1772300729,
+      "elapsed": 0.49
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.set_rate_as sig=124304d4c6cd887c...",
+      "ts": 1772300729,
+      "elapsed": 0.499
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_price sig=456ccb9e6c438743...",
+      "ts": 1772300729,
+      "elapsed": 0.478
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.update_agent_type_as sig=7fb0b867fa9de5df...",
+      "ts": 1772300729,
+      "elapsed": 0.168
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.attest_skill sig=a99030de492315f5...",
+      "ts": 1772300729,
+      "elapsed": 0.325
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_outcome_pool sig=c0360f4852b66c32...",
+      "ts": 1772300729,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.revoke_attestation sig=a04ab7f5f5344543...",
+      "ts": 1772300730,
+      "elapsed": 0.172
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_pool_reserves sig=eead41a49823225e...",
+      "ts": 1772300730,
+      "elapsed": 0.18
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.approve_recovery sig=678dc59f4b50dd5c...",
+      "ts": 1772300730,
+      "elapsed": 0.336
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_platform_stats sig=80faaf090bed872e...",
+      "ts": 1772300730,
+      "elapsed": 0.328
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.execute_recovery sig=75f3570d5cf6404b...",
+      "ts": 1772300730,
+      "elapsed": 0.17
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.quote_buy sig=d622a3599d3166d8...",
+      "ts": 1772300730,
+      "elapsed": 0.495
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.award_contribution_achievement sig=7dbc2c47ad82bb4d...",
+      "ts": 1772300730,
+      "elapsed": 0.341
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.quote_sell sig=105814b510cb8c88...",
+      "ts": 1772300731,
+      "elapsed": 0.169
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.create_name_auction sig=3d3310f3e14dd49b...",
+      "ts": 1772300731,
+      "elapsed": 0.169
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.add_initial_liquidity sig=caf3fc0411bd0d9f...",
+      "ts": 1772300731,
+      "elapsed": 0.335
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.bid_name_auction sig=5b1943f1ce4498aa...",
+      "ts": 1772300731,
+      "elapsed": 0.343
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.add_liquidity sig=7c8d4a325243a0a8...",
+      "ts": 1772300731,
+      "elapsed": 0.486
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.get_name_auction sig=047fb3e8526676da...",
+      "ts": 1772300731,
+      "elapsed": 0.482
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.buy_shares sig=ba8a2d5a3dc975e6...",
+      "ts": 1772300732,
+      "elapsed": 0.166
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.finalize_name_auction sig=88f72de3eafb76ca...",
+      "ts": 1772300732,
+      "elapsed": 0.17
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.sell_shares sig=82f2143f5a7057eb...",
+      "ts": 1772300732,
+      "elapsed": 0.167
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.transfer_name sig=fe0f793c4374217b...",
+      "ts": 1772300732,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_price_history sig=8b848b8512998bb3...",
+      "ts": 1772300732,
+      "elapsed": 0.168
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.renew_name sig=0cfae294a97bbaa4...",
+      "ts": 1772300732,
+      "elapsed": 0.183
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.mint_complete_set sig=7137180ab1292258...",
+      "ts": 1772300732,
+      "elapsed": 0.188
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.release_name sig=79e467d3390107c7...",
+      "ts": 1772300732,
+      "elapsed": 0.171
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.redeem_complete_set sig=7f66fa6ecc5030a6...",
+      "ts": 1772300732,
+      "elapsed": 0.163
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.transfer_name_as sig=aeef907d206480bc...",
+      "ts": 1772300732,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_position sig=9f4416960f4a99ac...",
+      "ts": 1772300733,
+      "elapsed": 0.322
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.renew_name_as sig=8696af05fc8b7867...",
+      "ts": 1772300733,
+      "elapsed": 0.328
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_user_markets sig=7f48be458cab0487...",
+      "ts": 1772300733,
+      "elapsed": 0.165
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.release_name_as sig=16888aca05c743bf...",
+      "ts": 1772300733,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.admin_register_reserved_name sig=4c57ac255bdb5f4c...",
+      "ts": 1772300733,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.get_lp_balance sig=a7a7222c11094f8c...",
+      "ts": 1772300733,
+      "elapsed": 0.321
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.withdraw_liquidity sig=47806aeb33f10818...",
+      "ts": 1772300733,
+      "elapsed": 0.318
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.transfer_admin sig=b5abf384a6d777ea...",
+      "ts": 1772300733,
+      "elapsed": 0.473
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.submit_resolution sig=ac99360312268087...",
+      "ts": 1772300734,
+      "elapsed": 0.501
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.mid_pause sig=fe84e76983a0e6fd...",
+      "ts": 1772300734,
+      "elapsed": 0.496
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.challenge_resolution sig=67960579ae980866...",
+      "ts": 1772300734,
+      "elapsed": 0.162
+    },
+    {
+      "status": "PASS",
+      "msg": "moltyid.mid_unpause sig=1a461f3013faac52...",
+      "ts": 1772300734,
+      "elapsed": 0.166
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.finalize_resolution sig=84ff52bc388f5d99...",
+      "ts": 1772300734,
+      "elapsed": 0.325
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.dao_resolve sig=f6d6a6dfd556d060...",
+      "ts": 1772300735,
+      "elapsed": 0.17
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.dao_void sig=5beabecc1c58b8aa...",
+      "ts": 1772300735,
+      "elapsed": 0.34
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.redeem_shares sig=0052469b8d3e2837...",
+      "ts": 1772300735,
+      "elapsed": 0.332
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.reclaim_collateral sig=789fb237bac52418...",
+      "ts": 1772300736,
+      "elapsed": 0.49
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.close_market sig=65b4ded7dddaa212...",
+      "ts": 1772300736,
+      "elapsed": 0.332
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.emergency_pause sig=e50d0d75aafd64d1...",
+      "ts": 1772300737,
+      "elapsed": 0.488
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.emergency_unpause sig=43cf15ed68c98123...",
+      "ts": 1772300737,
+      "elapsed": 0.171
+    },
+    {
+      "status": "PASS",
+      "msg": "prediction_market.rest_price_history count=0 (no trades yet)",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexCoreStats -> {'pair_count': 7, 'order_count': 56, 'trade_count': 17, 'total_volume': 225937200000, 'fee_treasury': 67781160, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexAmmStats -> {'pool_count': 7, 'position_count': 0, 'swap_count': 4, 'total_volume': 500021000, 'total_fees': 1500063, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexMarginStats -> {'position_count': 0, 'total_volume': 0, 'liquidation_count': 0, 'total_pnl_profit': 0, 'total_pnl_loss': 0, 'insurance_fund': 0, 'max_leverage': 100, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexRewardsStats -> {'trade_count': 0, 'trader_count': 0, 'total_volume': 0, 'total_distributed': 0, 'epoch': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexRouterStats -> {'route_count': 14, 'swap_count': 0, 'total_volume': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexAnalyticsStats -> {'record_count': 3, 'trader_count': 1, 'total_volume': 20000, 'total_candles': 185, 'tracked_pairs': 14, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getDexGovernanceStats -> {'proposal_count': 4, 'total_votes': 3, 'voter_count': 3, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltswapStats -> {'swap_count': 0, 'volume_a': 0, 'volume_b': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getLobsterLendStats -> {'total_deposits': 0, 'total_borrows': 0, 'reserves': 0, 'deposit_count': 0, 'borrow_count': 0, 'liquidation_count': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getClawPayStats -> {'stream_count': 0, 'total_streamed': 0, 'total_withdrawn': 0, 'cancel_count': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getBountyBoardStats -> {'bounty_count': 0, 'completed_count': 0, 'reward_volume': 0, 'cancel_count': 0}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getComputeMarketStats -> {'job_count': 0, 'completed_count': 0, 'payment_volume': 0, 'dispute_count': 0}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getReefStorageStats -> {'data_count': 0, 'total_bytes': 0, 'challenge_count': 0}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltMarketStats -> {'listing_count': 0, 'sale_count': 0, 'sale_volume': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltAuctionStats -> {'auction_count': 0, 'total_volume': 0, 'total_sales': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rpc.getMoltPunksStats -> {'total_minted': 0, 'transfer_count': 0, 'burn_count': 0, 'paused': False}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/core -> {'pairCount': 7, 'orderCount': 56, 'tradeCount': 17, 'totalVolume': 225937200000, 'feeTreasury': 67781160}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/amm -> {'poolCount': 7, 'positionCount': 0, 'swapCount': 4, 'totalVolume': 500021000, 'totalFees': 1500063}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/margin -> {'positionCount': 0, 'totalVolume': 0, 'liquidationCount': 0, 'insuranceFund': 0}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/router -> {'routeCount': 14, 'swapCount': 0, 'totalVolume': 0}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/rewards -> {'tradeCount': 0, 'traderCount': 0, 'totalVolume': 0, 'totalDistributed': 0}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/analytics -> {'recordCount': 3, 'traderCount': 1, 'totalVolume': 20000}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/governance -> {'proposalCount': 4, 'activeProposals': 4, 'totalVotes': 3, 'voterCount': 3, 'minQuorum': 3, 'min_quorum': 3}",
+      "ts": 1772300737,
+      "elapsed": 0.0
+    },
+    {
+      "status": "PASS",
+      "msg": "rest/api/v1/stats/moltswap -> {'swapCount': 0, 'volumeA': 0, 'volumeB': 0}",
+      "ts": 1772300737,
       "elapsed": 0.0
     }
   ],
-  "timings": []
+  "timings": [
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.initialize",
+      "elapsed": 0.018,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.initialize",
+      "elapsed": 0.338,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.initialize",
+      "elapsed": 0.347,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.initialize",
+      "elapsed": 0.349,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.initialize",
+      "elapsed": 0.351,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.mint",
+      "elapsed": 0.015,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.initialize",
+      "elapsed": 0.354,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.list_nft",
+      "elapsed": 0.361,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.initialize",
+      "elapsed": 0.384,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.initialize",
+      "elapsed": 0.384,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.initialize",
+      "elapsed": 0.385,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.mint",
+      "elapsed": 0.508,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.mint",
+      "elapsed": 0.509,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.initialize_ma_admin",
+      "elapsed": 0.507,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.get_listing",
+      "elapsed": 0.487,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.mint",
+      "elapsed": 0.52,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.transfer",
+      "elapsed": 0.517,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.add_bridge_validator",
+      "elapsed": 0.491,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.cancel_listing",
+      "elapsed": 0.021,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.create_token",
+      "elapsed": 0.505,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.deposit",
+      "elapsed": 0.509,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.transfer",
+      "elapsed": 0.164,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.approve",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.transfer",
+      "elapsed": 0.502,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.transfer",
+      "elapsed": 0.499,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.approve",
+      "elapsed": 0.499,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.create_auction",
+      "elapsed": 0.513,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.buy",
+      "elapsed": 0.487,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.set_required_confirmations",
+      "elapsed": 0.503,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.borrow",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.get_marketplace_stats",
+      "elapsed": 0.505,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.burn",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.balance_of",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.approve",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.burn",
+      "elapsed": 0.486,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.burn",
+      "elapsed": 0.496,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.sell",
+      "elapsed": 0.492,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.set_request_timeout",
+      "elapsed": 0.494,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.place_bid",
+      "elapsed": 0.503,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.repay",
+      "elapsed": 0.497,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.set_marketplace_fee",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.total_supply",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.allowance",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.burn",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.balance_of",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.approve",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.get_token_info",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.get_bridge_status",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.list_nft_with_royalty",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.set_reserve_price",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.withdraw",
+      "elapsed": 0.487,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.total_minted",
+      "elapsed": 0.166,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.total_burned",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.balance_of",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.total_supply",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.balance_of",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.get_token_count",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.remove_bridge_validator",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.make_offer",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.set_royalty",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_protocol_stats",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.transfer_from",
+      "elapsed": 0.164,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.total_supply",
+      "elapsed": 0.169,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.emergency_pause",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.allowance",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltcoin",
+      "test": "moltcoin.total_supply",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.allowance",
+      "elapsed": 0.489,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.get_platform_stats",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.lock_tokens",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.cancel_offer",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_account_info",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.get_auction_info",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.buy_nft",
+      "elapsed": 0.324,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_interest_rate",
+      "elapsed": 0.327,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.get_collection_stats",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.set_deposit_cap",
+      "elapsed": 0.014,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.emergency_unpause",
+      "elapsed": 0.485,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.total_minted",
+      "elapsed": 0.491,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.total_minted",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.initialize",
+      "elapsed": 0.493,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.get_buy_quote",
+      "elapsed": 0.489,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.submit_mint",
+      "elapsed": 0.489,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.accept_offer",
+      "elapsed": 0.164,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.update_collection_stats",
+      "elapsed": 0.168,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.get_transfer_count",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.total_burned",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.total_burned",
+      "elapsed": 0.325,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.register_provider",
+      "elapsed": 0.324,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.get_graduation_info",
+      "elapsed": 0.33,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.has_confirmed_mint",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.mm_pause",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.set_reserve_factor",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.cancel_auction",
+      "elapsed": 0.318,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.get_attestation_count",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.transfer_from",
+      "elapsed": 0.161,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.get_epoch_remaining",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.emergency_pause",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.transfer_from",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.set_storage_price",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.set_buy_cooldown",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.mm_unpause",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.finalize_auction",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.submit_unlock",
+      "elapsed": 0.492,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.pause",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.get_last_attestation_slot",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltmarket",
+      "test": "moltmarket.get_marketplace_stats",
+      "elapsed": 0.324,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.unpause",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.make_offer",
+      "elapsed": 0.328,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.has_confirmed_unlock",
+      "elapsed": 0.327,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.get_reserve_ratio",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.emergency_unpause",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.emergency_pause",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.store_data",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.set_sell_cooldown",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.attest_reserves",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.get_transfer_count",
+      "elapsed": 0.325,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.emergency_unpause",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.confirm_storage",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.set_max_buy",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.initialize",
+      "elapsed": 0.479,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.is_source_tx_used",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.accept_offer",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.withdraw_reserves",
+      "elapsed": 0.485,
+      "status": "PASS"
+    },
+    {
+      "contract": "weth_token",
+      "test": "weth_token.transfer_admin",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.initialize_cp_admin",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.get_attestation_count",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.get_transfer_count",
+      "elapsed": 0.479,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.get_storage_info",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.set_creator_royalty",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.set_protocol_addresses",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.is_burn_proof_used",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.liquidate",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.ma_pause",
+      "elapsed": 0.485,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.set_identity_admin",
+      "elapsed": 0.327,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.get_epoch_remaining",
+      "elapsed": 0.332,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.get_attestation_count",
+      "elapsed": 0.329,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.get_storage_price",
+      "elapsed": 0.326,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.set_dex_addresses",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.add_strategy",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.confirm_mint",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.flash_borrow",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.ma_unpause",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.set_moltyid_address",
+      "elapsed": 0.161,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.set_identity_gate",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.get_last_attestation_slot",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.get_epoch_remaining",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.get_provider_stake",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.create_stream",
+      "elapsed": 0.013,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.pause",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.deposit",
+      "elapsed": 0.495,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.confirm_unlock",
+      "elapsed": 0.49,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltauction",
+      "test": "moltauction.get_auction_stats",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.flash_repay",
+      "elapsed": 0.487,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.get_reserve_ratio",
+      "elapsed": 0.176,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.get_last_attestation_slot",
+      "elapsed": 0.18,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.cancel_expired_request",
+      "elapsed": 0.342,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_deposit_count",
+      "elapsed": 0.338,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.create_stream_with_cliff",
+      "elapsed": 0.495,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.unpause",
+      "elapsed": 0.494,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.claim_storage_rewards",
+      "elapsed": 0.508,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.attest_reserves",
+      "elapsed": 0.335,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.withdraw",
+      "elapsed": 0.493,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.get_reserve_ratio",
+      "elapsed": 0.337,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.initialize",
+      "elapsed": 0.497,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.set_moltyid_address",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_borrow_count",
+      "elapsed": 0.168,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.stake_collateral",
+      "elapsed": 0.334,
+      "status": "PASS"
+    },
+    {
+      "contract": "wsol_token",
+      "test": "wsol_token.transfer_admin",
+      "elapsed": 0.338,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.attest_reserves",
+      "elapsed": 0.333,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.get_vault_stats",
+      "elapsed": 0.342,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.register_identity",
+      "elapsed": 0.334,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_liquidation_count",
+      "elapsed": 0.327,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.set_identity_gate",
+      "elapsed": 0.34,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.get_stream",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.withdraw_fees",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.get_stream_info",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.freeze_token",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.issue_challenge",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.initialize",
+      "elapsed": 0.486,
+      "status": "PASS"
+    },
+    {
+      "contract": "musd_token",
+      "test": "musd_token.transfer_admin",
+      "elapsed": 0.494,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.get_user_position",
+      "elapsed": 0.487,
+      "status": "PASS"
+    },
+    {
+      "contract": "lobsterlend",
+      "test": "lobsterlend.get_platform_stats",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_identity",
+      "elapsed": 0.491,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.mb_pause",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.get_withdrawable",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.withdraw_from_stream",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpump",
+      "test": "clawpump.unfreeze_token",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.respond_challenge",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.initialize",
+      "elapsed": 0.012,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.set_protocol_fee",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.initialize",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltbridge",
+      "test": "moltbridge.mb_unpause",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_identity_count",
+      "elapsed": 0.49,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.get_strategy_info",
+      "elapsed": 0.495,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.initialize",
+      "elapsed": 0.493,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.transfer_stream",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.cancel_stream",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.set_challenge_window",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.mint_punk",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.set_platform_fee",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.register_feed",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.initialize",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_endpoint",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.harvest",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.set_quorum",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.pause",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.unpause",
+      "elapsed": 0.318,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.set_slash_percent",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.transfer_punk",
+      "elapsed": 0.498,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.create_pool",
+      "elapsed": 0.528,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.register_provider",
+      "elapsed": 0.507,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.submit_price",
+      "elapsed": 0.519,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_endpoint",
+      "elapsed": 0.506,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.set_voting_period",
+      "elapsed": 0.508,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.set_deposit_cap",
+      "elapsed": 0.515,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.add_liquidity",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.create_job",
+      "elapsed": 0.325,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.get_price",
+      "elapsed": 0.329,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_metadata",
+      "elapsed": 0.327,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.create_proposal",
+      "elapsed": 0.325,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.set_deposit_fee",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.get_stream_count",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.slash_provider",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.get_punk_metadata",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawpay",
+      "test": "clawpay.get_platform_stats",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "reef_storage",
+      "test": "reef_storage.get_platform_stats",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.get_total_supply",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.swap",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.accept_job",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.register_feed",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.cast_vote",
+      "elapsed": 0.479,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_metadata",
+      "elapsed": 0.487,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.set_withdrawal_fee",
+      "elapsed": 0.484,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.initialize",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.set_risk_tier",
+      "elapsed": 0.377,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_availability",
+      "elapsed": 0.381,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_proposal",
+      "elapsed": 0.387,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.create_bounty",
+      "elapsed": 0.329,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.initialize",
+      "elapsed": 0.496,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.get_owner_of",
+      "elapsed": 0.489,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.update_strategy_allocation",
+      "elapsed": 0.041,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.swap_a_for_b",
+      "elapsed": 0.508,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.submit_result",
+      "elapsed": 0.503,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.submit_price",
+      "elapsed": 0.539,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.swap_b_for_a",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.confirm_result",
+      "elapsed": 0.328,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.get_price",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_availability",
+      "elapsed": 0.517,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.get_bounty",
+      "elapsed": 0.514,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.create_pair",
+      "elapsed": 0.504,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_proposal_count",
+      "elapsed": 0.528,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.remove_strategy",
+      "elapsed": 0.494,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.set_base_uri",
+      "elapsed": 0.502,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_rate",
+      "elapsed": 0.332,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.get_bounty_count",
+      "elapsed": 0.336,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_vote",
+      "elapsed": 0.335,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.set_preferred_quote",
+      "elapsed": 0.34,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.withdraw_protocol_fees",
+      "elapsed": 0.342,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.set_max_supply",
+      "elapsed": 0.336,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.swap_a_for_b_with_deadline",
+      "elapsed": 0.524,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.get_job_info",
+      "elapsed": 0.51,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.get_feed_count",
+      "elapsed": 0.485,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_rate",
+      "elapsed": 0.164,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.add_skill",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.submit_work",
+      "elapsed": 0.483,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_vote_count",
+      "elapsed": 0.515,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.add_allowed_quote",
+      "elapsed": 0.515,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.get_punks_by_owner",
+      "elapsed": 0.532,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.cv_pause",
+      "elapsed": 0.538,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.swap_b_for_a_with_deadline",
+      "elapsed": 0.501,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.get_provider_info",
+      "elapsed": 0.516,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.get_feed_list",
+      "elapsed": 0.512,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.set_royalty",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "clawvault",
+      "test": "clawvault.cv_unpause",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_pool_info",
+      "elapsed": 0.349,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.set_update_interval",
+      "elapsed": 0.338,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.get_job_count",
+      "elapsed": 0.343,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_skills",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.approve_submission",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.finalize_proposal",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_allowed_quote_count",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.balance_of",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.initialize",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.set_timelock_delay",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.remove_allowed_quote",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.approve",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.create_pool",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_pool_count",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.add_reporter",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.set_platform_fee",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.vouch",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.cancel_bounty",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.execute_proposal",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.update_pair_fees",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_quote",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.remove_reporter",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.cm_pause",
+      "elapsed": 0.342,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_vouches",
+      "elapsed": 0.339,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.set_platform_fee",
+      "elapsed": 0.334,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_dao_stats",
+      "elapsed": 0.339,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_pair_count",
+      "elapsed": 0.336,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.burn",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.set_protocol_fee",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_reserves",
+      "elapsed": 0.164,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.mp_pause",
+      "elapsed": 0.335,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_preferred_quote",
+      "elapsed": 0.336,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.add_liquidity",
+      "elapsed": 0.334,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_liquidity_balance",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.get_oracle_stats",
+      "elapsed": 0.502,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.bb_pause",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_delegate",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.cm_unpause",
+      "elapsed": 0.49,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_active_proposals",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.mp_unpause",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_pair_info",
+      "elapsed": 0.168,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_pool_info",
+      "elapsed": 0.167,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_total_supply",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltpunks",
+      "test": "moltpunks.get_collection_stats",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_trade_count",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_position",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_total_liquidity",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.mo_pause",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.bb_unpause",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_delegate",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "compute_market",
+      "test": "compute_market.get_platform_stats",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.get_treasury_balance",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltoracle",
+      "test": "moltoracle.mo_unpause",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "bountyboard",
+      "test": "bountyboard.get_platform_stats",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.revoke_delegate",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.initialize",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.veto_proposal",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.initialize",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_fee_treasury",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_pool_count",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_protocol_fees",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.initialize",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.record_trade",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.place_order",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_position_count",
+      "elapsed": 0.318,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_flash_loan_fee",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.set_moltcoin_address",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.initialize",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.set_preferred_quote",
+      "elapsed": 0.47,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.update_reputation",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.cancel_proposal",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.set_moltcoin_address",
+      "elapsed": 0.338,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.add_allowed_quote",
+      "elapsed": 0.336,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.update_reputation_typed",
+      "elapsed": 0.338,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.treasury_transfer",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_ohlcv",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_order",
+      "elapsed": 0.477,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_tvl",
+      "elapsed": 0.479,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_twap_cumulatives",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.set_mark_price",
+      "elapsed": 0.481,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.set_rewards_pool",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.get_allowed_quote_count",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.set_max_leverage",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.set_reward_rate",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_reputation",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.remove_allowed_quote",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.dao_pause",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_24h_stats",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_best_bid",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.quote_swap",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_twap_snapshot_count",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.set_maintenance_margin",
+      "elapsed": 0.161,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.set_referral_rate",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.flash_loan_borrow",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.open_position",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.register_referral",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_trust_tier",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.set_moltyid_address",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltdao",
+      "test": "moltdao.dao_unpause",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_trader_stats",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_best_ask",
+      "elapsed": 0.47,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.swap_exact_in",
+      "elapsed": 0.469,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.flash_loan_repay",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_position_info",
+      "elapsed": 0.16,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_last_price",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_spread",
+      "elapsed": 0.313,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.swap_exact_out",
+      "elapsed": 0.314,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.flash_loan_abort",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_margin_ratio",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.record_trade",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.update_agent_type",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.set_listing_requirements",
+      "elapsed": 0.47,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.initialize",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_record_count",
+      "elapsed": 0.159,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.modify_order",
+      "elapsed": 0.159,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.collect_fees",
+      "elapsed": 0.158,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.accrue_lp_rewards",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.deactivate_identity",
+      "elapsed": 0.314,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.propose_new_pair",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.set_addresses",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.emergency_pause",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.cancel_order",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.remove_liquidity",
+      "elapsed": 0.315,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.remove_liquidity",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_tier_info",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.ms_pause",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.add_margin",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.claim_trading_rewards",
+      "elapsed": 0.47,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_agent_profile",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.propose_fee_change",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.register_route",
+      "elapsed": 0.469,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.emergency_unpause",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.cancel_all_orders",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.emergency_pause",
+      "elapsed": 0.469,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.get_route_count",
+      "elapsed": 0.32,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_trader_count",
+      "elapsed": 0.334,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_analytics",
+      "test": "dex_analytics.get_global_stats",
+      "elapsed": 0.007,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.pause_pair",
+      "elapsed": 0.35,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.emergency_unpause",
+      "elapsed": 0.35,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.ms_unpause",
+      "elapsed": 0.491,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.remove_margin",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.claim_lp_rewards",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_recovery_guardians",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.vote",
+      "elapsed": 0.47,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.get_swap_count",
+      "elapsed": 0.158,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.liquidate",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_pending_rewards",
+      "elapsed": 0.332,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.close_position",
+      "elapsed": 0.015,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.register_name",
+      "elapsed": 0.324,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.get_proposal_count",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.get_route_info",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.initialize",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.unpause_pair",
+      "elapsed": 0.479,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_total_volume",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_swap_count",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_trading_tier",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.withdraw_insurance",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.get_best_route",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.resolve_name",
+      "elapsed": 0.486,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.get_preferred_quote",
+      "elapsed": 0.486,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_referral_rate",
+      "elapsed": 0.327,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.set_moltyid_address",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.emergency_pause",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_swap_count",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_total_volume",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.set_oracle_address",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.emergency_unpause",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_total_fees_collected",
+      "elapsed": 0.317,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltswap",
+      "test": "moltswap.get_swap_stats",
+      "elapsed": 0.318,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.emergency_pause",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.reverse_resolve",
+      "elapsed": 0.486,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.get_proposal_info",
+      "elapsed": 0.495,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.set_route_enabled",
+      "elapsed": 0.497,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_total_distributed",
+      "elapsed": 0.494,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.set_musd_address",
+      "elapsed": 0.161,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.finalize_proposal",
+      "elapsed": 0.318,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.swap",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.emergency_pause",
+      "elapsed": 0.329,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.set_dex_gov_address",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_total_volume",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_amm",
+      "test": "dex_amm.get_amm_stats",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.emergency_unpause",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_achievements",
+      "elapsed": 0.474,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.execute_proposal",
+      "elapsed": 0.161,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.multi_hop_swap",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_total_volume",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_attestations",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.emergency_delist",
+      "elapsed": 0.316,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.emergency_unpause",
+      "elapsed": 0.472,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.emergency_pause",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.create_market",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_user_orders",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_user_positions",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.add_skill_as",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_total_pnl",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_endpoint_as",
+      "elapsed": 0.319,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.emergency_pause",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_trader_count",
+      "elapsed": 0.471,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.emergency_unpause",
+      "elapsed": 0.475,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_market_count",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_core",
+      "test": "dex_core.get_open_order_count",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_liquidation_count",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_metadata_as",
+      "elapsed": 0.167,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_margin",
+      "test": "dex_margin.get_margin_stats",
+      "elapsed": 0.323,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.emergency_unpause",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_total_volume",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_availability_as",
+      "elapsed": 0.324,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.get_total_volume_routed",
+      "elapsed": 0.48,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_market",
+      "elapsed": 0.476,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_rewards",
+      "test": "dex_rewards.get_reward_stats",
+      "elapsed": 0.167,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.get_governance_stats",
+      "elapsed": 0.168,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_governance",
+      "test": "dex_governance.get_voter_count",
+      "elapsed": 0.33,
+      "status": "PASS"
+    },
+    {
+      "contract": "dex_router",
+      "test": "dex_router.get_router_stats",
+      "elapsed": 0.49,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.set_rate_as",
+      "elapsed": 0.499,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_price",
+      "elapsed": 0.478,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.update_agent_type_as",
+      "elapsed": 0.168,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.attest_skill",
+      "elapsed": 0.325,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_outcome_pool",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.revoke_attestation",
+      "elapsed": 0.172,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_pool_reserves",
+      "elapsed": 0.18,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.approve_recovery",
+      "elapsed": 0.336,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_platform_stats",
+      "elapsed": 0.328,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.execute_recovery",
+      "elapsed": 0.17,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.quote_buy",
+      "elapsed": 0.495,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.award_contribution_achievement",
+      "elapsed": 0.341,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.quote_sell",
+      "elapsed": 0.169,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.create_name_auction",
+      "elapsed": 0.169,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.add_initial_liquidity",
+      "elapsed": 0.335,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.bid_name_auction",
+      "elapsed": 0.343,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.add_liquidity",
+      "elapsed": 0.486,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.get_name_auction",
+      "elapsed": 0.482,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.buy_shares",
+      "elapsed": 0.166,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.finalize_name_auction",
+      "elapsed": 0.17,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.sell_shares",
+      "elapsed": 0.167,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.transfer_name",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_price_history",
+      "elapsed": 0.168,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.renew_name",
+      "elapsed": 0.183,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.mint_complete_set",
+      "elapsed": 0.188,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.release_name",
+      "elapsed": 0.171,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.redeem_complete_set",
+      "elapsed": 0.163,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.transfer_name_as",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_position",
+      "elapsed": 0.322,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.renew_name_as",
+      "elapsed": 0.328,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_user_markets",
+      "elapsed": 0.165,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.release_name_as",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.admin_register_reserved_name",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.get_lp_balance",
+      "elapsed": 0.321,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.withdraw_liquidity",
+      "elapsed": 0.318,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.transfer_admin",
+      "elapsed": 0.473,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.submit_resolution",
+      "elapsed": 0.501,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.mid_pause",
+      "elapsed": 0.496,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.challenge_resolution",
+      "elapsed": 0.162,
+      "status": "PASS"
+    },
+    {
+      "contract": "moltyid",
+      "test": "moltyid.mid_unpause",
+      "elapsed": 0.166,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.finalize_resolution",
+      "elapsed": 0.325,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.dao_resolve",
+      "elapsed": 0.17,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.dao_void",
+      "elapsed": 0.34,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.redeem_shares",
+      "elapsed": 0.332,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.reclaim_collateral",
+      "elapsed": 0.49,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.close_market",
+      "elapsed": 0.332,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.emergency_pause",
+      "elapsed": 0.488,
+      "status": "PASS"
+    },
+    {
+      "contract": "prediction_market",
+      "test": "prediction_market.emergency_unpause",
+      "elapsed": 0.171,
+      "status": "PASS"
+    }
+  ]
 }

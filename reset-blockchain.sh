@@ -65,9 +65,11 @@ cd "$REPO_ROOT"
 
 if [ "$NETWORK" = "all" ]; then
 	rm -rf data/state-* 2>/dev/null && echo "  removed data/state-*" || true
+	rm -rf data/matrix-sdk-state-* 2>/dev/null && echo "  removed data/matrix-sdk-state-*" || true
 	WORKSPACE_ROOT="$(dirname "$(dirname "$REPO_ROOT")")" 2>/dev/null || true
 	if [ -d "$WORKSPACE_ROOT/data" ]; then
 		rm -rf "$WORKSPACE_ROOT/data/state-"* 2>/dev/null && echo "  removed workspace root orphans" || true
+		rm -rf "$WORKSPACE_ROOT/data/matrix-sdk-state-"* 2>/dev/null && echo "  removed workspace root legacy matrix dirs" || true
 	fi
 	rm -rf ~/.moltchain/data-* ~/.moltchain/state-* 2>/dev/null || true
 	if [[ "${EXTRA_FLAGS:-}" == *"--zk-reset"* ]]; then
@@ -77,6 +79,7 @@ if [ "$NETWORK" = "all" ]; then
 	rm -rf /tmp/moltchain-custody* 2>/dev/null || true
 else
 	rm -rf data/state-${NETWORK}-* 2>/dev/null && echo "  removed data/state-${NETWORK}-*" || true
+	rm -rf data/matrix-sdk-state-* 2>/dev/null && echo "  removed data/matrix-sdk-state-*" || true
 	if [ "$NETWORK" = "testnet" ]; then
 		for port in 8000 8001 8002 8003 8004; do rm -rf "data/state-${port}" 2>/dev/null || true; done
 		echo "  removed data/state-800x (testnet ports)"
@@ -179,6 +182,19 @@ if [ "$RESTART" = true ]; then
 	echo -e "${YELLOW}Restarting ${NETWORK} local stack (dev mode)...${NC}"
 	echo ""
 
+	if [ "$NETWORK" = "testnet" ]; then
+		PRIMARY_P2P=8000
+		PRIMARY_RPC=8899
+		FAUCET_PORT=9100
+	elif [ "$NETWORK" = "mainnet" ]; then
+		PRIMARY_P2P=9000
+		PRIMARY_RPC=9899
+		FAUCET_PORT=9101
+	else
+		echo -e "${RED}Restart requires explicit network (testnet or mainnet).${NC}"
+		exit 1
+	fi
+
 	LAUNCHER="${SCRIPT_DIR}/run-validator.sh"
 	if [ ! -x "$LAUNCHER" ]; then
 		echo -e "${RED}Launcher not found: $LAUNCHER${NC}"
@@ -205,7 +221,7 @@ if [ "$RESTART" = true ]; then
 
 	GENESIS_KEY=""
 	for _attempt in 1 2 3; do
-		GENESIS_KEY=$(find "$REPO_ROOT/data/state-8000/genesis-keys" -name "genesis-primary-*.json" -type f 2>/dev/null | head -1)
+		GENESIS_KEY=$(find "$REPO_ROOT/data/state-${PRIMARY_P2P}/genesis-keys" -name "genesis-primary-*.json" -type f 2>/dev/null | head -1)
 		[ -n "$GENESIS_KEY" ] && break
 		echo "   ⏳ Genesis keys not ready yet, waiting 5s more..."
 		sleep 5
@@ -243,15 +259,16 @@ if [ "$RESTART" = true ]; then
 
 	FAUCET_BIN="${REPO_ROOT}/target/release/moltchain-faucet"
 	if [ -x "$FAUCET_BIN" ]; then
-		FAUCET_KEY=$(find "$REPO_ROOT/data/state-8000/genesis-keys" -name "faucet-*.json" -type f 2>/dev/null | head -1)
+		FAUCET_KEY=$(find "$REPO_ROOT/data/state-${PRIMARY_P2P}/genesis-keys" -name "faucet-*.json" -type f 2>/dev/null | head -1)
 		if [ -n "$FAUCET_KEY" ]; then
 			cp "$FAUCET_KEY" "$REPO_ROOT/faucet-keypair.json"
 			echo "   ✓ Copied faucet keypair to faucet-keypair.json"
 		fi
-		echo "   Starting faucet service on port 9100..."
+		echo "   Starting faucet service on port ${FAUCET_PORT}..."
 		cd "$REPO_ROOT"
 		FAUCET_KEYPAIR="$REPO_ROOT/faucet-keypair.json" \
-		RPC_URL="http://127.0.0.1:8899" \
+		RPC_URL="http://127.0.0.1:${PRIMARY_RPC}" \
+		FAUCET_PORT="${FAUCET_PORT}" \
 		NETWORK="$NETWORK" \
 		nohup "$FAUCET_BIN" > /tmp/moltchain-faucet.log 2>&1 &
 		FAUCET_PID=$!

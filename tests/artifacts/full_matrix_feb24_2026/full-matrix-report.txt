@@ -1,39 +1,54 @@
-[1/37] PASS (1s) bash tests/test-rpc-comprehensive.sh
-[2/37] PASS (0s) bash tests/test-websocket.sh
-[3/37] PASS (0s) bash tests/test-cli-comprehensive.sh
-[4/37] PASS (31s) bash tests/live-e2e-test.sh
-[5/37] PASS (42s) REQUIRE_ALL_CONTRACTS=0 bash tests/services-deep-e2e.sh
-[6/37] FAIL (335s) exit=1 REQUIRE_FULL_WRITE_ACTIVITY=0 STRICT_WRITE_ASSERTIONS=0 ENFORCE_DOMAIN_ASSERTIONS=0 MIN_CONTRACT_ACTIVITY_DELTA=0 python3 tests/contracts-write-e2e.py
-[7/37] PASS (0s) bash tests/test-contract-deployment.sh
-[8/37] PASS (14s) bash scripts/test-all-sdks.sh
-[9/37] FAIL (30s) exit=1 node tests/e2e-dex.js
-[10/37] PASS (129s) python3 tests/e2e-dex-trading.py
-[11/37] PASS (50s) node tests/e2e-launchpad.js
-[12/37] PASS (40s) node tests/e2e-prediction.js
-[13/37] FAIL (83s) exit=1 node tests/e2e-volume.js
-[14/37] PASS (3s) bash tests/test-dex-api-comprehensive.sh
-[15/37] PASS (10s) node tests/test-ws-dex.js
-[16/37] PASS (1s) node tests/test_wallet_audit.js
-[17/37] PASS (0s) node tests/test_wallet_extension_audit.js
-[18/37] PASS (0s) node tests/test_marketplace_audit.js
-[19/37] PASS (0s) node tests/test_developers_audit.js
-[20/37] PASS (0s) node tests/test_website_audit.js
-[21/37] PASS (0s) node tests/test_cross_cutting_audit.js
-[22/37] PASS (0s) node tests/test_coverage_audit.js
-[23/37] PASS (1s) python3 tests/e2e-genesis-wiring.py
-[24/37] PASS (35s) bash tests/multi-validator-e2e.sh
-[25/37] FAIL (144s) exit=1 python3 tests/comprehensive-e2e.py
-[26/37] PASS (0s) python3 tests/comprehensive-e2e-parallel.py
-[27/37] FAIL (88s) exit=1 python3 tests/e2e-websocket-upgrade.py
-[28/37] PASS (0s) python3 tests/load-test-5k-traders.py
-[29/37] PASS (180s) bash tests/launch-3v.sh
-[30/37] FAIL (0s) exit=1 python3 sdk/python/test_sdk_live.py
-[31/37] FAIL (0s) exit=1 python3 sdk/python/test_websocket_sdk.py
-[32/37] FAIL (1s) exit=1 python3 sdk/python/test_websocket_simple.py
-[33/37] PASS (0s) python3 sdk/python/test_cross_sdk_compat.py
-[34/37] FAIL (1s) exit=1 npx --yes ts-node sdk/js/test-all-features.ts
-[35/37] PASS (0s) node sdk/js/test_cross_sdk_compat.js
-[36/37] FAIL (0s) exit=1 node sdk/js/test-subscriptions.js
-[37/37] FAIL (1s) exit=1 cargo run --manifest-path sdk/rust/Cargo.toml --example test_transactions
-TOTAL=37 PASS=26 FAIL=11
+[31/41] PASS (111s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' python3 tests/load-test-5k-traders.py
+[32/41] PASS (0s) bash tests/matrix-sdk-cluster.sh status
+[33/41] PASS (55s) python3 sdk/python/test_sdk_live.py
+[34/41] PASS (5s) python3 sdk/python/test_websocket_sdk.py
+[1/41] PASS (1s) bash tests/test-rpc-comprehensive.sh
+[2/41] PASS (0s) bash tests/test-websocket.sh
+[3/41] PASS (0s) bash tests/test-cli-comprehensive.sh
+[35/41] PASS (30s) python3 sdk/python/test_websocket_simple.py
+[36/41] PASS (0s) python3 sdk/python/test_cross_sdk_compat.py
+[37/41] PASS (1s) npx --yes ts-node sdk/js/test-all-features.ts
+[38/41] PASS (0s) node sdk/js/test_cross_sdk_compat.js
+[39/41] PASS (11s) node sdk/js/test-subscriptions.js
+[40/41] PASS (4s) cargo run --manifest-path sdk/rust/Cargo.toml --example test_transactions
+[41/41] PASS (3s) bash tests/matrix-sdk-cluster.sh stop
+[4/41] PASS (94s) bash tests/live-e2e-test.sh
+[5/41] PASS (38s) REQUIRE_ALL_CONTRACTS=0 bash tests/services-deep-e2e.sh
+[6/41] PASS (75s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' HUMAN_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/community_treasury-moltchain-testnet-1.json' REQUIRE_FULL_WRITE_ACTIVITY=0 STRICT_WRITE_ASSERTIONS=0 ENFORCE_DOMAIN_ASSERTIONS=0 MIN_CONTRACT_ACTIVITY_DELTA=0 python3 tests/contracts-write-e2e.py
+[7/41] PASS (0s) bash tests/test-contract-deployment.sh
+[8/41] PASS (7s) bash scripts/test-all-sdks.sh
+[9/41] PASS (34s) node tests/e2e-dex.js
+[10/41] PASS (59s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' python3 tests/e2e-dex-trading.py
+[11/41] PASS (49s) node tests/e2e-launchpad.js
+[12/41] PASS (56s) node tests/e2e-prediction.js
+[13/41] PASS (14s) PREDICTION_MULTI_OUTCOME_ONLY=1 node tests/e2e-prediction.js
+[14/41] PASS (113s) node tests/e2e-volume.js
+[15/41] PASS (3s) bash tests/test-dex-api-comprehensive.sh
+[16/41] PASS (10s) node tests/test-ws-dex.js
+[17/41] PASS (0s) node tests/test_wallet_audit.js
+[18/41] PASS (0s) node tests/test_wallet_extension_audit.js
+[19/41] PASS (0s) node tests/test_wallet_modal_parity.js
+[20/41] PASS (0s) node tests/test_programs_override_wiring.js
+[21/41] PASS (0s) node tests/test_marketplace_audit.js
+[22/41] PASS (0s) node tests/test_developers_audit.js
+[23/41] PASS (1s) node tests/test_website_audit.js
+[24/41] PASS (0s) node tests/test_cross_cutting_audit.js
+[25/41] PASS (0s) node tests/test_coverage_audit.js
+[26/41] PASS (0s) python3 tests/e2e-genesis-wiring.py
+[27/41] PASS (16s) bash tests/multi-validator-e2e.sh
+[28/41] PASS (142s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' REQUIRE_FUNDED_DEPLOYER=0 RPC_ENDPOINTS='http://127.0.0.1:8899' python3 tests/comprehensive-e2e.py
+[29/41] PASS (30s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' REQUIRE_FUNDED_DEPLOYER=0 RPC_ENDPOINTS='http://127.0.0.1:8899' python3 tests/comprehensive-e2e-parallel.py
+[30/41] PASS (88s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' python3 tests/e2e-websocket-upgrade.py
+[31/41] PASS (56s) AGENT_KEYPAIR='/Users/johnrobin/.openclaw/workspace/moltchain/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json' python3 tests/load-test-5k-traders.py
+[32/41] PASS (1s) bash tests/matrix-sdk-cluster.sh status
+[33/41] PASS (116s) python3 sdk/python/test_sdk_live.py
+[34/41] PASS (5s) python3 sdk/python/test_websocket_sdk.py
+[35/41] PASS (30s) python3 sdk/python/test_websocket_simple.py
+[36/41] PASS (0s) python3 sdk/python/test_cross_sdk_compat.py
+[37/41] PASS (1s) npx --yes ts-node sdk/js/test-all-features.ts
+[38/41] PASS (0s) node sdk/js/test_cross_sdk_compat.js
+[39/41] PASS (10s) node sdk/js/test-subscriptions.js
+[40/41] PASS (1s) cargo run --manifest-path sdk/rust/Cargo.toml --example test_transactions
+[41/41] PASS (3s) bash tests/matrix-sdk-cluster.sh stop
+TOTAL=41 PASS=41 FAIL=0
 LOG=tests/artifacts/full_matrix_feb24_2026/full-matrix.log

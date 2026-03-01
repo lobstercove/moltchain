@@ -34,6 +34,7 @@
 let nacl;
 try { nacl = require('tweetnacl'); }
 catch { console.error('Missing dependency: npm install tweetnacl'); process.exit(1); }
+const crypto = require('crypto');
 
 const { loadFundedWallets } = require('./helpers/funded-wallets');
 
@@ -184,8 +185,8 @@ async function sendTx(keypair, instructions) {
 // Contract call helpers
 // ═══════════════════════════════════════════════════════════════════════════════
 const CONTRACT_PID = bs58encode(new Uint8Array(32).fill(0xFF));
-function contractIx(callerAddr, contractAddr, argsBytes) {
-    const data = JSON.stringify({ Call: { function: "call", args: Array.from(argsBytes), value: 0 } });
+function contractIx(callerAddr, contractAddr, argsBytes, value = 0) {
+    const data = JSON.stringify({ Call: { function: "call", args: Array.from(argsBytes), value } });
     return { program_id: CONTRACT_PID, accounts: [callerAddr, contractAddr], data };
 }
 function namedCallIx(callerAddr, contractAddr, funcName, argsBytes) {
@@ -428,8 +429,7 @@ function buildGetGovernanceStats() {
 // create_market: opcode 1, variable length
 function buildCreateMarket(creator, category, closeSlot, outcomeCount, question) {
     const qBytes = new TextEncoder().encode(question);
-    const qHash = new Uint8Array(32); // simple hash (fill with question bytes for uniqueness)
-    for (let i = 0; i < qBytes.length && i < 32; i++) qHash[i] = qBytes[i];
+    const qHash = crypto.createHash('sha256').update(qBytes).digest();
     const totalLen = 1 + 32 + 1 + 8 + 1 + 32 + 4 + qBytes.length; // 79 + qLen
     const buf = new ArrayBuffer(totalLen); const v = new DataView(buf); const a = new Uint8Array(buf);
     writeU8(a, 0, 1); writePubkey(a, 1, creator);
@@ -917,13 +917,13 @@ async function runTests() {
     {
         // Create a prediction market
         const currentSlot = await rpc('getSlot');
-        const closeSlot = (typeof currentSlot === 'number' ? currentSlot : currentSlot?.slot || 1000) + 100;
+        const closeSlot = (typeof currentSlot === 'number' ? currentSlot : currentSlot?.slot || 1000) + 8000;
         const createArgs = buildCreateMarket(
             alice.address, 0, closeSlot, 2,
             'Will MOLT reach $1 by end of Q1?'
         );
         try {
-            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.prediction_market, createArgs)]);
+            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.prediction_market, createArgs, 10_000_000)]);
             assert(typeof sig === 'string', `Created prediction market: ${sig.slice(0, 16)}...`);
         } catch (e) {
             assert(true, `Create market TX submitted (${e.message})`);
@@ -945,7 +945,7 @@ async function runTests() {
         const liqAmount = Math.round(10 * 1e6); // 10 mUSD (assuming 1e6 scale)
         const liqArgs = buildAddInitialLiquidity(alice.address, predMarketId, liqAmount);
         try {
-            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.prediction_market, liqArgs)]);
+            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.prediction_market, liqArgs, liqAmount)]);
             assert(typeof sig === 'string', `Added initial liquidity to market: ${sig.slice(0, 16)}...`);
         } catch (e) {
             assert(true, `Add initial liquidity TX submitted (${e.message})`);
@@ -959,7 +959,7 @@ async function runTests() {
         const buyAmount = Math.round(5 * 1e6);
         const buyArgs = buildBuyShares(bob.address, predMarketId, 0, buyAmount);
         try {
-            const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.prediction_market, buyArgs)]);
+            const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.prediction_market, buyArgs, buyAmount)]);
             assert(typeof sig === 'string', `Bob bought YES shares: ${sig.slice(0, 16)}...`);
         } catch (e) {
             assert(true, `Buy shares TX submitted (${e.message})`);
@@ -969,7 +969,7 @@ async function runTests() {
         // Buy NO shares
         const buyNoArgs = buildBuyShares(charlie.address, predMarketId, 1, buyAmount);
         try {
-            const sig = await sendTx(charlie, [contractIx(charlie.address, CONTRACTS.prediction_market, buyNoArgs)]);
+            const sig = await sendTx(charlie, [contractIx(charlie.address, CONTRACTS.prediction_market, buyNoArgs, buyAmount)]);
             assert(typeof sig === 'string', `Charlie bought NO shares: ${sig.slice(0, 16)}...`);
         } catch (e) {
             assert(true, `Buy NO shares TX submitted (${e.message})`);
@@ -994,7 +994,7 @@ async function runTests() {
         const resolveArgs = buildSubmitResolution(alice.address, predMarketId, 0, resolveStake);
         assertEq(resolveArgs.length, 82, `Submit resolution uses 82-byte layout`);
         try {
-            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.prediction_market, resolveArgs)]);
+            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.prediction_market, resolveArgs, resolveStake)]);
             assert(typeof sig === 'string', `Submitted resolution (YES): ${sig.slice(0, 16)}...`);
         } catch (e) {
             assert(true, `Submit resolution TX submitted (${e.message})`);
@@ -1006,7 +1006,7 @@ async function runTests() {
         const challengeArgs = buildChallengeResolution(charlie.address, predMarketId, challengeStake);
         assertEq(challengeArgs.length, 81, `Challenge resolution uses 81-byte layout`);
         try {
-            const sig = await sendTx(charlie, [contractIx(charlie.address, CONTRACTS.prediction_market, challengeArgs)]);
+            const sig = await sendTx(charlie, [contractIx(charlie.address, CONTRACTS.prediction_market, challengeArgs, challengeStake)]);
             assert(typeof sig === 'string', `Challenge submitted: ${sig.slice(0, 16)}...`);
         } catch (e) {
             assert(true, `Challenge TX submitted (${e.message})`);

@@ -16,6 +16,7 @@
  *   P11. Edge cases (buy on non-existent market, zero-amount, preflight rejection)
  *   P12. Chart/price history verification
  *   P13. Complete-set minting & redemption
+ *   P16. Matrix expansion: additional binary + custom multi market bursts
  *
  * Usage:
  *   node tests/e2e-prediction.js
@@ -30,6 +31,7 @@
 let nacl;
 try { nacl = require('tweetnacl'); }
 catch { console.error('Missing dependency: npm install tweetnacl'); process.exit(1); }
+const crypto = require('crypto');
 const { loadFundedWallets } = require('./helpers/funded-wallets');
 
 const RPC_URL = process.env.MOLTCHAIN_RPC || 'http://127.0.0.1:8899';
@@ -37,6 +39,8 @@ const REST_BASE = `${RPC_URL}/api/v1`;
 const PM_SCALE = 1_000_000;      // 1 mUSD = 10^6 (6 decimals)
 const SHELLS_PER_MOLT = 1e9;     // 1 MOLT = 10^9 shells
 const FUND_AMOUNT = 100;  // 100 MOLT per airdrop (RPC expects MOLT, max 100)
+const PREDICT_CREATE_FEE = 10_000_000; // 10 mUSD, must match contract MARKET_CREATION_FEE
+const MULTI_OUTCOME_ONLY = process.env.PREDICTION_MULTI_OUTCOME_ONLY === '1';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Test harness
@@ -108,6 +112,29 @@ async function restPost(path, body) {
     } catch { return null; }
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function resolveMarketIdByQuestion(question, creator, expectedCloseSlot = null, retries = 8) {
+    for (let attempt = 0; attempt < retries; attempt++) {
+        const resp = await rest(`/prediction-market/markets?creator=${encodeURIComponent(creator)}&limit=200`);
+        const markets = Array.isArray(resp?.data?.markets)
+            ? resp.data.markets
+            : (Array.isArray(resp?.markets) ? resp.markets : []);
+        if (markets.length > 0) {
+            const exact = markets
+                .filter((m) => String(m.question || '').trim() === question.trim()
+                    && (expectedCloseSlot == null || Number(m.close_slot || 0) === Number(expectedCloseSlot)))
+                .sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+            if (exact[0]?.id) return Number(exact[0].id);
+
+            const byQuestion = markets
+                .filter((m) => String(m.question || '').trim() === question.trim())
+                .sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+            if (byQuestion[0]?.id) return Number(byQuestion[0].id);
+        }
+        await sleep(500 + attempt * 250);
+    }
+    return 0;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Keypair
@@ -219,8 +246,9 @@ function buildCreateMarket(creator, category, closeSlot, outcomeCount, questionT
     writeU8(a, 33, category);                   // category (0-7)
     writeU64LE(v, 34, closeSlot);               // close_slot
     writeU8(a, 42, outcomeCount);               // outcome_count (2-8)
-    // question_hash: SHA-256 of question (use zeros for simplicity — contract accepts it)
-    // Bytes 43..74 already zeroed
+    // question_hash: SHA-256(question) — must match contract verification
+    const qHash = crypto.createHash('sha256').update(qBytes).digest();
+    a.set(qHash, 43);
     writeU32LE(v, 75, qBytes.length);           // question_len
     a.set(qBytes, 79);                          // question text
     return a;
@@ -466,7 +494,7 @@ async function main() {
             console.log(`    Admin funding: ${e.message.slice(0, 60)}`);
         }
         // Register test wallets via admin_register_reserved_name (gives rep 10,000)
-        const names = ['alice_pm', 'bob_pm', 'carol_pm', 'dave_pm', 'eve_pm', 'frank_pm'];
+        const names = ['alicepm', 'bobpm', 'carolpm', 'davepm', 'evepm', 'frankpm'];
         let regCount = 0;
         for (let i = 0; i < wallets.length; i++) {
             try {
@@ -496,6 +524,10 @@ async function main() {
     const currentSlot = await rpc('getSlot');
     console.log(`    Current slot: ${currentSlot}`);
 
+    // When MULTI_OUTCOME_ONLY is set, skip binary-focused P4-P15 and jump to P16
+    // with only multi-outcome scenarios.  Setup (P1-P3) still runs.
+    if (!MULTI_OUTCOME_ONLY) {
+
     // ══════════════════════════════════════════════════════════════════════
     // P4. Market Creation via On-Chain TX
     // ══════════════════════════════════════════════════════════════════════
@@ -503,6 +535,8 @@ async function main() {
     let market1Id = 0;
     let market2Id = 0;
     const closeSlot = currentSlot + 8000;  // ~53 min from now (min 7200)
+    const market1Question = 'Will MOLT reach $1 by end of Q1 2026?';
+    const market2Question = 'Who will win the 2026 World Cup? US, France, or Brazil?';
 
     // Market 1: Binary (Yes/No) — crypto category
     try {
@@ -511,11 +545,12 @@ async function main() {
             2,                // category: crypto
             closeSlot,
             2,                // 2 outcomes (Yes/No)
-            'Will MOLT reach $1 by end of Q1 2026?'
+            market1Question
         );
-        const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.predict, args)]);
+        const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.predict, args, PREDICT_CREATE_FEE)]);
         assert(typeof sig === 'string', `Market 1 created (crypto/binary): ${sig?.slice(0, 16)}...`);
-        market1Id = 1;  // First market
+        market1Id = await resolveMarketIdByQuestion(market1Question, alice.address, closeSlot);
+        assertGt(market1Id, 0, `Resolved Market 1 ID (${market1Id})`);
         await sleep(2000);
     } catch (e) {
         // If reputation gate blocks creation, try REST as fallback
@@ -523,7 +558,7 @@ async function main() {
         console.log('    Trying REST fallback...');
         const adminToken = process.env.MOLTCHAIN_ADMIN_TOKEN || '';
         const resp = await restPost('/prediction-market/create', {
-            question: 'Will MOLT reach $1 by end of Q1 2026?',
+            question: market1Question,
             category: 'crypto',
             initialLiquidity: 100 * PM_SCALE,
             creator: alice.address,
@@ -531,7 +566,8 @@ async function main() {
             admin_token: adminToken,
         });
         if (resp?.data || resp?.success) {
-            market1Id = resp?.data?.next_market_id || 1;
+            market1Id = await resolveMarketIdByQuestion(market1Question, alice.address, closeSlot);
+            if (!market1Id) market1Id = resp?.data?.next_market_id || 0;
             assert(true, `Market 1 created via REST fallback: ID=${market1Id}`);
         } else {
             skip(`Market 1 creation unavailable: ${JSON.stringify(resp?.error || 'unknown').slice(0, 60)}`);
@@ -546,11 +582,16 @@ async function main() {
             1,                // category: sports
             closeSlot + 5000,
             3,                // 3 outcomes
-            'Who will win the 2026 World Cup? US, France, or Brazil?'
+            market2Question
         );
-        const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.predict, args)]);
+        const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.predict, args, PREDICT_CREATE_FEE)]);
         assert(typeof sig === 'string', `Market 2 created (sports/3-way): ${sig?.slice(0, 16)}...`);
-        market2Id = market1Id + 1;
+        market2Id = await resolveMarketIdByQuestion(market2Question, bob.address, closeSlot + 5000);
+        if (market2Id > 0) {
+            assertGt(market2Id, 0, `Resolved Market 2 ID (${market2Id})`);
+        } else {
+            skip('Market 2 ID not discoverable in current profile (continuing with Market 1 strict path)');
+        }
         await sleep(2000);
     } catch (e) {
         skip(`Market 2 creation: ${e.message.slice(0, 60)}`);
@@ -566,9 +607,10 @@ async function main() {
     if (market1Id > 0) {
         try {
             // Equal odds (50/50 for binary)
-            const args = buildAddInitialLiquidity(alice.address, market1Id, 50 * PM_SCALE);
-            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.predict, args)]);
-            assert(typeof sig === 'string', `Market 1 liquidity added (50 mUSD, equal odds): ${sig?.slice(0, 16)}...`);
+            const amount = 100 * PM_SCALE;
+            const args = buildAddInitialLiquidity(alice.address, market1Id, amount);
+            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.predict, args, amount)]);
+            assert(typeof sig === 'string', `Market 1 liquidity added (100 mUSD, equal odds): ${sig?.slice(0, 16)}...`);
             market1Active = true;
             await sleep(2000);
         } catch (e) {
@@ -588,8 +630,9 @@ async function main() {
     if (market2Id > 0) {
         try {
             // Custom odds: 40% US, 35% France, 25% Brazil → [4000, 3500, 2500]
-            const args = buildAddInitialLiquidity(bob.address, market2Id, 100 * PM_SCALE, [4000, 3500, 2500]);
-            const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.predict, args)]);
+            const amount = 100 * PM_SCALE;
+            const args = buildAddInitialLiquidity(bob.address, market2Id, amount, [4000, 3500, 2500]);
+            const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Market 2 liquidity added (100 mUSD, custom odds): ${sig?.slice(0, 16)}...`);
             market2Active = true;
             await sleep(2000);
@@ -606,48 +649,54 @@ async function main() {
     if (market1Active) {
         // Alice buys YES (outcome 0) — 10 mUSD
         try {
-            const args = buildBuyShares(alice.address, market1Id, 0, 10 * PM_SCALE);
-            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.predict, args)]);
+            const amount = 10 * PM_SCALE;
+            const args = buildBuyShares(alice.address, market1Id, 0, amount);
+            const sig = await sendTx(alice, [contractIx(alice.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Alice bought YES (10 mUSD): ${sig?.slice(0, 16)}...`);
         } catch (e) { assert(false, `Alice buy YES: ${e.message.slice(0, 60)}`); }
         await sleep(1500);
 
         // Bob buys NO (outcome 1) — 8 mUSD
         try {
-            const args = buildBuyShares(bob.address, market1Id, 1, 8 * PM_SCALE);
-            const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.predict, args)]);
+            const amount = 8 * PM_SCALE;
+            const args = buildBuyShares(bob.address, market1Id, 1, amount);
+            const sig = await sendTx(bob, [contractIx(bob.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Bob bought NO (8 mUSD): ${sig?.slice(0, 16)}...`);
         } catch (e) { assert(false, `Bob buy NO: ${e.message.slice(0, 60)}`); }
         await sleep(1500);
 
         // Carol buys YES (outcome 0) — 15 mUSD (largest buy → shifts price)
         try {
-            const args = buildBuyShares(carol.address, market1Id, 0, 15 * PM_SCALE);
-            const sig = await sendTx(carol, [contractIx(carol.address, CONTRACTS.predict, args)]);
+            const amount = 15 * PM_SCALE;
+            const args = buildBuyShares(carol.address, market1Id, 0, amount);
+            const sig = await sendTx(carol, [contractIx(carol.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Carol bought YES (15 mUSD): ${sig?.slice(0, 16)}...`);
         } catch (e) { assert(false, `Carol buy YES: ${e.message.slice(0, 60)}`); }
         await sleep(1500);
 
         // Dave buys NO (outcome 1) — 5 mUSD
         try {
-            const args = buildBuyShares(dave.address, market1Id, 1, 5 * PM_SCALE);
-            const sig = await sendTx(dave, [contractIx(dave.address, CONTRACTS.predict, args)]);
+            const amount = 5 * PM_SCALE;
+            const args = buildBuyShares(dave.address, market1Id, 1, amount);
+            const sig = await sendTx(dave, [contractIx(dave.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Dave bought NO (5 mUSD): ${sig?.slice(0, 16)}...`);
         } catch (e) { assert(false, `Dave buy NO: ${e.message.slice(0, 60)}`); }
         await sleep(1500);
 
         // Eve buys YES (outcome 0) — 12 mUSD
         try {
-            const args = buildBuyShares(eve.address, market1Id, 0, 12 * PM_SCALE);
-            const sig = await sendTx(eve, [contractIx(eve.address, CONTRACTS.predict, args)]);
+            const amount = 12 * PM_SCALE;
+            const args = buildBuyShares(eve.address, market1Id, 0, amount);
+            const sig = await sendTx(eve, [contractIx(eve.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Eve bought YES (12 mUSD): ${sig?.slice(0, 16)}...`);
         } catch (e) { assert(false, `Eve buy YES: ${e.message.slice(0, 60)}`); }
         await sleep(1500);
 
         // Frank buys NO (outcome 1) — 20 mUSD (big NO bet)
         try {
-            const args = buildBuyShares(frank.address, market1Id, 1, 20 * PM_SCALE);
-            const sig = await sendTx(frank, [contractIx(frank.address, CONTRACTS.predict, args)]);
+            const amount = 20 * PM_SCALE;
+            const args = buildBuyShares(frank.address, market1Id, 1, amount);
+            const sig = await sendTx(frank, [contractIx(frank.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Frank bought NO (20 mUSD): ${sig?.slice(0, 16)}...`);
         } catch (e) { assert(false, `Frank buy NO: ${e.message.slice(0, 60)}`); }
         await sleep(2000);
@@ -665,8 +714,9 @@ async function main() {
         ];
         for (const t of m2trades) {
             try {
-                const args = buildBuyShares(t.w.address, market2Id, t.outcome, t.amt * PM_SCALE);
-                const sig = await sendTx(t.w, [contractIx(t.w.address, CONTRACTS.predict, args)]);
+                const amount = t.amt * PM_SCALE;
+                const args = buildBuyShares(t.w.address, market2Id, t.outcome, amount);
+                const sig = await sendTx(t.w, [contractIx(t.w.address, CONTRACTS.predict, args, amount)]);
                 assert(typeof sig === 'string', `${t.desc}: ${sig?.slice(0, 16)}...`);
             } catch (e) { assert(false, `${t.desc}: ${e.message.slice(0, 60)}`); }
             await sleep(1000);
@@ -812,8 +862,9 @@ async function main() {
 
     // Buy shares on non-existent market (ID=999) — verify simulation shows 0 state changes
     try {
-        const args = buildBuyShares(dave.address, 999, 0, 5 * PM_SCALE);
-        const sim = await simulateTx(dave, [contractIx(dave.address, CONTRACTS.predict, args)]);
+        const amount = 5 * PM_SCALE;
+        const args = buildBuyShares(dave.address, 999, 0, amount);
+        const sim = await simulateTx(dave, [contractIx(dave.address, CONTRACTS.predict, args, amount)]);
         if (sim && sim.stateChanges === 0) {
             assert(true, `Buy non-existent market correctly has no effect (0 state changes)`);
         } else {
@@ -841,8 +892,9 @@ async function main() {
     // Buy on invalid outcome index (outcome=10 when market has 2)
     if (market1Active) {
         try {
-            const args = buildBuyShares(dave.address, market1Id, 10, 5 * PM_SCALE);
-            const sim = await simulateTx(dave, [contractIx(dave.address, CONTRACTS.predict, args)]);
+            const amount = 5 * PM_SCALE;
+            const args = buildBuyShares(dave.address, market1Id, 10, amount);
+            const sim = await simulateTx(dave, [contractIx(dave.address, CONTRACTS.predict, args, amount)]);
             if (sim && sim.stateChanges === 0) {
                 assert(true, `Invalid outcome correctly has no effect (0 state changes)`);
             } else {
@@ -888,6 +940,15 @@ async function main() {
                 console.log('  ⚠ Price history has 0 snapshots (not yet populated — known limitation)');
             }
         }
+
+        const tradeHistory = await rest(`/prediction-market/trades?address=${encodeURIComponent(alice.address)}&limit=50`);
+        assert(tradeHistory != null, 'Prediction trades API responds');
+        if (tradeHistory?.data && Array.isArray(tradeHistory.data)) {
+            assert(tradeHistory.data.length >= 1, `Prediction trades API returns entries (${tradeHistory.data.length})`);
+            const first = tradeHistory.data[0] || {};
+            assert(first.market_id !== undefined, 'Prediction trade row includes market_id');
+            assert(typeof first.action === 'string', 'Prediction trade row includes action');
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -898,8 +959,9 @@ async function main() {
     if (market1Active) {
         // Mint complete set (1 share of each outcome per mUSD)
         try {
-            const args = buildMintCompleteSet(eve.address, market1Id, 5 * PM_SCALE);
-            const sig = await sendTx(eve, [contractIx(eve.address, CONTRACTS.predict, args)]);
+            const amount = 5 * PM_SCALE;
+            const args = buildMintCompleteSet(eve.address, market1Id, amount);
+            const sig = await sendTx(eve, [contractIx(eve.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Eve minted complete set (5 mUSD): ${sig?.slice(0, 16)}...`);
             await sleep(1500);
         } catch (e) {
@@ -925,8 +987,9 @@ async function main() {
     if (market1Active) {
         // Carol adds more liquidity
         try {
-            const args = buildAddLiquidity(carol.address, market1Id, 20 * PM_SCALE);
-            const sig = await sendTx(carol, [contractIx(carol.address, CONTRACTS.predict, args)]);
+            const amount = 20 * PM_SCALE;
+            const args = buildAddLiquidity(carol.address, market1Id, amount);
+            const sig = await sendTx(carol, [contractIx(carol.address, CONTRACTS.predict, args, amount)]);
             assert(typeof sig === 'string', `Carol added liquidity (20 mUSD): ${sig?.slice(0, 16)}...`);
             await sleep(1500);
         } catch (e) {
@@ -970,6 +1033,140 @@ async function main() {
     if (finalStats?.data) {
         console.log(`    Platform: ${finalStats.data.total_markets} markets, $${(finalStats.data.total_volume || 0).toFixed(2)} vol, ${finalStats.data.total_traders || 0} traders`);
     }
+
+    } // end if (!MULTI_OUTCOME_ONLY) — P4-P15 skipped in multi-outcome-only mode
+
+    // ══════════════════════════════════════════════════════════════════════
+    // P16. Matrix Expansion: Binary + Custom Multi Stress Scenarios
+    // ══════════════════════════════════════════════════════════════════════
+    section(MULTI_OUTCOME_ONLY ? 'P16: Multi-Outcome Only' : 'P16: Matrix Expansion (Binary + Custom Multi)');
+
+    const matrixCases = [
+        {
+            name: 'Matrix-Binary',
+            creator: alice,
+            category: 2,
+            outcomeCount: 2,
+            question: `Matrix Binary ${Date.now()}: Will MOLT close above $0.20 this week?`,
+            closeSlot: currentSlot + 12_000,
+            initialLiquidity: 120 * PM_SCALE,
+            oddsBps: null,
+            trades: [
+                { w: alice, outcome: 0, amt: 6 },
+                { w: bob, outcome: 1, amt: 7 },
+                { w: carol, outcome: 0, amt: 9 },
+                { w: dave, outcome: 1, amt: 5 },
+                { w: eve, outcome: 0, amt: 8 },
+                { w: frank, outcome: 1, amt: 10 },
+            ],
+        },
+        {
+            name: 'Matrix-Custom-Multi',
+            creator: bob,
+            category: 7,
+            outcomeCount: 4,
+            question: `Matrix Custom ${Date.now()}: Which chain leads weekly agent txs? MoltChain/Solana/Base/Other`,
+            closeSlot: currentSlot + 16_000,
+            initialLiquidity: 150 * PM_SCALE,
+            oddsBps: [3500, 2500, 2500, 1500],
+            trades: [
+                { w: alice, outcome: 0, amt: 7 },
+                { w: bob, outcome: 1, amt: 6 },
+                { w: carol, outcome: 2, amt: 5 },
+                { w: dave, outcome: 3, amt: 4 },
+                { w: eve, outcome: 0, amt: 9 },
+                { w: frank, outcome: 2, amt: 8 },
+                { w: alice, outcome: 1, amt: 5 },
+                { w: bob, outcome: 3, amt: 3 },
+            ],
+        },
+    ];
+
+    // In multi-outcome-only mode, filter to only scenarios with > 2 outcomes
+    const activeCases = MULTI_OUTCOME_ONLY ? matrixCases.filter(c => c.outcomeCount > 2) : matrixCases;
+
+    let matrixActivated = 0;
+    for (const scenario of activeCases) {
+        let matrixMarketId = 0;
+        try {
+            const createArgs = buildCreateMarket(
+                scenario.creator.address,
+                scenario.category,
+                scenario.closeSlot,
+                scenario.outcomeCount,
+                scenario.question,
+            );
+            const createSig = await sendTx(
+                scenario.creator,
+                [contractIx(scenario.creator.address, CONTRACTS.predict, createArgs, PREDICT_CREATE_FEE)],
+            );
+            assert(typeof createSig === 'string', `${scenario.name} created: ${createSig?.slice(0, 16)}...`);
+            await sleep(1200);
+
+            matrixMarketId = await resolveMarketIdByQuestion(
+                scenario.question,
+                scenario.creator.address,
+                scenario.closeSlot,
+            );
+            if (matrixMarketId <= 0) {
+                skip(`${scenario.name} market ID unresolved after create; skipping matrix scenario`);
+                continue;
+            }
+            assertGt(matrixMarketId, 0, `${scenario.name} market ID resolved (${matrixMarketId})`);
+        } catch (e) {
+            skip(`${scenario.name} create skipped: ${e.message.slice(0, 80)}`);
+            continue;
+        }
+
+        try {
+            const liqArgs = buildAddInitialLiquidity(
+                scenario.creator.address,
+                matrixMarketId,
+                scenario.initialLiquidity,
+                scenario.oddsBps,
+            );
+            const liqSig = await sendTx(
+                scenario.creator,
+                [contractIx(scenario.creator.address, CONTRACTS.predict, liqArgs, scenario.initialLiquidity)],
+            );
+            assert(typeof liqSig === 'string', `${scenario.name} initial liquidity added`);
+            matrixActivated++;
+            await sleep(1200);
+        } catch (e) {
+            skip(`${scenario.name} liquidity skipped: ${e.message.slice(0, 80)}`);
+            continue;
+        }
+
+        for (const t of scenario.trades) {
+            try {
+                const amount = t.amt * PM_SCALE;
+                const buyArgs = buildBuyShares(t.w.address, matrixMarketId, t.outcome, amount);
+                const buySig = await sendTx(t.w, [contractIx(t.w.address, CONTRACTS.predict, buyArgs, amount)]);
+                assert(typeof buySig === 'string', `${scenario.name} trade outcome=${t.outcome} amt=${t.amt}`);
+            } catch (e) {
+                assert(false, `${scenario.name} trade failed outcome=${t.outcome}: ${e.message.slice(0, 80)}`);
+            }
+            await sleep(450);
+        }
+
+        await sleep(1000);
+        const matrixDetail = await rest(`/prediction-market/markets/${matrixMarketId}`);
+        if (matrixDetail?.data) {
+            const md = matrixDetail.data;
+            assert((md.outcome_count || md.outcomes?.length || 0) === scenario.outcomeCount, `${scenario.name} outcome count matches`);
+            assertGt(md.total_volume || 0, 0, `${scenario.name} has non-zero volume`);
+            if (scenario.outcomeCount === 2 && Array.isArray(md.outcomes) && md.outcomes.length >= 2) {
+                const p0 = Number(md.outcomes[0]?.price || 0);
+                const p1 = Number(md.outcomes[1]?.price || 0);
+                const sum = p0 + p1;
+                assert(sum > 0.85 && sum < 1.15, `${scenario.name} binary price sum near 1 (${sum.toFixed(4)})`);
+            }
+        } else {
+            skip(`${scenario.name} detail unavailable from REST`);
+        }
+    }
+
+    assertGte(matrixActivated, 1, `Matrix scenarios activated at least one market (${matrixActivated}/${activeCases.length})`);
 
     // ══════════════════════════════════════════════════════════════════════
     // Summary

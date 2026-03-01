@@ -24,10 +24,21 @@ function loadFundedWallets(limit = 2) {
     process.cwd(),
     path.resolve(process.cwd(), '..'),
   ];
-  const stateDirs = ['state-8000', 'state-8001', 'state-8002', 'state-testnet-7001', 'state-testnet-7002', 'state-testnet-7003'];
+  const staticStateDirs = ['matrix-sdk-state-8000', 'matrix-sdk-state-8001', 'matrix-sdk-state-8002', 'state-8000', 'state-8001', 'state-8002', 'state-testnet-7001', 'state-testnet-7002', 'state-testnet-7003'];
   const wallets = [];
+  const seen = new Set();
 
   for (const root of roots) {
+    const dataDir = path.join(root, 'data');
+    let dynamicStateDirs = [];
+    if (fs.existsSync(dataDir)) {
+      try {
+        dynamicStateDirs = fs.readdirSync(dataDir)
+          .filter((name) => name.startsWith('state-') || name.startsWith('matrix-sdk-state-'));
+      } catch (_) {}
+    }
+    const stateDirs = Array.from(new Set([...staticStateDirs, ...dynamicStateDirs]));
+
     for (const st of stateDirs) {
       const keysDir = path.join(root, 'data', st, 'genesis-keys');
       if (!fs.existsSync(keysDir)) continue;
@@ -64,6 +75,11 @@ function loadFundedWallets(limit = 2) {
             address: bs58encode(kp.publicKey),
             source: path.join(keysDir, file),
           });
+          if (seen.has(wallets[wallets.length - 1].address)) {
+            wallets.pop();
+          } else {
+            seen.add(wallets[wallets.length - 1].address);
+          }
         } catch (_) {}
       }
     }

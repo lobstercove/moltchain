@@ -8,7 +8,7 @@
   "results": [
     {
       "status": "PASS",
-      "msg": "RPC node is reachable (slot=804)",
+      "msg": "RPC node is reachable (slot=408)",
       "detail": ""
     },
     {
@@ -243,7 +243,7 @@
     },
     {
       "status": "PASS",
-      "msg": "MoltyID has 87 total skills (expected >= 9 for 3 identities \u00d7 3 skills)",
+      "msg": "MoltyID has 102 total skills (expected >= 9 for 3 identities \u00d7 3 skills)",
       "detail": ""
     },
     {
