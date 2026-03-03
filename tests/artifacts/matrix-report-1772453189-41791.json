@@ -1,0 +1,14 @@
+{
+  "run_id": "1772453189-41791",
+  "timestamp": "2026-03-02T12:07:28Z",
+  "validators": 3,
+  "stagger_delay_sec": 15,
+  "reused_cluster": false,
+  "summary": {
+    "total": 40,
+    "passed": 20,
+    "failed": 13,
+    "skipped": 7
+  },
+  "results": [{"test":"V1 healthy after 15s stagger","status":"pass"},{"test":"V2 healthy after 15s stagger","status":"pass"},{"test":"V3 healthy after 15s stagger","status":"pass"},{"test":"Blocks advancing: 8 → 9","status":"pass"},{"test":"Slot sync within 15 slots (V1=9 V2=9 V3=9, drift=0)","status":"pass"},{"test":"Validator count: 3 (≥ 2)","status":"pass"},{"test":"getBlock(7) returns data","status":"pass"},{"test":"RPC: health","status":"pass"},{"test":"RPC: getSlot","status":"pass"},{"test":"RPC: getRecentBlockhash","status":"pass"},{"test":"RPC: getVersion","status":"fail","detail":"no result"},{"test":"RPC: getValidators","status":"pass"},{"test":"RPC: getMetrics","status":"pass"},{"test":"RPC: getGenesisHash","status":"fail","detail":"no result"},{"test":"RPC: getEpochInfo","status":"fail","detail":"no result"},{"test":"RPC: getBlockHeight","status":"fail","detail":"no result"},{"test":"RPC: getSupply","status":"fail","detail":"no result"},{"test":"RPC: getTPS","status":"fail","detail":"no result"},{"test":"RPC: getClusterInfo","status":"pass"},{"test":"RPC: getMinimumBalanceForRentExemption","status":"fail","detail":"no result"},{"test":"RPC: getBalance (zero addr)","status":"pass"},{"test":"RPC: getAccountInfo","status":"pass"},{"test":"RPC: getSymbolRegistry","status":"fail","detail":"no result"},{"test":"RPC: getDeployedContracts","status":"fail","detail":"no result"},{"test":"Contract 'moltcoin' not found in symbol registry","status":"skip"},{"test":"Contract 'moltswap' not found in symbol registry","status":"skip"},{"test":"Contract 'lobsterlend' not found in symbol registry","status":"skip"},{"test":"Contract 'moltoracle' not found in symbol registry","status":"skip"},{"test":"Contract 'moltyid' not found in symbol registry","status":"skip"},{"test":"Contract state read: moltcoin/total_supply (may not be queryable)","status":"skip"},{"test":"WebSocket: slotSubscribe","status":"fail","detail":"timeout"},{"test":"WebSocket: ping/pong","status":"fail","detail":"timeout"},{"test":"CLI: keygen","status":"fail","detail":"unexpected output"},{"test":"CLI: balance query (response format may differ)","status":"skip"},{"test":"CLI: slot query","status":"fail","detail":"no numeric output"},{"test":"Rapid RPC: 10/10 getSlot calls succeeded","status":"pass"},{"test":"Final slot drift: 0 (V1=10 V2=10 V3=10)","status":"pass"},{"test":"Post-test health: port 10099","status":"pass"},{"test":"Post-test health: port 10101","status":"pass"},{"test":"Post-test health: port 10103","status":"pass"}]
+}
