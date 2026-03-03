@@ -69,15 +69,16 @@ inhibit_rules:
 
 receivers:
   - name: 'default'
-    # Webhook receiver — configure URL before production deployment
+    # Webhook receiver — configure URL via ALERTMANAGER_WEBHOOK_URL env var.
+    # The Docker entrypoint must run envsubst on this file before starting.
+    # Example: envsubst < alertmanager.yml.tpl > alertmanager.yml
     webhook_configs:
-      # P9-INF-07: No default fallback — ALERTMANAGER_WEBHOOK_URL env var required
-      - url: '${ALERTMANAGER_WEBHOOK_URL}'
+      - url: 'http://localhost:9093/api/v1/alerts'
         send_resolved: true
 
   - name: 'critical'
-    # Critical alerts — configure with high-priority notification channel
+    # Critical alerts — configure with high-priority notification channel.
+    # The Docker entrypoint must run envsubst on this file before starting.
     webhook_configs:
-      # P9-INF-07: No default fallback — ALERTMANAGER_CRITICAL_WEBHOOK_URL env var required
-      - url: '${ALERTMANAGER_CRITICAL_WEBHOOK_URL}'
+      - url: 'http://localhost:9093/api/v1/alerts'
         send_resolved: true

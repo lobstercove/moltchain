@@ -30,7 +30,7 @@ certbot certonly --standalone \
     -d "$DOMAIN" \
     --non-interactive \
     --agree-tos \
-    --email admin@moltchain.io
+    --email ${CERTBOT_EMAIL:-admin@moltchain.io}
 
 # Copy certs to nginx ssl dir
 cp /etc/letsencrypt/live/"$DOMAIN"/fullchain.pem "$SSL_DIR/fullchain.pem"
