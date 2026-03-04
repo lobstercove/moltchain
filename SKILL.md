@@ -56,6 +56,29 @@
 | Total contract opcodes | 147 (DEX) + named exports (22 contracts) |
 | Achievements | 90+ auto-detected |
 
+### Production Endpoints
+
+| Service | URL |
+|---------|-----|
+| RPC (Testnet) | `https://rpc.moltchain.network` |
+| WebSocket (Testnet) | `wss://ws.moltchain.network` |
+| Custody Bridge | `https://custody.moltchain.network` |
+| Faucet | `https://faucet.moltchain.network` |
+| Explorer | `https://explorer.moltchain.network` |
+| DEX (ClawSwap) | `https://dex.moltchain.network` |
+| Wallet | `https://wallet.moltchain.network` |
+| Developer Portal | `https://developers.moltchain.network` |
+| Marketplace | `https://marketplace.moltchain.network` |
+| Programs IDE | `https://programs.moltchain.network` |
+| Monitoring | `https://monitoring.moltchain.network` |
+
+### Seed Validators
+
+| Region | Host |
+|--------|------|
+| US (Virginia) | `seed-01.moltchain.network` |
+| EU (France) | `seed-02.moltchain.network` |
+
 ---
 
 ## 2. Architecture
@@ -1250,7 +1273,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 ## 13. WebSocket Subscriptions
 
-Connect to `ws://localhost:8900`. Send JSON-RPC subscribe messages.
+Connect to `ws://localhost:8900` (local) or `wss://ws.moltchain.network` (production). Send JSON-RPC subscribe messages.
 
 ### Core
 
@@ -1328,7 +1351,9 @@ const kp = Keypair.generate();
 const pub = kp.pubkey();  // PublicKey
 
 // Connect
-const conn = new Connection('http://localhost:8899', 'ws://localhost:8900');
+// Local:   new Connection('http://localhost:8899', 'ws://localhost:8900');
+// Production:
+const conn = new Connection('https://rpc.moltchain.network', 'wss://ws.moltchain.network');
 
 // Query
 const balance = await conn.getBalance(pub.toBase58());
@@ -1575,4 +1600,4 @@ All E2E tests require a running validator (`bash moltchain-start.sh testnet`).
 
 ---
 
-*Last updated: 2025*
+*Last updated: June 2025*
