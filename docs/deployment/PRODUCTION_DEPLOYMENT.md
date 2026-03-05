@@ -656,13 +656,16 @@ Environment=CUSTODY_DEPOSIT_TTL_SECS=86400
 Environment=RUST_LOG=info
 
 # MoltChain connection
+# CRITICAL: This keypair must match the one used to deploy_dex.py (the "admin" key).
+# Copy keypairs/deployer.json to this path after deployment.
 Environment=CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899
-Environment=CUSTODY_TREASURY_KEYPAIR=/var/lib/moltchain/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json
+Environment=CUSTODY_TREASURY_KEYPAIR=/etc/moltchain/custody-treasury.json
 
-# Wrapped token contracts (fill after deploying)
+# Wrapped token contracts (auto-discovered from registry, or pin manually)
 Environment=CUSTODY_MUSD_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WSOL_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WETH_TOKEN_ADDR=<deploy-and-fill>
+Environment=CUSTODY_WBNB_TOKEN_ADDR=<deploy-and-fill>
 
 # Solana bridge
 Environment=CUSTODY_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
