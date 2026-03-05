@@ -426,12 +426,17 @@ Environment=RUST_LOG=info
 
 # === MoltChain ===
 Environment=CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899
-Environment=CUSTODY_TREASURY_KEYPAIR=/etc/moltchain/treasury-keypair.json
+# CRITICAL: This keypair MUST be the same one that deployed + initialized the
+# wrapped token contracts (the "admin" key). Otherwise mint() returns error 2.
+# After running deploy_dex.py, copy keypairs/deployer.json here:
+Environment=CUSTODY_TREASURY_KEYPAIR=/etc/moltchain/custody-treasury.json
 
 # === Wrapped Token Contracts ===
+# These are auto-discovered from the symbol registry, but can be pinned:
 Environment=CUSTODY_MUSD_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WSOL_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WETH_TOKEN_ADDR=<deploy-and-fill>
+Environment=CUSTODY_WBNB_TOKEN_ADDR=<deploy-and-fill>
 
 # === Solana Bridge ===
 Environment=CUSTODY_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
