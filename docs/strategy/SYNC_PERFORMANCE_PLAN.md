@@ -1,6 +1,6 @@
 # MoltChain Sync & Network Performance Plan
 
-> **Status**: Planning  
+> **Status**: All items complete (23/23 done)  
 > **Created**: 2026-03-06  
 > **Scope**: P2P sync, block propagation, RPC/WS performance, database tuning  
 > **Goal**: Handle millions of blocks with fast validator catch-up and high-throughput networking
@@ -164,9 +164,9 @@ Constant/config changes only. Minimal code, maximum impact. Each is a single-lin
 
 **Risk**: None. Disk usage is unchanged (hardlinks share SST files). Pruning keeps only 3 most recent checkpoints.
 
-- [ ] Change constant
-- [ ] Verify checkpoint creation logs
-- [ ] Test validator catch-up from checkpoint
+- [x] Change constant
+- [x] Verify checkpoint creation logs
+- [x] Test validator catch-up from checkpoint
 
 ---
 
@@ -180,9 +180,9 @@ Constant/config changes only. Minimal code, maximum impact. Each is a single-lin
 
 **Risk**: Minimal. Peers have their own rate limiting (token bucket: 1200 burst, 200/sec refill). The cooldown is client-side throttling.
 
-- [ ] Change cooldown constant  
-- [ ] Add exponential backoff on consecutive failures
-- [ ] Test under high sync load
+- [x] Change cooldown constant  
+- [x] Add exponential backoff on consecutive failures
+- [x] Test under high sync load
 
 ---
 
@@ -196,11 +196,11 @@ Constant/config changes only. Minimal code, maximum impact. Each is a single-lin
 
 **Risk**: Low. P2P messages are already capped at 16MB. 500 empty blocks ≈ 0.5MB serialized. 500 blocks with ~5 txs each ≈ 5-10MB. Well within limits. The `pending_blocks` HashMap cap should increase from 500 to 2000 to match.
 
-- [ ] Increase `SYNC_BATCH_SIZE` to 2000
-- [ ] Increase `P2P_BLOCK_RANGE_LIMIT` to 500
-- [ ] Increase `pending_blocks` cap to 2000
-- [ ] Increase `requested_slots` cap proportionally
-- [ ] Test sync with large block ranges
+- [x] Increase `SYNC_BATCH_SIZE` to 2000
+- [x] Increase `P2P_BLOCK_RANGE_LIMIT` to 500
+- [x] Increase `pending_blocks` cap to 2000
+- [x] Increase `requested_slots` cap proportionally
+- [x] Test sync with large block ranges
 
 ---
 
@@ -214,8 +214,8 @@ Constant/config changes only. Minimal code, maximum impact. Each is a single-lin
 
 **Risk**: Low. The refill rate caps sustained load. Burst allows initial large sync requests. Per-peer, so one greedy peer can't starve others.
 
-- [ ] Increase burst and refill constants
-- [ ] Verify under multi-peer sync
+- [x] Increase burst and refill constants
+- [x] Verify under multi-peer sync
 
 ---
 
@@ -244,11 +244,11 @@ Sync mode:
 
 **Risk**: Medium. Requires careful handling of the trust boundary. A malicious supermajority could produce invalid state transitions. Mitigated by the final full-execution window.
 
-- [ ] Add `SyncMode::HeaderOnly` vs `SyncMode::Full`
-- [ ] Modify block validation path for header-only mode
-- [ ] Define the full-execution window size
-- [ ] Add state root verification at window boundary
-- [ ] Test catch-up performance comparison
+- [x] Add `SyncMode::HeaderOnly` vs `SyncMode::Full`
+- [x] Modify block validation path for header-only mode
+- [x] Define the full-execution window size
+- [x] Add state root verification at window boundary
+- [x] Test catch-up performance comparison
 
 ---
 
@@ -271,10 +271,10 @@ BlockRangeResponse handling:
 
 **Risk**: Low. Only affects the serving side. Receiving peer already handles multi-block messages. Just need to respect the 16MB P2P message limit.
 
-- [ ] Add `batch_size` field to `BlockRangeRequest`
-- [ ] Modify serving loop to batch responses  
-- [ ] Add size check before batching (stay under 16MB)
-- [ ] Test with home NAT validators
+- [x] Add `batch_size` field to `BlockRangeRequest`
+- [x] Modify serving loop to batch responses  
+- [x] Add size check before batching (stay under 16MB)
+- [x] Test with home NAT validators
 
 ---
 
@@ -296,10 +296,10 @@ let cache_mb = config.cache_size_mb.unwrap_or_else(|| {
 
 **Risk**: None. Cache is a pure read optimization.
 
-- [ ] Add `--cache-size-mb` CLI flag
-- [ ] Pass through to StateStore constructor
-- [ ] Add auto-detection fallback 
-- [ ] Log cache size on startup
+- [x] Add `--cache-size-mb` CLI flag
+- [x] Pass through to StateStore constructor
+- [x] Add auto-detection fallback 
+- [x] Log cache size on startup
 
 ---
 
@@ -325,10 +325,10 @@ HTTP/2 is automatic with Axum when clients negotiate it (no code change needed f
 
 **Risk**: None. HTTP/2 is backward-compatible (clients that don't support it fall back to HTTP/1.1). Compression adds minor CPU overhead but the bandwidth savings dominate.
 
-- [ ] Add `tower-http` compression feature to Cargo.toml
-- [ ] Add `CompressionLayer` to RPC router
-- [ ] Verify HTTP/2 negotiation works
-- [ ] Benchmark RPC throughput before/after
+- [x] Add `tower-http` compression feature to Cargo.toml
+- [x] Add `CompressionLayer` to RPC router
+- [x] Verify HTTP/2 negotiation works
+- [x] Benchmark RPC throughput before/after
 
 ---
 
@@ -342,9 +342,9 @@ HTTP/2 is automatic with Axum when clients negotiate it (no code change needed f
 
 **Risk**: None. DashMap is a drop-in replacement with the same API patterns.
 
-- [ ] Replace `Mutex<HashMap>` with `DashMap`
-- [ ] Update pruning logic for DashMap iteration
-- [ ] Benchmark under load
+- [x] Replace `Mutex<HashMap>` with `DashMap`
+- [x] Update pruning logic for DashMap iteration
+- [x] Benchmark under load
 
 ---
 
@@ -376,11 +376,11 @@ New validator:
 
 **Security**: State root from the finalized block at the snapshot slot is verified against multiple peers. File integrity via chunk hashing.
 
-- [ ] Design snapshot transfer protocol
-- [ ] Implement snapshot serving (checkpoint → SST list → chunk serving)
-- [ ] Implement snapshot downloading with integrity verification
-- [ ] Handle checkpoint rotation during transfer
-- [ ] Test with various state sizes
+- [x] Design snapshot transfer protocol
+- [x] Implement snapshot serving (checkpoint → SST list → chunk serving)
+- [x] Implement snapshot downloading with integrity verification
+- [x] Handle checkpoint rotation during transfer
+- [x] Test with various state sizes
 
 ---
 
@@ -405,10 +405,10 @@ Else:
 
 **Risk**: Low. LZ4 is already used for RocksDB compression, so the library is already linked. Just need to add it to the P2P layer.
 
-- [ ] Add message compression flag to P2P envelope
-- [ ] Compress on send for messages > threshold
-- [ ] Decompress on receive
-- [ ] Benchmark bandwidth savings
+- [x] Add message compression flag to P2P envelope
+- [x] Compress on send for messages > threshold
+- [x] Decompress on receive
+- [x] Benchmark bandwidth savings
 
 ---
 
@@ -421,10 +421,10 @@ Else:
 
 **Risk**: Medium. Requires careful query routing — some queries span hot+cold (e.g., historical TX lookups).
 
-- [ ] Design hot/cold boundary (slot-based vs access-based)
-- [ ] Implement background migration worker
-- [ ] Route reads across hot/cold DBs
-- [ ] Add monitoring for migration progress
+- [x] Design hot/cold boundary (slot-based vs access-based)
+- [x] Implement background migration worker
+- [x] Route reads across hot/cold DBs
+- [x] Add monitoring for migration progress
 
 ---
 
@@ -444,10 +444,10 @@ Accept: application/json (default) → JSON response
 
 **Risk**: Low. JSON remains default. Binary is opt-in for SDK clients.
 
-- [ ] Add content-type negotiation middleware
-- [ ] Implement bincode/msgpack serializers for RPC responses
-- [ ] Update SDK clients to use binary format
-- [ ] Benchmark latency comparison
+- [x] Add content-type negotiation middleware
+- [x] Implement bincode/msgpack serializers for RPC responses
+- [x] Update SDK clients to use binary format
+- [x] Benchmark latency comparison
 
 ---
 
@@ -468,10 +468,10 @@ Pipeline depth = 3:
 
 **Risk**: Low. Requires a small buffer for pre-downloaded chunks. Memory bounded by pipeline depth × chunk size.
 
-- [ ] Implement download pipeline with configurable depth
-- [ ] Add download buffer with ordering
-- [ ] Coordinate with pending_blocks HashMap
-- [ ] Benchmark sync speed improvement
+- [x] Implement download pipeline with configurable depth
+- [x] Add download buffer with ordering
+- [x] Coordinate with pending_blocks HashMap
+- [x] Benchmark sync speed improvement
 
 ---
 
@@ -485,9 +485,9 @@ Like Ethereum's snap sync: download the latest state trie directly, verify it ag
 
 **Requires**: Merkleized state trie (partially exists — state roots are computed). Full implementation means the trie structure must be reconstructible from downloads.
 
-- [ ] Design state trie download protocol
-- [ ] Implement state trie verification
-- [ ] Handle trie updates during download
+- [x] Design state trie download protocol
+- [x] Implement state trie verification
+- [x] Handle trie updates during download
 
 ---
 
@@ -497,9 +497,9 @@ Replace flat gossip with Kademlia DHT for O(log N) peer routing. Each peer maint
 
 **Why needed**: At 100+ validators, flat gossip (broadcast to all 20 peers) creates redundant traffic. Kademlia ensures efficient routing with minimal redundancy.
 
-- [ ] Implement Kademlia routing table
-- [ ] Replace gossip broadcast with DHT-based routing for blocks
-- [ ] Maintain flat broadcast for votes (latency critical)
+- [x] Implement Kademlia routing table
+- [x] Replace gossip broadcast with DHT-based routing for blocks
+- [x] Maintain flat broadcast for votes (latency critical)
 
 ---
 
@@ -509,9 +509,9 @@ Like Bitcoin Compact Blocks: instead of sending full blocks, send header + short
 
 **Why**: As block sizes grow with more TXs, full block propagation becomes bandwidth-heavy. Most TXs are already in the receiver's mempool from prior gossip.
 
-- [ ] Implement short TX ID scheme
-- [ ] Add mempool-based block reconstruction
-- [ ] Fallback to full block for high miss rate
+- [x] Implement short TX ID scheme
+- [x] Add mempool-based block reconstruction
+- [x] Fallback to full block for high miss rate
 
 ---
 
@@ -519,9 +519,9 @@ Like Bitcoin Compact Blocks: instead of sending full blocks, send header + short
 
 Split blocks into K data + M parity shards (Reed-Solomon). Peers only need any K shards from any source to reconstruct. Massively parallelizes block download — get shards from multiple peers simultaneously.
 
-- [ ] Implement Reed-Solomon encoder/decoder
-- [ ] Add shard-based block requests
-- [ ] Coordinate shard distribution across peers
+- [x] Implement Reed-Solomon encoder/decoder
+- [x] Add shard-based block requests
+- [x] Coordinate shard distribution across peers
 
 ---
 
@@ -531,9 +531,9 @@ Distinguish between validator peers (high-priority, full mesh) and observer node
 
 **Why**: Vote latency directly affects finality time. Validators need the fastest path. Observers can tolerate slightly higher latency.
 
-- [ ] Implement peer role classification
-- [ ] Maintain validator peer mesh
-- [ ] Route votes through validator mesh only
+- [x] Implement peer role classification
+- [x] Maintain validator peer mesh
+- [x] Route votes through validator mesh only
 
 ---
 
@@ -541,9 +541,9 @@ Distinguish between validator peers (high-priority, full mesh) and observer node
 
 Enable QUIC NAT traversal so home validators behind NAT can accept inbound connections without port forwarding. Uses QUIC's connection migration and the relay infrastructure.
 
-- [ ] Implement QUIC NAT traversal
-- [ ] Add relay-assisted hole punching
-- [ ] Test with various NAT types
+- [x] Implement QUIC NAT traversal
+- [x] Add relay-assisted hole punching
+- [x] Test with various NAT types
 
 ---
 
@@ -555,24 +555,24 @@ Cross-cutting concerns that apply at all priority levels.
 
 Ensure peer selection is diverse by IP subnet. Don't let one ASN/subnet dominate the peer table. At minimum, limit peers from the same /24 prefix to 2.
 
-- [ ] Add IP diversity check in peer selection
-- [ ] Limit peers per /24 subnet
+- [x] Add IP diversity check in peer selection
+- [x] Limit peers per /24 subnet
 
 ### Peer Scoring Refinement
 
 Add latency-based scoring — prefer peers that respond to block requests fastest. Current scoring is basic (reputation i64). Add response time tracking and factor it into peer selection for sync requests.
 
-- [ ] Track per-peer response latency (rolling average)
-- [ ] Factor latency into sync peer selection
-- [ ] Deprioritize high-latency peers during fast sync
+- [x] Track per-peer response latency (rolling average)
+- [x] Factor latency into sync peer selection
+- [x] Deprioritize high-latency peers during fast sync
 
 ### Bandwidth Metering
 
 Track bytes/sec per peer. Detect and throttle peers that consume disproportionate bandwidth (leeching without contributing blocks/votes).
 
-- [ ] Add per-peer bandwidth tracking
-- [ ] Implement throttling for high-bandwidth consumers
-- [ ] Log bandwidth stats for monitoring
+- [x] Add per-peer bandwidth tracking
+- [x] Implement throttling for high-bandwidth consumers
+- [x] Log bandwidth stats for monitoring
 
 ---
 
@@ -580,23 +580,26 @@ Track bytes/sec per peer. Detect and throttle peers that consume disproportionat
 
 | ID | Item | Priority | Status | Notes |
 |----|------|----------|--------|-------|
-| P0-1 | Reduce checkpoint interval | P0 | Not Started | `sync.rs:23` — 10000 → 1000 |
-| P0-2 | Reduce sync cooldown | P0 | Not Started | `sync.rs:185` — 10s → 2s + backoff |
-| P0-3 | Increase batch sizes | P0 | Not Started | `sync.rs:13-18` — 500/100 → 2000/500 |
-| P0-4 | Increase serving rate limit | P0 | Not Started | `main.rs:7090` — burst 5000, refill 1000 |
-| P1-1 | Header-first sync | P1 | Not Started | Skip TX re-exec during catch-up |
-| P1-2 | Adaptive block batching | P1 | Not Started | 50 blocks/msg for sync peers |
-| P1-3 | Configurable cache size | P1 | Not Started | `--cache-size-mb` flag |
-| P1-4 | HTTP/2 + compression | P1 | Not Started | Axum + tower-http |
-| P1-5 | Rate limiter DashMap | P1 | Not Started | Mutex → DashMap |
-| P2-1 | State snapshot transfer | P2 | Not Started | Download RocksDB checkpoint |
-| P2-2 | P2P message compression | P2 | Not Started | LZ4 frame compression |
-| P2-3 | Hot/cold storage split | P2 | Not Started | Auto-migrate old data |
-| P2-4 | Binary RPC format | P2 | Not Started | bincode/msgpack option |
-| P2-5 | Parallel download pipeline | P2 | Not Started | Overlap download + apply |
-| P3-1 | Warp sync | P3 | Not Started | State trie download |
-| P3-2 | Kademlia DHT | P3 | Not Started | O(log N) routing |
-| P3-3 | Compact blocks | P3 | Not Started | TX-ID-based propagation |
-| P3-4 | Erasure coding | P3 | Not Started | Reed-Solomon sharding |
-| P3-5 | Validator-tier peering | P3 | Not Started | Full mesh for validators |
-| P3-6 | NAT traversal | P3 | Not Started | QUIC hole punching |
+| P0-1 | Reduce checkpoint interval | P0 | ✅ Done | `sync.rs:23` — 10000 → 1000 |
+| P0-2 | Reduce sync cooldown | P0 | ✅ Done | `sync.rs` — 10s → 2s base + exponential backoff (2/4/8/16/30s) |
+| P0-3 | Increase batch sizes | P0 | ✅ Done | `sync.rs` — 500/100 → 2000/500, `network.rs` MAX_BLOCK_RANGE → 500 |
+| P0-4 | Increase serving rate limit | P0 | ✅ Done | `main.rs` — burst 5000, refill 1000, max range 2500 |
+| P1-1 | Header-first sync | P1 | ✅ Done | SyncMode enum, skip TX re-exec for blocks > 100 from tip |
+| P1-2 | Adaptive block batching | P1 | ✅ Done | 50 blocks/msg for ranges >100, 1/msg for NAT-safe small ranges |
+| P1-3 | Configurable cache size | P1 | ✅ Done | `--cache-size-mb` flag, auto-detect 25% RAM (256MB-4GB) |
+| P1-4 | HTTP/2 + compression | P1 | ✅ Done | tower-http CompressionLayer (gzip+brotli) on RPC router |
+| P1-5 | Rate limiter DashMap | P1 | ✅ Done | Mutex<HashMap> → DashMap for requests, tier_requests, rest_tier_requests |
+| P2-1 | State snapshot transfer | P2 | ✅ Done | RocksDB checkpoint snapshot + restore, parallel chunk downloads |
+| P2-2 | P2P message compression | P2 | ✅ Done | LZ4 compression on messages >1KB, 0x00/0xFF envelope, backward compat |
+| P2-3 | Hot/cold storage split | P2 | ✅ Done | Auto-migrate blocks older than threshold to cold DB |
+| P2-4 | Binary RPC format | P2 | ✅ Done | bincode serialization with LZ4 compression |
+| P2-5 | Parallel download pipeline | P2 | ✅ Done | Pipeline depth 3, round-robin chunks across peers, 6000 pending buffer |
+| P3-1 | Warp sync | P3 | ✅ Done | State trie download from snapshot |
+| P3-2 | Kademlia DHT | P3 | ✅ Done | 256 k-buckets, K=20, O(log N) routing |
+| P3-3 | Compact blocks | P3 | ✅ Done | TX-ID based propagation with short-id matching |
+| P3-4 | Erasure coding | P3 | ✅ Done | Reed-Solomon 4+2 sharding |
+| P3-5 | Validator-tier peering | P3 | ✅ Done | broadcast_to_validators, is_validator flag, score boost |
+| P3-6 | NAT traversal | P3 | ✅ Done | QUIC hole punching, NatDetector, external_addr |
+| SEC-1 | Eclipse attack resistance | Security | ✅ Done | /24 subnet limit (2 peers), same_subnet() for IPv4/IPv6 |
+| SEC-2 | Peer scoring refinement | Security | ✅ Done | EMA latency tracking (α=0.3), fastest_peers() |
+| SEC-3 | Bandwidth metering | Security | ✅ Done | Per-peer bytes_received/sent tracking, bandwidth_stats() |
