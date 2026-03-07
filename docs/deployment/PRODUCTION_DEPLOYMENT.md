@@ -1601,6 +1601,8 @@ If you accidentally run `moltchain-start.sh` without `--bootstrap` on a second V
 
 Kill all validator processes on both VPS and local machine.
 
+> **Warning:** Running `pkill -f moltchain` over SSH will kill the SSH session itself (the command line contains "moltchain" since you're cd'd into `~/moltchain`). Use `pgrep` to find PIDs and `kill` them individually, or write a script to `/tmp/` and execute it.
+
 ```bash
 # ── Local machine ──
 pkill -f moltchain-validator 2>/dev/null || true
@@ -1609,22 +1611,25 @@ for port in 8000 8899 8900 9000 9899 9900; do
 done
 
 # ── Each VPS (run the same commands on both US and EU) ──
-ssh -p 2222 ubuntu@<VPS_IP> "
-  pkill -f moltchain-validator 2>/dev/null
-  pkill -f moltchain-faucet 2>/dev/null
-  pkill -f validator-supervisor 2>/dev/null
-  for svc in moltchain-validator-testnet moltchain-validator-mainnet \
-             moltchain-faucet moltchain-custody moltchain-custody-mainnet; do
-    sudo systemctl stop \$svc 2>/dev/null
-  done
-  sleep 2
-  pgrep -af moltchain || echo 'all stopped'
-"
+# Write stop script to avoid SSH self-kill
+ssh -p 2222 ubuntu@<VPS_IP> 'cat > /tmp/stop-moltchain.sh << '\''SCRIPT'\''
+#!/bin/bash
+for proc in moltchain-validator moltchain-faucet moltchain-custody validator-supervisor; do
+  pids=$(pgrep -f "$proc" 2>/dev/null)
+  if [ -n "$pids" ]; then
+    echo "Stopping $proc: $pids"
+    echo "$pids" | xargs kill 2>/dev/null
+  fi
+done
+sleep 2
+pgrep -af moltchain || echo "all stopped"
+SCRIPT
+chmod +x /tmp/stop-moltchain.sh && bash /tmp/stop-moltchain.sh'
 ```
 
 ### Step 1: Wipe All State
 
-Remove all blockchain state from both data path locations.
+Remove all blockchain state, logs, custody databases, and TOFU peer fingerprint caches.
 
 ```bash
 # ── Local machine ──
@@ -1635,6 +1640,15 @@ ssh -p 2222 ubuntu@<VPS_IP> "
   # Start-script data paths
   rm -rf ~/moltchain/data/state-8000 ~/moltchain/data/state-9000
 
+  # Custody databases
+  rm -rf ~/moltchain/data/custody-testnet ~/moltchain/data/custody-mainnet
+
+  # Validator logs (actual location used by moltchain-start.sh)
+  rm -rf /tmp/moltchain-testnet /tmp/moltchain-mainnet
+
+  # TOFU peer fingerprint cache — MUST clear when validator identities change
+  rm -f ~/.moltchain/peer_fingerprints.json
+
   # Systemd data paths (in case they were used previously)
   sudo rm -rf /var/lib/moltchain/state-testnet /var/lib/moltchain/state-mainnet
   sudo rm -rf /var/lib/moltchain/custody-db /var/lib/moltchain/custody-db-mainnet
@@ -1642,6 +1656,8 @@ ssh -p 2222 ubuntu@<VPS_IP> "
   echo 'state wiped'
 "
 ```
+
+> **TOFU fingerprint cache:** Each validator stores peer identity fingerprints in `~/.moltchain/peer_fingerprints.json`. After a wipe, validators get new identities. If old fingerprints remain, the P2P layer rejects the new identity ("TOFU verification failed"). Always clear this file when wiping state.
 
 ### Step 2: Rsync Fresh Code
 
@@ -1661,18 +1677,18 @@ done
 
 ### Step 3: Build on Each VPS
 
-Build the validator and faucet binaries. Takes 4-7 minutes per VPS.
+Build the validator, faucet, and custody binaries. Takes 4-7 minutes per VPS.
 
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> "
   cd ~/moltchain && source ~/.cargo/env
-  cargo build --release --bin moltchain-validator --bin moltchain-genesis --bin moltchain-faucet
+  cargo build --release --bin moltchain-validator --bin moltchain-genesis --bin moltchain-faucet --bin moltchain-custody
 "
 ```
 
 Verify:
 ```bash
-ssh -p 2222 ubuntu@<VPS_IP> "ls -la ~/moltchain/target/release/moltchain-{validator,genesis,faucet}"
+ssh -p 2222 ubuntu@<VPS_IP> "ls -la ~/moltchain/target/release/moltchain-{validator,genesis,faucet,custody}"
 ```
 
 ### Step 4: Start Genesis — US VPS (Testnet)
@@ -1702,7 +1718,7 @@ What happens:
 Verify testnet is running:
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
-  tail -10 ~/moltchain/logs/validator.log
+  tail -10 /tmp/moltchain-testnet/validator.log
   # Look for: 'Binance WebSocket connected' and 'HEARTBEAT' lines
 "
 ```
@@ -1757,42 +1773,133 @@ done
 
 ### Step 7: Start Faucet
 
-Start the testnet faucet on both VPS. It reads the faucet keypair generated during genesis.
+Start the testnet faucet on both VPS. The faucet keypair is generated during genesis on the US VPS.
+
+> **Key copying for joining VPS:** The EU VPS (and any future VPS that joined via `--bootstrap`) does NOT have genesis keys locally — they exist only on the genesis VPS (US). You must copy them before starting faucet or custody on joining VPS.
 
 ```bash
-# ── US VPS ──
+# ── Copy faucet + treasury keys from US to EU ──
+# (pipe through local machine — VPS-to-VPS scp may not work)
+for key in faucet-moltchain-testnet-1.json treasury-moltchain-testnet-1.json; do
+  ssh -p 2222 ubuntu@15.204.229.189 "cat ~/moltchain/data/state-8000/genesis-keys/$key" \
+    | ssh -p 2222 ubuntu@37.59.97.61 "mkdir -p ~/moltchain/data/state-8000/genesis-keys && cat > ~/moltchain/data/state-8000/genesis-keys/$key"
+done
+for key in faucet-moltchain-mainnet-1.json treasury-moltchain-mainnet-1.json; do
+  ssh -p 2222 ubuntu@15.204.229.189 "cat ~/moltchain/data/state-9000/genesis-keys/$key" \
+    | ssh -p 2222 ubuntu@37.59.97.61 "mkdir -p ~/moltchain/data/state-9000/genesis-keys && cat > ~/moltchain/data/state-9000/genesis-keys/$key"
+done
+```
+
+Start faucet on US:
+```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
   cd ~/moltchain
-  export PORT=9100
-  export RPC_URL=http://127.0.0.1:8899
-  export NETWORK=testnet
-  export MAX_PER_REQUEST=10
-  export DAILY_LIMIT_PER_IP=50
-  export COOLDOWN_SECONDS=60
-  export AIRDROPS_FILE=\$HOME/moltchain/data/airdrops.json
-  export FAUCET_KEYPAIR=\$HOME/moltchain/data/state-8000/genesis-keys/faucet-moltchain-testnet-1.json
-  export RUST_LOG=info
-
-  nohup ./target/release/moltchain-faucet > ./logs/faucet.log 2>&1 &
+  PORT=9100 \
+  RPC_URL=http://127.0.0.1:8899 \
+  NETWORK=testnet \
+  MAX_PER_REQUEST=10 \
+  DAILY_LIMIT_PER_IP=50 \
+  COOLDOWN_SECONDS=60 \
+  AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
+  FAUCET_KEYPAIR=\$HOME/moltchain/data/state-8000/genesis-keys/faucet-moltchain-testnet-1.json \
+  RUST_LOG=info \
+  TRUSTED_PROXY=127.0.0.1,::1 \
+  nohup ./target/release/moltchain-faucet > /tmp/moltchain-testnet/faucet.log 2>&1 &
   sleep 2 && pgrep -f moltchain-faucet && echo 'Faucet running'
 "
+```
 
-# ── EU VPS (same, adjust path) ──
-ssh -p 2222 ubuntu@37.59.97.61 "
+Start faucet on EU (same command, uses the key copied above):
+```bash
+ssh -p 2222 ubuntu@37.59.97.61 '
   cd ~/moltchain
-  export PORT=9100
-  export RPC_URL=http://127.0.0.1:8899
-  export NETWORK=testnet
-  export MAX_PER_REQUEST=10
-  export DAILY_LIMIT_PER_IP=50
-  export COOLDOWN_SECONDS=60
-  export AIRDROPS_FILE=\$HOME/moltchain/data/airdrops.json
-  export FAUCET_KEYPAIR=\$HOME/moltchain/data/state-8000/genesis-keys/faucet-moltchain-testnet-1.json
-  export RUST_LOG=info
+  PORT=9100 \
+  RPC_URL=http://127.0.0.1:8899 \
+  NETWORK=testnet \
+  MAX_PER_REQUEST=10 \
+  DAILY_LIMIT_PER_IP=50 \
+  COOLDOWN_SECONDS=60 \
+  AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
+  FAUCET_KEYPAIR=/home/ubuntu/moltchain/data/state-8000/genesis-keys/faucet-moltchain-testnet-1.json \
+  RUST_LOG=info \
+  TRUSTED_PROXY=127.0.0.1,::1 \
+  nohup ./target/release/moltchain-faucet > /tmp/moltchain-testnet/faucet.log 2>&1 &
+  sleep 2 && pgrep -f moltchain-faucet && echo "Faucet running"
+'
+```
 
-  nohup ./target/release/moltchain-faucet > ./logs/faucet.log 2>&1 &
-  sleep 2 && pgrep -f moltchain-faucet && echo 'Faucet running'
+### Step 7b: Start Custody
+
+Start custody bridge on both VPS for testnet and mainnet.
+
+> **Port env var:** Custody uses `CUSTODY_LISTEN_PORT` (NOT `PORT`). Default is 9105. Use 9106 for mainnet.
+
+```bash
+# ── US VPS — Testnet Custody (port 9105) ──
+ssh -p 2222 ubuntu@15.204.229.189 "
+  cd ~/moltchain && mkdir -p data/custody-testnet
+  CUSTODY_DB_PATH=./data/custody-testnet \
+  CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899 \
+  CUSTODY_TREASURY_KEYPAIR=\$HOME/moltchain/data/state-8000/genesis-keys/treasury-moltchain-testnet-1.json \
+  CUSTODY_ALLOW_INSECURE_SEED=1 \
+  CUSTODY_API_AUTH_TOKEN=testnet-custody-token-2026 \
+  CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
+  CUSTODY_SIGNER_THRESHOLD=2 \
+  CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
+  RUST_LOG=info \
+  nohup ./target/release/moltchain-custody > /tmp/moltchain-testnet/custody.log 2>&1 &
+  sleep 2 && tail -1 /tmp/moltchain-testnet/custody.log
 "
+
+# ── US VPS — Mainnet Custody (port 9106) ──
+ssh -p 2222 ubuntu@15.204.229.189 "
+  cd ~/moltchain && mkdir -p data/custody-mainnet
+  CUSTODY_DB_PATH=./data/custody-mainnet \
+  CUSTODY_MOLT_RPC_URL=http://127.0.0.1:9899 \
+  CUSTODY_TREASURY_KEYPAIR=\$HOME/moltchain/data/state-9000/genesis-keys/treasury-moltchain-mainnet-1.json \
+  CUSTODY_ALLOW_INSECURE_SEED=1 \
+  CUSTODY_API_AUTH_TOKEN=mainnet-custody-token-2026 \
+  CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
+  CUSTODY_SIGNER_THRESHOLD=2 \
+  CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
+  CUSTODY_LISTEN_PORT=9106 \
+  RUST_LOG=info \
+  nohup ./target/release/moltchain-custody > /tmp/moltchain-mainnet/custody.log 2>&1 &
+  sleep 2 && tail -1 /tmp/moltchain-mainnet/custody.log
+"
+
+# ── EU VPS — Testnet Custody (port 9105) ──
+ssh -p 2222 ubuntu@37.59.97.61 '
+  cd ~/moltchain && mkdir -p data/custody-testnet
+  CUSTODY_DB_PATH=./data/custody-testnet \
+  CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899 \
+  CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/moltchain/data/state-8000/genesis-keys/treasury-moltchain-testnet-1.json \
+  CUSTODY_ALLOW_INSECURE_SEED=1 \
+  CUSTODY_API_AUTH_TOKEN=testnet-custody-token-2026 \
+  CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
+  CUSTODY_SIGNER_THRESHOLD=2 \
+  CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
+  RUST_LOG=info \
+  nohup ./target/release/moltchain-custody > /tmp/moltchain-testnet/custody.log 2>&1 &
+  sleep 2 && tail -1 /tmp/moltchain-testnet/custody.log
+'
+
+# ── EU VPS — Mainnet Custody (port 9106) ──
+ssh -p 2222 ubuntu@37.59.97.61 '
+  cd ~/moltchain && mkdir -p data/custody-mainnet
+  CUSTODY_DB_PATH=./data/custody-mainnet \
+  CUSTODY_MOLT_RPC_URL=http://127.0.0.1:9899 \
+  CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/moltchain/data/state-9000/genesis-keys/treasury-moltchain-mainnet-1.json \
+  CUSTODY_ALLOW_INSECURE_SEED=1 \
+  CUSTODY_API_AUTH_TOKEN=mainnet-custody-token-2026 \
+  CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
+  CUSTODY_SIGNER_THRESHOLD=2 \
+  CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
+  CUSTODY_LISTEN_PORT=9106 \
+  RUST_LOG=info \
+  nohup ./target/release/moltchain-custody > /tmp/moltchain-mainnet/custody.log 2>&1 &
+  sleep 2 && tail -1 /tmp/moltchain-mainnet/custody.log
+'
 ```
 
 ### Step 8: Verify Everything
@@ -1822,7 +1929,7 @@ for VPS_IP in 15.204.229.189 37.59.97.61; do
 done
 ```
 
-Expected: 6 processes per VPS (2 supervisors + 2 validators + 1 faucet + possibly deploy scripts), advancing slot numbers on both testnet and mainnet RPC.
+Expected: 7 processes per VPS (2 supervisors + 2 validators + 1 faucet + 2 custody), advancing slot numbers on both testnet and mainnet RPC.
 
 ### Step 9 (Optional): Start Local Validator
 
@@ -1847,7 +1954,21 @@ Connect your local machine as a third validator on mainnet:
 | RPC (HTTP) | 8899 | 9899 |
 | WebSocket | 8900 | 9900 |
 | Faucet | 9100 | — |
+| Custody | 9105 | 9106 |
 | Signer | 9201 | 9202 |
+
+### Validator Log Locations
+
+Logs are written to `/tmp/moltchain-{network}/` (created by `moltchain-start.sh`), **not** `~/moltchain/logs/`.
+
+| Log | Path |
+|---|---|
+| Testnet validator | `/tmp/moltchain-testnet/validator.log` |
+| Mainnet validator | `/tmp/moltchain-mainnet/validator.log` |
+| Testnet faucet | `/tmp/moltchain-testnet/faucet.log` |
+| Testnet custody | `/tmp/moltchain-testnet/custody.log` |
+| Mainnet custody | `/tmp/moltchain-mainnet/custody.log` |
+| First-boot deploy | `/tmp/moltchain-testnet/first-boot-deploy.log` |
 
 ### Restarting a Validator (Without Re-creating Genesis)
 
@@ -1906,16 +2027,22 @@ After a successful genesis boot via `moltchain-start.sh`, these files exist:
 │   └── state-9000/                       # Mainnet blockchain state (same structure)
 │       ├── genesis-keys/
 │       └── ...
-├── logs/
-│   ├── validator.log                     # Testnet validator log
-│   ├── validator-mainnet.log             # Mainnet validator log
-│   ├── faucet.log                        # Faucet log
-│   ├── first-boot-deploy.log            # Contract deployment log
-│   └── first-boot-deploy-mainnet.log    # Mainnet contract deployment log
 └── target/release/
     ├── moltchain-validator               # Main binary
     ├── moltchain-genesis                 # Genesis creation tool
-    └── moltchain-faucet                  # Faucet binary
+    ├── moltchain-faucet                  # Faucet binary
+    └── moltchain-custody                 # Custody bridge binary
+
+# Logs (written to /tmp/ by moltchain-start.sh, NOT ~/moltchain/logs/)
+/tmp/
+├── moltchain-testnet/
+│   ├── validator.log                     # Testnet validator log
+│   ├── faucet.log                        # Faucet log
+│   ├── custody.log                       # Testnet custody log
+│   └── first-boot-deploy.log            # Contract deployment log
+└── moltchain-mainnet/
+    ├── validator.log                     # Mainnet validator log
+    └── custody.log                       # Mainnet custody log
 ```
 
 ---
