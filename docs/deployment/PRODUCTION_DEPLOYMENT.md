@@ -1539,13 +1539,13 @@ The **systemd services** (`moltchain-validator-testnet`, `moltchain-validator-ma
 ❌  sudo systemctl start moltchain-validator-testnet   ← Does NOT create genesis
 ```
 
-#### 2. seeds.json prevents genesis creation (the "sync trap")
+#### 2. seeds.json and the "sync trap"
 
-When `seeds.json` has `bootstrap_peers` listed (e.g., `15.204.229.189:8000`), the validator sees these peers and enters **sync mode** — it tries to download genesis from the existing network. If the network doesn't exist yet (fresh deploy), it loops forever trying to connect to peers that aren't running.
+`seeds.json` lists known peers (e.g., `15.204.229.189:8000`). When the validator binary starts and finds these peers but has no local state, it enters sync mode — trying to download the chain from those peers. If the peer network doesn't exist yet, it loops forever.
 
-The `moltchain-start.sh` script handles this correctly: it detects an empty `data/state-{port}/` directory and runs `moltchain-genesis` first, THEN starts the validator with `--bootstrap-peers`.
+This is **not a problem in practice** because `moltchain-start.sh` handles it: on genesis boot it creates state BEFORE starting the validator, and on join boot (`--bootstrap`) it syncs from the specified peer. The trap only bites if you bypass the script and start the validator binary directly (e.g., via systemd on a fresh VPS).
 
-**Never try to work around this by removing seeds.json** — the start script needs it for the `--bootstrap-peers` flag on subsequent starts.
+Don't remove `seeds.json` — the validator uses it for peer discovery after initial boot.
 
 #### 3. Two different data paths — don't mix them up
 
@@ -1569,11 +1569,19 @@ export MOLTCHAIN_ORACLE_REST_URL="https://api.binance.us/api/v3/ticker/price?sym
 
 The EU VPS (37.59.97.61) can use the default `binance.com` URLs. These env vars must be set **before** starting the validator process. The start script does NOT set them — you must export them in the shell before running it, or set them in the validator's environment.
 
-#### 5. Each VPS creates independent genesis (separate chains)
+#### 5. One chain — genesis VPS first, all others join
 
-When both VPS create genesis independently, they produce different genesis hashes, different validator identities, and different treasury keys. They are **separate chains** that cannot peer with each other. This is expected for the current deployment model.
+There is ONE testnet chain and ONE mainnet chain. The first VPS (US) creates genesis. Every other VPS joins that chain by syncing from the genesis VPS:
 
-If you want a single shared chain, start genesis on only one VPS, then have the second VPS join using `--bootstrap-peers` with the first VPS's address.
+```bash
+# US VPS — creates genesis (first boot, no --bootstrap)
+bash moltchain-start.sh testnet
+
+# EU VPS — joins the existing chain
+bash moltchain-start.sh testnet --bootstrap 15.204.229.189:8000
+```
+
+If you accidentally run `moltchain-start.sh` without `--bootstrap` on a second VPS, it creates a separate chain with a different genesis hash. Those two chains cannot peer. Wipe the state and re-run with `--bootstrap`.
 
 ---
 
@@ -1722,20 +1730,20 @@ ssh -p 2222 ubuntu@15.204.229.189 "
 "
 ```
 
-### Step 6: Start Genesis — EU VPS (Testnet + Mainnet)
+### Step 6: Join Chain — EU VPS (Testnet + Mainnet)
 
-EU VPS can use default binance.com (not geo-blocked). No oracle env vars needed.
+EU VPS joins the chains already created by US VPS. Uses `--bootstrap` to sync genesis + state from the US peer. No oracle env vars needed (binance.com works from EU).
 
 ```bash
 ssh -p 2222 ubuntu@37.59.97.61 "
   cd ~/moltchain
-  bash moltchain-start.sh testnet
+  bash moltchain-start.sh testnet --bootstrap 15.204.229.189:8000
 "
 
-# Wait for testnet to finish genesis, then start mainnet
+# Wait for testnet sync to complete, then join mainnet
 ssh -p 2222 ubuntu@37.59.97.61 "
   cd ~/moltchain
-  bash moltchain-start.sh mainnet
+  bash moltchain-start.sh mainnet --bootstrap 15.204.229.189:9000
 "
 ```
 
