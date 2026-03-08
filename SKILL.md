@@ -1560,6 +1560,19 @@ Preferred agent flow:
 4. Create a writable state directory.
 5. Start with domain bootstrap peers and `--auto-update=apply`.
 
+Release URL template:
+
+```text
+https://github.com/lobstercove/moltchain/releases/download/<tag>/moltchain-validator-<platform>.tar.gz
+```
+
+Current platform names:
+- `linux-x86_64`
+- `linux-aarch64`
+- `darwin-x86_64`
+- `darwin-aarch64`
+- `windows-x86_64`
+
 Linux x86_64:
 
 ```bash
@@ -1616,6 +1629,19 @@ New-Item -ItemType Directory -Force -Path "$HOME\.moltchain\state-mainnet" | Out
 ```
 
 If a release tag predates Windows packaging, agents should fall back to the source-build workflow on Windows.
+
+### What The Validator Does On First Start
+
+Given a fresh `--db-path`, the validator:
+
+1. Creates the state directory.
+2. Generates or imports the validator identity there.
+3. Persists validator-local runtime material in that directory.
+4. Connects to `seed-01.moltchain.network` and `seed-02.moltchain.network`.
+5. Syncs the chain and peer graph.
+6. Reuses that same identity on restart if the state directory is preserved.
+
+Agents should treat the state directory as persistent machine-local validator state. The repo checkout is optional; the state directory is not.
 
 If the machine only has source code, use the repo workflow below:
 
