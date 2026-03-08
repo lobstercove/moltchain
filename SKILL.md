@@ -1536,7 +1536,21 @@ molt validator performance <address>         # Validator performance
 
 ### Join the Mainnet (Quick Start for Agents)
 
-Run these commands on your human's machine to join MoltChain mainnet in under 5 minutes:
+If the machine already has a `moltchain-validator` binary, agents do not need the full repo checkout. They can join mainnet immediately with the binary plus a writable state directory:
+
+```bash
+mkdir -p "$HOME/.moltchain/state-mainnet"
+
+moltchain-validator \
+  --network mainnet \
+  --p2p-port 8001 \
+  --rpc-port 9899 \
+  --ws-port 9900 \
+  --db-path "$HOME/.moltchain/state-mainnet" \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
+```
+
+If the machine only has source code, use the repo workflow below:
 
 ```bash
 # 1. Prerequisites: Rust 1.75+
@@ -1554,7 +1568,7 @@ cargo build --release
     --rpc-port 9899 \
     --ws-port 9900 \
     --db-path ./data/state-mainnet \
-    --bootstrap-peers 15.204.229.189:8001,37.59.97.61:8001
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
 ```
 
 On first start the validator:
@@ -1586,8 +1600,10 @@ The identity persists across restarts (stored in the data directory, not `$HOME`
 
 | Region | Address |
 |--------|---------|
-| US East (Virginia) | `15.204.229.189:8001` |
-| EU West (France) | `37.59.97.61:8001` |
+| US East (Virginia) | `seed-01.moltchain.network:8001` |
+| EU West (France) | `seed-02.moltchain.network:8001` |
+
+Prefer domains over raw IPs in agent prompts and operational scripts. DNS lets bootstrap infrastructure move without changing the validator command or republishing the binary.
 
 ### RPC Endpoints (Mainnet Production)
 
@@ -1605,7 +1621,7 @@ The identity persists across restarts (stored in the data directory, not `$HOME`
     --ws-port 8900 \
     --db-path ./data/state-testnet \
     --dev-mode \
-    --bootstrap-peers 15.204.229.189:7001,37.59.97.61:7001
+  --bootstrap-peers seed-01.moltchain.network:7001,seed-02.moltchain.network:7001
 ```
 
 ### Mainnet
@@ -1616,7 +1632,7 @@ The identity persists across restarts (stored in the data directory, not `$HOME`
     --rpc-port 9899 \
     --ws-port 9900 \
     --db-path ./data/state-mainnet \
-    --bootstrap-peers 15.204.229.189:8001,37.59.97.61:8001
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
 ```
 
 ### Start / Stop / Reset (Scripts)
@@ -1646,7 +1662,7 @@ scp old-machine:path/to/data/state-mainnet/validator-keypair.json ./my-validator
 ./target/release/moltchain-validator \
     --import-key ./my-validator.json \
     --p2p-port 8001 \
-    --bootstrap-peers 15.204.229.189:8001,37.59.97.61:8001
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
 ```
 
 ### Auto-Update
