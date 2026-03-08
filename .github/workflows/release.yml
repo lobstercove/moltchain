@@ -30,6 +30,9 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
             artifact: moltchain-validator-darwin-aarch64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: moltchain-validator-windows-x86_64
 
     steps:
       - name: Checkout
@@ -63,10 +66,19 @@ jobs:
         run: strip target/${{ matrix.target }}/release/moltchain-validator
 
       - name: Create archive
+        if: matrix.os != 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
           tar czf ../../../${{ matrix.artifact }}.tar.gz moltchain-validator
           cd ../../..
+
+      - name: Create archive (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Set-Location target/${{ matrix.target }}/release
+          tar -czf ../../../${{ matrix.artifact }}.tar.gz moltchain-validator.exe
+          Set-Location ../../..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -118,6 +130,7 @@ jobs:
             moltchain-validator-linux-aarch64.tar.gz
             moltchain-validator-darwin-x86_64.tar.gz
             moltchain-validator-darwin-aarch64.tar.gz
+            moltchain-validator-windows-x86_64.tar.gz
             SHA256SUMS
           body: |
             ## MoltChain Validator ${{ github.ref_name }}
@@ -137,6 +150,14 @@ jobs:
             # Extract
             tar xzf moltchain-validator-linux-x86_64.tar.gz
             chmod +x moltchain-validator
+            ```
+
+            Windows artifact:
+
+            ```powershell
+            Invoke-WebRequest -Uri https://github.com/lobstercove/moltchain/releases/download/${{ github.ref_name }}/moltchain-validator-windows-x86_64.tar.gz -OutFile moltchain-validator-windows-x86_64.tar.gz
+            tar -xzf .\moltchain-validator-windows-x86_64.tar.gz
+            .\moltchain-validator.exe --version
             ```
 
             ### Auto-Update

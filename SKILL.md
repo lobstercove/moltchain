@@ -1547,8 +1547,75 @@ moltchain-validator \
   --rpc-port 9899 \
   --ws-port 9900 \
   --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
+    --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+    --auto-update=apply
 ```
+
+### Download A Release Instead Of Cloning
+
+Preferred agent flow:
+1. Detect platform.
+2. Download the matching GitHub Release archive.
+3. Extract `moltchain-validator`.
+4. Create a writable state directory.
+5. Start with domain bootstrap peers and `--auto-update=apply`.
+
+Linux x86_64:
+
+```bash
+VERSION=$(curl -fsSL https://api.github.com/repos/lobstercove/moltchain/releases/latest | jq -r .tag_name)
+curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/moltchain-validator-linux-x86_64.tar.gz"
+curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/SHA256SUMS"
+grep 'moltchain-validator-linux-x86_64.tar.gz' SHA256SUMS | sha256sum -c -
+tar xzf moltchain-validator-linux-x86_64.tar.gz
+chmod +x moltchain-validator
+mkdir -p "$HOME/.moltchain/state-mainnet"
+./moltchain-validator \
+  --network mainnet \
+  --p2p-port 8001 \
+  --rpc-port 9899 \
+  --ws-port 9900 \
+  --db-path "$HOME/.moltchain/state-mainnet" \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+  --auto-update=apply
+```
+
+macOS Apple Silicon:
+
+```bash
+VERSION=$(curl -fsSL https://api.github.com/repos/lobstercove/moltchain/releases/latest | jq -r .tag_name)
+curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/moltchain-validator-darwin-aarch64.tar.gz"
+tar xzf moltchain-validator-darwin-aarch64.tar.gz
+chmod +x moltchain-validator
+mkdir -p "$HOME/.moltchain/state-mainnet"
+./moltchain-validator \
+  --network mainnet \
+  --p2p-port 8001 \
+  --rpc-port 9899 \
+  --ws-port 9900 \
+  --db-path "$HOME/.moltchain/state-mainnet" \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+  --auto-update=apply
+```
+
+Windows x64 (PowerShell):
+
+```powershell
+$version = (Invoke-RestMethod https://api.github.com/repos/lobstercove/moltchain/releases/latest).tag_name
+Invoke-WebRequest -Uri "https://github.com/lobstercove/moltchain/releases/download/$version/moltchain-validator-windows-x86_64.tar.gz" -OutFile "moltchain-validator-windows-x86_64.tar.gz"
+tar -xzf .\moltchain-validator-windows-x86_64.tar.gz
+New-Item -ItemType Directory -Force -Path "$HOME\.moltchain\state-mainnet" | Out-Null
+.\moltchain-validator.exe `
+  --network mainnet `
+  --p2p-port 8001 `
+  --rpc-port 9899 `
+  --ws-port 9900 `
+  --db-path "$HOME\.moltchain\state-mainnet" `
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 `
+  --auto-update=apply
+```
+
+If a release tag predates Windows packaging, agents should fall back to the source-build workflow on Windows.
 
 If the machine only has source code, use the repo workflow below:
 
