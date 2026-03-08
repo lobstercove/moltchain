@@ -125,11 +125,13 @@ else
 	rm -rf data/state-${NETWORK}-* 2>/dev/null && echo "  removed data/state-${NETWORK}-*" || true
 	rm -rf data/matrix-sdk-state-* 2>/dev/null && echo "  removed data/matrix-sdk-state-*" || true
 	if [ "$NETWORK" = "testnet" ]; then
-		for port in 8000 8001 8002 8003 8004; do rm -rf "data/state-${port}" 2>/dev/null || true; done
-		echo "  removed data/state-800x (testnet ports)"
+		for port in 7001 7002 7003 8000 8001 8002 8003 8004; do rm -rf "data/state-${port}" 2>/dev/null || true; done
+		rm -rf "data/state-testnet" 2>/dev/null || true
+		echo "  removed data/state-testnet and legacy testnet port dirs"
 	elif [ "$NETWORK" = "mainnet" ]; then
-		for port in 9000 9001 9002 9003 9004; do rm -rf "data/state-${port}" 2>/dev/null || true; done
-		echo "  removed data/state-900x (mainnet ports)"
+		for port in 8001 8002 8003 9000 9001 9002 9003 9004; do rm -rf "data/state-${port}" 2>/dev/null || true; done
+		rm -rf "data/state-mainnet" 2>/dev/null || true
+		echo "  removed data/state-mainnet and legacy mainnet port dirs"
 	fi
 	rm -rf data/custody-${NETWORK}* 2>/dev/null || true
 fi
@@ -146,8 +148,10 @@ else
 	else
 		if [ "$NETWORK" = "testnet" ]; then
 			for port in 7001 7002 7003 8000 8001 8002; do rm -f "$HOME/.moltchain/validators/validator-${port}.json" 2>/dev/null || true; done
+			rm -f "$HOME/.moltchain/validators/validator-testnet.json" 2>/dev/null || true
 		else
 			for port in 8001 8002 8003 9000 9001 9002; do rm -f "$HOME/.moltchain/validators/validator-${port}.json" 2>/dev/null || true; done
+			rm -f "$HOME/.moltchain/validators/validator-mainnet.json" 2>/dev/null || true
 		fi
 	fi
 	echo -e "${GREEN}  Validator keypairs cleared (regenerate on start)${NC}"
@@ -340,11 +344,11 @@ if [ "$RESTART" = true ]; then
 		echo ""
 
 		if [ "$NETWORK" = "testnet" ]; then
-			PRIMARY_P2P=8000
+			PRIMARY_P2P=7001
 			PRIMARY_RPC=8899
 			FAUCET_PORT=9100
 		elif [ "$NETWORK" = "mainnet" ]; then
-			PRIMARY_P2P=9000
+			PRIMARY_P2P=8001
 			PRIMARY_RPC=9899
 			FAUCET_PORT=9101
 		else

@@ -4,8 +4,8 @@ cd /Users/johnrobin/.openclaw/workspace/moltchain
 BIN="$PWD/target/release/moltchain-validator"
 
 echo "=== Starting V1 (leader) ==="
-RUST_LOG=info "$BIN" --dev-mode --p2p-port 8000 --rpc-port 8899 \
-  --db-path "$PWD/data/state-8000" > /tmp/v1.log 2>&1 &
+RUST_LOG=info "$BIN" --dev-mode --p2p-port 7001 --rpc-port 8899 \
+  --db-path "$PWD/data/state-7001" > /tmp/v1.log 2>&1 &
 V1PID=$!
 echo "V1 PID=$V1PID"
 sleep 8
@@ -16,15 +16,15 @@ curl -sf http://127.0.0.1:8899 -X POST -H 'Content-Type:application/json' \
 echo ""
 
 echo "=== Starting V2 ==="
-RUST_LOG=info "$BIN" --dev-mode --p2p-port 8001 --rpc-port 8901 \
-  --db-path "$PWD/data/state-8001" --bootstrap 127.0.0.1:8000 > /tmp/v2.log 2>&1 &
+RUST_LOG=info "$BIN" --dev-mode --p2p-port 7002 --rpc-port 8901 \
+  --db-path "$PWD/data/state-7002" --bootstrap 127.0.0.1:7001 > /tmp/v2.log 2>&1 &
 V2PID=$!
 echo "V2 PID=$V2PID"
 sleep 6
 
 echo "=== Starting V3 ==="
-RUST_LOG=info "$BIN" --dev-mode --p2p-port 8004 --rpc-port 8903 \
-  --db-path "$PWD/data/state-8002" --bootstrap 127.0.0.1:8000 > /tmp/v3.log 2>&1 &
+RUST_LOG=info "$BIN" --dev-mode --p2p-port 7003 --rpc-port 8903 \
+  --db-path "$PWD/data/state-7003" --bootstrap 127.0.0.1:7001 > /tmp/v3.log 2>&1 &
 V3PID=$!
 echo "V3 PID=$V3PID"
 sleep 6

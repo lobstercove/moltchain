@@ -33,7 +33,7 @@ kill_stale_validator_supervisors() {
   pkill -f 'scripts/validator-supervisor\.sh .*run-validator\.sh mainnet 1' 2>/dev/null || true
   pkill -f 'scripts/validator-supervisor\.sh .*run-validator\.sh mainnet 2' 2>/dev/null || true
   pkill -f 'scripts/validator-supervisor\.sh .*run-validator\.sh mainnet 3' 2>/dev/null || true
-  pkill -f 'target/(release|debug)/moltchain-validator .*--p2p-port (8000|8001|8002|9000|9001|9002)' 2>/dev/null || true
+  pkill -f 'target/(release|debug)/moltchain-validator .*--p2p-port (7001|7002|7003|8001|8002|8003)' 2>/dev/null || true
 }
 
 rpc_ok() {
