@@ -16,6 +16,7 @@ jobs:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -24,10 +25,10 @@ jobs:
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             artifact: moltchain-validator-linux-aarch64
-          - os: macos-latest
+          - os: macos-13
             target: x86_64-apple-darwin
             artifact: moltchain-validator-darwin-x86_64
-          - os: macos-latest
+          - os: macos-14
             target: aarch64-apple-darwin
             artifact: moltchain-validator-darwin-aarch64
           - os: windows-latest
