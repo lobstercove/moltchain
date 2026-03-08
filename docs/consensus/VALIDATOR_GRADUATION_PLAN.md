@@ -176,9 +176,9 @@ For local testing (running 3 validators on one machine):
 
 ```bash
 # Skip fingerprint uniqueness check
-moltchain-validator --dev-mode --p2p-port 8000
-moltchain-validator --dev-mode --p2p-port 8001
-moltchain-validator --dev-mode --p2p-port 8002
+moltchain-validator --dev-mode --p2p-port 7001
+moltchain-validator --dev-mode --p2p-port 7002
+moltchain-validator --dev-mode --p2p-port 7003
 ```
 
 `--dev-mode` flag:
@@ -226,10 +226,10 @@ The network treats this as a **machine migration**:
 
 ```bash
 # FRESH START — new keypair generated, eligible for bootstrap grant if < 200
-moltchain-validator --p2p-port 8000
+moltchain-validator --p2p-port 7001
 
 # RESUME — import existing keypair, NO bootstrap grant (system detects existing stake)
-moltchain-validator --p2p-port 8000 --import-key /path/to/validator-keypair.json
+moltchain-validator --p2p-port 7001 --import-key /path/to/validator-keypair.json
 ```
 
 **Rule:** When `--import-key` is provided, the validator binary:

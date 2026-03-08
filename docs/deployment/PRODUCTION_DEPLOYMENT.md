@@ -417,12 +417,12 @@ cd moltchain
 cargo build --release
 
 # Start the first validator — it auto-generates genesis
-./target/release/moltchain-validator --network testnet --p2p-port 8000
+./target/release/moltchain-validator --network testnet --p2p-port 7001
 ```
 
 On first boot with no existing state, the validator:
 1. Generates a **genesis wallet** with multi-sig (2/3 for testnet, 3/5 for mainnet)
-2. Creates treasury keypairs in `./data/state-8000/genesis-keys/`
+2. Creates treasury keypairs in `./data/state-7001/genesis-keys/`
 3. Saves `genesis-wallet.json` in the state directory
 4. Mints 1 billion MOLT to the treasury
 5. Registers itself as the initial validator
@@ -488,7 +488,7 @@ If you prefer to skip the local step:
 
 ```bash
 # SSH into US VPS, build there, start the validator
-./moltchain-validator --network testnet --listen-addr 0.0.0.0 --p2p-port 8000
+./moltchain-validator --network testnet --listen-addr 0.0.0.0 --p2p-port 7001
 # Let it generate genesis
 # Then tar + scp the state to EU/ASIA
 ```
@@ -540,7 +540,7 @@ sudo tee /etc/moltchain/env-testnet <<'EOF'
 MOLTCHAIN_NETWORK=testnet
 MOLTCHAIN_RPC_PORT=8899
 MOLTCHAIN_WS_PORT=8900
-MOLTCHAIN_P2P_PORT=8000
+MOLTCHAIN_P2P_PORT=7001
 MOLTCHAIN_SIGNER_BIND=0.0.0.0:9200
 RUST_LOG=info
 # MOLTCHAIN_ADMIN_TOKEN=<generate-with-openssl-rand-hex-32>
@@ -566,9 +566,9 @@ ExecStart=/opt/moltchain/bin/moltchain-validator \
     --listen-addr 0.0.0.0 \
     --rpc-port 8899 \
     --ws-port 8900 \
-    --p2p-port 8000 \
+    --p2p-port 7001 \
     --db-path /var/lib/moltchain/state-testnet \
-    --bootstrap-peers seed-us.moltchain.network:8000,seed-eu.moltchain.network:8000,seed-ap.moltchain.network:8000
+    --bootstrap-peers seed-us.moltchain.network:7001,seed-eu.moltchain.network:7001,seed-ap.moltchain.network:7001
 
 Restart=on-failure
 RestartSec=5
@@ -1996,11 +1996,11 @@ ssh -p 2222 ubuntu@<VPS_IP> "
   export MOLTCHAIN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
   export MOLTCHAIN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
 
-  ./scripts/validator-supervisor.sh testnet-primary-p8000 -- \
+  ./scripts/validator-supervisor.sh testnet-primary-p7001 -- \
     ./target/release/moltchain-validator \
-    --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 8000 \
-    --db-path ./data/state-8000 \
-    --bootstrap-peers '15.204.229.189:8000,37.59.97.61:8000' \
+    --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 \
+    --db-path ./data/state-7001 \
+    --bootstrap-peers '15.204.229.189:7001,37.59.97.61:7001' \
     --listen-addr 0.0.0.0 \
     >./logs/validator.log 2>&1 &
 "

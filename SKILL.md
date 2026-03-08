@@ -1569,7 +1569,7 @@ The identity persists across restarts (stored in the data directory, not `$HOME`
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--p2p-port` | 8000 | P2P gossip port |
+| `--p2p-port` | 7001 | P2P gossip port |
 | `--rpc-port` | 8899 | JSON-RPC HTTP port |
 | `--ws-port` | 8900 | WebSocket port |
 | `--db-path` | `./data/state-{p2p_port}` | State database directory |

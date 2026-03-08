@@ -3,7 +3,7 @@
 **Validator PID:** 97421  
 **RPC Port:** 8899  
 **WebSocket Port:** 8900  
-**P2P Port:** 8000
+**P2P Port:** 7001
 
 ---
 
