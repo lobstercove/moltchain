@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
@@ -69,17 +69,17 @@ jobs:
       - name: Create archive
         if: matrix.os != 'windows-latest'
         run: |
-          cd target/${{ matrix.target }}/release
-          tar czf ../../../${{ matrix.artifact }}.tar.gz moltchain-validator
-          cd ../../..
+          mkdir -p ${{ matrix.artifact }}
+          cp target/${{ matrix.target }}/release/moltchain-validator ${{ matrix.artifact }}/
+          tar czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Create archive (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          Set-Location target/${{ matrix.target }}/release
-          tar -czf ../../../${{ matrix.artifact }}.tar.gz moltchain-validator.exe
-          Set-Location ../../..
+          New-Item -ItemType Directory -Force -Path ${{ matrix.artifact }} | Out-Null
+          Copy-Item target/${{ matrix.target }}/release/moltchain-validator.exe ${{ matrix.artifact }}/
+          tar -czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -149,7 +149,7 @@ jobs:
             sha256sum -c SHA256SUMS --ignore-missing
 
             # Extract
-            tar xzf moltchain-validator-linux-x86_64.tar.gz
+            tar xzf moltchain-validator-linux-x86_64.tar.gz --strip-components=1
             chmod +x moltchain-validator
             ```
 
@@ -157,7 +157,7 @@ jobs:
 
             ```powershell
             Invoke-WebRequest -Uri https://github.com/lobstercove/moltchain/releases/download/${{ github.ref_name }}/moltchain-validator-windows-x86_64.tar.gz -OutFile moltchain-validator-windows-x86_64.tar.gz
-            tar -xzf .\moltchain-validator-windows-x86_64.tar.gz
+            tar -xzf .\moltchain-validator-windows-x86_64.tar.gz --strip-components=1
             .\moltchain-validator.exe --version
             ```
 
