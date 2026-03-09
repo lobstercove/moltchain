@@ -31,7 +31,7 @@ faucet-service/ — Testnet MOLT dispenser
 genesis/      — Genesis block generation (compiles + deploys 29 contracts)
 compiler/     — Rust → WASM contract compilation pipeline
 contracts/    — 29 WASM smart contracts (each has own Cargo.toml)
-sdk/          — JavaScript, Python, Rust client SDKs
+sdk/          — Contract SDK (`moltchain-contract-sdk`), Client SDKs (JS, Python, Rust `moltchain-client-sdk`)
 wallet/       — Browser wallet app
 explorer/     — Block explorer
 dex/          — ClawSwap decentralized exchange
