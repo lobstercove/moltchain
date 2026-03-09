@@ -48,7 +48,7 @@
 | Explorer | Port 3001 |
 | DEX | Port 8080 |
 | Wallet | Port 3000 |
-| Faucet | Port 9900 |
+| Faucet | Port 9100 |
 | Custody | Port 9105 |
 | Monitoring | Port 9100 (Prometheus metrics) |
 | Contracts deployed at genesis | 29 |
@@ -1727,7 +1727,7 @@ For unattended updates, agents should prefer running the validator under a resta
 If the machine only has source code, use the repo workflow below:
 
 ```bash
-# 1. Prerequisites: Rust 1.75+
+# 1. Prerequisites: Rust 1.88+
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
 
