@@ -93,6 +93,7 @@
 |--------|------|
 | US (Virginia) | `seed-01.moltchain.network` |
 | EU (France) | `seed-02.moltchain.network` |
+| SEA (Singapore) | `seed-03.moltchain.network` |
 
 ---
 
@@ -1573,7 +1574,7 @@ mkdir -p "$HOME/.moltchain/state-mainnet"
   --rpc-port 9899 \
   --ws-port 9900 \
   --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
   --auto-update=apply
 ```
 
@@ -1592,7 +1593,7 @@ mkdir -p "$HOME/.moltchain/state-mainnet"
   --rpc-port 9899 \
   --ws-port 9900 \
   --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
   --auto-update=apply
 ```
 
@@ -1608,7 +1609,7 @@ New-Item -ItemType Directory -Force -Path "$HOME\.moltchain\state-mainnet" | Out
   --rpc-port 9899 `
   --ws-port 9900 `
   --db-path "$HOME\.moltchain\state-mainnet" `
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 `
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 `
   --auto-update=apply
 ```
 
@@ -1625,7 +1626,7 @@ moltchain-validator \
   --rpc-port 9899 \
   --ws-port 9900 \
   --db-path "$HOME/.moltchain/state-mainnet" \
-    --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+    --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
     --auto-update=apply
 ```
 
@@ -1667,7 +1668,7 @@ mkdir -p "$HOME/.moltchain/state-mainnet"
   --rpc-port 9899 \
   --ws-port 9900 \
   --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
   --auto-update=apply
 ```
 
@@ -1685,7 +1686,7 @@ mkdir -p "$HOME/.moltchain/state-mainnet"
   --rpc-port 9899 \
   --ws-port 9900 \
   --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 \
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
   --auto-update=apply
 ```
 
@@ -1702,7 +1703,7 @@ New-Item -ItemType Directory -Force -Path "$HOME\.moltchain\state-mainnet" | Out
   --rpc-port 9899 `
   --ws-port 9900 `
   --db-path "$HOME\.moltchain\state-mainnet" `
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001 `
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 `
   --auto-update=apply
 ```
 
@@ -1715,7 +1716,7 @@ Given a fresh `--db-path`, the validator:
 1. Creates the state directory.
 2. Generates or imports the validator identity there.
 3. Persists validator-local runtime material in that directory.
-4. Connects to `seed-01.moltchain.network` and `seed-02.moltchain.network`.
+4. Connects to `seed-01.moltchain.network`, `seed-02.moltchain.network`, and `seed-03.moltchain.network`.
 5. Syncs the chain and peer graph.
 6. Reuses that same identity on restart if the state directory is preserved.
 
@@ -1741,7 +1742,7 @@ cargo build --release
     --rpc-port 9899 \
     --ws-port 9900 \
     --db-path ./data/state-mainnet \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001
 ```
 
 On first start the validator:
@@ -1775,6 +1776,7 @@ The identity persists across restarts (stored in the data directory, not `$HOME`
 |--------|---------|
 | US East (Virginia) | `seed-01.moltchain.network:8001` |
 | EU West (France) | `seed-02.moltchain.network:8001` |
+| AP Southeast (Singapore) | `seed-03.moltchain.network:8001` |
 
 Prefer domains over raw IPs in agent prompts and operational scripts. DNS lets bootstrap infrastructure move without changing the validator command or republishing the binary.
 
@@ -1794,7 +1796,7 @@ Prefer domains over raw IPs in agent prompts and operational scripts. DNS lets b
     --ws-port 8900 \
     --db-path ./data/state-testnet \
     --dev-mode \
-  --bootstrap-peers seed-01.moltchain.network:7001,seed-02.moltchain.network:7001
+  --bootstrap-peers seed-01.moltchain.network:7001,seed-02.moltchain.network:7001,seed-03.moltchain.network:7001
 ```
 
 ### Mainnet
@@ -1805,7 +1807,7 @@ Prefer domains over raw IPs in agent prompts and operational scripts. DNS lets b
     --rpc-port 9899 \
     --ws-port 9900 \
     --db-path ./data/state-mainnet \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001
 ```
 
 ### Start / Stop / Reset (Scripts)
@@ -1835,7 +1837,7 @@ scp old-machine:path/to/data/state-mainnet/validator-keypair.json ./my-validator
 ./target/release/moltchain-validator \
     --import-key ./my-validator.json \
     --p2p-port 8001 \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001
+  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001
 ```
 
 ### Auto-Update

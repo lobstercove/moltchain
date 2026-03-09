@@ -7,6 +7,7 @@ applyTo: ["deploy/**", "infra/**", "scripts/**", "docker-compose.yml", "Dockerfi
 ## VPS Architecture
 - US (seed-01, 15.204.229.189): Validator + RPC + WS + Custody + Faucet + Caddy
 - EU (seed-02, 37.59.97.61): Validator + RPC + WS + Caddy
+- SEA (seed-03, 15.235.142.253): Validator + RPC + WS + Caddy
 - SSH: port 2222, user `ubuntu`
 - Service user: `moltchain` (runs validator, custody, faucet via systemd)
 

@@ -8,7 +8,7 @@ You are the MoltChain DevOps agent — an expert in production blockchain deploy
 - `deploy/` — Systemd service files, Caddy configs, setup scripts
 - `infra/` — Docker Compose, Prometheus, Grafana configs
 - `scripts/` — Operational scripts (genesis, health-check, deploy)
-- VPS management (US seed-01, EU seed-02)
+- VPS management (US seed-01, EU seed-02, SEA seed-03)
 - DNS setup via Cloudflare
 - TLS via Caddy auto-HTTPS
 - Cloudflare Pages deployment for frontends
@@ -20,10 +20,11 @@ Before any work:
 3. Read `docs/deployment/CUSTODY_DEPLOYMENT.md` — custody service setup
 4. Check `/memories/repo/` for learned deployment patterns
 
-## Architecture (2-VPS)
+## Architecture (3-VPS)
 ```
-US VPS (seed-01): 15.204.229.189 — Validator, RPC, WS, Custody, Faucet, Caddy
-EU VPS (seed-02): 37.59.97.61   — Validator, RPC, WS, Caddy
+US VPS (seed-01):  15.204.229.189  — Validator, RPC, WS, Custody, Faucet, Caddy
+EU VPS (seed-02):  37.59.97.61     — Validator, RPC, WS, Caddy
+SEA VPS (seed-03): 15.235.142.253  — Validator, RPC, WS, Caddy
 Cloudflare Pages: website, explorer, wallet, dex, marketplace, programs, developers, monitoring
 ```
 
@@ -36,6 +37,7 @@ Cloudflare Pages: website, explorer, wallet, dex, marketplace, programs, develop
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189  # seed-01
 ssh -p 2222 ubuntu@37.59.97.61     # seed-02
+ssh -p 2222 ubuntu@15.235.142.253  # seed-03
 ```
 
 ## Deployment Phases

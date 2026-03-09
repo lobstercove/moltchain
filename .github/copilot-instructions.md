@@ -106,12 +106,13 @@ Every change must meet these criteria. No exceptions:
 |---------|-----|
 | RPC (Mainnet) | `https://rpc.moltchain.network` |
 | WebSocket (Mainnet) | `wss://ws.moltchain.network` |
-| Seed nodes | `seed-01.moltchain.network:8001`, `seed-02.moltchain.network:8001` |
+| Seed nodes | `seed-01.moltchain.network:8001`, `seed-02.moltchain.network:8001`, `seed-03.moltchain.network:8001` |
 
-## Deployment Architecture (2-VPS)
+## Deployment Architecture (3-VPS)
 
 - US VPS (seed-01): Validator, RPC, WS, Custody, Faucet, Caddy
 - EU VPS (seed-02): Validator, RPC, WS, Caddy
+- SEA VPS (seed-03): Validator, RPC, WS, Caddy
 - Cloudflare Pages: All frontend portals (website, explorer, wallet, dex, marketplace, programs, developers, monitoring)
 - Testnet ports: RPC=8899, WS=8900, P2P=7001
 - Mainnet ports: RPC=9899, WS=9900, P2P=8001
