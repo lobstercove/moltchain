@@ -52,7 +52,7 @@ jobs:
           echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
 
       - name: Build release binary
-        run: cargo build --release --target ${{ matrix.target }} --bin moltchain-validator --bin moltchain-genesis --bin moltchain-faucet --bin molt --bin moltchain-custody
+        run: cargo build --release --target ${{ matrix.target }} --bin moltchain-validator --bin moltchain-genesis --bin moltchain-faucet --bin molt --bin moltchain-custody --bin zk-setup
 
       - name: Strip binary (Linux)
         if: startsWith(matrix.os, 'ubuntu') && matrix.target != 'aarch64-unknown-linux-gnu'
@@ -62,6 +62,7 @@ jobs:
           strip target/${{ matrix.target }}/release/moltchain-faucet
           strip target/${{ matrix.target }}/release/molt
           strip target/${{ matrix.target }}/release/moltchain-custody
+          strip target/${{ matrix.target }}/release/zk-setup
 
       - name: Strip binary (Linux aarch64)
         if: matrix.target == 'aarch64-unknown-linux-gnu'
@@ -71,6 +72,7 @@ jobs:
           aarch64-linux-gnu-strip target/${{ matrix.target }}/release/moltchain-faucet
           aarch64-linux-gnu-strip target/${{ matrix.target }}/release/molt
           aarch64-linux-gnu-strip target/${{ matrix.target }}/release/moltchain-custody
+          aarch64-linux-gnu-strip target/${{ matrix.target }}/release/zk-setup
 
       - name: Strip binary (macOS)
         if: startsWith(matrix.os, 'macos')
@@ -80,6 +82,7 @@ jobs:
           strip target/${{ matrix.target }}/release/moltchain-faucet
           strip target/${{ matrix.target }}/release/molt
           strip target/${{ matrix.target }}/release/moltchain-custody
+          strip target/${{ matrix.target }}/release/zk-setup
 
       - name: Create archive
         if: matrix.os != 'windows-latest'
@@ -90,6 +93,7 @@ jobs:
           cp target/${{ matrix.target }}/release/moltchain-faucet ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/molt ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/moltchain-custody ${{ matrix.artifact }}/
+          cp target/${{ matrix.target }}/release/zk-setup ${{ matrix.artifact }}/
           tar czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Create archive (Windows)
@@ -102,6 +106,7 @@ jobs:
           Copy-Item target/${{ matrix.target }}/release/moltchain-faucet.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/molt.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/moltchain-custody.exe ${{ matrix.artifact }}/
+          Copy-Item target/${{ matrix.target }}/release/zk-setup.exe ${{ matrix.artifact }}/
           tar -czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Upload artifact
