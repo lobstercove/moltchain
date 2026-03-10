@@ -52,25 +52,40 @@ jobs:
           echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
 
       - name: Build release binary
-        run: cargo build --release --target ${{ matrix.target }} --bin moltchain-validator
+        run: cargo build --release --target ${{ matrix.target }} --bin moltchain-validator --bin moltchain-faucet --bin molt-cli --bin moltchain-custody
 
       - name: Strip binary (Linux)
         if: startsWith(matrix.os, 'ubuntu') && matrix.target != 'aarch64-unknown-linux-gnu'
-        run: strip target/${{ matrix.target }}/release/moltchain-validator
+        run: |
+          strip target/${{ matrix.target }}/release/moltchain-validator
+          strip target/${{ matrix.target }}/release/moltchain-faucet
+          strip target/${{ matrix.target }}/release/molt-cli
+          strip target/${{ matrix.target }}/release/moltchain-custody
 
       - name: Strip binary (Linux aarch64)
         if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: aarch64-linux-gnu-strip target/${{ matrix.target }}/release/moltchain-validator
+        run: |
+          aarch64-linux-gnu-strip target/${{ matrix.target }}/release/moltchain-validator
+          aarch64-linux-gnu-strip target/${{ matrix.target }}/release/moltchain-faucet
+          aarch64-linux-gnu-strip target/${{ matrix.target }}/release/molt-cli
+          aarch64-linux-gnu-strip target/${{ matrix.target }}/release/moltchain-custody
 
       - name: Strip binary (macOS)
         if: startsWith(matrix.os, 'macos')
-        run: strip target/${{ matrix.target }}/release/moltchain-validator
+        run: |
+          strip target/${{ matrix.target }}/release/moltchain-validator
+          strip target/${{ matrix.target }}/release/moltchain-faucet
+          strip target/${{ matrix.target }}/release/molt-cli
+          strip target/${{ matrix.target }}/release/moltchain-custody
 
       - name: Create archive
         if: matrix.os != 'windows-latest'
         run: |
           mkdir -p ${{ matrix.artifact }}
           cp target/${{ matrix.target }}/release/moltchain-validator ${{ matrix.artifact }}/
+          cp target/${{ matrix.target }}/release/moltchain-faucet ${{ matrix.artifact }}/
+          cp target/${{ matrix.target }}/release/molt-cli ${{ matrix.artifact }}/
+          cp target/${{ matrix.target }}/release/moltchain-custody ${{ matrix.artifact }}/
           tar czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Create archive (Windows)
@@ -79,6 +94,9 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path ${{ matrix.artifact }} | Out-Null
           Copy-Item target/${{ matrix.target }}/release/moltchain-validator.exe ${{ matrix.artifact }}/
+          Copy-Item target/${{ matrix.target }}/release/moltchain-faucet.exe ${{ matrix.artifact }}/
+          Copy-Item target/${{ matrix.target }}/release/molt-cli.exe ${{ matrix.artifact }}/
+          Copy-Item target/${{ matrix.target }}/release/moltchain-custody.exe ${{ matrix.artifact }}/
           tar -czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Upload artifact
