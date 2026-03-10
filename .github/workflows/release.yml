@@ -12,8 +12,45 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  zk-keys:
+    name: Generate ZK ceremony keys
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: zk-keys-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build zk-setup
+        run: cargo build --release --bin zk-setup
+
+      - name: Run ZK trusted setup
+        run: |
+          mkdir -p zk-keys
+          ./target/release/zk-setup --output zk-keys --force
+
+      - name: List generated keys
+        run: ls -la zk-keys/
+
+      - name: Upload ZK keys
+        uses: actions/upload-artifact@v4
+        with:
+          name: zk-keys
+          path: zk-keys/
+
   build:
     name: Build ${{ matrix.target }}
+    needs: zk-keys
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -84,29 +121,37 @@ jobs:
           strip target/${{ matrix.target }}/release/moltchain-custody
           strip target/${{ matrix.target }}/release/zk-setup
 
+      - name: Download ZK keys
+        uses: actions/download-artifact@v4
+        with:
+          name: zk-keys
+          path: zk-keys
+
       - name: Create archive
         if: matrix.os != 'windows-latest'
         run: |
-          mkdir -p ${{ matrix.artifact }}
+          mkdir -p ${{ matrix.artifact }}/zk
           cp target/${{ matrix.target }}/release/moltchain-validator ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/moltchain-genesis ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/moltchain-faucet ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/molt ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/moltchain-custody ${{ matrix.artifact }}/
           cp target/${{ matrix.target }}/release/zk-setup ${{ matrix.artifact }}/
+          cp zk-keys/*.bin ${{ matrix.artifact }}/zk/
           tar czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Create archive (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path ${{ matrix.artifact }} | Out-Null
+          New-Item -ItemType Directory -Force -Path ${{ matrix.artifact }}/zk | Out-Null
           Copy-Item target/${{ matrix.target }}/release/moltchain-validator.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/moltchain-genesis.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/moltchain-faucet.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/molt.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/moltchain-custody.exe ${{ matrix.artifact }}/
           Copy-Item target/${{ matrix.target }}/release/zk-setup.exe ${{ matrix.artifact }}/
+          Copy-Item zk-keys/*.bin ${{ matrix.artifact }}/zk/
           tar -czf ${{ matrix.artifact }}.tar.gz ${{ matrix.artifact }}
 
       - name: Upload artifact
