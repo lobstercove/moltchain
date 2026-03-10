@@ -144,10 +144,10 @@ jobs:
       - name: List files
         run: ls -la
 
-      - name: Create Release (Draft)
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: false
           generate_release_notes: true
           files: |
             moltchain-validator-linux-x86_64.tar.gz
@@ -196,8 +196,8 @@ jobs:
             curl -LO https://github.com/lobstercove/moltchain/releases/download/${{ github.ref_name }}/SHA256SUMS.sig
             ```
 
-            > **Note:** This release is created as a DRAFT. A maintainer must:
-            > 1. Download SHA256SUMS from the draft release
+            > **Note:** To add a detached signature, a maintainer should:
+            > 1. Download SHA256SUMS from this release
             > 2. Sign it offline: `./scripts/sign-release.sh SHA256SUMS release-signing-keypair.json`
             > 3. Upload SHA256SUMS.sig to the release
             > 4. Publish the release
