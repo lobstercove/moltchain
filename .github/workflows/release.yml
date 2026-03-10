@@ -12,45 +12,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  zk-keys:
-    name: Generate ZK ceremony keys
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: zk-keys-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Build zk-setup
-        run: cargo build --release --bin zk-setup
-
-      - name: Run ZK trusted setup
-        run: |
-          mkdir -p zk-keys
-          ./target/release/zk-setup --output zk-keys --force
-
-      - name: List generated keys
-        run: ls -la zk-keys/
-
-      - name: Upload ZK keys
-        uses: actions/upload-artifact@v4
-        with:
-          name: zk-keys
-          path: zk-keys/
-
   build:
     name: Build ${{ matrix.target }}
-    needs: zk-keys
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -120,12 +83,6 @@ jobs:
           strip target/${{ matrix.target }}/release/molt
           strip target/${{ matrix.target }}/release/moltchain-custody
           strip target/${{ matrix.target }}/release/zk-setup
-
-      - name: Download ZK keys
-        uses: actions/download-artifact@v4
-        with:
-          name: zk-keys
-          path: zk-keys
 
       - name: Create archive
         if: matrix.os != 'windows-latest'
