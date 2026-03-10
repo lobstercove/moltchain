@@ -89,7 +89,14 @@ jobs:
       - name: Start validator in background
         run: |
           ./target/release/moltchain-validator &
-          sleep 5  # wait for startup
+          echo "Waiting for RPC to become ready (ZK setup may take ~30s)..."
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8899 -d '{"jsonrpc":"2.0","id":1,"method":"getHealth"}' -H 'Content-Type: application/json' >/dev/null 2>&1; then
+              echo "RPC ready after ${i}s"
+              break
+            fi
+            sleep 1
+          done
       - name: Run RPC integration tests
         run: bash tests/test-rpc-comprehensive.sh
       - name: Run CLI integration tests
