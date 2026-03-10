@@ -555,6 +555,51 @@ sudo tar xzf /tmp/genesis-state.tar.gz -C /var/lib/moltchain/state-testnet
 sudo chown -R moltchain:moltchain /var/lib/moltchain
 ```
 
+### ZK Verification Keys (Auto-Generated)
+
+Starting with v0.2.9, the validator **auto-generates** ZK verification keys on first
+startup if they are not already present. The Groth16 trusted setup for 3 circuits
+(shield, unshield, transfer) completes in ~30 seconds and produces 6 key files cached
+at `~/.moltchain/zk/` (for the user running the validator, typically
+`/var/lib/moltchain/.moltchain/zk/` for the `moltchain` systemd user).
+
+**No manual ZK setup is required.** The validator handles it automatically.
+
+#### Critical: File Ownership
+
+All files under `/var/lib/moltchain/` **must** be owned by `moltchain:moltchain`.
+If you manually copy ZK keys (e.g. via rsync as the `ubuntu` user), fix ownership
+immediately:
+
+```bash
+sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/
+```
+
+**If ownership is wrong,** the validator cannot read the key files and shielded
+transactions will fail silently with a log warning. Always verify after any manual
+file operation:
+
+```bash
+ls -la /var/lib/moltchain/.moltchain/zk/
+# All files should show: moltchain moltchain
+```
+
+#### Manual ZK Key Copy (optional, saves ~30s startup)
+
+If you want to skip auto-generation (e.g. deploying to many nodes at once), copy
+pre-generated keys from a working node:
+
+```bash
+# From a node that already has keys:
+rsync -avz -e "ssh -p 2222" \
+    /var/lib/moltchain/.moltchain/zk/ \
+    ubuntu@<TARGET_VPS>:/var/lib/moltchain/.moltchain/zk/
+
+# THEN fix ownership on the target:
+ssh -p 2222 ubuntu@<TARGET_VPS> \
+    "sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/"
+```
+
 ### On Each VPS: Validator Service
 
 ```bash
@@ -1345,6 +1390,33 @@ find "$BACKUP_DIR" -name "*.tar.gz" -mtime +7 -delete
 
 ## Troubleshooting
 
+### ZK keys: "Failed reading shield VK" or shielded pool warnings
+
+**Cause:** ZK verification keys are missing or unreadable. Most common when:
+1. Keys haven't been generated yet (pre-v0.2.9 — now auto-generated)
+2. File ownership is wrong (e.g. files owned by `ubuntu` instead of `moltchain`)
+
+**Fix:**
+
+```bash
+# Check the ZK directory exists and has correct ownership
+ls -la /var/lib/moltchain/.moltchain/zk/
+# Expected: 6 files (vk_shield.bin, pk_shield.bin, vk_unshield.bin, pk_unshield.bin,
+#           vk_transfer.bin, pk_transfer.bin), all owned by moltchain:moltchain
+
+# If files exist but wrong owner:
+sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/
+
+# If files are missing, restart the validator — v0.2.9+ auto-generates them:
+sudo systemctl restart moltchain-validator-mainnet
+```
+
+**Prevention:** Never rsync/scp files to `/var/lib/moltchain/` as a non-moltchain user
+without fixing ownership afterward. Always run:
+```bash
+sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/
+```
+
 ### "Seed peers found — will sync genesis from the existing network"
 
 **Cause:** The validator sees `bootstrap_peers` in `seeds.json` and enters sync mode instead of creating genesis. This happens when you start a validator on a freshly wiped VPS where no network exists yet.
@@ -1387,6 +1459,26 @@ sudo ss -tlnp | grep 8000
 # Should show: 0.0.0.0:7001 (testnet) or 0.0.0.0:8001 (mainnet)
 
 # If it shows 127.0.0.1:7001, add --listen-addr 0.0.0.0 to the systemd service
+```
+
+### TOFU fingerprint violations
+
+**Cause:** MoltChain P2P uses Trust-On-First-Use (TOFU) for TLS peer identity.
+If a VPS regenerates its P2P certificate (e.g. after a state wipe) and other
+nodes have the old fingerprint cached, connections are rejected.
+
+**Fix (v0.2.9+):** Seed/bootstrap peers are automatically treated as reserved
+peers, which auto-accept fingerprint rotations. No manual action needed for
+the 3 seed nodes.
+
+**Fix (stale local cache):** If a local validator rejects known-good seed peers,
+delete the cached fingerprints:
+
+```bash
+# Find and remove the TOFU fingerprint cache
+find ~/.moltchain/ -name "peer_fingerprints.json" -delete
+# Or for the moltchain systemd user:
+sudo find /var/lib/moltchain/.moltchain/ -name "peer_fingerprints.json" -delete
 ```
 
 ### Blocks not producing
