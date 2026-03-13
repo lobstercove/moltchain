@@ -1311,6 +1311,7 @@ async def test_prediction_market(conn: Connection, deployer: Keypair, trader_a: 
             prediction_ws_task.cancel()
 
         event_types = {str(evt.get("type", "")) for evt in prediction_ws_events}
+        event_types_lower = {t.lower() for t in event_types}
         if not event_types:
             report(
                 "SKIP",
@@ -1319,17 +1320,17 @@ async def test_prediction_market(conn: Connection, deployer: Keypair, trader_a: 
             )
             return
         report(
-            "PASS" if "MarketCreated" in event_types else "SKIP",
+            "PASS" if "marketcreated" in event_types_lower else "SKIP",
             "Prediction WS lifecycle: MarketCreated observed",
             f"types={sorted(event_types)}" if event_types else "no events",
         )
         report(
-            "PASS" if ("TradeExecuted" in event_types or "PriceUpdate" in event_types) else "FAIL",
+            "PASS" if ("tradeexecuted" in event_types_lower or "priceupdate" in event_types_lower) else "FAIL",
             "Prediction WS lifecycle: Trade/Price update observed",
             f"types={sorted(event_types)}" if event_types else "no events",
         )
         report(
-            "PASS" if "MarketResolved" in event_types else "SKIP",
+            "PASS" if "marketresolved" in event_types_lower else "SKIP",
             "Prediction WS lifecycle: MarketResolved observed",
             f"types={sorted(event_types)}" if event_types else "no events",
         )
