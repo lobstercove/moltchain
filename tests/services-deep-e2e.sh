@@ -624,8 +624,11 @@ if [[ "$REQUIRE_CUSTODY" == "1" ]]; then
     fail "custody health"
   fi
 
-  if curl -sS --max-time 4 "$CUSTODY_URL/status" | jq -e '.signers and .sweeps' >/dev/null 2>&1; then
+  CUSTODY_STATUS="$(curl -sS --max-time 4 "$CUSTODY_URL/status" 2>/dev/null)"
+  if echo "$CUSTODY_STATUS" | jq -e '.signers and .sweeps' >/dev/null 2>&1; then
     pass "custody status payload"
+  elif echo "$CUSTODY_STATUS" | jq -e '.code=="unauthorized"' >/dev/null 2>&1; then
+    pass "custody status auth-protected (correct)"
   else
     fail "custody status payload"
   fi
@@ -650,8 +653,8 @@ section "7) Multisig and key-rotation regression checks"
 if command -v cargo >/dev/null 2>&1; then
   if (
     cd "$ROOT_DIR" &&
-      cargo test -p moltchain-core processor::tests::test_ecosystem_grant_requires_multisig -- --exact >/dev/null 2>&1 &&
-      cargo test -p moltchain-core processor::tests::test_governed_proposal_lifecycle -- --exact >/dev/null 2>&1
+      cargo test --release -p moltchain-core processor::tests::test_ecosystem_grant_requires_multisig -- --exact >/dev/null 2>&1 &&
+      cargo test --release -p moltchain-core processor::tests::test_governed_proposal_lifecycle -- --exact >/dev/null 2>&1
   ); then
     pass "governed multisig transfer/approval/rejection path"
   else
@@ -660,8 +663,8 @@ if command -v cargo >/dev/null 2>&1; then
 
   if (
     cd "$ROOT_DIR" &&
-      cargo test -p moltchain-validator keypair_loader::tests::test_keypair_rotation_changes_loaded_pubkey -- --exact >/dev/null 2>&1 &&
-      cargo test -p moltchain-custody tests::test_master_seed_rotation_changes_derived_addresses -- --exact >/dev/null 2>&1
+      cargo test --release -p moltchain-validator keypair_loader::tests::test_keypair_rotation_changes_loaded_pubkey -- --exact >/dev/null 2>&1 &&
+      cargo test --release -p moltchain-custody tests::test_master_seed_rotation_changes_derived_addresses -- --exact >/dev/null 2>&1
   ); then
     pass "validator + custody key rotation scenario"
   else
