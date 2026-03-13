@@ -7,9 +7,9 @@
 
 | Property | Value |
 |----------|-------|
-| Chain | MoltChain (custom L1, Proof of Stake) |
+| Chain | MoltChain (custom L1, Tendermint BFT) |
 | Language | Rust (core, contracts), JavaScript (frontends, SDKs), Python (SDK) |
-| Slot time | 400 ms |
+| Block time | ~800ms heartbeat, ~200ms with txs (Tendermint BFT) |
 | Native token | MOLT (1 MOLT = 1,000,000,000 shells) |
 | Signing | Ed25519 |
 | Smart contracts | WASM (Rust → wasm32-unknown-unknown) |
