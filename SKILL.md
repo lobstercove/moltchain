@@ -2069,6 +2069,33 @@ All tokens on MoltChain are WASM contracts. Use `molt deploy --symbol` or `molt 
 
 `--supply <amount>` sets initial total supply (in whole tokens, auto-converted to shells via decimals). `--metadata <json>` attaches arbitrary metadata to the symbol registry entry. After deploy, the CLI automatically verifies the contract is live on-chain by polling `getAccountInfo`.
 
+### Template Categories
+
+The `--template` flag sets the contract category in the symbol registry. The explorer uses this to filter and display contracts. Common values (matching genesis):
+
+| Template | Explorer Category | Used By |
+|----------|------------------|---------|
+| `token` | Token | Fungible tokens (MT-20) |
+| `wrapped` | Wrapped | Bridge-wrapped tokens (MUSD, WSOL, WETH, WBNB) |
+| `nft` | NFT | NFT collections (MT-721) |
+| `marketplace` | NFT | NFT marketplaces |
+| `auction` | NFT | Auction contracts |
+| `dex` | DEX | Exchange contracts |
+| `defi` | DeFi | General DeFi protocols |
+| `lending` | DeFi | Lending protocols |
+| `bridge` | DeFi | Cross-chain bridges |
+| `oracle` | DeFi | Price oracles |
+| `governance` | Governance | DAO governance |
+| `identity` | Infra | Identity/DID |
+| `launchpad` | Infra | Token launchpads |
+| `vault` | Infra | Vault contracts |
+| `payments` | Infra | Payment processors |
+| `bounty` | Infra | Bounty boards |
+| `compute` | Infra | Compute markets |
+| `storage` | Infra | Storage protocols |
+
+The template is a free-form string — any value is accepted. Unrecognized values default to "Infra" in the explorer. The Programs Playground uses `mt20` (→ Token) and `mt721` (→ NFT) as aliases.
+
 ### Contract Function Convention
 
 ```rust
