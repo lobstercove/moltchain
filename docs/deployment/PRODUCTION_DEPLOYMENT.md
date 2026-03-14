@@ -44,7 +44,7 @@ MoltChain compiles into **4 separate binaries** from the workspace:
 |---|---|---|---|---|
 | `moltchain-validator` | `validator` | P2P: 8000, RPC: 8899, WS: 8900, Signer: 9200 | Every VPS | Validator + built-in RPC + WebSocket + threshold signer. **This is the main binary.** |
 | `moltchain-custody` | `custody` | 9105 | Seed VPS only (1 instance) | Bridge service for Solana/Ethereum ↔ MoltChain deposits & withdrawals |
-| `moltchain-faucet` | `faucet` | 9100 | Seed VPS only (testnet) | MOLT faucet for testnet. Refuses to run on mainnet. |
+| `moltchain-faucet` | `faucet` | 9100 | All VPSes (testnet only) | MOLT faucet for testnet. Refuses to run on mainnet. Same keypair copied to each VPS. |
 | `molt` | `cli` | — | Dev machines | CLI tool for sending transactions, querying state. NOT a server. |
 
 **Important:** The `moltchain-validator` binary is a single process that includes:
@@ -109,7 +109,7 @@ tar -cf - \
 │  seed-us.moltchain.network      →  US VPS (direct IP)            │
 │  seed-ap.moltchain.network      →  ASIA VPS (direct IP)          │
 │  custody.moltchain.network      →  US VPS                        │
-│  faucet.moltchain.network       →  US VPS (testnet only)         │
+│  faucet.moltchain.network       →  Round-robin to all 3 VPS      │
 │                                                                   │
 │  STATIC PORTALS (Cloudflare Pages — global CDN edge)              │
 │  ──────────────────────────────────────────────────────────       │
@@ -168,7 +168,7 @@ tar -cf - \
         | Seed validators | 3 → 6 | Consensus + bootstrap peers | `seed-*.moltchain.network:8001` |
         | RPC relays | 1 → 2 | Stable HTTPS/WSS front door + upstream rotation | `rpc.moltchain.network`, `ws.moltchain.network` |
         | Custody host | 1 | Custody service + workers | `custody.moltchain.network` |
-        | Faucet host (testnet) | 1 | Test token distribution | `faucet.moltchain.network` |
+        | Faucet host (testnet) | 3 | Test token distribution (all VPSes) | `faucet.moltchain.network` (round-robin) |
 
         ### Phased rollout (exact order)
 
@@ -240,7 +240,9 @@ Set these up on your DNS provider. I recommend Cloudflare for geo-based load bal
 | **A** | `ws` | `<EU_VPS_IP>` | DNS only | 300 | WebSocket round-robin |
 | **A** | `ws` | `<ASIA_VPS_IP>` | DNS only | 300 | WebSocket round-robin |
 | **A** | `custody` | `<US_VPS_IP>` | Proxied | Auto | Custody bridge (single instance) |
-| **A** | `faucet` | `<US_VPS_IP>` | Proxied | Auto | Faucet (testnet only) |
+| **A** | `faucet` | `<US_VPS_IP>` | Proxied | Auto | Faucet round-robin (add all 3) |
+| **A** | `faucet` | `<EU_VPS_IP>` | Proxied | Auto | Faucet round-robin |
+| **A** | `faucet` | `<ASIA_VPS_IP>` | Proxied | Auto | Faucet round-robin |
 
 ### Recommended DNS layout for 3 → 6 validators + relays
 
@@ -545,7 +547,7 @@ cargo build --release
 # Copy binaries
 sudo cp target/release/moltchain-validator /opt/moltchain/bin/
 sudo cp target/release/moltchain-custody /opt/moltchain/bin/  # US VPS only
-sudo cp target/release/moltchain-faucet /opt/moltchain/bin/   # US VPS only
+sudo cp target/release/moltchain-faucet /opt/moltchain/bin/   # All VPSes
 sudo cp target/release/molt /opt/moltchain/bin/               # CLI (optional)
 sudo chmod +x /opt/moltchain/bin/*
 
@@ -764,40 +766,79 @@ The custody service calls each validator's threshold signer on port 9200. These 
 
 ## Phase 4 — Faucet Service
 
-### Faucet (US VPS, testnet only)
+### Faucet (all 3 VPSes, testnet only)
 
-The faucet is the only "frontend" that runs as a server process (Rust binary). It serves both the API and its own static UI.
+The faucet runs as a Rust binary on **all 3 VPSes**. DNS for `faucet.moltchain.network` round-robins to all 3, so every VPS must have the faucet running with the **same keypair**.
+
+#### 1. Copy faucet keypair to all VPSes
+
+Genesis creates the faucet keypair at `state-testnet/genesis-keys/faucet-<chain-id>.json`. Copy it to the expected service path on **each** VPS:
+
+```bash
+sudo cp /var/lib/moltchain/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
+       /var/lib/moltchain/faucet-keypair-testnet.json
+sudo chown moltchain:moltchain /var/lib/moltchain/faucet-keypair-testnet.json
+sudo chmod 600 /var/lib/moltchain/faucet-keypair-testnet.json
+```
+
+#### 2. Create systemd service (on each VPS)
 
 ```bash
 sudo tee /etc/systemd/system/moltchain-faucet.service <<'EOF'
 [Unit]
-Description=MoltChain Faucet
-After=moltchain-validator.service
+Description=MoltChain Faucet Service
+After=moltchain-validator-testnet.service
+Wants=moltchain-validator-testnet.service
 
 [Service]
 Type=simple
 User=moltchain
-ExecStart=/opt/moltchain/bin/moltchain-faucet
+Group=moltchain
+WorkingDirectory=/var/lib/moltchain
+ExecStart=/usr/local/bin/moltchain-faucet
 Restart=always
+RestartSec=5
 
-Environment=PORT=8901
+Environment=PORT=9100
 Environment=RPC_URL=http://127.0.0.1:8899
 Environment=NETWORK=testnet
 Environment=MAX_PER_REQUEST=10
-Environment=DAILY_LIMIT_PER_IP=10
+Environment=DAILY_LIMIT_PER_IP=150
 Environment=COOLDOWN_SECONDS=60
 Environment=AIRDROPS_FILE=/var/lib/moltchain/airdrops.json
+Environment=FAUCET_KEYPAIR=/var/lib/moltchain/faucet-keypair-testnet.json
+Environment=RUST_LOG=info
+Environment=TRUSTED_PROXY=127.0.0.1,::1
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/moltchain
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=moltchain-faucet
 
 [Install]
 WantedBy=multi-user.target
 EOF
+sudo systemctl daemon-reload
+sudo systemctl enable moltchain-faucet
+sudo systemctl start moltchain-faucet
 ```
 
-The faucet UI files should still be copied to the VPS since Caddy serves them alongside the API:
+#### 3. Copy faucet UI files (Caddy serves them alongside the API)
 
 ```bash
 sudo mkdir -p /opt/moltchain/www/faucet-ui
-sudo cp -r faucet/*.html faucet/*.css faucet/*.js /opt/moltchain/www/faucet-ui/ 2>/dev/null
+rsync -a faucet/ /opt/moltchain/www/faucet-ui/
+```
+
+The faucet frontend is also deployed to **Cloudflare Pages** (`moltchain-faucet` project):
+
+```bash
+npx wrangler pages deploy faucet/ --project-name moltchain-faucet
 ```
 
 ---
@@ -831,6 +872,7 @@ In the Cloudflare dashboard → **Workers & Pages** → **Create**:
 | `moltchain-programs` | `MoltChain/moltchain` | `programs` | `programs.moltchain.network` |
 | `moltchain-developers` | `MoltChain/moltchain` | `developers` | `developers.moltchain.network` |
 | `moltchain-monitoring` | `MoltChain/moltchain` | `monitoring` | `monitoring.moltchain.network` |
+| `moltchain-faucet` | `MoltChain/moltchain` | `faucet` | *(none — VPS Caddy serves frontend; Pages is backup)* |
 
 For each project:
 
@@ -2160,7 +2202,7 @@ ssh -p 2222 ubuntu@15.204.229.189 "
   RPC_URL=http://127.0.0.1:8899 \
   NETWORK=testnet \
   MAX_PER_REQUEST=10 \
-  DAILY_LIMIT_PER_IP=50 \
+  DAILY_LIMIT_PER_IP=150 \
   COOLDOWN_SECONDS=60 \
   AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
   FAUCET_KEYPAIR=\$HOME/moltchain/data/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
@@ -2177,7 +2219,7 @@ ssh -p 2222 ubuntu@37.59.97.61 '
   RPC_URL=http://127.0.0.1:8899 \
   NETWORK=testnet \
   MAX_PER_REQUEST=10 \
-  DAILY_LIMIT_PER_IP=50 \
+  DAILY_LIMIT_PER_IP=150 \
   COOLDOWN_SECONDS=60 \
   AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
   FAUCET_KEYPAIR=/home/ubuntu/moltchain/data/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
@@ -2194,7 +2236,7 @@ ssh -p 2222 ubuntu@15.235.142.253 '
   RPC_URL=http://127.0.0.1:8899 \
   NETWORK=testnet \
   MAX_PER_REQUEST=10 \
-  DAILY_LIMIT_PER_IP=50 \
+  DAILY_LIMIT_PER_IP=150 \
   COOLDOWN_SECONDS=60 \
   AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
   FAUCET_KEYPAIR=/home/ubuntu/moltchain/data/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
