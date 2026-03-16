@@ -216,8 +216,8 @@ echo "┌─ Global Fixes (GX-02, GX-03, GX-04)"
 check "GX-02: tx_to_rpc_json status documented" \
   "grep -q 'AUDIT-FIX GX-02' '$ROOT/rpc/src/lib.rs'"
 
-check "GX-03: MoltCoin initial supply = 1B" \
-  "grep -q '1_000_000_000_000_000_000.*1B' '$ROOT/contracts/moltcoin/src/lib.rs'"
+check "GX-03: MoltCoin initial supply = 500M" \
+  "grep -q '500_000_000_000_000_000.*500M' '$ROOT/contracts/moltcoin/src/lib.rs'"
 
 check "GX-04: mint() documented re: native vs wrapper" \
   "grep -q 'AUDIT-FIX GX-04' '$ROOT/contracts/moltcoin/src/lib.rs'"

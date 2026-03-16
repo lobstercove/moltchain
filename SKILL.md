@@ -42,7 +42,7 @@
 | Smart contracts | WASM (Rust → wasm32-unknown-unknown) |
 | ZK proofs | Groth16 over BN254 (Poseidon hashing) |
 | RPC | JSON-RPC 2.0 on port 8899 |
-| Solana compat RPC | `POST /solana` on port 8899 |
+| Solana-format RPC | `POST /solana-compat` on port 8899 (legacy alias: `/solana`) |
 | EVM compat RPC | `POST /evm` on port 8899 |
 | WebSocket | Port 8900 |
 | Explorer | Port 3001 |
@@ -142,7 +142,7 @@ Instruction {
 
 | Parameter | Value |
 |-----------|-------|
-| Total supply | 1,000,000,000 MOLT (fixed, not mintable) |
+| Total supply | 500,000,000 MOLT genesis + inflationary minting (4% initial, 0.15% floor) |
 | Base fee | 0.001 MOLT (1,000,000 shells) |
 | Fee distribution | 40% burn, 30% block producer, 10% voters, 10% treasury, 10% community |
 | Contract deploy fee | 25 MOLT |
@@ -1151,7 +1151,10 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `getBridgeDeposit` | `[deposit_id]` (UUID) | Deposit object |
 | `getBridgeDepositsByRecipient` | `[address, {limit?}]` (max 100) | Deposits array |
 
-### Solana-Compatible JSON-RPC (`POST /solana`)
+### Solana-Format JSON-RPC (`POST /solana-compat`)
+
+> Accepts MoltChain transactions in Solana wire format. Does **not** accept native Solana transactions.
+> Legacy alias `/solana` is supported for backward compatibility.
 
 | Method | Description |
 |--------|-------------|
