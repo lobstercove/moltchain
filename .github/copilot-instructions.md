@@ -119,8 +119,8 @@ Every change must meet these criteria. No exceptions:
 
 ## Current Status
 
-- **Phase**: Phase 2 Network Expansion (Phase 1 Live Foundation complete)
-- **Deployment**: Phase 4 done (frontend config fixes), Phase 0-3 pending (DNS, VPS, genesis)
+- **Version**: v0.4.0 (Blockchain Alignment Complete — all 39 findings resolved)
+- **Testnet**: Live on 3 VPSes (US/EU/SEA) with BFT consensus, 29 contracts at genesis
 - **Contracts**: 29 deployed at genesis, 7 more planned for Phase 2 Agent Economy
 - See `DEPLOYMENT_STATUS.md` for the detailed task tracker
 
