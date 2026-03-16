@@ -15,7 +15,7 @@
 | Smart contracts | WASM (Rust → wasm32-unknown-unknown) |
 | ZK proofs | Groth16 over BN254 |
 | Contracts at genesis | 29 |
-| RPC | JSON-RPC 2.0 port 8899 + Solana compat `/solana` + EVM compat `/evm` |
+| RPC | JSON-RPC 2.0 port 8899 + Solana-format `/solana-compat` + EVM compat `/evm` |
 | WebSocket | Port 8900 |
 
 ## Repository Structure
