@@ -119,7 +119,7 @@ Every change must meet these criteria. No exceptions:
 
 ## Current Status
 
-- **Version**: v0.4.0 (Blockchain Alignment Complete — all 39 findings resolved)
+- **Version**: v0.4.5 (Production Hardening — epoch-frozen validator sets, DeregisterValidator, commit cert cross-ref)
 - **Testnet**: Live on 3 VPSes (US/EU/SEA) with BFT consensus, 29 contracts at genesis
 - **Contracts**: 29 deployed at genesis, 7 more planned for Phase 2 Agent Economy
 - See `DEPLOYMENT_STATUS.md` for the detailed task tracker
