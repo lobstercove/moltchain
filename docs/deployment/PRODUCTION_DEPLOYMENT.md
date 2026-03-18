@@ -2,7 +2,7 @@
 
 > Full step-by-step guide for deploying MoltChain across seed + relay infrastructure with 3 to 6 validators using the `moltchain.network` domain. Covers genesis bootstrapping, DNS, seed discovery, RPC/WS rotation, custody bridge, faucet, and how agent-run validators connect.
 
-**Release-ready status (Feb 24, 2026):** main validated and published at commit `4059403`.
+**Release-ready status (Mar 19, 2026):** v0.4.5 validated on a fresh 3-VPS redeploy using repo-local runtime paths, explicit `moltchain-genesis` initialization, and direct validator launches against `~/moltchain/data/state-{testnet,mainnet}`.
 
 ---
 
@@ -1827,43 +1827,46 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 
 ## Clean Slate Deployment Runbook
 
-> **Last validated: March 10, 2026** — This is the exact, battle-tested procedure for wiping all blockchain state and redeploying MoltChain from scratch across all VPS nodes. Every step has been validated in production. Follow them in order.
+> **Last validated: March 19, 2026** — This is the exact, battle-tested procedure for wiping all blockchain state and redeploying MoltChain from scratch across all 3 VPS nodes. It reflects the runtime layout actually used on the live hosts during the successful v0.4.5 clean redeploy.
 
 ### ⚠️ Critical Knowledge — Read Before Starting
 
 These are hard-won lessons from repeated deployment failures. Understand them before proceeding.
 
-#### 1. Genesis is created by `moltchain-start.sh`, NOT by systemd services
+#### 1. Genesis must be created explicitly with `moltchain-genesis`
 
-The **systemd services** (`moltchain-validator-testnet`, `moltchain-validator-mainnet`) simply start the validator binary. They do **NOT** create genesis. If you start them on a freshly wiped VPS, the validator will either:
-- Try to sync from seed peers (and fail because no network exists yet), or
-- Exit with "No genesis block found and no seed peers available"
+On a freshly wiped node, starting `moltchain-validator` directly is not enough to bootstrap a new chain. If seed peers are visible, the validator enters join mode and waits for genesis sync forever. For a clean network boot, create slot 0 first:
 
-**Genesis creation requires the `moltchain-genesis` binary**, which is called automatically by the `moltchain-start.sh` script. Always use the start script for first boot.
-
-```
-✅  bash moltchain-start.sh testnet     ← Creates genesis + starts validator
-❌  sudo systemctl start moltchain-validator-testnet   ← Does NOT create genesis
+```bash
+./target/release/moltchain-genesis --network testnet --db-path ./data/state-testnet
+./target/release/moltchain-genesis --network mainnet --db-path ./data/state-mainnet
 ```
 
-#### 2. seeds.json and the "sync trap"
+Only after those commands succeed should you launch `moltchain-validator` against the matching `--db-path`.
 
-`seeds.json` lists known peers (e.g., `15.204.229.189:7001`). When the validator binary starts and finds these peers but has no local state, it enters sync mode — trying to download the chain from those peers. If the peer network doesn't exist yet, it loops forever.
+#### 2. Seed peers cause the "join on empty state" trap
 
-This is **not a problem in practice** because `moltchain-start.sh` handles it: on genesis boot it creates state BEFORE starting the validator, and on join boot (`--bootstrap`) it syncs from the specified peer. The trap only bites if you bypass the script and start the validator binary directly (e.g., via systemd on a fresh VPS).
+The validator checks for existing block state first. If there is no local slot 0 and any seeds are reachable, it assumes this node should join an existing network. Those seeds can come from:
+- `--bootstrap-peers`
+- `/etc/moltchain/seeds.json`
+- embedded/default seed configuration
 
-Don't remove `seeds.json` — the validator uses it for peer discovery after initial boot.
+That means an empty node can sit forever at `tip: 0` unless `moltchain-genesis` has already created the database locally.
 
-#### 3. Two different data paths — don't mix them up
+#### 3. The canonical live runtime path is repo-local
 
-| Method | Testnet state path | Mainnet state path |
-|---|---|---|
-| `moltchain-start.sh` | `~/moltchain/data/state-testnet/` | `~/moltchain/data/state-mainnet/` |
-| systemd services | `/var/lib/moltchain/state-testnet/` | `/var/lib/moltchain/state-mainnet/` |
+The clean v0.4.5 redeploy that restored stable consensus did **not** use the dormant systemd layout under `/var/lib/moltchain`. The live validator layout was:
 
-If you create genesis via the start script, the state lives in `~/moltchain/data/state-{port}/`. The systemd services look in `/var/lib/moltchain/state-{network}/`. Don't flush one expecting the other to be affected.
+| Item | Path |
+|---|---|
+| Repo root | `~/moltchain/` |
+| Testnet DB | `~/moltchain/data/state-testnet/` |
+| Mainnet DB | `~/moltchain/data/state-mainnet/` |
+| Testnet log | `/tmp/moltchain-testnet/validator.log` |
+| Mainnet log | `/tmp/moltchain-mainnet/validator.log` |
+| Binaries | `~/moltchain/target/release/moltchain-*` |
 
-**Recommendation:** Use `moltchain-start.sh` for all VPS deployments. It stores state at `~/moltchain/data/state-{port}/` and manages the validator process via `scripts/validator-supervisor.sh` with auto-restart.
+If you wipe or inspect `/var/lib/moltchain` without touching `~/moltchain/data/state-*`, you are looking at the wrong runtime tree for this deployment path.
 
 #### 4. US VPS requires binance.us oracle URLs (geo-blocking)
 
@@ -1876,24 +1879,21 @@ export MOLTCHAIN_ORACLE_REST_URL="https://api.binance.us/api/v3/ticker/price?sym
 
 The EU VPS (37.59.97.61) can use the default `binance.com` URLs. These env vars must be set **before** starting the validator process. The start script does NOT set them — you must export them in the shell before running it, or set them in the validator's environment.
 
-#### 5. One chain — genesis VPS first, all others join
+#### 5. One chain per network: US creates genesis, EU and SEA join
 
-There is ONE testnet chain and ONE mainnet chain. The first VPS (US) creates genesis. Every other VPS joins that chain by syncing from the genesis VPS:
+There is one fresh testnet and one fresh mainnet. The validated order is:
 
 ```bash
-# US VPS — creates genesis (first boot, no --bootstrap)
-bash moltchain-start.sh testnet
+# US VPS
+./target/release/moltchain-genesis --network testnet --db-path ./data/state-testnet
+./target/release/moltchain-genesis --network mainnet --db-path ./data/state-mainnet
 
-# EU VPS — joins the existing chain (testnet P2P = 7001, mainnet P2P = 8001)
-bash moltchain-start.sh testnet --bootstrap 15.204.229.189:7001
-
-# SEA VPS — also joins
-bash moltchain-start.sh testnet --bootstrap 15.204.229.189:7001
+# EU / SEA VPS
+./target/release/moltchain-validator --network testnet ... --bootstrap-peers 15.204.229.189:7001
+./target/release/moltchain-validator --network mainnet ... --bootstrap-peers 15.204.229.189:8001
 ```
 
-**Port numbers:** `moltchain-start.sh` uses P2P port **7001** for testnet and **8001** for mainnet. When bootstrapping, use the P2P port, not the RPC port.
-
-If you accidentally run `moltchain-start.sh` without `--bootstrap` on a second VPS, it creates a separate chain with a different genesis hash. Those two chains cannot peer. Wipe the state and re-run with `--bootstrap`.
+Do not generate independent genesis on EU or SEA. They must join the US-created chain for both networks.
 
 #### 6. Cross-compilation from macOS to Linux does NOT work
 
@@ -1975,69 +1975,42 @@ chmod +x /tmp/stop.sh && bash /tmp/stop.sh'
 | SEA VPS | `ubuntu@15.235.142.253` (SSH port 2222) — joins US |
 | SSH command | `ssh -p 2222 ubuntu@<IP>` |
 | Source repo | `lobstercove/moltchain` on GitHub (rsync to VPS — no git on VPS) |
-| Start script | `moltchain-start.sh` — handles genesis + validator + contract deployment |
-| Data dir (start script) | `~/moltchain/data/state-{testnet,mainnet}/` |
+| Genesis binary | `~/moltchain/target/release/moltchain-genesis` |
+| Validator binary | `~/moltchain/target/release/moltchain-validator` |
+| Data dir | `~/moltchain/data/state-{testnet,mainnet}/` |
 | P2P ports | Testnet: **7001**, Mainnet: **8001** |
 | RPC ports | Testnet: **8899**, Mainnet: **9899** |
+| WS ports | Testnet: **8900**, Mainnet: **9900** |
 
-### Step 0: Stop Everything
+### Step 0: Stop Existing Processes
 
-Kill all validator processes on both VPS and local machine.
-
-> **Warning:** Running `pkill -f moltchain` over SSH will kill the SSH session itself (the command line contains "moltchain" since you're cd'd into `~/moltchain`). Use `pgrep` to find PIDs and `kill` them individually, or write a script to `/tmp/` and execute it.
+Kill validators and ancillary services on each VPS without using broad `pkill -f` patterns that can self-match the SSH command.
 
 ```bash
-# ── Local machine ──
-pkill -f moltchain-validator 2>/dev/null || true
-for port in 7001 8001 8899 8900 9899 9900; do
-  lsof -i ":$port" -t 2>/dev/null | xargs kill -9 2>/dev/null
-done
-
-# ── Each VPS (run the same commands on US, EU, and SEA) ──
-# Write stop script to avoid SSH self-kill
-ssh -p 2222 ubuntu@<VPS_IP> 'cat > /tmp/stop-moltchain.sh << '\''SCRIPT'\''
-#!/bin/bash
+ssh -p 2222 ubuntu@<VPS_IP> 'set +H
 for proc in moltchain-validator moltchain-faucet moltchain-custody validator-supervisor; do
-  pids=$(pgrep -f "$proc" 2>/dev/null)
+  pids=$(pgrep -f "$proc" 2>/dev/null || true)
   if [ -n "$pids" ]; then
-    echo "Stopping $proc: $pids"
-    echo "$pids" | xargs kill 2>/dev/null
+    echo "$pids" | xargs kill 2>/dev/null || true
   fi
 done
 sleep 2
-pgrep -af moltchain || echo "all stopped"
-SCRIPT
-chmod +x /tmp/stop-moltchain.sh && bash /tmp/stop-moltchain.sh'
+pgrep -af moltchain || true'
 ```
 
-### Step 1: Wipe All State
+### Step 1: Wipe Repo-Local State
 
-Remove all blockchain state, logs, custody databases, and TOFU peer fingerprint caches.
+Remove repo-local chain state, custody state, and transient logs on all three VPSes.
 
 ```bash
-# ── Local machine ──
-rm -rf ./data/state-* 2>/dev/null
-
-# ── Each VPS (run on US, EU, and SEA) ──
-ssh -p 2222 ubuntu@<VPS_IP> "
-  # Start-script data paths
+ssh -p 2222 ubuntu@<VPS_IP> '
   rm -rf ~/moltchain/data/state-testnet ~/moltchain/data/state-mainnet
-
-  # Custody databases
   rm -rf ~/moltchain/data/custody-testnet ~/moltchain/data/custody-mainnet
-
-  # Validator logs (actual location used by moltchain-start.sh)
   rm -rf /tmp/moltchain-testnet /tmp/moltchain-mainnet
-
-  # TOFU peer fingerprint cache — MUST clear when validator identities change
   rm -f ~/.moltchain/peer_fingerprints.json
-
-  # Systemd data paths (in case they were used previously)
-  sudo rm -rf /var/lib/moltchain/state-testnet /var/lib/moltchain/state-mainnet
-  sudo rm -rf /var/lib/moltchain/custody-db /var/lib/moltchain/custody-db-mainnet
-
-  echo 'state wiped'
-"
+  mkdir -p ~/moltchain/data
+  echo state wiped
+'
 ```
 
 > **TOFU fingerprint cache:** Each validator stores peer identity fingerprints in `~/.moltchain/peer_fingerprints.json`. After a wipe, validators get new identities. If old fingerprints remain, the P2P layer rejects the new identity ("TOFU verification failed"). Always clear this file when wiping state.
@@ -2060,118 +2033,105 @@ done
 
 ### Step 3: Build on Each VPS
 
-Build the validator, faucet, and custody binaries. Takes 4-7 minutes per VPS.
+Build the validator and genesis binaries first. Build faucet and custody if you plan to restart ancillary services in the same maintenance window.
 
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> "
   cd ~/moltchain && source ~/.cargo/env
-  cargo build --release --bin moltchain-validator --bin moltchain-genesis --bin moltchain-faucet --bin moltchain-custody
+  cargo build --release --bin moltchain-validator --bin moltchain-genesis
 "
 ```
 
 Verify:
 ```bash
-ssh -p 2222 ubuntu@<VPS_IP> "ls -la ~/moltchain/target/release/moltchain-{validator,genesis,faucet,custody}"
+ssh -p 2222 ubuntu@<VPS_IP> "ls -la ~/moltchain/target/release/moltchain-{validator,genesis}"
 ```
 
-### Step 4: Start Genesis — US VPS (Testnet)
+### Step 4: Initialize Genesis Databases on US VPS
 
-**Use `moltchain-start.sh`**, not systemd. Set binance.us oracle env vars first.
+Run `moltchain-genesis` directly for both networks before starting any validator process.
 
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
   cd ~/moltchain
-
-  # US requires binance.us (binance.com returns HTTP 451)
-  export MOLTCHAIN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
-  export MOLTCHAIN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
-
-  bash moltchain-start.sh testnet
+  ./target/release/moltchain-genesis --network testnet --db-path ./data/state-testnet
+  ./target/release/moltchain-genesis --network mainnet --db-path ./data/state-mainnet
 "
 ```
 
-What happens:
-1. Detects empty `data/state-testnet/` → enters **GENESIS** mode
-2. Fetches live prices from Binance for genesis pool seeding
-3. Runs `moltchain-genesis --network testnet --db-path ./data/state-testnet`
-4. Creates genesis block, treasury keys, deploys 29 contracts, 7 trading pairs, 7 AMM pools
-5. Starts validator via `validator-supervisor.sh` (auto-restarts on crash)
-6. Runs `first-boot-deploy.sh` in background (contract initialization)
+This creates the fresh slot-0 database for both networks, writes the genesis wallet and keys under `~/moltchain/data/state-*`, and avoids the empty-state join trap.
 
-Verify testnet is running:
-```bash
-ssh -p 2222 ubuntu@15.204.229.189 "
-  tail -10 /tmp/moltchain-testnet/validator.log
-  # Look for: 'Binance WebSocket connected' and 'HEARTBEAT' lines
-"
-```
+### Step 5: Start US Validators Against the Genesis DBs
 
-### Step 5: Start Genesis — US VPS (Mainnet)
-
-Same procedure for mainnet (ports 9000/9899/9900):
+Launch the validators directly, writing logs to `/tmp/moltchain-{network}/validator.log`.
 
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
   cd ~/moltchain
-
-  export MOLTCHAIN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
-  export MOLTCHAIN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
-
-  bash moltchain-start.sh mainnet
+  mkdir -p /tmp/moltchain-testnet /tmp/moltchain-mainnet
+  setsid sh -c './target/release/moltchain-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 > /tmp/moltchain-testnet/validator.log 2>&1' >/dev/null 2>&1 &
+  setsid sh -c './target/release/moltchain-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 > /tmp/moltchain-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
 "
 ```
 
-Verify both networks:
+Verify US is advancing:
+
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
-  pgrep -af moltchain-validator
-  # Should show 2 supervisor + 2 validator processes (testnet + mainnet)
+  curl -s -X POST http://127.0.0.1:8899 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[]}'
+  echo
+  curl -s -X POST http://127.0.0.1:9899 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[]}'
+  echo
+  tail -n 20 /tmp/moltchain-testnet/validator.log
+  tail -n 20 /tmp/moltchain-mainnet/validator.log
 "
 ```
 
-### Step 6: Join Chain — EU VPS (Testnet + Mainnet)
+### Step 6: Join EU and SEA from US
 
-EU VPS joins the chains already created by US VPS. Uses `--bootstrap` to sync genesis + state from the US peer. No oracle env vars needed (binance.com works from EU).
+Start EU and SEA validators against empty local DBs, but with explicit US bootstrap peers.
 
 ```bash
 ssh -p 2222 ubuntu@37.59.97.61 "
   cd ~/moltchain
-  bash moltchain-start.sh testnet --bootstrap 15.204.229.189:7001
+  mkdir -p /tmp/moltchain-testnet /tmp/moltchain-mainnet
+  setsid sh -c './target/release/moltchain-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:7001 > /tmp/moltchain-testnet/validator.log 2>&1' >/dev/null 2>&1 &
+  setsid sh -c './target/release/moltchain-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:8001 > /tmp/moltchain-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
 "
 
-# Wait for testnet sync to complete, then join mainnet
-ssh -p 2222 ubuntu@37.59.97.61 "
+ssh -p 2222 ubuntu@15.235.142.253 "
   cd ~/moltchain
-  bash moltchain-start.sh mainnet --bootstrap 15.204.229.189:8001
+  mkdir -p /tmp/moltchain-testnet /tmp/moltchain-mainnet
+  setsid sh -c './target/release/moltchain-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:7001 > /tmp/moltchain-testnet/validator.log 2>&1' >/dev/null 2>&1 &
+  setsid sh -c './target/release/moltchain-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:8001 > /tmp/moltchain-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
 "
 ```
 
-### Step 6b: Join Chain — SEA VPS (Testnet + Mainnet)
+EU and SEA will start at slot 0, fetch genesis/state from US, submit `RegisterValidator`, then move into the active proposer set once their on-chain stake is committed.
 
-Same as EU — joins via `--bootstrap`:
+### Step 7: Verify 3-Node Convergence
 
-```bash
-ssh -p 2222 ubuntu@15.235.142.253 "
-  cd ~/moltchain
-  nohup bash moltchain-start.sh testnet --bootstrap 15.204.229.189:7001 > /tmp/start-testnet.log 2>&1 & disown
-"
-
-# Wait for testnet sync, then mainnet
-ssh -p 2222 ubuntu@15.235.142.253 "
-  cd ~/moltchain
-  nohup bash moltchain-start.sh mainnet --bootstrap 15.204.229.189:8001 > /tmp/start-mainnet.log 2>&1 & disown
-"
-```
-
-Verify all 6 validators across all VPS:
 ```bash
 for VPS_IP in 15.204.229.189 37.59.97.61 15.235.142.253; do
   echo "=== $VPS_IP ==="
-  ssh -p 2222 "ubuntu@${VPS_IP}" "pgrep -c -f moltchain-validator && echo 'validators running'"
+  ssh -p 2222 "ubuntu@${VPS_IP}" "
+    echo testnet && curl -s -X POST http://127.0.0.1:8899 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSlot\",\"params\":[]}'
+    echo
+    echo mainnet && curl -s -X POST http://127.0.0.1:9899 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSlot\",\"params\":[]}'
+    echo
+    tail -n 20 /tmp/moltchain-testnet/validator.log
+    tail -n 20 /tmp/moltchain-mainnet/validator.log
+  "
 done
 ```
 
-### Step 7: Start Faucet
+Healthy steady-state signals:
+- all three nodes report advancing slots on both networks
+- logs show `eligible=3`
+- proposers rotate across US, EU, and SEA
+- BFT messages are broadcast to `2 peers`
+
+### Step 8: Start Faucet and Custody After Validator Health Is Stable
 
 Start the testnet faucet on all 3 VPSes. The faucet keypair is generated during genesis on the US VPS.
 
@@ -2247,7 +2207,7 @@ ssh -p 2222 ubuntu@15.235.142.253 '
 '
 ```
 
-### Step 7b: Start Custody
+### Step 8b: Start Custody
 
 Start custody bridge on US VPS for testnet and mainnet. Currently custody runs on US only.
 
@@ -2323,7 +2283,7 @@ ssh -p 2222 ubuntu@15.204.229.189 "
 # '
 ```
 
-### Step 8: Verify Everything
+### Step 9: Verify Ancillary Services
 
 ```bash
 for VPS_IP in 15.204.229.189 37.59.97.61 15.235.142.253; do
