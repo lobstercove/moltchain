@@ -32,6 +32,13 @@ if [ "$VPS_MODE" = false ] && systemctl list-unit-files 'moltchain-validator-*' 
 	VPS_MODE=true
 fi
 
+if [ "$VPS_MODE" = true ]; then
+	echo -e "${RED}CRITICAL: reset-blockchain.sh VPS mode is disabled for v0.4.6.${NC}"
+	echo "This script's systemd restart and genesis recovery path is not aligned with the validated production runbook."
+	echo "Use docs/deployment/PRODUCTION_DEPLOYMENT.md and deploy/setup.sh for production resets instead."
+	exit 1
+fi
+
 if [ "$RESTART" = true ] && [ "$NETWORK" = "all" ]; then
 	NETWORK="testnet"
 fi
@@ -70,15 +77,19 @@ fi
 pkill -9 -f moltchain-validator 2>/dev/null || true
 pkill -9 -f moltchain-faucet    2>/dev/null || true
 pkill -9 -f moltchain-custody   2>/dev/null || true
+pkill -9 -f validator-supervisor.sh 2>/dev/null || true
+pkill -9 -f run-validator.sh        2>/dev/null || true
 sleep 1
 
 if pgrep -f "moltchain-" >/dev/null 2>&1; then
 	echo -e "  ${YELLOW}Retrying kill...${NC}"
 	pkill -9 -f "moltchain-" 2>/dev/null || true
+	pkill -9 -f validator-supervisor.sh 2>/dev/null || true
+	pkill -9 -f run-validator.sh        2>/dev/null || true
 	sleep 2
 fi
 
-LEFTOVER=$(pgrep -f "moltchain-(validator|faucet|custody)" 2>/dev/null || true)
+LEFTOVER=$(pgrep -f "(moltchain-(validator|faucet|custody)|validator-supervisor\.sh|run-validator\.sh)" 2>/dev/null || true)
 if [ -n "$LEFTOVER" ]; then
 	echo -e "  ${YELLOW}Warning: PIDs still present: $LEFTOVER${NC}"
 else

@@ -46,7 +46,7 @@ console.log('\n── C22.1: moltpunks panic message ──');
 // ═══════════════════════════════════════════════════════════════════════════
 console.log('\n── C22.5: faucet graceful exit on bad config ──');
 {
-    const src = fs.readFileSync(path.join(ROOT, 'faucet', 'src', 'main.rs'), 'utf8');
+    const src = fs.readFileSync(path.join(ROOT, 'faucet-service', 'src', 'main.rs'), 'utf8');
 
     // Count panic! calls related to keypair config
     const keypairPanics = src.split('\n').filter(l =>
@@ -124,7 +124,7 @@ console.log('\n── C22.7: favicon.ico presence ──');
 console.log('\n── CC-1: No todo!/unimplemented! in production Rust ──');
 {
     const rustDirs = ['core/src', 'validator/src', 'rpc/src', 'cli/src', 'p2p/src',
-                      'faucet/src', 'custody/src', 'sdk/src'];
+        'faucet/src', 'custody/src', 'sdk/src'];
     let todoCount = 0;
     let unimplCount = 0;
 
@@ -194,7 +194,7 @@ console.log('\n── CC-4: shared-theme.css consistency ──');
 {
     // monitoring uses standalone css/monitoring.css (self-contained dashboard)
     const frontends = ['dex', 'wallet', 'explorer', 'developers', 'marketplace',
-                       'website', 'faucet'];
+        'website', 'faucet'];
     let missing = [];
     for (const dir of frontends) {
         const html = fs.readFileSync(path.join(ROOT, dir, 'index.html'), 'utf8');
@@ -217,7 +217,7 @@ console.log('\n── CC-4: shared-theme.css consistency ──');
 console.log('\n── CC-5: No private key leaks in logs ──');
 {
     const sensitiveFiles = [
-        'rpc/src/lib.rs', 'faucet/src/main.rs', 'custody/src/main.rs',
+        'rpc/src/lib.rs', 'faucet-service/src/main.rs', 'custody/src/main.rs',
         'validator/src/main.rs',
     ];
     let leaks = 0;

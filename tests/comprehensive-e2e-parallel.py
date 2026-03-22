@@ -65,6 +65,7 @@ SYMBOL_TO_DIR = {
     "PUNKS": "moltpunks", "CLAWPAY": "clawpay", "CLAWPUMP": "clawpump",
     "CLAWVAULT": "clawvault", "COMPUTE": "compute_market", "REEF": "reef_storage",
     "PREDICT": "prediction_market", "BOUNTY": "bountyboard", "AUCTION": "moltauction",
+    "WBNB": "wbnb_token", "SHIELDED": "shielded_pool",
 }
 
 # Dispatcher contracts (use opcode ABI via call())
@@ -442,6 +443,35 @@ def build_named_scenarios(
             {"fn": "get_reserve_ratio", "args": {}},
             {"fn": "attest_reserves", "args": {"attester": dp, "reserve_amount": 1_000_000, "supply_snapshot": 999_000}},
             {"fn": "transfer_admin", "args": {"caller": dp, "new_admin": dp}},
+        ],
+        "wbnb_token": [
+            {"fn": "initialize", "args": {"admin": dp}},
+            {"fn": "mint", "args": {"caller": dp, "to": dp, "amount": 1_000_000}},
+            {"fn": "transfer", "args": {"from": dp, "to": sp, "amount": 10_000}},
+            {"fn": "approve", "args": {"owner": dp, "spender": sp, "amount": 5_000}},
+            {"fn": "burn", "args": {"caller": dp, "amount": 1_000}},
+            {"fn": "balance_of", "args": {"account": dp}},
+            {"fn": "total_supply", "args": {}},
+            {"fn": "allowance", "args": {"owner": dp, "spender": sp}},
+            {"fn": "total_minted", "args": {}},
+            {"fn": "total_burned", "args": {}},
+            {"fn": "transfer_from", "args": {"caller": sp, "from": dp, "to": sp, "amount": 100}, "actor": "secondary"},
+            {"fn": "emergency_pause", "args": {"caller": dp}},
+            {"fn": "emergency_unpause", "args": {"caller": dp}},
+            {"fn": "get_transfer_count", "args": {}},
+            {"fn": "get_attestation_count", "args": {}},
+            {"fn": "get_epoch_remaining", "args": {}},
+            {"fn": "get_last_attestation_slot", "args": {}},
+            {"fn": "get_reserve_ratio", "args": {}},
+            {"fn": "attest_reserves", "args": {"attester": dp, "reserve_amount": 1_000_000, "supply_snapshot": 999_000}},
+            {"fn": "transfer_admin", "args": {"caller": dp, "new_admin": dp}},
+        ],
+        "shielded_pool": [
+            {"fn": "initialize", "args": {"admin_ptr": dp}},
+            {"fn": "get_pool_stats", "args": {}},
+            {"fn": "get_merkle_root", "args": {}},
+            {"fn": "pause", "args": {}},
+            {"fn": "unpause", "args": {}},
         ],
         "clawpump": [
             {"fn": "initialize", "args": {"admin": dp}},

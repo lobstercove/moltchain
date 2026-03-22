@@ -4,6 +4,8 @@
 
 **Release-ready status (Mar 19, 2026):** v0.4.5 validated on a fresh 3-VPS redeploy using repo-local runtime paths, explicit `moltchain-genesis` initialization, and direct validator launches against `~/moltchain/data/state-{testnet,mainnet}`.
 
+> Canonical v0.4.5 production path: prefer `deploy/setup.sh`, the network-specific `/etc/moltchain/env-*` files it generates, and the clean-slate runbook later in this document. Older examples in this guide that reference `/opt/moltchain`, single-unit `moltchain-validator.service`, or ad hoc setup scripts should be treated as historical context unless they were explicitly updated after Mar 19, 2026.
+
 ---
 
 ## Table of Contents
@@ -42,7 +44,7 @@ MoltChain compiles into **4 separate binaries** from the workspace:
 
 | Binary | Crate | Port | Runs On | Description |
 |---|---|---|---|---|
-| `moltchain-validator` | `validator` | P2P: 8000, RPC: 8899, WS: 8900, Signer: 9200 | Every VPS | Validator + built-in RPC + WebSocket + threshold signer. **This is the main binary.** |
+| `moltchain-validator` | `validator` | P2P: 7001/8001, RPC: 8899/9899, WS: 8900/9900, Signer: 9201 | Every VPS | Validator + built-in RPC + WebSocket + threshold signer. **This is the main binary.** Ports are testnet/mainnet respectively. |
 | `moltchain-custody` | `custody` | 9105 | Seed VPS only (1 instance) | Bridge service for Solana/Ethereum ↔ MoltChain deposits & withdrawals |
 | `moltchain-faucet` | `faucet` | 9100 | All VPSes (testnet only) | MOLT faucet for testnet. Refuses to run on mainnet. Same keypair copied to each VPS. |
 | `molt` | `cli` | — | Dev machines | CLI tool for sending transactions, querying state. NOT a server. |
@@ -138,7 +140,7 @@ tar -cf - \
 │ Validator  :7001/:8001│◄──►│ Validator  :7001/:8001│◄──►│ Validator  :7001/:8001│
 │ RPC        :8899   │    │ RPC        :8899   │    │ RPC        :8899   │
 │ WebSocket  :8900   │    │ WebSocket  :8900   │    │ WebSocket  :8900   │
-│ Signer     :9200   │    │ Signer     :9200   │    │ Signer     :9200   │
+│ Signer     :9201   │    │ Signer     :9201   │    │ Signer     :9201   │
 │                    │    │ Custody    :9105   │    │                    │
 │                    │    │ Faucet     :9100   │    │                    │
 │ Caddy      :443    │    │ Caddy      :443    │    │ Caddy      :443    │
@@ -195,7 +197,7 @@ tar -cf - \
 
         ### Seed vs relay traffic policy
 
-        - **P2P bootstrap**: always direct to `seed-*` records on port `8000`
+        - **P2P bootstrap**: always direct to `seed-*` records on port `7001` (testnet) / `8001` (mainnet)
         - **Wallet/app/agent RPC**: route via relays (`rpc.moltchain.network`)
         - **WS subscriptions**: route via relays (`ws.moltchain.network`) where possible; client-side fallback list remains recommended
 
@@ -301,14 +303,29 @@ On the free plan, DNS round-robin works fine — clients get a random IP from th
 
 ## Port Map
 
+**Testnet:**
+
 | Service | Port | Protocol | Exposed Publicly? |
 |---|---|---|---|
-| P2P (QUIC) | **8000** | UDP/TCP | YES — other validators must reach this |
+| P2P (QUIC) | **7001** | UDP/TCP | YES — other validators must reach this |
 | RPC (HTTP) | **8899** | TCP | YES — via Caddy → `rpc.moltchain.network` |
 | WebSocket | **8900** | TCP | YES — via Caddy → `ws.moltchain.network` |
-| Threshold Signer | **9200** | TCP | **NO** — private network only (other VPS signers) |
+| Threshold Signer | **9201** | TCP | **NO** — loopback only (inter-signer traffic) |
 | Custody API | **9105** | TCP | YES — via Caddy → `custody.moltchain.network` |
 | Faucet API | **9100** | TCP | YES — via Caddy → `faucet.moltchain.network` |
+| Caddy (HTTPS) | **443** | TCP | YES |
+| Caddy (HTTP→HTTPS) | **80** | TCP | YES (redirect only) |
+
+**Mainnet:**
+
+| Service | Port | Protocol | Exposed Publicly? |
+|---|---|---|---|
+| P2P (QUIC) | **8001** | UDP/TCP | YES — other validators must reach this |
+| RPC (HTTP) | **9899** | TCP | YES — via Caddy → `rpc.moltchain.network` |
+| WebSocket | **9900** | TCP | YES — via Caddy → `ws.moltchain.network` |
+| Threshold Signer | **9201** | TCP | **NO** — loopback only (inter-signer traffic) |
+| Custody API | **9105** | TCP | YES — via Caddy → `custody.moltchain.network` |
+| Faucet API | — | — | Mainnet has no faucet |
 | Caddy (HTTPS) | **443** | TCP | YES |
 | Caddy (HTTP→HTTPS) | **80** | TCP | YES (redirect only) |
 
@@ -449,7 +466,7 @@ On first boot with no existing state, the validator:
 1. Generates a **genesis wallet** with multi-sig (2/3 for testnet, 3/5 for mainnet)
 2. Creates treasury keypairs in `./data/state-7001/genesis-keys/`
 3. Saves `genesis-wallet.json` in the state directory
-4. Mints 1 billion MOLT to the treasury
+4. Creates the canonical 500M MOLT genesis distribution across the configured treasury wallets
 5. Registers itself as the initial validator
 6. **Auto-deploys all 30 genesis contracts** from the `contracts/` directory
 
@@ -611,7 +628,8 @@ MOLTCHAIN_NETWORK=testnet
 MOLTCHAIN_RPC_PORT=8899
 MOLTCHAIN_WS_PORT=8900
 MOLTCHAIN_P2P_PORT=7001
-MOLTCHAIN_SIGNER_BIND=0.0.0.0:9200
+MOLTCHAIN_SIGNER_BIND=127.0.0.1:9201
+MOLTCHAIN_SIGNER_AUTH_TOKEN=<shared-signer-token>
 RUST_LOG=info
 # MOLTCHAIN_ADMIN_TOKEN=<generate-with-openssl-rand-hex-32>
 EOF
@@ -744,7 +762,8 @@ Environment=CUSTODY_TREASURY_SOLANA=<your-solana-address>
 Environment=CUSTODY_SOLANA_FEE_PAYER=/etc/moltchain/solana-fee-payer.json
 
 # Threshold signers (all 3 VPS)
-Environment=CUSTODY_SIGNER_ENDPOINTS=http://<US_PRIVATE_IP>:9200,http://<EU_PRIVATE_IP>:9200,http://<ASIA_PRIVATE_IP>:9200
+Environment=CUSTODY_SIGNER_ENDPOINTS=http://<US_PRIVATE_IP>:9201,http://<EU_PRIVATE_IP>:9201,http://<ASIA_PRIVATE_IP>:9201
+Environment=CUSTODY_SIGNER_AUTH_TOKEN=<shared-signer-token>
 
 [Install]
 WantedBy=multi-user.target
@@ -757,10 +776,11 @@ sudo systemctl start moltchain-custody
 
 ### Signer Network
 
-The custody service calls each validator's threshold signer on port 9200. These must be reachable between the VPS nodes. Options:
+The custody service calls each validator's threshold signer on port 9201. These must be reachable between the VPS nodes. Options:
 - **WireGuard VPN** between the 3 VPS (recommended)
-- **Firewall allow-list** — only allow port 9200 from the other 2 VPS IPs
-- Never expose port 9200 to the public internet
+- **Firewall allow-list** — only allow port 9201 from the other 2 VPS IPs
+- Never expose port 9201 to the public internet
+- Use the same secret in `MOLTCHAIN_SIGNER_AUTH_TOKEN` on validators and `CUSTODY_SIGNER_AUTH_TOKEN` in custody
 
 ---
 
@@ -1022,7 +1042,7 @@ Agent validators behind NAT can still:
 - **Produce blocks** when it's their turn
 
 What they CAN'T do as a NAT'd node:
-- Accept inbound connections from other peers (unless they open port 8000 on their router)
+- Accept inbound connections from other peers (unless they open port 7001/8001 on their router)
 - Act as a full relay/seed (they're a "leaf" node)
 
 This is fine — only the 3 VPS need to be fully reachable. Agent validators are consumers of the seed network.
@@ -1275,21 +1295,24 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 
 # P2P (QUIC) — must be open for validators to connect
-sudo ufw allow 8000/tcp
-sudo ufw allow 8000/udp
+# Testnet: 7001, Mainnet: 8001
+sudo ufw allow 7001/tcp
+sudo ufw allow 7001/udp
+# sudo ufw allow 8001/tcp   # Uncomment for mainnet
+# sudo ufw allow 8001/udp   # Uncomment for mainnet
 
-# Threshold Signer — ONLY from other VPS IPs
-sudo ufw allow from <US_VPS_IP> to any port 9200 proto tcp
-sudo ufw allow from <EU_VPS_IP> to any port 9200 proto tcp
-sudo ufw allow from <ASIA_VPS_IP> to any port 9200 proto tcp
+# Threshold Signer — ONLY from other VPS IPs (port 9201)
+sudo ufw allow from <US_VPS_IP> to any port 9201 proto tcp
+sudo ufw allow from <EU_VPS_IP> to any port 9201 proto tcp
+sudo ufw allow from <ASIA_VPS_IP> to any port 9201 proto tcp
 
 # Enable
 sudo ufw enable
 ```
 
 **Never expose these to the public:**
-- Port 9200 (threshold signer)
-- Port 8899/8900 directly (should go through Caddy HTTPS)
+- Port 9201 (threshold signer)
+- Port 8899/9899 directly (should go through Caddy HTTPS)
 - Port 9105 directly (custody, should go through Caddy)
 
 ---
@@ -1365,7 +1388,7 @@ Keep this policy strict; do not delete genesis keys after deployment.
 | `genesis-keys/` | **Minimal** (only where strictly required) | **Yes, mandatory** (multiple encrypted backups) | Root treasury/admin control; loss is catastrophic |
 | `genesis-wallet.json` | Optional | Yes | Metadata/reference; not a replacement for keys |
 | validator identity keypair | Yes (on each validator host) | Yes | One keypair per validator; never reused across nodes |
-| signer keypair (`:9200`) | Yes (only on signer-enabled nodes) | Yes | Restrict access to private network + file perms |
+| signer keypair (`:9201`) | Yes (only on signer-enabled nodes) | Yes | Restrict access to private network + file perms |
 | custody treasury keypair | Yes (custody host only) | Yes | Treat as production hot wallet material |
 
 Minimum controls:
@@ -1551,7 +1574,7 @@ curl http://localhost:9105/status
 # "signers.configured" should be 3
 
 # Test signer connectivity manually
-curl -s http://<OTHER_VPS_IP>:9200/health
+curl -s http://<OTHER_VPS_IP>:9201/health
 ```
 
 ### Faucet: "Treasury keypair not configured — cannot sign airdrop transactions"
@@ -1819,7 +1842,7 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 [ ] 65. Set up backup cron jobs
 [ ] 66. Set up health check monitoring
 [ ] 67. Copy genesis-keys/ to a secure offline location (USB / vault)
-[ ] 68. Set up WireGuard VPN between 3 VPS for signer port 9200
+[ ] 68. Set up WireGuard VPN between 3 VPS for signer port 9201
 [ ] 69. Connect git repo to CF Pages for auto-deploy on push
 ```
 
@@ -2223,9 +2246,9 @@ ssh -p 2222 ubuntu@15.204.229.189 "
   CUSTODY_TREASURY_KEYPAIR=\$HOME/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json \
   CUSTODY_ALLOW_INSECURE_SEED=1 \
   CUSTODY_API_AUTH_TOKEN=testnet-custody-token-2026 \
+  CUSTODY_SIGNER_AUTH_TOKEN=testnet-signer-token-2026 \
   CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
   CUSTODY_SIGNER_THRESHOLD=2 \
-  CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
   RUST_LOG=info \
   nohup ./target/release/moltchain-custody > /tmp/moltchain-testnet/custody.log 2>&1 &
   sleep 2 && tail -1 /tmp/moltchain-testnet/custody.log
@@ -2239,9 +2262,9 @@ ssh -p 2222 ubuntu@15.204.229.189 "
   CUSTODY_TREASURY_KEYPAIR=\$HOME/moltchain/data/state-mainnet/genesis-keys/treasury-moltchain-mainnet-1.json \
   CUSTODY_ALLOW_INSECURE_SEED=1 \
   CUSTODY_API_AUTH_TOKEN=mainnet-custody-token-2026 \
+  CUSTODY_SIGNER_AUTH_TOKEN=mainnet-signer-token-2026 \
   CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
   CUSTODY_SIGNER_THRESHOLD=2 \
-  CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
   CUSTODY_LISTEN_PORT=9106 \
   RUST_LOG=info \
   nohup ./target/release/moltchain-custody > /tmp/moltchain-mainnet/custody.log 2>&1 &
@@ -2257,9 +2280,9 @@ ssh -p 2222 ubuntu@15.204.229.189 "
 #   CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json \
 #   CUSTODY_ALLOW_INSECURE_SEED=1 \
 #   CUSTODY_API_AUTH_TOKEN=testnet-custody-token-2026 \
+#   CUSTODY_SIGNER_AUTH_TOKEN=testnet-signer-token-2026 \
 #   CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
 #   CUSTODY_SIGNER_THRESHOLD=2 \
-#   CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
 #   RUST_LOG=info \
 #   nohup ./target/release/moltchain-custody > /tmp/moltchain-testnet/custody.log 2>&1 &
 #   sleep 2 && tail -1 /tmp/moltchain-testnet/custody.log
@@ -2273,9 +2296,9 @@ ssh -p 2222 ubuntu@15.204.229.189 "
 #   CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/moltchain/data/state-mainnet/genesis-keys/treasury-moltchain-mainnet-1.json \
 #   CUSTODY_ALLOW_INSECURE_SEED=1 \
 #   CUSTODY_API_AUTH_TOKEN=mainnet-custody-token-2026 \
+#   CUSTODY_SIGNER_AUTH_TOKEN=mainnet-signer-token-2026 \
 #   CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
 #   CUSTODY_SIGNER_THRESHOLD=2 \
-#   CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1 \
 #   CUSTODY_LISTEN_PORT=9106 \
 #   RUST_LOG=info \
 #   nohup ./target/release/moltchain-custody > /tmp/moltchain-mainnet/custody.log 2>&1 &
@@ -2575,24 +2598,24 @@ The validator includes a built-in auto-update system that can check for, downloa
 # Check-only mode (logs new versions, doesn't download)
 ./moltchain-validator \
   --auto-update check \
-  --p2p-port 8000
+  --p2p-port 7001
 
 # Download + verify, but don't apply (manual restart needed)
 ./moltchain-validator \
   --auto-update download \
-  --p2p-port 8000
+  --p2p-port 7001
 
 # Full automatic updates (recommended for testnet)
 ./moltchain-validator \
   --auto-update apply \
-  --p2p-port 8000
+  --p2p-port 7001
 
 # Customize check interval and channel
 ./moltchain-validator \
   --auto-update apply \
   --update-check-interval 600 \
   --update-channel stable \
-  --p2p-port 8000
+  --p2p-port 7001
 ```
 
 ### Production Recommendations
@@ -2763,7 +2786,7 @@ This matrix aligns local/testnet/prod procedures with the tested sequence: build
 | Stage | Local Dev | Testnet (3 validators) | Production/Mainnet |
 |---|---|---|---|
 | Build | `cargo build --release` | `cargo build --release` | `cargo build --release` |
-| Deploy genesis/programs | `./target/release/moltchain-validator --network testnet --p2p-port 8000` (first run) | same + state distribution to seed nodes | mainnet genesis generation + signed distribution artifacts |
+| Deploy genesis/programs | `./target/release/moltchain-validator --network testnet --p2p-port 7001` (first run) | same + state distribution to seed nodes | mainnet genesis generation + signed distribution artifacts |
 | Configure services | local env defaults | systemd + `/etc/moltchain/env-testnet` + Caddy | systemd + secrets manager + hardened Caddy/firewall |
 | Strict gate | `STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh` | `STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh` | pre-launch requirement: same strict gate against prod-like env |
 | Launch / operate | `./moltchain-validator ...` | `systemctl start moltchain-validator` (+ custody/faucet where needed) | staged rollout across seeds/relays with monitored restart windows |

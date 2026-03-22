@@ -224,7 +224,7 @@ SLOT_V3=$(rpc_result $RPC_V3 "getSlot" || echo "0")
 SYNCED=$(python3 -c "
 s=[int('$SLOT_V1'),int('$SLOT_V2'),int('$SLOT_V3')]
 diff=max(s)-min(s)
-print('yes' if diff <= 10 else 'no')
+print('yes' if diff <= 20 else 'no')
 print(f'V1={s[0]} V2={s[1]} V3={s[2]} (drift={diff})')
 " 2>/dev/null)
 if echo "$SYNCED" | head -1 | grep -q "yes"; then

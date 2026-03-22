@@ -233,7 +233,7 @@ assert(browseNormalize !== null, 'M-6.4  browse.js normalizeImage exists');
 if (browseNormalize) {
     // Provide stub for gradientFromHash dependency
     const testNormImg = new Function('gradientFromHash', 'return ' + browseNormalize);
-    const normImg = testNormImg(function(s) { return 'gradient-' + s; });
+    const normImg = testNormImg(function (s) { return 'gradient-' + s; });
     assert(typeof normImg === 'function', 'M-6.5  normalizeImage is callable');
     // Test: non-standard protocol returns gradient (not passthrough)
     const result = normImg('javascript:alert(1)', 'test');
@@ -773,8 +773,9 @@ assert(profileHtml.includes('id="chainBlockHeight"'), 'M-32.4  profile.html has 
 // ════════════════════════════════════════════════════════════
 console.log('\n── M-33: Marketplace ws config ──');
 
-assert(marketplaceConfigJs.includes("ws: 'wss://rpc.moltchain.network/ws'"), 'M-33.1  mainnet wsUrl is configured');
-assert(marketplaceConfigJs.includes("ws: 'wss://testnet-rpc.moltchain.network/ws'"), 'M-33.2  testnet wsUrl is configured');
+const marketplaceSharedConfigJs = fs.readFileSync(path.join(__dirname, '..', 'marketplace', 'shared-config.js'), 'utf8');
+assert(marketplaceSharedConfigJs.includes("ws: 'wss://ws.moltchain.network'"), 'M-33.1  mainnet wsUrl is configured');
+assert(marketplaceSharedConfigJs.includes("ws: 'wss://testnet-ws.moltchain.network'"), 'M-33.2  testnet wsUrl is configured');
 
 // ════════════════════════════════════════════════════════════
 // M-34: Backend aggregated marketplace stats
@@ -836,7 +837,12 @@ assert(itemJs.includes("buildContractCallData('create_auction'") && itemJs.inclu
 assert(profileJs.includes('_profileCreateAuction') && profileJs.includes('_profilePlaceBid'), 'M-38.4  profile.js exposes auction create/bid actions');
 assert(profileJs.includes("buildContractCallData('create_auction'") && profileJs.includes("buildContractCallData('place_bid'"), 'M-38.5  profile.js builds auction create/bid contract calls');
 assert(contractRs.includes('Auction royalty transfer failed; paying fallback to seller'), 'M-38.6  settle_auction logs royalty-failure fallback path');
-assert(contractRs.includes('call_token_transfer(payment_token, marketplace_addr, seller, royalty_amount)'), 'M-38.7  settle_auction credits seller on royalty transfer failure');
+{
+    // Multi-line call_token_transfer — check key arguments present near fallback path
+    const fallbackIdx = contractRs.indexOf('Auction royalty transfer failed; paying fallback to seller');
+    const vicinity = contractRs.slice(fallbackIdx, fallbackIdx + 300);
+    assert(vicinity.includes('call_token_transfer') && vicinity.includes('seller') && vicinity.includes('royalty_amount'), 'M-38.7  settle_auction credits seller on royalty transfer failure');
+}
 
 // ════════════════════════════════════════════════════════════
 // Summary

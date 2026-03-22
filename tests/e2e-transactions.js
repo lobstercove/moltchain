@@ -152,6 +152,10 @@ function encodeTransactionMessage(instructions, blockhash, signer) {
     }
     // recent_blockhash: [u8; 32]
     parts.push(hexToBytes(blockhash));
+    // compute_budget: Option<u64> = None (0x00)
+    parts.push(new Uint8Array([0x00]));
+    // compute_unit_price: Option<u64> = None (0x00)
+    parts.push(new Uint8Array([0x00]));
     const total = parts.reduce((s, a) => s + a.length, 0);
     const out = new Uint8Array(total);
     let off = 0;
@@ -325,7 +329,7 @@ async function runTests() {
     const freshAlice = generateKeypair();
     const freshBob = generateKeypair();
     const alice = funded[0] || freshAlice;
-    const bob   = funded[1] || freshBob;
+    const bob = funded[1] || freshBob;
     // Crypto property checks use the fresh keypairs to validate generation
     assert(freshAlice.publicKey.length === 32, 'Alice pubkey is 32 bytes');
     assert(freshAlice.secretKey.length === 64, 'Alice secretKey is 64 bytes');

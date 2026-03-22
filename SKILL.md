@@ -36,7 +36,7 @@
 |----------|-------|
 | Chain | MoltChain (custom L1) |
 | Consensus | Tendermint-style BFT (PoS with contributory stake) |
-| Block time | ~800ms heartbeat, ~200ms with transactions (adaptive) |
+| Block time | ~800ms heartbeat, ~400ms with transactions (adaptive) |
 | Native token | MOLT (1 MOLT = 1 000 000 000 shells) |
 | Signing | Ed25519 |
 | Smart contracts | WASM (Rust → wasm32-unknown-unknown) |
@@ -53,7 +53,7 @@
 | Monitoring | Port 9100 (Prometheus metrics) |
 | Contracts deployed at genesis | 29 |
 | Trading pairs at genesis | 7 |
-| Total RPC methods | ~166 (JSON-RPC) + ~65 REST routes |
+| Total RPC methods | ~172 (JSON-RPC) + ~65 REST routes |
 | Total contract opcodes | 147 (DEX) + named exports (22 contracts) |
 | Achievements | 90+ auto-detected |
 
@@ -109,7 +109,7 @@
 | Validator | `moltchain-validator` | Block production, slot scheduling, auto-update |
 | CLI | `moltchain-cli` | Command-line wallet tool |
 | Compiler | `moltchain-compiler` | Rust → WASM contract compilation pipeline |
-| Custody | `moltchain-custody` | Multi-signature custody with threshold signing, bridge deposits/withdrawals |
+| Custody | `moltchain-custody` | Bridge custody with threshold treasury withdrawals on supported Solana/EVM paths and fail-closed multi-signer deposit issuance unless local sweeps are explicitly allowed |
 
 ### Transaction Format
 
@@ -230,7 +230,7 @@ WASM contracts are invoked via the Contract Program (`program_id = [0xFF; 32]`).
 
 | Style | Used By | Mechanism |
 |-------|---------|-----------|
-| **Named exports** | 23 standalone contracts | Each function is a `#[no_mangle] pub extern "C" fn name()` WASM export |
+| **Named exports** | 22 standalone contracts | Each function is a `#[no_mangle] pub extern "C" fn name()` WASM export |
 | **Opcode dispatch** | 7 DEX contracts | Single `call(args_ptr, args_len)` export; first byte = opcode |
 
 ---

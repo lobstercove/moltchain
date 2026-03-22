@@ -743,9 +743,9 @@ async def test_section_4_upgrade_contract():
     admin_obj = {"admin_token": ADMIN_TOKEN}
 
     # 4a. First fund the deployer
-    resp = await rpc_call("requestAirdrop", [deployer_b58, 50])
+    resp = await rpc_call("requestAirdrop", [deployer_b58, 10])
     if "result" in resp:
-        report("PASS", f"Airdrop 50 MOLT to deployer")
+        report("PASS", f"Airdrop 10 MOLT to deployer")
     else:
         report("SKIP", "Airdrop failed", str(resp.get('error', ''))[:60])
 
@@ -786,8 +786,8 @@ async def test_section_4_upgrade_contract():
             else:
                 report("SKIP", "Contract exists but could not extract address")
                 return
-        elif "disabled in multi-validator mode" in msg.lower():
-            report("SKIP", "deployContract disabled in multi-validator mode")
+        elif "disabled" in msg.lower() and ("multi-validator" in msg.lower() or "local/dev" in msg.lower()):
+            report("SKIP", "deployContract disabled in this environment")
             return
         else:
             report("FAIL", "deployContract", msg[:80])

@@ -6,7 +6,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-moltchain-sdk = { path = "../../sdk" }
+moltchain-sdk = { path = "../../sdk", package = "moltchain-contract-sdk" }
 musd-token = { path = "../../contracts/musd_token" }
 wsol-token = { path = "../../contracts/wsol_token" }
 weth-token = { path = "../../contracts/weth_token" }

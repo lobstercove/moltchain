@@ -139,6 +139,8 @@ function encodeMsg(instructions, blockhash, signer) {
         parts.push(d);
     }
     parts.push(hexToBytes(blockhash));
+    parts.push(new Uint8Array([0x00]));  // compute_budget: None
+    parts.push(new Uint8Array([0x00]));  // compute_unit_price: None
     const total = parts.reduce((s, a) => s + a.length, 0);
     const out = new Uint8Array(total); let off = 0;
     for (const a of parts) { out.set(a, off); off += a.length; }

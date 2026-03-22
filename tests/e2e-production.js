@@ -160,6 +160,8 @@ function encodeMsg(instructions, blockhash, signer) {
         parts.push(d);
     }
     parts.push(hexToBytes(blockhash));
+    parts.push(new Uint8Array([0x00]));  // compute_budget: None
+    parts.push(new Uint8Array([0x00]));  // compute_unit_price: None
     const total = parts.reduce((s, a) => s + a.length, 0);
     const out = new Uint8Array(total); let off = 0;
     for (const a of parts) { out.set(a, off); off += a.length; }
@@ -587,8 +589,8 @@ async function runTests() {
     // ── Setup: Load funded genesis wallets ──
     section('Setup: Wallets');
     const funded = loadFundedWallets(3);
-    const alice   = funded[0] || genKeypair();
-    const bob     = funded[1] || genKeypair();
+    const alice = funded[0] || genKeypair();
+    const bob = funded[1] || genKeypair();
     const charlie = funded[2] || genKeypair();
     console.log(`  Alice:   ${alice.address} (${alice.source ? 'funded' : 'fresh'})`);
     console.log(`  Bob:     ${bob.address} (${bob.source ? 'funded' : 'fresh'})`);

@@ -90,7 +90,7 @@ command_needs_cluster() {
 
 max_attempts_for_command() {
   local cmd="$1"
-  if [[ "$cmd" == *"live-e2e-test.sh"* || "$cmd" == *"contracts-write-e2e.py"* || "$cmd" == *"e2e-dex.js"* || "$cmd" == *"e2e-dex-trading.py"* || "$cmd" == *"e2e-volume.js"* || "$cmd" == *"comprehensive-e2e.py"* || "$cmd" == *"comprehensive-e2e-parallel.py"* || "$cmd" == *"e2e-websocket-upgrade.py"* || "$cmd" == *"load-test-5k-traders.py"* ]]; then
+  if [[ "$cmd" == *"live-e2e-test.sh"* || "$cmd" == *"contracts-write-e2e.py"* || "$cmd" == *"e2e-dex.js"* || "$cmd" == *"e2e-dex-trading.py"* || "$cmd" == *"e2e-volume.js"* || "$cmd" == *"comprehensive-e2e.py"* || "$cmd" == *"comprehensive-e2e-parallel.py"* || "$cmd" == *"e2e-websocket-upgrade.py"* || "$cmd" == *"load-test-5k-traders.py"* || "$cmd" == *"test-rpc-comprehensive.sh"* ]]; then
     if [[ "$cmd" == *"live-e2e-test.sh"* || "$cmd" == *"comprehensive-e2e.py"* || "$cmd" == *"comprehensive-e2e-parallel.py"* ]]; then
       echo 3
       return
@@ -207,14 +207,17 @@ fi
 
 resolve_signers
 if [[ "$MATRIX_SIGNER_COUNT" -eq 0 ]]; then
-  fallback_agent="$PWD/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json"
-  fallback_human="$PWD/data/state-8000/genesis-keys/community_treasury-moltchain-testnet-1.json"
-  if [[ -f "$fallback_agent" && -f "$fallback_human" ]]; then
-    MATRIX_AGENT_KEYPAIR="$fallback_agent"
-    MATRIX_HUMAN_KEYPAIR="$fallback_human"
-    MATRIX_SIGNER_COUNT=2
-    echo "[full-matrix] signer discovery fallback enabled (builder_grants/community_treasury)" | tee -a "$LOG"
-  fi
+  for _fb_dir in "$PWD/data/state-7001" "$PWD/data/state-8000"; do
+    fallback_agent="$_fb_dir/genesis-keys/genesis-primary-moltchain-testnet-1.json"
+    fallback_human="$_fb_dir/genesis-keys/builder_grants-moltchain-testnet-1.json"
+    if [[ -f "$fallback_agent" && -f "$fallback_human" ]]; then
+      MATRIX_AGENT_KEYPAIR="$fallback_agent"
+      MATRIX_HUMAN_KEYPAIR="$fallback_human"
+      MATRIX_SIGNER_COUNT=2
+      echo "[full-matrix] signer discovery fallback enabled (builder_grants/community_treasury from $_fb_dir)" | tee -a "$LOG"
+      break
+    fi
+  done
 fi
 if ! ensure_funded_signers; then
   echo "[full-matrix] signer preflight failed; attempting one-shot seeded reset bootstrap" | tee -a "$LOG"
@@ -231,14 +234,17 @@ if ! ensure_funded_signers; then
 
   resolve_signers
   if [[ "$MATRIX_SIGNER_COUNT" -eq 0 ]]; then
-    fallback_agent="$PWD/data/state-8000/genesis-keys/builder_grants-moltchain-testnet-1.json"
-    fallback_human="$PWD/data/state-8000/genesis-keys/community_treasury-moltchain-testnet-1.json"
-    if [[ -f "$fallback_agent" && -f "$fallback_human" ]]; then
-      MATRIX_AGENT_KEYPAIR="$fallback_agent"
-      MATRIX_HUMAN_KEYPAIR="$fallback_human"
-      MATRIX_SIGNER_COUNT=2
-      echo "[full-matrix] signer discovery fallback enabled after reset bootstrap" | tee -a "$LOG"
-    fi
+    for _fb_dir in "$PWD/data/state-7001" "$PWD/data/state-8000"; do
+      fallback_agent="$_fb_dir/genesis-keys/genesis-primary-moltchain-testnet-1.json"
+      fallback_human="$_fb_dir/genesis-keys/builder_grants-moltchain-testnet-1.json"
+      if [[ -f "$fallback_agent" && -f "$fallback_human" ]]; then
+        MATRIX_AGENT_KEYPAIR="$fallback_agent"
+        MATRIX_HUMAN_KEYPAIR="$fallback_human"
+        MATRIX_SIGNER_COUNT=2
+        echo "[full-matrix] signer discovery fallback enabled after reset bootstrap (from $_fb_dir)" | tee -a "$LOG"
+        break
+      fi
+    done
   fi
 
   if ! ensure_funded_signers; then

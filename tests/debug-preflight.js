@@ -12,13 +12,14 @@ function bs58decode(str) {
     const hex = num.toString(16).padStart(64, '0');
     return new Uint8Array(hex.match(/.{2}/g).map(h => parseInt(h, 16)));
 }
-function bytesToHex(b) { return Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join(''); }
+function bytesToHex(b) { return Array.from(b).map(x => x.toString(16).padStart(2, '0')).join(''); }
 
 const RPC = 'http://127.0.0.1:8899';
-async function rpc(method, params=[]) {
-    const r = await fetch(RPC, { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({jsonrpc:'2.0',id:1,method,params})
-    }).then(r=>r.json());
+async function rpc(method, params = []) {
+    const r = await fetch(RPC, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params })
+    }).then(r => r.json());
     if (r.error) throw new Error(`RPC ${r.error.code}: ${r.error.message}`);
     return r.result;
 }
@@ -62,7 +63,7 @@ const CONTRACT_PID = bs58encode(new Uint8Array(32).fill(0xFF));
     // Create and fund test keypair
     const kp = nacl.sign.keyPair();
     const addr = bs58encode(kp.publicKey);
-    await rpc('requestAirdrop', [addr, 100]);
+    await rpc('requestAirdrop', [addr, 10]);
     console.log('Funded:', addr);
     await new Promise(r => setTimeout(r, 2000));
 

@@ -80,7 +80,7 @@ def main():
         if shells >= MIN_SHELLS:
             candidates.append({"path": path, "pubkey": pubkey, "shells": shells})
 
-    candidates.sort(key=lambda c: (-c["shells"], priority(c["path"]), c["path"]))
+    candidates.sort(key=lambda c: (priority(c["path"]), -c["shells"], c["path"]))
     agent = candidates[0] if candidates else None
     human = candidates[1] if len(candidates) > 1 else agent
 

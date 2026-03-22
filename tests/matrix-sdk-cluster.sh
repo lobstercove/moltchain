@@ -12,9 +12,9 @@ MATRIX_BUILD_FIRST="${MATRIX_BUILD_FIRST:-0}"
 MATRIX_STAGGER_SECS="${MATRIX_STAGGER_SECS:-15}"
 MATRIX_MIN_VALIDATORS="${MATRIX_MIN_VALIDATORS:-3}"
 
-DATA1="$ROOT/data/state-8000"
-DATA2="$ROOT/data/state-8001"
-DATA3="$ROOT/data/state-8002"
+DATA1="$ROOT/data/state-7001"
+DATA2="$ROOT/data/state-7002"
+DATA3="$ROOT/data/state-7003"
 LEGACY_MATRIX_DATA_GLOB="$ROOT/data/matrix-sdk-state-*"
 
 ARTIFACT_DIR="$ROOT/tests/artifacts/full_matrix_feb24_2026/sdk_cluster"
@@ -229,7 +229,7 @@ start_cluster() {
   fi
 
   echo "[matrix-sdk-cluster] starting V1 (production path: run-validator.sh testnet 1)"
-  MOLTCHAIN_SIGNER_BIND=0.0.0.0:9301 RUST_LOG=warn "$LAUNCHER" testnet 1 --dev-mode >"$LOG1" 2>&1 &
+  MOLTCHAIN_SIGNER_BIND=0.0.0.0:9301 RUST_LOG=${MATRIX_RUST_LOG:-warn} "$LAUNCHER" testnet 1 --dev-mode >"$LOG1" 2>&1 &
   V1PID=$!
   sleep "$MATRIX_STAGGER_SECS"
 
