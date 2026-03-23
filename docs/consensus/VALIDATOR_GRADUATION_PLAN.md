@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-MoltChain's Contributory Stake system gives the first 200 validators a 100,000 MOLT bootstrap grant from treasury so they can start validating with zero personal capital. This grant becomes bootstrap debt that validators repay through settled validator rewards. Once repaid, they **graduate** and earn 100% of settled rewards as liquid balance.
+Lichen's Contributory Stake system gives the first 200 validators a 100,000 LICN bootstrap grant from treasury so they can start validating with zero personal capital. This grant becomes bootstrap debt that validators repay through settled validator rewards. Once repaid, they **graduate** and earn 100% of settled rewards as liquid balance.
 
 **The problem:** At high validator counts, bootstrap repayment can stretch out if active stake is widely distributed and fee flow is low. We solve this with a time cap + performance bonus + hard cap on bootstrap grants.
 
@@ -20,8 +20,8 @@ MoltChain's Contributory Stake system gives the first 200 validators a 100,000 M
 
 | Parameter | Value |
 |-----------|-------|
-| Bootstrap grant | 100,000 MOLT (from treasury) |
-| Bootstrap debt | 100,000 MOLT |
+| Bootstrap grant | 100,000 LICN (from treasury) |
+| Bootstrap debt | 100,000 LICN |
 | Reward split | 50% liquid / 50% debt repayment |
 | Time cap | 547 days (18 months) |
 | Performance bonus | 95%+ uptime → 1.5× repayment speed |
@@ -36,12 +36,12 @@ MoltChain's Contributory Stake system gives the first 200 validators a 100,000 M
 
 | Parameter | Value |
 |-----------|-------|
-| Bootstrap grant | **None** — bring your own 100K MOLT |
+| Bootstrap grant | **None** — bring your own 100K LICN |
 | Bootstrap debt | 0 |
 | Status | `FullyVested` (immediate) |
 | Reward split | 100% liquid from day 1 |
 
-- Mature validators must fund their own 100K MOLT stake.
+- Mature validators must fund their own 100K LICN stake.
 - They are immediately fully vested with no debt obligation.
 - The network is proven by validator 201 — joining is an investment, not a leap of faith.
 
@@ -113,10 +113,10 @@ if current_slot - start_slot >= MAX_BOOTSTRAP_SLOTS && bootstrap_debt > 0 {
 
 | Scenario | Daily repayment/validator | Natural graduation | With time cap |
 |----------|--------------------------|-------------------|---------------|
-| Standard (50/50) | 73 MOLT/day | 1,370 days (3.7 yrs) | **547 days (cap)** |
-| 95%+ uptime (75/25) | 109.5 MOLT/day | 913 days (2.5 yrs) | **547 days (cap)** |
-| Mixed tx blocks (50%) | ~365 MOLT/day | 274 days | 274 days (natural) |
-| High tx volume | ~730 MOLT/day | 137 days | 137 days (natural) |
+| Standard (50/50) | 73 LICN/day | 1,370 days (3.7 yrs) | **547 days (cap)** |
+| 95%+ uptime (75/25) | 109.5 LICN/day | 913 days (2.5 yrs) | **547 days (cap)** |
+| Mixed tx blocks (50%) | ~365 LICN/day | 274 days | 274 days (natural) |
+| High tx volume | ~730 LICN/day | 137 days | 137 days (natural) |
 
 At 50 validators the standard path graduates in ~343 days (no cap needed). The cap matters most when the network grows past ~70 validators under heartbeat-only conditions.
 
@@ -128,7 +128,7 @@ At 50 validators the standard path graduates in ~343 days (no cap needed). The c
 
 Without protection, an attacker can:
 1. Run 50 validator processes on one machine, each with a different keypair
-2. Each claims a 100K MOLT bootstrap grant = 5M MOLT ($500K) stolen from treasury
+2. Each claims a 100K LICN bootstrap grant = 5M LICN ($500K) stolen from treasury
 3. All 50 "validators" are actually one machine contributing nothing extra to decentralization
 
 ### 4.2 The Defense: Machine Fingerprint
@@ -176,9 +176,9 @@ For local testing (running 3 validators on one machine):
 
 ```bash
 # Skip fingerprint uniqueness check
-moltchain-validator --dev-mode --p2p-port 7001
-moltchain-validator --dev-mode --p2p-port 7002
-moltchain-validator --dev-mode --p2p-port 7003
+lichen-validator --dev-mode --p2p-port 7001
+lichen-validator --dev-mode --p2p-port 7002
+lichen-validator --dev-mode --p2p-port 7003
 ```
 
 `--dev-mode` flag:
@@ -217,7 +217,7 @@ The network treats this as a **machine migration**:
 
 **Using `--import-key`:**
 1. Stop validator on old machine
-2. On new machine, start with: `moltchain-validator --import-key /path/to/keypair.json`
+2. On new machine, start with: `lichen-validator --import-key /path/to/keypair.json`
 3. The keypair file is copied into the validator's data directory
 4. Fingerprint auto-updates on next announcement
 5. All progress (debt, earned rewards, graduation) is preserved — tied to pubkey, not machine
@@ -226,10 +226,10 @@ The network treats this as a **machine migration**:
 
 ```bash
 # FRESH START — new keypair generated, eligible for bootstrap grant if < 200
-moltchain-validator --p2p-port 7001
+lichen-validator --p2p-port 7001
 
 # RESUME — import existing keypair, NO bootstrap grant (system detects existing stake)
-moltchain-validator --p2p-port 7001 --import-key /path/to/validator-keypair.json
+lichen-validator --p2p-port 7001 --import-key /path/to/validator-keypair.json
 ```
 
 **Rule:** When `--import-key` is provided, the validator binary:
@@ -283,12 +283,12 @@ DoubleBlock {
 
 ### The Rule
 
-**One keypair = one machine = one validator.** This is not a MoltChain limitation — it's fundamental to Byzantine fault tolerance. Every PoS chain enforces this (Ethereum, Cosmos, Solana).
+**One keypair = one machine = one validator.** This is not a Lichen limitation — it's fundamental to Byzantine fault tolerance. Every PoS chain enforces this (Ethereum, Cosmos, Solana).
 
 If you want to run 3 validators, you need:
 - 3 different keypairs
 - 3 different machines (or `--dev-mode` for testing)
-- 3 separate bootstrap grants (if within the first 200) or 3 × 100K MOLT self-funded
+- 3 separate bootstrap grants (if within the first 200) or 3 × 100K LICN self-funded
 
 ---
 
@@ -428,7 +428,7 @@ For a fresh network (genesis), the counter starts at 0 and counts up as validato
 ## 11. Marketing Angle
 
 > **First 200 validators: $0 to start.**  
-> We stake you 100,000 MOLT to build MoltChain with us.  
+> We stake you 100,000 LICN to build Lichen with us.  
 > After 200? Bring your own stake — the network is proven.
 
 - **Clean story**: No tiering, no class system. 200 is exclusive enough to be special, large enough for real decentralization.

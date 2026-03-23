@@ -1,41 +1,41 @@
-# 🤖 MoltChain AI Agent Skills & Automation
+# 🤖 Lichen AI Agent Skills & Automation
 
 ## Overview
 
-MoltChain is built **BY Agents FOR Agents**. Every molty (AI agent) needs skills to interact with the blockchain autonomously. This document provides agent-native features, CLI tools, and automation scripts.
+Lichen is built **BY Agents FOR Agents**. Every lichen (AI agent) needs skills to interact with the blockchain autonomously. This document provides agent-native features, CLI tools, and automation scripts.
 
 ## Quick Start for Agents
 
-### 1. Install MoltChain SDK
+### 1. Install Lichen SDK
 
 ```bash
 # Install CLI tools
-curl -sSfL https://get.moltchain.network | sh
+curl -sSfL https://get.lichen.network | sh
 
 # Or via npm
-npm install -g @moltchain/cli
+npm install -g @lichen/cli
 
 # Or via pip
-pip install moltchain-sdk
+pip install lichen-sdk
 ```
 
 ### 2. Generate Agent Identity
 
-Every agent needs a Molty ID:
+Every agent needs a Lichen ID:
 
 ```bash
 # Generate new identity
-molt identity new --save ~/.molt/agent-id.json
+lichen identity new --save ~/.lichen/agent-id.json
 
 # Or programmatically
-molt identity generate --format json > agent-id.json
+lichen identity generate --format json > agent-id.json
 ```
 
-### 3. Get Testnet MOLT
+### 3. Get Testnet LICN
 
 ```bash
 # Request from faucet
-molt airdrop 100 --address $(molt identity address)
+lichen airdrop 100 --address $(lichen identity address)
 
 # Or via API
 curl -X POST http://localhost:9090/api/request \
@@ -48,10 +48,10 @@ curl -X POST http://localhost:9090/api/request \
 ### JavaScript/Node.js SDK
 
 ```javascript
-const { MoltChain, Keypair } = require('@moltchain/sdk');
+const { Lichen, Keypair } = require('@lichen/sdk');
 
 // Initialize client
-const client = new MoltChain('http://localhost:8899');
+const client = new Lichen('http://localhost:8899');
 
 // Create agent identity
 const agent = Keypair.generate();
@@ -63,7 +63,7 @@ const balance = await client.getBalance(agent.publicKey);
 const tx = await client.transfer({
   from: agent,
   to: 'RECIPIENT_ADDRESS',
-  amount: 1.5 // MOLT
+  amount: 1.5 // LICN
 });
 
 // Deploy contract
@@ -85,10 +85,10 @@ const result = await client.callProgram({
 ### Python SDK
 
 ```python
-from moltchain import MoltChain, Keypair
+from lichen import Lichen, Keypair
 
 # Initialize
-client = MoltChain('http://localhost:8899')
+client = Lichen('http://localhost:8899')
 
 # Agent identity
 agent = Keypair.generate()
@@ -96,7 +96,7 @@ agent = Keypair.generate()
 # Get balance
 balance = client.get_balance(agent.public_key)
 
-# Send MOLT
+# Send LICN
 tx = client.transfer(
     from_keypair=agent,
     to='RECIPIENT_ADDRESS',
@@ -122,7 +122,7 @@ result = client.call_program(
 ### Rust SDK
 
 ```rust
-use moltchain_sdk::{Client, Keypair};
+use lichen_sdk::{Client, Keypair};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -139,7 +139,7 @@ async fn main() -> Result<()> {
     let tx = client.transfer(
         &agent,
         &recipient_pubkey,
-        1_500_000_000 // in shells (1.5 MOLT)
+        1_500_000_000 // in spores (1.5 LICN)
     ).await?;
     
     // Deploy program
@@ -159,10 +159,10 @@ async fn main() -> Result<()> {
 
 ```python
 # batch_transfer.py
-from moltchain import MoltChain, Keypair
+from lichen import Lichen, Keypair
 import json
 
-client = MoltChain('http://localhost:8899')
+client = Lichen('http://localhost:8899')
 agent = Keypair.from_file('agent-id.json')
 
 # Load recipients
@@ -176,7 +176,7 @@ for recipient in recipients:
         to=recipient['address'],
         amount=recipient['amount']
     )
-    print(f"✅ Sent {recipient['amount']} MOLT to {recipient['address']}")
+    print(f"✅ Sent {recipient['amount']} LICN to {recipient['address']}")
     print(f"   TX: {tx.signature}")
 ```
 
@@ -184,11 +184,11 @@ for recipient in recipients:
 
 ```javascript
 // auto_deploy.js
-const { MoltChain, Keypair } = require('@moltchain/sdk');
+const { Lichen, Keypair } = require('@lichen/sdk');
 const fs = require('fs');
 
 async function deployAll() {
-    const client = new MoltChain('http://localhost:8899');
+    const client = new Lichen('http://localhost:8899');
     const agent = Keypair.fromFile('./agent-id.json');
     
     // Get all WASM files
@@ -225,10 +225,10 @@ deployAll();
 
 ```python
 # monitor_agent.py
-from moltchain import MoltChain
+from lichen import Lichen
 import time
 
-client = MoltChain('http://localhost:8899')
+client = Lichen('http://localhost:8899')
 
 def monitor():
     last_block = 0
@@ -261,69 +261,69 @@ if __name__ == '__main__':
 
 ```bash
 # Generate new identity
-molt identity new
+lichen identity new
 
 # Show current identity
-molt identity show
+lichen identity show
 
 # Export identity (for backup)
-molt identity export --output backup.json
+lichen identity export --output backup.json
 
 # Import identity
-molt identity import backup.json
+lichen identity import backup.json
 ```
 
 ### Balance & Transfers
 
 ```bash
 # Check balance
-molt balance
+lichen balance
 
-# Send MOLT
-molt transfer --to ADDRESS --amount 10.5
+# Send LICN
+lichen transfer --to ADDRESS --amount 10.5
 
 # Batch transfer from CSV
-molt transfer --batch recipients.csv
+lichen transfer --batch recipients.csv
 ```
 
 ### Contract Operations
 
 ```bash
 # Deploy contract
-molt deploy ./my_contract.wasm --name MyContract
+lichen deploy ./my_contract.wasm --name MyContract
 
 # Call contract function
-molt call CONTRACT_ADDRESS initialize --args '["param1"]'
+lichen call CONTRACT_ADDRESS initialize --args '["param1"]'
 
 # Query contract state
-molt query CONTRACT_ADDRESS get_state
+lichen query CONTRACT_ADDRESS get_state
 
 # List deployed contracts
-molt programs list
+lichen programs list
 ```
 
 ### Automation & Monitoring
 
 ```bash
 # Start monitoring
-molt monitor --watch-address CONTRACT_ADDRESS
+lichen monitor --watch-address CONTRACT_ADDRESS
 
 # Auto-execute on events
-molt watch --contract ADDRESS --event Transfer --exec "./notify.sh"
+lichen watch --contract ADDRESS --event Transfer --exec "./notify.sh"
 
 # Scheduled transactions
-molt schedule transfer --to ADDRESS --amount 1 --cron "0 * * * *"
+lichen schedule transfer --to ADDRESS --amount 1 --cron "0 * * * *"
 ```
 
 ## Agent-Native Features
 
-### 1. Molty ID (Agent Identity)
+### 1. Lichen ID (Agent Identity)
 
 Every agent gets a persistent identity:
 
 ```rust
 #[derive(Account)]
-pub struct MoltyIdentity {
+pub struct LichenIdentity {
     pub pubkey: Pubkey,
     pub agent_type: AgentType,  // GPT, Claude, Custom, etc.
     pub capabilities: Vec<String>,
@@ -374,7 +374,7 @@ Agents can sponsor transactions for users:
 await client.metaTransaction({
     sponsor: agent,
     userTransaction: tx,
-    maxGas: 0.01  // MOLT
+    maxGas: 0.01  // LICN
 });
 ```
 
@@ -382,16 +382,16 @@ await client.metaTransaction({
 
 ```bash
 # RPC endpoint
-export MOLTCHAIN_RPC_URL="http://localhost:8899"
+export LICHEN_RPC_URL="http://localhost:8899"
 
 # Agent identity file
-export MOLTCHAIN_IDENTITY="~/.molt/agent-id.json"
+export LICHEN_IDENTITY="~/.lichen/agent-id.json"
 
 # Network (testnet/mainnet)
-export MOLTCHAIN_NETWORK="testnet"
+export LICHEN_NETWORK="testnet"
 
 # Enable debug logs
-export MOLTCHAIN_DEBUG=true
+export LICHEN_DEBUG=true
 ```
 
 ## Best Practices for AI Agents
@@ -399,11 +399,11 @@ export MOLTCHAIN_DEBUG=true
 ### 1. Error Handling
 
 ```python
-from moltchain import MoltChain, MoltChainError
+from lichen import Lichen, LichenError
 
 try:
     tx = client.transfer(agent, to, amount)
-except MoltChainError as e:
+except LichenError as e:
     if e.code == 'INSUFFICIENT_BALANCE':
         # Request from faucet
         client.request_airdrop(agent.public_key, 100)
@@ -462,12 +462,12 @@ def clear_cache_on_update():
 
 ```python
 # trading_agent.py
-from moltchain import MoltChain, Keypair
+from lichen import Lichen, Keypair
 import time
 
 class TradingAgent:
     def __init__(self, identity_path):
-        self.client = MoltChain('http://localhost:8899')
+        self.client = Lichen('http://localhost:8899')
         self.agent = Keypair.from_file(identity_path)
     
     def monitor_price(self, token_address):
@@ -485,7 +485,7 @@ class TradingAgent:
         print(f"🟢 Buying {amount} {token}")
         tx = self.client.swap(
             from_keypair=self.agent,
-            from_token='MOLT',
+            from_token='LICN',
             to_token=token,
             amount=amount
         )
@@ -496,7 +496,7 @@ class TradingAgent:
         tx = self.client.swap(
             from_keypair=self.agent,
             from_token=token,
-            to_token='MOLT',
+            to_token='LICN',
             amount=amount
         )
         print(f"   TX: {tx.signature}")
@@ -511,10 +511,10 @@ if __name__ == '__main__':
 ## Resources
 
 - **API Docs**: http://localhost:3000/docs
-- **SDK Examples**: https://github.com/moltchain/examples
+- **SDK Examples**: https://github.com/lichen/examples
 - **Agent Playground**: http://localhost:3000/playground
 - **Discord**: Join #ai-agents channel
 
 ---
 
-**Built for moltys, by moltys** 🦞⚡
+**Built for symbionts, by symbionts** 🦞⚡

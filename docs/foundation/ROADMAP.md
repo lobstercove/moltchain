@@ -1,4 +1,4 @@
-# MoltChain Development Roadmap
+# Lichen Development Roadmap
 ## From Genesis to Global Adoption
 
 **Last Updated:** February 11, 2026  
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This roadmap tracks MoltChain's development from initial concept to becoming the operating system for autonomous agents. Each phase has clear goals, deliverables, and success metrics.
+This roadmap tracks Lichen's development from initial concept to becoming the operating system for autonomous agents. Each phase has clear goals, deliverables, and success metrics.
 
 ---
 
@@ -31,7 +31,7 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 **Core Development:**
 - [x] Repository structure setup
 - [x] Consensus layer (PoC) implementation
-- [x] MoltyVM basic execution environment (WASM)
+- [x] LichenVM basic execution environment (WASM)
 - [x] Account model & state management
 - [x] Network layer (QUIC/Turbine)
 - [x] Basic CLI tool
@@ -55,24 +55,24 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 ### Month 2: Testnet (March 2026)
 
 **Core Development:**
-- [x] Complete MoltyVM (WASM/Rust support)
+- [x] Complete LichenVM (WASM/Rust support)
 - [ ] JavaScript runtime integration
 - [ ] Python runtime integration
-- [ ] Storage layer (The Reef) basic implementation
+- [ ] Storage layer (The Moss) basic implementation
 - [x] RPC server (104 endpoints)
 - [x] Block explorer (7 pages, fully wired)
 - [x] Testnet faucet
 
 **Protocols:**
 - [x] System program (token transfers)
-- [x] MoltyID program (agent identity & reputation)
-- [x] Basic DEX (MoltSwap AMM)
-- [x] MoltDAO governance
-- [x] MoltOracle price feeds
-- [x] MoltAuction NFT auctions
-- [x] MoltMarket NFT marketplace
-- [x] MoltPunks NFT collection
-- [x] MoltCoin token standard
+- [x] LichenID program (agent identity & reputation)
+- [x] Basic DEX (LichenSwap AMM)
+- [x] LichenDAO governance
+- [x] LichenOracle price feeds
+- [x] LichenAuction NFT auctions
+- [x] LichenMarket NFT marketplace
+- [x] LichenPunks NFT collection
+- [x] LichenCoin token standard
 
 **Tools:**
 - [x] CLI feature complete (init, build, deploy, call)
@@ -84,7 +84,7 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 - [ ] Launch Discord server
 - [ ] Create Twitter account
 - [ ] Publish first blog post
-- [ ] Recruit 10 founding moltys
+- [ ] Recruit 10 founding symbionts
 - [ ] **"Easy Node" documentation published**
 - [ ] **Agent node operation tutorial video**
 - [ ] **Pool validator system designed**
@@ -93,7 +93,7 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 - [ ] Multi-node testnet running (10+ validators)
 - [ ] First program deployed by external developer
 - [ ] 100+ test transactions per day
-- [ ] 10 founding moltys committed
+- [ ] 10 founding symbionts committed
 
 ### Month 3: Refinement (April 2026)
 
@@ -104,9 +104,9 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 - [ ] Bug fixes from community feedback
 
 **Protocols:**
-- [ ] LobsterLend lending protocol
-- [ ] ClawPump token launchpad
-- [ ] ReefStake liquid staking
+- [ ] ThallLend lending protocol
+- [ ] SporePump token launchpad
+- [ ] MossStake liquid staking
 - [ ] Cross-program invocation (CPI) complete
 
 **Tools:**
@@ -138,7 +138,7 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 
 **Security:**
 - [ ] External security audit (consensus layer)
-- [ ] External security audit (MoltyVM)
+- [ ] External security audit (LichenVM)
 - [ ] External security audit (core programs)
 - [ ] Penetration testing
 - [ ] Fix all critical/high severity issues
@@ -177,8 +177,8 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 
 **Core Programs:**
 - [ ] All core protocols deployed on mainnet
-- [ ] Liquidity bootstrapping for ClawSwap
-- [ ] ClawPump launchpad live
+- [ ] Liquidity bootstrapping for SporeSwap
+- [ ] SporePump launchpad live
 - [ ] Bridge to Solana operational
 
 **Community:**
@@ -219,7 +219,7 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 - [ ] $10M+ TVL
 - [ ] 100+ programs deployed
 - [ ] 10,000+ daily transactions
-- [ ] 50+ tokens launched on ClawPump
+- [ ] 50+ tokens launched on SporePump
 
 ---
 
@@ -262,7 +262,7 @@ This roadmap tracks MoltChain's development from initial concept to becoming the
 
 ---
 
-## Phase 4: The Reef Expands (Year 2+) 🎯 VISION
+## Phase 4: The Moss Expands (Year 2+) 🎯 VISION
 
 **Goal:** Become THE blockchain for autonomous agents globally.
 
@@ -344,7 +344,7 @@ Month 6: Growth & Stability
 2. **Testnet launch pending** (core development complete, single-node works)
    - Mitigation: Multi-node coordination in progress
 3. **No funding secured** (bootstrapping)
-   - Mitigation: Launch with founding molty contributions, no VC needed
+   - Mitigation: Launch with founding lichen contributions, no VC needed
 
 ---
 
@@ -369,7 +369,7 @@ Month 6: Growth & Stability
 
 ## Get Involved
 
-**Want to help build MoltChain?**
+**Want to help build Lichen?**
 
 1. **Developers:** Pick a task from the roadmap, start coding
 2. **Validators:** Register interest in Discord
@@ -378,9 +378,9 @@ Month 6: Growth & Stability
 
 **Contact:**
 - Discord: https://discord.gg/gkQmsHXRXp
-- X: @MoltChainHQ
-- Telegram: https://t.me/moltchainhq
-- Email: hello@moltchain.network
+- X: @LichenHQ
+- Telegram: https://t.me/lichenhq
+- Email: hello@lichen.network
 
 ---
 
@@ -395,8 +395,8 @@ By end of Phase 2 (Month 6), we will have succeeded if:
 ✅ 10,000+ daily transactions proves user engagement  
 ✅ Community is self-sustaining and growing  
 
-**If we hit these metrics, we'll know MoltChain is working.**
+**If we hit these metrics, we'll know Lichen is working.**
 
 ---
 
-*The reef is active. The future is molty. Let's build it.* 🦞⚡
+*The network is active. The future is lichen. Let's build it.* 🦞⚡

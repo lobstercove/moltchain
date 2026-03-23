@@ -1,4 +1,4 @@
-# Production-Readiness Audit — MoltChain
+# Production-Readiness Audit — Lichen
 **Date:** February 25, 2026  
 **Scope:** Full workspace at `/Users/johnrobin/.openclaw/workspace/moltchain/`  
 **Rule:** "No stubs, no placeholders, no TODOs, no mock data, no hardcoded — everything wired from core code or contracts"
@@ -34,7 +34,7 @@ The following keyword hits were triaged and are all **benign**:
 | # | File | Line | Keyword | Severity | Verdict |
 |---|---|---|---|---|---|
 | 1 | `sdk/src/lib.rs` | 22–427 | `test_mock` | **Info** | SDK testing framework — `#[cfg(not(target_arch = "wasm32"))]` only. Never compiled into production WASM. Correct design for contract unit tests. |
-| 2 | `contracts/clawvault/src/lib.rs` | 917–1652 | `test_mock` | **Info** | All inside `#[cfg(test)] mod tests`. |
+| 2 | `contracts/sporevault/src/lib.rs` | 917–1652 | `test_mock` | **Info** | All inside `#[cfg(test)] mod tests`. |
 | 3 | `contracts/dex_rewards/src/lib.rs` | 769–1147 | `test_mock` | **Info** | All inside `#[cfg(test)] mod tests`. |
 | 4 | `custody/src/main.rs` | 5992 | "placeholder" | **Info** | Comment reads "Replace first signature (fee payer's placeholder) with real signature" — describes the protocol where a TX is pre-built with a zero-sig slot and then the real sig is injected. This is standard multisig flow, not unfinished work. |
 | 5 | `rpc/src/lib.rs` | 8149 | "Placeholder signature" | **Info** | Comment: "AUDIT-FIX 2.15: Placeholder signature so downstream code doesn't reject". EVM compatibility shim — the real ECDSA sig lives inside the EVM tx envelope. The outer `[0u8; 64]` is intentional protocol design. |
@@ -57,15 +57,15 @@ All are standard HTML `<input placeholder="Search docs...">` attributes across `
 All frontends use a centralized configuration system:
 
 1. **`shared/utils.js`** — Single source of truth for protocol constants:
-   - `SHELLS_PER_MOLT = 1_000_000_000`
+   - `SPORES_PER_LICN = 1_000_000_000`
    - `MS_PER_SLOT = 400`
    - `SLOTS_PER_EPOCH = 432_000`
-   - `BASE_FEE_SHELLS = 1_000_000`
+   - `BASE_FEE_SPORES = 1_000_000`
    - Fee split ratios, ZK compute fees, etc.
 
 2. **`shared-config.js`** — Single source of truth for frontend URLs:
    - Auto-detects dev (localhost) vs. production (origin-relative paths)
-   - All cross-app navigation uses `data-molt-app` attributes resolved from `MOLT_CONFIG`
+   - All cross-app navigation uses `data-lichen-app` attributes resolved from `LICHEN_CONFIG`
 
 3. **All 6 frontends** confirmed to import both files:
    - ✅ `explorer/index.html` → `../shared/utils.js` + `../shared-config.js`
@@ -79,10 +79,10 @@ All frontends use a centralized configuration system:
 
 | Check | Result |
 |---|---|
-| Hardcoded port numbers (3000, 8899, etc.) in JS | **0 found** — all routed through `MOLT_CONFIG` |
+| Hardcoded port numbers (3000, 8899, etc.) in JS | **0 found** — all routed through `LICHEN_CONFIG` |
 | Hardcoded token amounts / fee values in JS | **0 found** — all read from `shared/utils.js` constants |
 | Hardcoded status strings ("Online", "Active") | **0 found** |
-| Hardcoded supply numbers (1e9, 1000000000) | **0 found** — all use `SHELLS_PER_MOLT` |
+| Hardcoded supply numbers (1e9, 1000000000) | **0 found** — all use `SPORES_PER_LICN` |
 | Hardcoded slot times (400, 0.4) | **0 found** — all use `MS_PER_SLOT` |
 | Hardcoded `localhost`/`127.0.0.1` URLs in JS | **0 found** |
 
@@ -101,7 +101,7 @@ All frontends use a centralized configuration system:
 | 3 | `dex/dex.js` | 2618 | `console.log('[DEX] Binance price feed connected')` | **Low** | One-time startup log. |
 | 4 | `wallet/js/shielded.js` | 74 | `console.log('Shielded wallet initialized. Address:', ...)` | **Medium** | **Leaks shielded address to console.** Privacy concern for a ZK privacy wallet. Should be removed or gated. |
 | 5 | `wallet/js/shielded.js` | 835 | `console.log('Shielded wallet module loaded')` | **Low** | Module load confirmation. Low risk. |
-| 6 | `wallet/js/identity.js` | 1192 | `console.log('MoltyID Identity module loaded')` | **Low** | Module load confirmation. |
+| 6 | `wallet/js/identity.js` | 1192 | `console.log('LichenID Identity module loaded')` | **Low** | Module load confirmation. |
 
 **Note:** `wallet/js/wallet.js` and `explorer/js/explorer.js` have ~15 console.log lines, but all are **commented out** (`// n(...)`). Clean.
 
@@ -120,7 +120,7 @@ All `println!` calls in `core/src/{block,account,hash,transaction}.rs` are **ins
 | `core/src/state.rs` | 1076, 1093 | "Warning: failed to serialize tx" | **Info** — graceful degradation |
 | `core/src/state.rs` | 1409 | "Warning: failed to write Merkle leaf updates" | **Info** — data integrity warning |
 | `core/src/state.rs` | 4623 | "Failed to deserialize slashing tracker" | **Info** — graceful fallback |
-| `core/src/evm.rs` | 433, 509, 702 | EVM sub-shell remainder warnings (T3.8, H3) | **Info** — precision loss warnings |
+| `core/src/evm.rs` | 433, 509, 702 | EVM sub-spore remainder warnings (T3.8, H3) | **Info** — precision loss warnings |
 | `core/src/consensus.rs` | 2155 | "HALT: No validators" | **Info** — critical safety halt |
 | `core/src/processor.rs` | 3004, 3028 | Deploy indexing failures | **Info** — operational warnings |
 | `core/src/processor.rs` | 3358 | Contract returned non-zero code warning | **Info** — debug aid |

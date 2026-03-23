@@ -1,4 +1,4 @@
-# 🦞 MoltChain Contract Development Guide
+# 🦞 Lichen Contract Development Guide
 
 ## Quick Start
 
@@ -15,7 +15,7 @@ rustup target add wasm32-unknown-unknown
 ### 2. Create Your First Contract
 
 ```bash
-cd moltchain/contracts
+cd lichen/contracts
 cargo new my_token --lib
 cd my_token
 ```
@@ -31,7 +31,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-moltchain-sdk = { path = "../../sdk" }
+lichen-sdk = { path = "../../sdk" }
 
 [profile.release]
 opt-level = "z"
@@ -44,7 +44,7 @@ codegen-units = 1
 #![no_std]
 #![no_main]
 
-use moltchain_sdk::{Token, Address, log_info};
+use lichen_sdk::{Token, Address, log_info};
 
 static mut TOKEN: Option<Token> = None;
 
@@ -98,7 +98,7 @@ pub trait MT20 {
 ### Example Token
 
 ```rust
-use moltchain_sdk::Token;
+use lichen_sdk::Token;
 
 let mut token = Token::new("MyCoin", "MYC", 9, "myc");
 
@@ -120,7 +120,7 @@ token.transfer_from(spender, owner, recipient, 25_000_000_000)?;
 ### Reading Storage
 
 ```rust
-use moltchain_sdk::storage_get;
+use lichen_sdk::storage_get;
 
 let value = storage_get(b"my_key");
 if let Some(bytes) = value {
@@ -131,7 +131,7 @@ if let Some(bytes) = value {
 ### Writing Storage
 
 ```rust
-use moltchain_sdk::storage_set;
+use lichen_sdk::storage_set;
 
 storage_set(b"my_key", b"my_value");
 ```
@@ -139,7 +139,7 @@ storage_set(b"my_key", b"my_value");
 ### Removing from Storage
 
 ```rust
-use moltchain_sdk::storage;
+use lichen_sdk::storage;
 
 storage::remove(b"my_key");
 ```
@@ -147,7 +147,7 @@ storage::remove(b"my_key");
 ## Gas Management
 
 ```rust
-use moltchain_sdk::consume_gas;
+use lichen_sdk::consume_gas;
 
 // Consume 1000 gas units
 if consume_gas(1000) {
@@ -160,7 +160,7 @@ if consume_gas(1000) {
 ## Logging
 
 ```rust
-use moltchain_sdk::log_info;
+use lichen_sdk::log_info;
 
 log_info("Transfer successful");
 log_info("Balance updated");
@@ -174,7 +174,7 @@ log_info("Balance updated");
 #![no_std]
 #![no_main]
 
-use moltchain_sdk::{storage_get, storage_set, bytes_to_u64, u64_to_bytes};
+use lichen_sdk::{storage_get, storage_set, bytes_to_u64, u64_to_bytes};
 
 #[no_mangle]
 pub extern "C" fn increment() -> u64 {
@@ -202,7 +202,7 @@ pub extern "C" fn get_count() -> u64 {
 #![no_std]
 #![no_main]
 
-use moltchain_sdk::{Address, storage_get, storage_set};
+use lichen_sdk::{Address, storage_get, storage_set};
 
 static mut OWNERS: [Address; 3] = [Address([0u8; 32]); 3];
 static mut REQUIRED: u8 = 2; // 2 of 3 signatures
@@ -234,7 +234,7 @@ pub extern "C" fn approve_transaction(proposal_id: u64, signer: Address) -> u32 
 #![no_std]
 #![no_main]
 
-use moltchain_sdk::{Address, storage_get, storage_set};
+use lichen_sdk::{Address, storage_get, storage_set};
 
 #[no_mangle]
 pub extern "C" fn mint(to: Address, token_id: u64, metadata: *const u8, len: u32) -> u32 {
@@ -362,7 +362,7 @@ Build and deploy to local network:
 
 ```bash
 # Start validator
-moltchain-validator 8000
+lichen-validator 8000
 
 # Deploy contract
 python3 tools/deploy_contract.py my_token.wasm
@@ -455,8 +455,8 @@ pub extern "C" fn pause(caller: *const u8) -> u32 {
 
 ## Resources
 
-- **SDK Docs**: `moltchain/sdk/README.md`
-- **Examples**: `moltchain/contracts/`
+- **SDK Docs**: `lichen/sdk/README.md`
+- **Examples**: `lichen/contracts/`
 - **RPC API**: `http://localhost:8899/docs`
 - **Discord**: Join for support
 

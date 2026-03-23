@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================
-# MoltChain VPS Post-Genesis Keypair Setup
+# Lichen VPS Post-Genesis Keypair Setup
 # ============================================================================
 #
 # Run ONCE after the validator creates genesis on a VPS.
@@ -10,9 +10,9 @@
 # no deploy_dex.py or first-boot-deploy.sh needed.
 #
 # What this script does:
-#   1. Copies genesis primary keypair → /etc/moltchain/custody-treasury-<network>.json
+#   1. Copies genesis primary keypair → /etc/lichen/custody-treasury-<network>.json
 #      (so custody signs mint() calls with the matching contract admin key)
-#   2. Copies faucet keypair → /var/lib/moltchain/faucet-keypair-<network>.json
+#   2. Copies faucet keypair → /var/lib/lichen/faucet-keypair-<network>.json
 #   3. Optionally restarts custody + faucet systemd services
 #
 # Usage:
@@ -26,8 +26,8 @@ set -euo pipefail
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 
-VPS_STATE="/var/lib/moltchain"
-VPS_CONFIG="/etc/moltchain"
+VPS_STATE="/var/lib/lichen"
+VPS_CONFIG="/etc/lichen"
 NETWORK=""
 DO_RESTART=true
 
@@ -62,7 +62,7 @@ if ! sudo test -d "$GENESIS_KEYS_DIR"; then
 fi
 
 echo -e "${CYAN}══════════════════════════════════════════════════════${NC}"
-echo -e "${CYAN}  MoltChain VPS Post-Genesis Setup ($NETWORK)${NC}"
+echo -e "${CYAN}  Lichen VPS Post-Genesis Setup ($NETWORK)${NC}"
 echo -e "${CYAN}══════════════════════════════════════════════════════${NC}"
 echo ""
 
@@ -71,7 +71,7 @@ GENESIS_KEY=$(sudo find "$GENESIS_KEYS_DIR" -name "genesis-primary-*.json" -type
 if [ -n "$GENESIS_KEY" ]; then
 	sudo cp "$GENESIS_KEY" "$CUSTODY_KEY_TARGET"
 	sudo chmod 600 "$CUSTODY_KEY_TARGET"
-	sudo chown moltchain:moltchain "$CUSTODY_KEY_TARGET"
+	sudo chown lichen:lichen "$CUSTODY_KEY_TARGET"
 
 	PUBKEY=$(sudo python3 -c "import json; d=json.load(open('$GENESIS_KEY')); print(d.get('pubkey','?'))" 2>/dev/null || echo '?')
 	echo -e "  ${GREEN}✓${NC} Custody treasury = genesis admin: $PUBKEY"
@@ -85,7 +85,7 @@ FAUCET_KEY=$(sudo find "$GENESIS_KEYS_DIR" -name "faucet-*.json" -type f 2>/dev/
 if [ -n "$FAUCET_KEY" ]; then
 	sudo cp "$FAUCET_KEY" "$FAUCET_KEY_TARGET"
 	sudo chmod 600 "$FAUCET_KEY_TARGET"
-	sudo chown moltchain:moltchain "$FAUCET_KEY_TARGET"
+	sudo chown lichen:lichen "$FAUCET_KEY_TARGET"
 
 	FAUCET_PK=$(sudo python3 -c "import json; d=json.load(open('$FAUCET_KEY')); print(d.get('pubkey','?'))" 2>/dev/null || echo '?')
 	echo -e "  ${GREEN}✓${NC} Faucet keypair: $FAUCET_PK"
@@ -106,7 +106,7 @@ fi
 # ── 4. Ensure custody-db exists ──
 if [ ! -d "$VPS_STATE/custody-db" ]; then
 	sudo mkdir -p "$VPS_STATE/custody-db"
-	sudo chown moltchain:moltchain "$VPS_STATE/custody-db"
+	sudo chown lichen:lichen "$VPS_STATE/custody-db"
 	echo -e "  ${GREEN}✓${NC} Created $VPS_STATE/custody-db"
 fi
 
@@ -114,8 +114,8 @@ fi
 if [ "$DO_RESTART" = true ]; then
 	echo ""
 	echo -e "  Restarting services..."
-	sudo systemctl restart moltchain-custody 2>/dev/null && echo -e "  ${GREEN}✓${NC} custody restarted" || echo -e "  ${YELLOW}⚠${NC} custody restart failed"
-	sudo systemctl restart moltchain-faucet 2>/dev/null && echo -e "  ${GREEN}✓${NC} faucet restarted" || echo -e "  ${YELLOW}⚠${NC} faucet restart failed"
+	sudo systemctl restart lichen-custody 2>/dev/null && echo -e "  ${GREEN}✓${NC} custody restarted" || echo -e "  ${YELLOW}⚠${NC} custody restart failed"
+	sudo systemctl restart lichen-faucet 2>/dev/null && echo -e "  ${GREEN}✓${NC} faucet restarted" || echo -e "  ${YELLOW}⚠${NC} faucet restart failed"
 fi
 
 echo ""

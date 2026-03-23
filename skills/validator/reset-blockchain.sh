@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================
-# MoltChain - Full Blockchain Reset
+# Lichen - Full Blockchain Reset
 # ============================================================================
 #
 # Stops ALL running services, removes ALL persistent state, and prepares
@@ -61,7 +61,7 @@ if [ "$RESTART" = true ]; then
 fi
 
 echo -e "${RED}=================================================${NC}"
-echo -e "${RED}  MoltChain FULL RESET - All State Will Be Destroyed${NC}"
+echo -e "${RED}  Lichen FULL RESET - All State Will Be Destroyed${NC}"
 echo -e "${RED}=================================================${NC}"
 echo ""
 echo "  Repo root: $REPO_ROOT"
@@ -71,22 +71,22 @@ echo ""
 # ════════════════════════════════════════════════════════════
 # STEP 1: KILL ALL PROCESSES
 # ════════════════════════════════════════════════════════════
-echo -e "${YELLOW}[1/7] Killing all MoltChain processes...${NC}"
+echo -e "${YELLOW}[1/7] Killing all Lichen processes...${NC}"
 
-pkill -9 -f moltchain-validator 2>/dev/null || true
-pkill -9 -f moltchain-faucet    2>/dev/null || true
-pkill -9 -f moltchain-custody   2>/dev/null || true
+pkill -9 -f lichen-validator 2>/dev/null || true
+pkill -9 -f lichen-faucet    2>/dev/null || true
+pkill -9 -f lichen-custody   2>/dev/null || true
 sleep 1
 
 # Retry if stubborn
-if pgrep -f "moltchain-" >/dev/null 2>&1; then
+if pgrep -f "lichen-" >/dev/null 2>&1; then
     echo -e "  ${YELLOW}Retrying kill...${NC}"
-    pkill -9 -f "moltchain-" 2>/dev/null || true
+    pkill -9 -f "lichen-" 2>/dev/null || true
     sleep 2
 fi
 
 # Don't block on zombie PIDs
-LEFTOVER=$(pgrep -f "moltchain-(validator|faucet|custody)" 2>/dev/null || true)
+LEFTOVER=$(pgrep -f "lichen-(validator|faucet|custody)" 2>/dev/null || true)
 if [ -n "$LEFTOVER" ]; then
     echo -e "  ${YELLOW}Warning: PIDs still present: $LEFTOVER${NC}"
 else
@@ -115,20 +115,20 @@ if [ "$NETWORK" = "all" ]; then
     fi
 
     # Home directory state
-    rm -rf ~/.moltchain/data-* ~/.moltchain/state-* 2>/dev/null || true
+    rm -rf ~/.lichen/data-* ~/.lichen/state-* 2>/dev/null || true
 
-    # NOTE: ~/.moltchain/zk/ is intentionally NOT wiped.
+    # NOTE: ~/.lichen/zk/ is intentionally NOT wiped.
     # ZK verification/proving keys are deterministic Groth16 parameters — they
     # contain no blockchain state.  Regenerating them takes ~10s (standalone
     # zk-setup binary) but gains nothing security-wise.  Add --zk-reset to
     # explicitly force regeneration (useful after changing circuit parameters).
     if [[ "${EXTRA_FLAGS:-}" == *"--zk-reset"* ]]; then
-        rm -rf ~/.moltchain/zk 2>/dev/null && echo "  removed ZK key cache (--zk-reset)"
+        rm -rf ~/.lichen/zk 2>/dev/null && echo "  removed ZK key cache (--zk-reset)"
     fi
 
     # Custody state
     rm -rf data/custody* 2>/dev/null || true
-    rm -rf /tmp/moltchain-custody* 2>/dev/null || true
+    rm -rf /tmp/lichen-custody* 2>/dev/null || true
 else
     # Network-specific: remove both naming conventions
     # Convention 1: data/state-{network}-{port}
@@ -160,8 +160,8 @@ else
     echo -e "${YELLOW}[3/7] Removing validator keypairs...${NC}"
 
     if [ "$NETWORK" = "all" ]; then
-        rm -rf ~/.moltchain/validators 2>/dev/null || true
-        rm -f ~/.moltchain/validator-*.json 2>/dev/null || true
+        rm -rf ~/.lichen/validators 2>/dev/null || true
+        rm -f ~/.lichen/validator-*.json 2>/dev/null || true
 
         # Keypairs copied via --import-key into data dirs
         find "$REPO_ROOT/data" -maxdepth 3 -name "validator-keypair.json" -delete 2>/dev/null || true
@@ -169,11 +169,11 @@ else
         # Only remove keypairs for the specific network ports
         if [ "$NETWORK" = "testnet" ]; then
             for port in 7001 7002 7003 8000 8001 8002; do
-                rm -f "$HOME/.moltchain/validators/validator-${port}.json" 2>/dev/null || true
+                rm -f "$HOME/.lichen/validators/validator-${port}.json" 2>/dev/null || true
             done
         else
             for port in 8001 8002 8003 9000 9001 9002; do
-                rm -f "$HOME/.moltchain/validators/validator-${port}.json" 2>/dev/null || true
+                rm -f "$HOME/.lichen/validators/validator-${port}.json" 2>/dev/null || true
             done
         fi
     fi
@@ -187,25 +187,25 @@ echo -e "${YELLOW}[4/7] Cleaning signer data, peer stores, genesis files...${NC}
 
 if [ "$NETWORK" = "all" ]; then
     # Signer keypairs
-    rm -rf ~/.moltchain/signer-* ~/.moltchain/signers 2>/dev/null || true
+    rm -rf ~/.lichen/signer-* ~/.lichen/signers 2>/dev/null || true
     rm -rf "$REPO_ROOT"/data/signer-* 2>/dev/null || true
 
     # Peer stores (only check data dirs, not target/)
     find "$REPO_ROOT/data" -maxdepth 3 -name "known-peers.json" -delete 2>/dev/null || true
-    rm -f ~/.moltchain/known-peers.json 2>/dev/null || true
+    rm -f ~/.lichen/known-peers.json 2>/dev/null || true
 
     # Genesis files
     rm -f "$REPO_ROOT/genesis.json" 2>/dev/null || true
     find "$REPO_ROOT/data" -maxdepth 3 -name "genesis-wallet.json" -delete 2>/dev/null || true
     find "$REPO_ROOT/data" -maxdepth 3 -name "genesis-keys" -type d -exec rm -rf {} + 2>/dev/null || true
-    rm -f ~/.moltchain/genesis-wallet.json 2>/dev/null || true
-    rm -rf ~/.moltchain/genesis-keys 2>/dev/null || true
+    rm -f ~/.lichen/genesis-wallet.json 2>/dev/null || true
+    rm -rf ~/.lichen/genesis-keys 2>/dev/null || true
 
     # Faucet persisted state
     rm -f "$REPO_ROOT/airdrops.json" 2>/dev/null || true
 
     # Temp files and logs
-    rm -rf /tmp/moltchain-* /tmp/validator-* /tmp/molt* 2>/dev/null || true
+    rm -rf /tmp/lichen-* /tmp/validator-* /tmp/lichen-* 2>/dev/null || true
 else
     # Network-specific
     for dir in "$REPO_ROOT"/data/state-${NETWORK}-*; do
@@ -234,7 +234,7 @@ if [ "$NETWORK" = "all" ]; then
     find "$REPO_ROOT/data" -maxdepth 3 -name "fingerprint-*.dat" -delete 2>/dev/null || true
 
     # Any stale validator PID files
-    rm -f /tmp/moltchain-validator-*.pid 2>/dev/null || true
+    rm -f /tmp/lichen-validator-*.pid 2>/dev/null || true
 
     # Dev signer temp files
     rm -f /tmp/signer-*.json 2>/dev/null || true
@@ -313,7 +313,7 @@ if [ "$RESTART" = true ]; then
     # ── Generate ZK keys (if not cached) ──
     # The Groth16 trusted setup is memory-intensive, so it runs as a
     # standalone binary before validators start.  Keys are cached at
-    # ~/.moltchain/zk/ and persist across resets.
+    # ~/.lichen/zk/ and persist across resets.
     ZK_SETUP_BIN="${REPO_ROOT}/target/release/zk-setup"
     if [ -x "$ZK_SETUP_BIN" ]; then
         echo "   Ensuring ZK proving/verification keys exist..."
@@ -325,7 +325,7 @@ if [ "$RESTART" = true ]; then
     echo ""
 
     echo "   Starting V1 (primary - creates genesis)..."
-    nohup "$LAUNCHER" "$NETWORK" 1 $EXTRA_FLAGS > /tmp/moltchain-v1.log 2>&1 &
+    nohup "$LAUNCHER" "$NETWORK" 1 $EXTRA_FLAGS > /tmp/lichen-v1.log 2>&1 &
     V1_PID=$!
     echo "   V1 PID: $V1_PID"
 
@@ -352,14 +352,14 @@ if [ "$RESTART" = true ]; then
     fi
 
     echo "   Starting V2 (secondary)..."
-    nohup "$LAUNCHER" "$NETWORK" 2 $EXTRA_FLAGS > /tmp/moltchain-v2.log 2>&1 &
+    nohup "$LAUNCHER" "$NETWORK" 2 $EXTRA_FLAGS > /tmp/lichen-v2.log 2>&1 &
     echo "   V2 PID: $!"
 
     echo "   Waiting for V2 sync (20s)..."
     sleep 20
 
     echo "   Starting V3 (tertiary)..."
-    nohup "$LAUNCHER" "$NETWORK" 3 $EXTRA_FLAGS > /tmp/moltchain-v3.log 2>&1 &
+    nohup "$LAUNCHER" "$NETWORK" 3 $EXTRA_FLAGS > /tmp/lichen-v3.log 2>&1 &
     echo "   V3 PID: $!"
 
     echo ""
@@ -380,7 +380,7 @@ if [ "$RESTART" = true ]; then
     # ── Start faucet service ──
     # The faucet sends signed transfer transactions (works in multi-validator mode).
     # Its keypair was auto-generated and funded at genesis.
-    FAUCET_BIN="${REPO_ROOT}/target/release/moltchain-faucet"
+    FAUCET_BIN="${REPO_ROOT}/target/release/lichen-faucet"
     if [ -x "$FAUCET_BIN" ]; then
         # Copy faucet keypair from genesis-keys to repo root
         FAUCET_KEY=$(find "$REPO_ROOT/data/state-8000/genesis-keys" -name "faucet-*.json" -type f 2>/dev/null | head -1)
@@ -393,19 +393,19 @@ if [ "$RESTART" = true ]; then
         FAUCET_KEYPAIR="$REPO_ROOT/faucet-keypair.json" \
         RPC_URL="http://127.0.0.1:8899" \
         NETWORK="$NETWORK" \
-        nohup "$FAUCET_BIN" > /tmp/moltchain-faucet.log 2>&1 &
+        nohup "$FAUCET_BIN" > /tmp/lichen-faucet.log 2>&1 &
         FAUCET_PID=$!
         echo "   ✓ Faucet PID: $FAUCET_PID"
     else
-        echo "   ⚠  Faucet binary not found — build with: cargo build --release --bin moltchain-faucet"
+        echo "   ⚠  Faucet binary not found — build with: cargo build --release --bin lichen-faucet"
     fi
 
     echo ""
     echo -e "${GREEN}Stack restarted (dev mode — fingerprint = SHA-256(pubkey)). Check logs:${NC}"
-    echo "   tail -f /tmp/moltchain-v1.log"
-    echo "   tail -f /tmp/moltchain-v2.log"
-    echo "   tail -f /tmp/moltchain-v3.log"
-    echo "   tail -f /tmp/moltchain-faucet.log"
+    echo "   tail -f /tmp/lichen-v1.log"
+    echo "   tail -f /tmp/lichen-v2.log"
+    echo "   tail -f /tmp/lichen-v3.log"
+    echo "   tail -f /tmp/lichen-faucet.log"
 else
     echo "Next steps:"
     echo "   cd $REPO_ROOT"
@@ -416,17 +416,17 @@ else
     echo "   ./skills/validator/run-validator.sh testnet 3   # V3 sync"
     echo ""
     echo "   # Option B: Direct binary (explicit ports)"
-    echo "   ./target/release/moltchain-validator --p2p-port 8000 --rpc-port 8899 --db-path \$PWD/data/state-8000"
-    echo "   ./target/release/moltchain-validator --p2p-port 8001 --rpc-port 8901 --db-path \$PWD/data/state-8001 --bootstrap 127.0.0.1:8000"
-    echo "   ./target/release/moltchain-validator --p2p-port 8002 --rpc-port 8903 --db-path \$PWD/data/state-8002 --bootstrap 127.0.0.1:8000"
+    echo "   ./target/release/lichen-validator --p2p-port 8000 --rpc-port 8899 --db-path \$PWD/data/state-8000"
+    echo "   ./target/release/lichen-validator --p2p-port 8001 --rpc-port 8901 --db-path \$PWD/data/state-8001 --bootstrap 127.0.0.1:8000"
+    echo "   ./target/release/lichen-validator --p2p-port 8002 --rpc-port 8903 --db-path \$PWD/data/state-8002 --bootstrap 127.0.0.1:8000"
     echo ""
     echo "   # Option C: Dev mode (multi-validator on one machine, bypasses fingerprint)"
-    echo "   ./target/release/moltchain-validator --dev-mode --p2p-port 8000 --rpc-port 8899 --db-path \$PWD/data/state-8000"
-    echo "   ./target/release/moltchain-validator --dev-mode --p2p-port 8001 --rpc-port 8901 --db-path \$PWD/data/state-8001 --bootstrap 127.0.0.1:8000"
-    echo "   ./target/release/moltchain-validator --dev-mode --p2p-port 8002 --rpc-port 8903 --db-path \$PWD/data/state-8002 --bootstrap 127.0.0.1:8000"
+    echo "   ./target/release/lichen-validator --dev-mode --p2p-port 8000 --rpc-port 8899 --db-path \$PWD/data/state-8000"
+    echo "   ./target/release/lichen-validator --dev-mode --p2p-port 8001 --rpc-port 8901 --db-path \$PWD/data/state-8001 --bootstrap 127.0.0.1:8000"
+    echo "   ./target/release/lichen-validator --dev-mode --p2p-port 8002 --rpc-port 8903 --db-path \$PWD/data/state-8002 --bootstrap 127.0.0.1:8000"
     echo ""
     echo "   # Machine migration (import keypair from another machine)"
-    echo "   ./target/release/moltchain-validator --import-key /path/to/keypair.json --p2p-port 8000 --rpc-port 8899"
+    echo "   ./target/release/lichen-validator --import-key /path/to/keypair.json --p2p-port 8000 --rpc-port 8899"
     echo ""
     echo "   First validator creates genesis - start it first!"
 fi

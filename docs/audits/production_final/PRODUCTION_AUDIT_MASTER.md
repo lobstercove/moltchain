@@ -1,4 +1,4 @@
-# MoltChain — Master Production Audit
+# Lichen — Master Production Audit
 **Date:** February 26, 2026  
 **Method:** Multi-agent cross-matching (frontend ↔ contract ↔ RPC ↔ WS), line-by-line  
 **Status tracking:** Each finding has an `[ ]` / `[x]` checkbox for fix tracking  
@@ -41,7 +41,7 @@ These findings affect multiple systems simultaneously.
 
 ### 🔴 GX-01 — `callContract` RPC method does not exist
 - **Impact:** Every dApp, the website quickstart, the SDK Python tests, the dev portal playground, and `test-rpc-comprehensive.sh` all call `callContract`. It has zero implementation in the dispatch table. All callers receive `{"error":{"code":-32601,"message":"Method not found: callContract"}}`.
-- **Files:** [rpc/src/lib.rs](rpc/src/lib.rs) — no arm in `handle_rpc()` match · [website/index.html](website/index.html#L808) · [developers/moltyid.html](developers/moltyid.html#L566) · [test-rpc-comprehensive.sh](test-rpc-comprehensive.sh#L119)
+- **Files:** [rpc/src/lib.rs](rpc/src/lib.rs) — no arm in `handle_rpc()` match · [website/index.html](website/index.html#L808) · [developers/lichenid.html](developers/lichenid.html#L566) · [test-rpc-comprehensive.sh](test-rpc-comprehensive.sh#L119)
 - **Fix:** Implement `callContract` in the RPC dispatch: deserialize the contract address + function opcode + args, route to `callContract()` in core, return execution result.
 - [x] Fix
 
@@ -51,15 +51,15 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Persist transaction execution result (success/failure/error message) at block finalization and surface it in `tx_to_rpc_json()`.
 - [x] Fix
 
-### 🔴 GX-03 — MoltCoin wrapper supply and public supply docs were inconsistent
+### 🔴 GX-03 — LichenCoin wrapper supply and public supply docs were inconsistent
 - **Impact:** Public materials and the wrapper contract described different supply figures, creating a trust and operator-alignment problem.
-- **Files:** [contracts/moltcoin/src/lib.rs](contracts/moltcoin/src/lib.rs#L67) · [developers/contract-reference.html](developers/contract-reference.html) · [website/index.html](website/index.html)
+- **Files:** [contracts/lichencoin/src/lib.rs](contracts/lichencoin/src/lib.rs#L67) · [developers/contract-reference.html](developers/contract-reference.html) · [website/index.html](website/index.html)
 - **Fix:** Resolved by aligning the wrapper layer and public docs to the live chain semantics: 500M genesis supply at the native layer, protocol-managed minting at epoch boundaries, and updated public-facing tokenomics.
 - [x] Fix
 
-### 🔴 GX-04 — MoltCoin wrapper `mint()` semantics conflicted with fixed-supply marketing
+### 🔴 GX-04 — LichenCoin wrapper `mint()` semantics conflicted with fixed-supply marketing
 - **Impact:** The old capped-supply / zero-inflation marketing claim was false once compared against the wrapper contract and live protocol behavior.
-- **Files:** [contracts/moltcoin/src/lib.rs](contracts/moltcoin/src/lib.rs#L140-L162) — `mint()` function · [website/index.html](website/index.html) — old tokenomics copy
+- **Files:** [contracts/lichencoin/src/lib.rs](contracts/lichencoin/src/lib.rs#L140-L162) — `mint()` function · [website/index.html](website/index.html) — old tokenomics copy
 - **Fix:** Resolved by documenting `mint()` as wrapper-layer only and updating public tokenomics to the live model: 500M genesis supply, epoch-boundary mint settlement, and fee-burn counter-pressure.
 - [x] Fix
 
@@ -129,7 +129,7 @@ These findings affect multiple systems simultaneously.
 - [x] Fix
 
 ### 🟡 EX-05 — `openEditProfileModal` sends 5 separate transactions with no rollback on partial failure
-- **Impact:** If any of the 5 MoltyID update transactions fails mid-sequence (e.g., network error after the 3rd), the identity is left in a partially-updated inconsistent state with no way to undo.
+- **Impact:** If any of the 5 LichenID update transactions fails mid-sequence (e.g., network error after the 3rd), the identity is left in a partially-updated inconsistent state with no way to undo.
 - **Files:** [explorer/js/address.js](explorer/js/address.js) — `openEditProfileModal()` function
 - **Fix:** Batch all 5 update calls into a single multi-instruction transaction.
 - [x] Fix
@@ -199,15 +199,15 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Persist pending requests to `chrome.storage.session` keyed by request ID. Restore them on service worker startup.
 - [x] Fix
 
-### 🟠 WL-03 — Fees are hardcoded (0.001 MOLT); not fetched from RPC `getFeeConfig`
+### 🟠 WL-03 — Fees are hardcoded (0.001 LICN); not fetched from RPC `getFeeConfig`
 - **Impact:** If the on-chain fee is changed via `setFeeConfig`, all wallets continue displaying and using the wrong fee. Users could over-pay or under-pay.
-- **Files:** [wallet/shared/utils.js](wallet/shared/utils.js#L17) `BASE_FEE_MOLT = 0.001` · [wallet/extension/src/core/provider-router.js](wallet/extension/src/core/provider-router.js#L614) hardcoded `eth_estimateGas` / `eth_gasPrice`
+- **Files:** [wallet/shared/utils.js](wallet/shared/utils.js#L17) `BASE_FEE_LICN = 0.001` · [wallet/extension/src/core/provider-router.js](wallet/extension/src/core/provider-router.js#L614) hardcoded `eth_estimateGas` / `eth_gasPrice`
 - **Fix:** Call `getFeeConfig` at wallet load time and cache the result. Update displayed fee dynamically.
 - [x] Fix
 
 ### 🟠 WL-04 — Transaction serialization has three independent copies — divergence risk
 - **Impact:** `serializeMessageBincode` exists in [wallet/js/wallet.js](wallet/js/wallet.js#L328), [wallet/extension/src/core/tx-service.js](wallet/extension/src/core/tx-service.js#L13), and [wallet/extension/src/core/provider-router.js](wallet/extension/src/core/provider-router.js#L304). A future bug fix in one may not be applied to the others, causing signature mismatches.
-- **Fix:** Extract to a single `@moltchain/crypto` shared package. Import from one place.
+- **Fix:** Extract to a single `@lichen/crypto` shared package. Import from one place.
 - [x] Fix
 
 ### 🟡 WL-05 — Extension `crypto-service.js` lacks async BIP39 checksum validation on import
@@ -219,7 +219,7 @@ These findings affect multiple systems simultaneously.
 ### 🟡 WL-06 — HD derivation is not BIP44/SLIP-0010 — incompatible with hardware wallets
 - **Impact:** Derivation slices the first 32 bytes of PBKDF2-SHA512 output. This is neither BIP32 nor BIP44. Users cannot use Ledger/Trezor. Cross-wallet seed recovery will produce wrong keys.
 - **Files:** [wallet/js/crypto.js](wallet/js/crypto.js#L180) · [wallet/extension/src/core/crypto-service.js](wallet/extension/src/core/crypto-service.js#L375)
-- **Note:** This is by-design if MoltChain intends a custom scheme, but the comment "compatible with Solana" is technically wrong and should be corrected.
+- **Note:** This is by-design if Lichen intends a custom scheme, but the comment "compatible with Solana" is technically wrong and should be corrected.
 - **Fix:** Either implement SLIP-0010/Ed25519 BIP44 derivation (`m/44'/<cointype>'/0'/0'`), or remove the "Solana-compatible" comment and document the actual scheme.
 - [x] Fix
 
@@ -235,7 +235,7 @@ These findings affect multiple systems simultaneously.
 - [x] Fix
 
 ### 🟡 WL-09 — Web wallet localStorage key blob accessible to XSS on the wallet origin
-- **Files:** [wallet/js/wallet.js](wallet/js/wallet.js) — `localStorage.moltWalletState`
+- **Files:** [wallet/js/wallet.js](wallet/js/wallet.js) — `localStorage.lichenWalletState`
 - **Fix:** Store the decrypted session in `sessionStorage` (cleared on browser close). Keep only the encrypted blob in `localStorage`.
 - [x] Fix
 
@@ -364,37 +364,37 @@ These findings affect multiple systems simultaneously.
 
 ### 🔴 MK-03 — `profile.js` `accept_offer`: seller/offerer args swapped vs contract
 - **Impact:** Even if the address bug in MK-02 is fixed, `accept_offer` encodes seller and offerer in wrong order. Contract will reject or credit funds to wrong party.
-- **Files:** [marketplace/js/profile.js](marketplace/js/profile.js) — `buildAcceptOfferArgs()` · [contracts/moltmarket/src/lib.rs](contracts/moltmarket/src/lib.rs) — `accept_offer` parameter order
+- **Files:** [marketplace/js/profile.js](marketplace/js/profile.js) — `buildAcceptOfferArgs()` · [contracts/lichenmarket/src/lib.rs](contracts/lichenmarket/src/lib.rs) — `accept_offer` parameter order
 - **Fix:** Align the JS argument order with the contract's expected parameter layout.
 - [x] Fix
 
 ### 🔴 MK-04 — `createCollection` RPC call does not exist as an RPC method
 - **Impact:** The "Create Collection" button calls `rpc.createCollection(...)` which routes to an internal classifier string, not an RPC handler. Collection creation always fails with method-not-found.
 - **Files:** [marketplace/js/create.js](marketplace/js/create.js) · [rpc/src/lib.rs](rpc/src/lib.rs) — no `createCollection` arm
-- **Fix:** Route collection creation through `sendTransaction` calling the `moltpunks::create_collection` contract function.
+- **Fix:** Route collection creation through `sendTransaction` calling the `lichenpunks::create_collection` contract function.
 - [x] Fix
 
-### 🔴 MK-05 — Mint sends opcode/binary payload to `moltpunks::mint` which expects WASM ABI pointer args
+### 🔴 MK-05 — Mint sends opcode/binary payload to `lichenpunks::mint` which expects WASM ABI pointer args
 - **Impact:** The create flow serializes a binary opcode payload but the contract expects WASM function arguments. Every mint attempt fails on deserialization.
-- **Files:** [marketplace/js/create.js](marketplace/js/create.js) — `buildMintArgs()` · [contracts/moltpunks/src/lib.rs](contracts/moltpunks/src/lib.rs)
-- **Fix:** Serialize mint arguments to match the exact byte layout expected by `moltpunks::mint`.
+- **Files:** [marketplace/js/create.js](marketplace/js/create.js) — `buildMintArgs()` · [contracts/lichenpunks/src/lib.rs](contracts/lichenpunks/src/lib.rs)
+- **Fix:** Serialize mint arguments to match the exact byte layout expected by `lichenpunks::mint`.
 - [x] Fix
 
-### 🔴 MK-06 — Auction system entirely unwired (both `moltmarket`'s and `moltauction`'s)
-- **Impact:** There is no bid UI, no create-auction UI, no settle/cancel auction flow anywhere in the marketplace. Two fully-implemented auction contracts (`moltmarket::create_auction` + standalone `moltauction`) are 100% unused.
-- **Files:** [marketplace/js/](marketplace/js/) — no `buildPlaceBidArgs`, `buildCreateAuctionArgs`, `buildSettleAuctionArgs` anywhere · [contracts/moltmarket/src/lib.rs](contracts/moltmarket/src/lib.rs) · [contracts/moltauction/src/lib.rs](contracts/moltauction/src/lib.rs)
-- **Fix:** Implement the full auction UI. Decide which contract is canonical (`moltmarket` embedded vs `moltauction`) and remove the other, or document both use cases.
+### 🔴 MK-06 — Auction system entirely unwired (both `lichenmarket`'s and `lichenauction`'s)
+- **Impact:** There is no bid UI, no create-auction UI, no settle/cancel auction flow anywhere in the marketplace. Two fully-implemented auction contracts (`lichenmarket::create_auction` + standalone `lichenauction`) are 100% unused.
+- **Files:** [marketplace/js/](marketplace/js/) — no `buildPlaceBidArgs`, `buildCreateAuctionArgs`, `buildSettleAuctionArgs` anywhere · [contracts/lichenmarket/src/lib.rs](contracts/lichenmarket/src/lib.rs) · [contracts/lichenauction/src/lib.rs](contracts/lichenauction/src/lib.rs)
+- **Fix:** Implement the full auction UI. Decide which contract is canonical (`lichenmarket` embedded vs `lichenauction`) and remove the other, or document both use cases.
 - [x] Fix
 
-### 🔴 MK-07 — NFT metadata stored as inline `data:` URI; `reef_storage` is never called
-- **Impact:** Metadata is embedded as base64 data URIs inline. `reef_storage` (the decentralized storage contract) is never invoked. Images will be lost when contract state is pruned. IPFS or on-chain Reef Storage was clearly intended.
-- **Files:** [marketplace/js/create.js](marketplace/js/create.js) · [contracts/reef_storage/src/lib.rs](contracts/reef_storage/src/lib.rs) — never called from marketplace
-- **Fix:** Upload image/metadata to `reef_storage` or IPFS first, then pass the resulting content hash as the metadata URI in the mint transaction.
+### 🔴 MK-07 — NFT metadata stored as inline `data:` URI; `moss_storage` is never called
+- **Impact:** Metadata is embedded as base64 data URIs inline. `moss_storage` (the decentralized storage contract) is never invoked. Images will be lost when contract state is pruned. IPFS or on-chain Moss Storage was clearly intended.
+- **Files:** [marketplace/js/create.js](marketplace/js/create.js) · [contracts/moss_storage/src/lib.rs](contracts/moss_storage/src/lib.rs) — never called from marketplace
+- **Fix:** Upload image/metadata to `moss_storage` or IPFS first, then pass the resulting content hash as the metadata URI in the mint transaction.
 - [x] Fix
 
-### 🔴 MK-08 — `moltmarket::make_offer` has no escrow — funds not locked at offer time
+### 🔴 MK-08 — `lichenmarket::make_offer` has no escrow — funds not locked at offer time
 - **Impact:** An offerer can make an offer, immediately drain their wallet, and the offer remains valid. When accepted, the settlement will fail or succeed unexpectedly. Classic offer-without-escrow vulnerability.
-- **Files:** [contracts/moltmarket/src/lib.rs](contracts/moltmarket/src/lib.rs)
+- **Files:** [contracts/lichenmarket/src/lib.rs](contracts/lichenmarket/src/lib.rs)
 - **Fix:** Lock offer amount in escrow (transfer to marketplace program account) in `make_offer`. Release on acceptance or cancellation.
 - [x] Fix
 
@@ -406,19 +406,19 @@ These findings affect multiple systems simultaneously.
 
 ### 🟠 MK-10 — Royalty fields never set in `list_nft` path — all listings have 0% royalties permanently
 - **Impact:** NFT creators receive 0 royalties on all secondary sales. The contract supports royalties but the `buildListNftArgs` function never encodes royalty address or percentage.
-- **Files:** [marketplace/js/marketplace.js](marketplace/js/marketplace.js) · [contracts/moltmarket/src/lib.rs](contracts/moltmarket/src/lib.rs)
+- **Files:** [marketplace/js/marketplace.js](marketplace/js/marketplace.js) · [contracts/lichenmarket/src/lib.rs](contracts/lichenmarket/src/lib.rs)
 - **Fix:** Add royalty address and royalty BPS fields to `buildListNftArgs`, pulled from the NFT's metadata or collection settings.
 - [x] Fix
 
-### 🟠 MK-11 — `moltpunks::mint` is minter-gated; user-initiated mints from the Create page always return error 0
+### 🟠 MK-11 — `lichenpunks::mint` is minter-gated; user-initiated mints from the Create page always return error 0
 - **Impact:** Non-admin users cannot mint NFTs through the standard UI flow.
-- **Files:** [contracts/moltpunks/src/lib.rs](contracts/moltpunks/src/lib.rs) — `mint()` requires `is_minter` authorization
-- **Fix:** Either add a public `public_mint()` entrypoint with a mint price check, or document that `moltpunks` is admin-only and redirect the Create page to `moltmarket`'s collection/mint flow.
+- **Files:** [contracts/lichenpunks/src/lib.rs](contracts/lichenpunks/src/lib.rs) — `mint()` requires `is_minter` authorization
+- **Fix:** Either add a public `public_mint()` entrypoint with a mint price check, or document that `lichenpunks` is admin-only and redirect the Create page to `lichenmarket`'s collection/mint flow.
 - [x] Fix
 
-### 🟠 MK-12 — `moltmarket::accept_collection_offer` double-charges marketplace fee from offerer
+### 🟠 MK-12 — `lichenmarket::accept_collection_offer` double-charges marketplace fee from offerer
 - **Impact:** The offerer's balance is charged the marketplace fee a second time at settlement after paying it at offer creation. This is a double-spend bug that over-charges buyers.
-- **Files:** [contracts/moltmarket/src/lib.rs](contracts/moltmarket/src/lib.rs) — `accept_collection_offer()`
+- **Files:** [contracts/lichenmarket/src/lib.rs](contracts/lichenmarket/src/lib.rs) — `accept_collection_offer()`
 - **Fix:** Market fee should be taken once at settlement from the payment. Remove the duplicate charge.
 - [x] Fix
 
@@ -438,16 +438,16 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Either change `COOLDOWN_SECONDS` default to `86400`, or have the frontend fetch the actual cooldown from `/health` or a config endpoint and display it dynamically.
 - [x] Fix
 
-### 🟠 FA-03 — Faucet amount stat card shows hardcoded `MOLT_PER_REQUEST = 100`, not the server's actual value
-- **Impact:** If `MAX_PER_REQUEST` env var is changed on the server, the UI continues to show 100 MOLT.
+### 🟠 FA-03 — Faucet amount stat card shows hardcoded `LICN_PER_REQUEST = 100`, not the server's actual value
+- **Impact:** If `MAX_PER_REQUEST` env var is changed on the server, the UI continues to show 100 LICN.
 - **Files:** [faucet/faucet.js](faucet/faucet.js#L29-L35) — `updateStats()` uses local constant · [faucet/src/main.rs](faucet/src/main.rs#L161)
 - **Fix:** Expose `max_per_request` field in the `/health` response and read it in `updateStats()`.
 - [x] Fix
 
-### 🟡 FA-04 — Faucet mechanism uses native system transfer, not MoltCoin smart contract
-- **Impact:** Whether this is correct depends on the canonical MOLT design. If MOLT is a native protocol asset, the system transfer is correct. If MoltCoin MT-20 is the canonical representation, the contract should be called. The documentation is silent on which is authoritative.
+### 🟡 FA-04 — Faucet mechanism uses native system transfer, not LichenCoin smart contract
+- **Impact:** Whether this is correct depends on the canonical LICN design. If LICN is a native protocol asset, the system transfer is correct. If LichenCoin MT-20 is the canonical representation, the contract should be called. The documentation is silent on which is authoritative.
 - **Files:** [faucet/src/main.rs](faucet/src/main.rs#L445-L555)
-- **Fix:** Document and enforce the canonical MOLT representation. If native, remove MoltCoin confusion from documentation. If contract-based, wire to `callContract`.
+- **Fix:** Document and enforce the canonical LICN representation. If native, remove LichenCoin confusion from documentation. If contract-based, wire to `callContract`.
 - [x] Fix
 
 ### 🟡 FA-05 — CORS allowlist excludes common development ports
@@ -476,7 +476,7 @@ These findings affect multiple systems simultaneously.
 - [x] Fix
 
 ### 🟡 WB-03 — "Browse All 27 Contracts" button links to an unverified GitHub URL
-- **Files:** [website/index.html](website/index.html#L748) — `https://github.com/moltchain/moltchain/tree/main/contracts`
+- **Files:** [website/index.html](website/index.html#L748) — `https://github.com/lichen/lichen/tree/main/contracts`
 - **Fix:** Verify the URL is correct, or link to the contracts section of the developer portal.
 - [x] Fix
 
@@ -486,8 +486,8 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Use "theoretical peak" or cite the Solana marketing figure honestly.
 - [x] Fix
 
-### 🔵 WB-05 — `data-molt-app` cross-app links silently break with JavaScript disabled
-- **Files:** All `data-molt-app` links render as `href="#"` without JS. No `<noscript>` fallback.
+### 🔵 WB-05 — `data-lichen-app` cross-app links silently break with JavaScript disabled
+- **Files:** All `data-lichen-app` links render as `href="#"` without JS. No `<noscript>` fallback.
 - **Fix:** Add `<noscript>` with direct absolute URL fallbacks.
 - [x] Fix
 
@@ -502,7 +502,7 @@ These findings affect multiple systems simultaneously.
 - [x] Fix
 
 ### 🟠 DEV-02 — 30+ implemented RPC methods completely undocumented
-- **Impact:** Developers cannot discover or use MoltyID (6 methods), ZK privacy (6 methods), bridge (3 methods), ReefStake (6 methods), prediction market (8 methods), DEX/contract stats (~18 methods), admin endpoints, registry endpoints, and governance endpoints.
+- **Impact:** Developers cannot discover or use LichenID (6 methods), ZK privacy (6 methods), bridge (3 methods), MossStake (6 methods), prediction market (8 methods), DEX/contract stats (~18 methods), admin endpoints, registry endpoints, and governance endpoints.
 - **Files:** [developers/rpc-reference.html](developers/rpc-reference.html) — sidebar missing ~50 methods present in [rpc/src/lib.rs](rpc/src/lib.rs#L1355-L1545)
 - **Fix:** Generate RPC reference documentation from the actual dispatch table. Add auto-generation or a sync check to CI.
 - [x] Fix
@@ -513,10 +513,10 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Remove inline `:root {}` block from `contract-reference.html`. Add `<link>` tags for `shared-base-styles.css` and `shared-theme.css`. Replace custom variable names with the shared ones.
 - [x] Fix
 
-### 🟡 DEV-04 — Portal search index uses `molt_` prefix; actual API methods have no prefix
-- **Impact:** A developer searching for "getBalance" in the portal search will not find it; it's indexed as "molt_getBalance". Search results are unreliable.
+### 🟡 DEV-04 — Portal search index uses `licn_` prefix; actual API methods have no prefix
+- **Impact:** A developer searching for "getBalance" in the portal search will not find it; it's indexed as "licn_getBalance". Search results are unreliable.
 - **Files:** [developers/js/developers.js](developers/js/developers.js#L283)
-- **Fix:** Remove the `molt_` prefix from the search index entries.
+- **Fix:** Remove the `licn_` prefix from the search index entries.
 - [x] Fix
 
 ### 🟡 DEV-05 — WS Solana-compat aliases (`slotSubscribe`, `signatureSubscribe`, etc.) are undocumented
@@ -528,9 +528,9 @@ These findings affect multiple systems simultaneously.
 
 ## 9. CORE CONTRACTS (NON-DEX)
 
-### 🔴 CON-01 — `moltoracle`: timestamp in milliseconds vs comparison in seconds — oracle always "stale"  
+### 🔴 CON-01 — `lichenoracle`: timestamp in milliseconds vs comparison in seconds — oracle always "stale"  
 - **Impact:** `get_timestamp()` returns milliseconds. Staleness checks compare `elapsed > 3600` (seconds). A price published 3.6 seconds ago is rejected as "stale." The oracle is effectively non-functional — every price read fails the freshness check.
-- **Files:** [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs#L203) `get_timestamp()` · [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs#L832) staleness check `> 3600`
+- **Files:** [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs#L203) `get_timestamp()` · [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs#L832) staleness check `> 3600`
 - **Fix:** Change both freshness comparisons from `> 3_600` to `> 3_600_000` to match milliseconds, or fix `get_timestamp()` to return seconds.
 - [x] Fix
 
@@ -552,39 +552,39 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Add `pause()` / `unpause()` (with two-step timelock) guarded by admin authority.
 - [x] Fix
 
-### 🔴 CON-05 — `clawpump`: `transfer_molt_out` silently returns success when MOLT address is unconfigured
-- **Impact:** A seller's MOLT funds are permanently lost when the MOLT address is not yet configured. The function returns `true` (success) instead of an error, masking the fund loss.
-- **Files:** [contracts/clawpump/src/lib.rs](contracts/clawpump/src/lib.rs#L190)
-- **Fix:** Return an explicit error code (not success) when MOLT address is unset.
+### 🔴 CON-05 — `sporepump`: `transfer_licn_out` silently returns success when LICN address is unconfigured
+- **Impact:** A seller's LICN funds are permanently lost when the LICN address is not yet configured. The function returns `true` (success) instead of an error, masking the fund loss.
+- **Files:** [contracts/sporepump/src/lib.rs](contracts/sporepump/src/lib.rs#L190)
+- **Fix:** Return an explicit error code (not success) when LICN address is unset.
 - [x] Fix
 
-### 🟠 CON-06 — `lobsterlend`: health factor calculation overflows `u64` for deposits > ~2.17M MOLT
+### 🟠 CON-06 — `thalllend`: health factor calculation overflows `u64` for deposits > ~2.17M LICN
 - **Impact:** Large depositors get an incorrect (overflowed) health factor, potentially blocking legitimate borrows or preventing liquidation of genuinely unhealthy positions.
-- **Files:** [contracts/lobsterlend/src/lib.rs](contracts/lobsterlend/src/lib.rs#L750) — `deposit * 85 * 100 / borrow` as u64
+- **Files:** [contracts/thalllend/src/lib.rs](contracts/thalllend/src/lib.rs#L750) — `deposit * 85 * 100 / borrow` as u64
 - **Fix:** Cast to `u128` for the multiplication: `((deposit as u128) * 85 * 100 / (borrow as u128)) as u64`.
 - [x] Fix
 
-### 🟠 CON-07 — `moltdao`: `PROPOSAL_SIZE = 210` but layout is 212 bytes
-- **Impact:** A proposal exactly at the size boundary (210 bytes) passes the guard with `stake_amount` unreadable. The deserialized `stake_amount` = 0, skipping stake refund on proposal close. Authors lose their staked MOLT.
-- **Files:** [contracts/moltdao/src/lib.rs](contracts/moltdao/src/lib.rs#L317)
+### 🟠 CON-07 — `lichendao`: `PROPOSAL_SIZE = 210` but layout is 212 bytes
+- **Impact:** A proposal exactly at the size boundary (210 bytes) passes the guard with `stake_amount` unreadable. The deserialized `stake_amount` = 0, skipping stake refund on proposal close. Authors lose their staked LICN.
+- **Files:** [contracts/lichendao/src/lib.rs](contracts/lichendao/src/lib.rs#L317)
 - **Fix:** Change `PROPOSAL_SIZE` to `212` to match the actual layout.
 - [x] Fix
 
-### 🟡 CON-08 — `moltoracle`: legacy `request_randomness()` is front-runnable
+### 🟡 CON-08 — `lichenoracle`: legacy `request_randomness()` is front-runnable
 - **Impact:** Block producers can see pending randomness requests before finalization and influence the result.
-- **Files:** [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs)
+- **Files:** [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs)
 - **Fix:** Remove or disable `request_randomness()`. The commit-reveal randomness system already exists and should be the only randomness mechanism.
 - [x] Fix
 
-### 🟡 CON-09 — `clawvault`: no total allocation cap on strategy addition
+### 🟡 CON-09 — `sporevault`: no total allocation cap on strategy addition
 - **Impact:** Admin can add strategies totalling >100% of vault assets. On a rebalance, the vault would try to over-allocate, potentially draining assets.
-- **Files:** [contracts/clawvault/src/lib.rs](contracts/clawvault/src/lib.rs)
+- **Files:** [contracts/sporevault/src/lib.rs](contracts/sporevault/src/lib.rs)
 - **Fix:** Enforce that the sum of all strategy allocations ≤ 10,000 bps (100%) in `add_strategy` and `update_strategy`.
 - [x] Fix
 
-### 🟡 CON-10 — `clawvault`: `harvest()` silently succeeds when protocol addresses are unset
+### 🟡 CON-10 — `sporevault`: `harvest()` silently succeeds when protocol addresses are unset
 - **Impact:** Protocol fees are silently dropped. `harvest()` returns code `1` (success) when `protocol_address` or `treasury_address` is not configured, instead of an error.
-- **Files:** [contracts/clawvault/src/lib.rs](contracts/clawvault/src/lib.rs)
+- **Files:** [contracts/sporevault/src/lib.rs](contracts/sporevault/src/lib.rs)
 - **Fix:** Return an error code if required addresses are unset. Never silently succeed a fund movement.
 - [x] Fix
 
@@ -609,7 +609,7 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Move admin token to `Authorization: Bearer <token>` header. Remove it from the request body.
 - [x] Fix
 
-### 🟡 RPC-02 — Deprecated `stakeToReefStake` / `unstakeFromReefStake` / `claimUnstakedTokens` still consume rate-limit budget
+### 🟡 RPC-02 — Deprecated `stakeToMossStake` / `unstakeFromMossStake` / `claimUnstakedTokens` still consume rate-limit budget
 - **Impact:** Applications calling these deprecated methods hit the Expensive rate-limit tier before getting -32601.
 - **Files:** [rpc/src/lib.rs](rpc/src/lib.rs#L297)
 - **Fix:** Remove deprecated methods from the `classify_method()` Expensive tier or move to a separate "deprecated/removed" category that returns -32601 without consuming rate budget.
@@ -627,13 +627,13 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Move prediction event emission to the block finalization path, after transaction execution is confirmed.
 - [x] Fix
 
-### 🟡 RPC-05 — `MOLTCHAIN_CORS_ORIGINS=*` has no production guard
+### 🟡 RPC-05 — `LICHEN_CORS_ORIGINS=*` has no production guard
 - **Impact:** If a mis-configured production deployment sets `CORS_ORIGINS=*`, any origin can send RPC calls.
 - **Files:** [rpc/src/lib.rs](rpc/src/lib.rs#L1236)
 - **Fix:** Add a check: if `NETWORK == "mainnet"` and `CORS_ORIGINS == "*"`, refuse to start with an explicit error.
 - [x] Fix
 
-### 🟡 RPC-06 — `getGenesisAccounts` hardcodes `"amount_molt": 1_000_000_000` regardless of actual supply
+### 🟡 RPC-06 — `getGenesisAccounts` hardcodes `"amount_licn": 1_000_000_000` regardless of actual supply
 - **Files:** [rpc/src/lib.rs](rpc/src/lib.rs#L4379)
 - **Fix:** Read the actual initial supply from the genesis block or chain configuration.
 - [x] Fix
@@ -717,7 +717,7 @@ These findings affect multiple systems simultaneously.
 | GX-02 | Fix `tx_to_rpc_json` hardcoded Success status | ALL systems |
 | GX-03 | Fix wrapper/public supply mismatch and align docs to live 500M genesis semantics | Tokenomics, Trust |
 | GX-04 | Fix obsolete fixed-supply claim vs wrapper/protocol mint semantics | Tokenomics, Trust |
-| CON-01 | Fix `moltoracle` ms vs seconds: oracle always stale | DEX margin, prediction market |
+| CON-01 | Fix `lichenoracle` ms vs seconds: oracle always stale | DEX margin, prediction market |
 | CON-02 | Fix `shielded_pool` reentrancy: double-spend possible | ZK Privacy |
 | CON-03 | Fix `shielded_pool` caller verification | ZK Privacy |
 | MK-01 | Fix marketplace placeholder contract address | Marketplace |
@@ -740,17 +740,17 @@ These findings affect multiple systems simultaneously.
 | GX-06 | Emit DEX candle/order/position WS updates from validator |
 | MK-03 | Fix `accept_offer` arg swap in profile.js |
 | MK-04 | Fix `createCollection` routing through `sendTransaction` |
-| MK-05 | Fix mint payload serialization for moltpunks |
+| MK-05 | Fix mint payload serialization for lichenpunks |
 | MK-06 | Implement full auction UI (both bid + create + settle) |
-| MK-07 | Wire reef_storage for NFT metadata |
-| MK-08 | Add escrow to `moltmarket::make_offer` |
+| MK-07 | Wire moss_storage for NFT metadata |
+| MK-08 | Add escrow to `lichenmarket::make_offer` |
 | MK-10 | Wire royalty fields in `buildListNftArgs` |
-| MK-11 | Add public mint entrypoint to moltpunks |
+| MK-11 | Add public mint entrypoint to lichenpunks |
 | MK-12 | Fix `accept_collection_offer` double marketplace fee |
 | CON-04 | Add pause to `shielded_pool` |
-| CON-05 | Fix `clawpump::transfer_molt_out` silent success |
-| CON-06 | Fix `lobsterlend` health factor u64 overflow |
-| CON-07 | Fix `moltdao::PROPOSAL_SIZE = 212` |
+| CON-05 | Fix `sporepump::transfer_licn_out` silent success |
+| CON-06 | Fix `thalllend` health factor u64 overflow |
+| CON-07 | Fix `lichendao::PROPOSAL_SIZE = 212` |
 | WL-01 | Fix extension approval loop (120 round-trips) |
 | WL-02 | Persist MV3 pending requests to storage |
 | WL-03 | Dynamic fee from `getFeeConfig` |
@@ -770,7 +770,7 @@ These findings affect multiple systems simultaneously.
 | GX-09 | Normalize DEX REST address format to base58 |
 | GX-10 | Add cursor-based pagination to all list endpoints |
 | EX-04 | Wire status filter dropdown in transactions.js |
-| EX-05 | Batch MoltyID profile update (5 txns → 1) |
+| EX-05 | Batch LichenID profile update (5 txns → 1) |
 | EX-06 | Add navigation link to privacy.html |
 | EX-07 | Show notification when WS is unavailable for network |
 | WL-05 | BIP39 checksum validation in extension |
@@ -784,22 +784,22 @@ These findings affect multiple systems simultaneously.
 | DEX-06 | Replace margin position poll with WS |
 | DEX-07 | Disable unimplemented governance proposal types |
 | CON-08 | Disable legacy `request_randomness()` |
-| CON-09 | Add strategy allocation cap to `clawvault` |
-| CON-10 | Fix `clawvault::harvest` silent success |
+| CON-09 | Add strategy allocation cap to `sporevault` |
+| CON-10 | Fix `sporevault::harvest` silent success |
 | CON-11 | Add pause to `compute_market` |
 | CON-12 | Refactor `shielded_pool` storage to sparse per-leaf keys |
 | RPC-01 | Move admin token to Authorization header |
-| RPC-02 | Remove deprecated ReefStake methods from rate-limit tier |
+| RPC-02 | Remove deprecated MossStake methods from rate-limit tier |
 | RPC-03 | Fix `circulating_supply` (subtract locked amounts) |
 | RPC-04 | Move prediction WS events to post-confirmation |
 | RPC-05 | Guard `CORS_ORIGINS=*` on mainnet |
 | FA-03 | Dynamic faucet amount from server config |
-| FA-04 | Document/enforce canonical MOLT representation |
+| FA-04 | Document/enforce canonical LICN representation |
 | FA-05 | Fix faucet CORS allowlist |
 | FA-06 | Fix faucet footer links (`.md` → HTML) |
 | WB-02 | Add Ecosystem links to website main nav |
 | WB-03 | Verify or fix GitHub contract browser URL |
-| DEV-04 | Remove `molt_` prefix from portal search index |
+| DEV-04 | Remove `licn_` prefix from portal search index |
 | DEV-05 | Document WS Solana-compat aliases |
 | TC-04 through TC-10 | All remaining test coverage gaps |
 
@@ -826,7 +826,7 @@ These findings affect multiple systems simultaneously.
 | DEX-13 | Modularize dex.js IIFE |
 | RPC-06 | Fix `getGenesisAccounts` hardcoded supply |
 | WB-04 | Clarify Solana TPS comparison |
-| WB-05 | Add `<noscript>` fallbacks for data-molt-app links |
+| WB-05 | Add `<noscript>` fallbacks for data-lichen-app links |
 | STY-02–04 | Remaining style polish items |
 
 ---
@@ -897,13 +897,13 @@ These findings affect multiple systems simultaneously.
 ## 15. EXPLORER — NEW CRITICAL ISSUES (Round 2)
 
 ### 🔴 EXR2-01 — `bindIdentityActionButtons()` is defined but NEVER called
-- **Impact:** All six identity action buttons in `address.html` (Edit Profile, Add Skill, Link Social, etc.) have zero event listeners. Clicking any of them does nothing. The entire MoltyID profile management flow is inaccessible from the Explorer.
+- **Impact:** All six identity action buttons in `address.html` (Edit Profile, Add Skill, Link Social, etc.) have zero event listeners. Clicking any of them does nothing. The entire LichenID profile management flow is inaccessible from the Explorer.
 - **Files:** [explorer/js/address.js](explorer/js/address.js) — `bindIdentityActionButtons()` defined but no call site
 - **Fix:** Call `bindIdentityActionButtons()` from `init()` at page load.
 - [x] Fix
 
 ### 🔴 EXR2-02 — Six address summary HTML elements missing from `address.html`
-- **Impact:** `address.js` sets `innerHTML` on `#summaryAddress`, `#summaryBalance`, `#summaryMoltBalance`, `#summaryTxCount`, `#summaryStakeBalance`, and `#summaryIdentityBadge` — none of which exist in the HTML. The entire address header section is permanently blank. Users see an empty card where their address info should be.
+- **Impact:** `address.js` sets `innerHTML` on `#summaryAddress`, `#summaryBalance`, `#summaryLicnBalance`, `#summaryTxCount`, `#summaryStakeBalance`, and `#summaryIdentityBadge` — none of which exist in the HTML. The entire address header section is permanently blank. Users see an empty card where their address info should be.
 - **Files:** [explorer/address.html](explorer/address.html) — missing 6 element IDs · [explorer/js/address.js](explorer/js/address.js) — all 6 references
 - **Fix:** Add the 6 missing elements to the address summary card section of `address.html`.
 - [x] Fix
@@ -971,7 +971,7 @@ These findings affect multiple systems simultaneously.
 - [x] Fix
 
 ### 🟠 RPCR2-06 — 84 handlers return raw RocksDB error strings (filesystem path leakage)
-- **Impact:** Callers receive RocksDB internal error strings including database file paths (e.g., `/var/moltchain/db/OPTIONS-000003: too many open files`), column family names, and internal key format patterns.
+- **Impact:** Callers receive RocksDB internal error strings including database file paths (e.g., `/var/lichen/db/OPTIONS-000003: too many open files`), column family names, and internal key format patterns.
 - **Files:** [rpc/src/lib.rs](rpc/src/lib.rs) — all `format!("Database error: {}", e)` patterns (~84 occurrences)
 - **Fix:** Map all DB errors to generic `-32000` with an opaque server-side correlation ID. Log full error server-side only.
 - [x] Fix
@@ -1032,9 +1032,9 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Add nav items for these three sections, or remove the sections if they are decommissioned.
 - [x] Fix
 
-### 🟠 WBR2-03 — `callContract` shown in wizard Step 5 but not implemented in `MoltChainRPC` class
-- **See cross-reference with GX-01. Note: this Class-level gap is new from Round 2 investigation.** The website's `MoltChainRPC` class presented in the SDK quickstart wizard includes a `callContract()` stub that is not wired to any real endpoint. End-to-end tutorial fails at the most important step.
-- **Files:** [website/script.js](website/script.js) — `MoltChainRPC.callContract()` stub · [website/index.html](website/index.html#L808) — Step 5 code example
+### 🟠 WBR2-03 — `callContract` shown in wizard Step 5 but not implemented in `LichenRPC` class
+- **See cross-reference with GX-01. Note: this Class-level gap is new from Round 2 investigation.** The website's `LichenRPC` class presented in the SDK quickstart wizard includes a `callContract()` stub that is not wired to any real endpoint. End-to-end tutorial fails at the most important step.
+- **Files:** [website/script.js](website/script.js) — `LichenRPC.callContract()` stub · [website/index.html](website/index.html#L808) — Step 5 code example
 - **Fix:** After GX-01 is resolved, implement `callContract()` in the SDK class to call the new RPC method.
 - [x] Fix
 
@@ -1066,9 +1066,9 @@ These findings affect multiple systems simultaneously.
 - **Fix:** Either implement `getProgramAccounts` (scan CF_PROGRAMS with owner filter), or remove it from all SDK examples and add a note explaining why it's not supported.
 - [x] Fix
 
-### 🟠 DEVR2-05 — Search index uses `molt_` prefix; actual RPC method names have no prefix
-- **See DEV-04 (Round 1).** Confirmed in Round 2: the search index at [developers/js/developers.js](developers/js/developers.js#L283) prepends `molt_` to all method names in the index. Searching for `getBalance` returns no results; you must search `molt_getBalance`.
-- **Fix:** Strip the `molt_` prefix from search index entries.
+### 🟠 DEVR2-05 — Search index uses `licn_` prefix; actual RPC method names have no prefix
+- **See DEV-04 (Round 1).** Confirmed in Round 2: the search index at [developers/js/developers.js](developers/js/developers.js#L283) prepends `licn_` to all method names in the index. Searching for `getBalance` returns no results; you must search `licn_getBalance`.
+- **Fix:** Strip the `licn_` prefix from search index entries.
 - [x] Fix
 
 ### 🟠 DEVR2-06 — `sdk-python.html` nav highlights the JS page as active
@@ -1120,7 +1120,7 @@ These findings affect multiple systems simultaneously.
 | EXR2-03 | Dual `getSlot` polling (2× redundant RPC calls per page) |
 | WBR2-03 | `callContract` in website SDK class not wired |
 | DEVR2-04 | `getProgramAccounts` in all SDKs returns -32601 |
-| DEVR2-05 | Search index `molt_` prefix breaks all searches |
+| DEVR2-05 | Search index `licn_` prefix breaks all searches |
 | DEVR2-06 | SDK-python nav highlights wrong page as active |
 
 ---

@@ -1,7 +1,7 @@
-# MoltChain Quantum Resistance Plan
+# Lichen Quantum Resistance Plan
 
 > **Status:** Planning  
-> **Author:** MoltChain Core Team  
+> **Author:** Lichen Core Team  
 > **Created:** 2026-03-01  
 > **Target Completion:** Phased rollout (2026 – 2029)
 
@@ -32,7 +32,7 @@
 
 Cryptographically Relevant Quantum Computers (CRQCs) capable of breaking elliptic-curve discrete-log problems via Shor's algorithm are projected to emerge between 2030–2040. The "harvest now, decrypt later" threat means that blockchain transactions recorded today could be retroactively broken once CRQCs exist — exposing private keys from public keys visible on-chain.
 
-MoltChain currently relies on **Ed25519** (signatures), **Groth16/BN254** (ZK proofs), and **Pedersen commitments** (shielded pool) — all of which are vulnerable to quantum attack. This document defines a phased migration plan to post-quantum cryptography (PQC) that:
+Lichen currently relies on **Ed25519** (signatures), **Groth16/BN254** (ZK proofs), and **Pedersen commitments** (shielded pool) — all of which are vulnerable to quantum attack. This document defines a phased migration plan to post-quantum cryptography (PQC) that:
 
 - Preserves backwards compatibility through a hybrid transition period
 - Prioritizes the highest-risk components first (signatures > ZK > transport)
@@ -85,7 +85,7 @@ This is the most relevant near-term threat. Every transaction broadcast today ex
 | NSA CNSA 2.0 (2022) | Mandates PQC for national security by 2035 |
 | Consensus estimate | **2032–2040 for cryptographically relevant** |
 
-**MoltChain position:** Begin migration in 2026 to be fully quantum-safe by 2029, well before projected CRQC availability.
+**Lichen position:** Begin migration in 2026 to be fully quantum-safe by 2029, well before projected CRQC availability.
 
 ---
 
@@ -259,7 +259,7 @@ Replace Groth16/BN254 with a **quantum-resistant zero-knowledge proof system** f
 
 Groth16 is elegant (128-byte proofs, ~2ms verification), but its security rests entirely on the hardness of the discrete-log problem on BN254's pairing groups. A quantum computer breaks this completely — an attacker could:
 
-1. Forge proofs for any statement (mint shielded MOLT from nothing)
+1. Forge proofs for any statement (mint shielded LICN from nothing)
 2. Derive spending keys from viewing keys
 3. Break Pedersen commitment hiding (reveal shielded amounts)
 4. Compute nullifiers without the spending key (track shielded recipients)
@@ -278,7 +278,7 @@ Groth16 is elegant (128-byte proofs, ~2ms verification), but its security rests 
 Rationale:
 - No trusted setup (eliminates CRS vulnerability)
 - Quantum-safe by construction (relies only on hash function collision resistance)
-- Proof sizes are larger but acceptable for MoltChain's block size
+- Proof sizes are larger but acceptable for Lichen's block size
 - Mature enough by 2027 (StarkNet, Polygon Miden, and others are deploying today)
 - Can use Poseidon hash (our existing tree hash) over a PQ-safe field
 
@@ -464,7 +464,7 @@ Replace Ed25519-only gossip signatures with hybrid dual-sig (already done in Pha
 
 ### 9.1 Objective
 
-Remove all classical-only code paths. After Phase 5, MoltChain is **purely post-quantum**.
+Remove all classical-only code paths. After Phase 5, Lichen is **purely post-quantum**.
 
 ### 9.2 Deprecation Schedule
 

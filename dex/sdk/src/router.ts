@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — Router Module
+// @lichen/dex-sdk — Router Module
 // Smart order routing: CLOB → AMM → Split → Multi-hop
 // ═══════════════════════════════════════════════════════════════════════════════
 

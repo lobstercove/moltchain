@@ -8,7 +8,7 @@
 - **Single instance** on US VPS (15.204.229.189)
 - **RocksDB** with file-level lock — only one process can open the DB
 - **Rate limiters** (withdrawal, deposit) are in-memory per-process
-- **Treasury keypair** — shared signing key for MOLT transactions
+- **Treasury keypair** — shared signing key for LICN transactions
 - **Threshold signers** — `signer_endpoints` point to `localhost:920x`
 - **Ports**: testnet=9105, mainnet=9106
 
@@ -25,7 +25,7 @@ Each custody instance maintains independent rate limit state (`WithdrawalRateSta
 **To fix**: Shared rate limiting via Redis, or a coordinated rate limit service.
 
 ### 3. Treasury Nonce Conflicts
-All instances would sign with the same treasury keypair. Concurrent MOLT transaction submissions create nonce conflicts — two instances trying to submit at the same time would invalidate each other's transactions.
+All instances would sign with the same treasury keypair. Concurrent LICN transaction submissions create nonce conflicts — two instances trying to submit at the same time would invalidate each other's transactions.
 
 **To fix**: Nonce serialization service, or designate one instance as the sole writer.
 
@@ -37,7 +37,7 @@ Currently `signer_endpoints` point to `localhost:9201,9202,9203`. Multi-VPS depl
 ## Scaling Phases
 
 ### Phase 1: Single Instance (Now → 5K users)
-**No changes needed.** The bottleneck is external chain polling (Solana RPC, EVM RPC), not CPU/memory. MoltChain's 400ms slots are fast. A single custody instance can handle deposit monitoring, sweep jobs, and withdrawals for several thousand users comfortably.
+**No changes needed.** The bottleneck is external chain polling (Solana RPC, EVM RPC), not CPU/memory. Lichen's 400ms slots are fast. A single custody instance can handle deposit monitoring, sweep jobs, and withdrawals for several thousand users comfortably.
 
 **Capacity estimate**: ~100 deposits/min, ~50 withdrawals/min on single instance.
 
@@ -54,7 +54,7 @@ Run custody on all 3 VPSes with **role separation**:
 - Add a `CUSTODY_READ_ONLY=true` env var that disables write endpoints
 - Read replicas generate deposit addresses (stateless — derived from user ID + chain)
 - Read replicas query the primary via internal API for balance/status
-- Load balance reads via Caddy upstream rotation on `custody.moltchain.network`
+- Load balance reads via Caddy upstream rotation on `custody.lichen.network`
 - Primary handles all on-chain transactions (no nonce conflicts)
 
 **Effort**: ~2-3 days of code changes. No DB migration needed.
@@ -64,7 +64,7 @@ Full horizontal scaling with all instances capable of writes:
 
 1. **Database**: Migrate from RocksDB to Postgres (networked, multi-client)
 2. **Rate limits**: Redis cluster shared across VPSes
-3. **Nonce serialization**: Distributed lock (Redis SETNX) for MOLT transaction submission
+3. **Nonce serialization**: Distributed lock (Redis SETNX) for LICN transaction submission
 4. **Signers**: Each VPS runs its own threshold signer set, or shared signer service
 5. **Event dedup**: Webhook events need idempotency keys to prevent duplicate delivery
 

@@ -2,7 +2,7 @@
 
 **Date:** March 4, 2026
 **Audited document:** `docs/skills/SKILL_BOOK.md` (All Sections)
-**Source files verified:** `core/src/processor.rs`, `core/src/consensus.rs`, `core/src/reefstake.rs`, `core/src/zk/mod.rs`, `core/src/zk/merkle.rs`, `contracts/*/src/lib.rs`, `rpc/src/lib.rs`, `rpc/src/ws.rs`, `rpc/src/dex.rs`, `rpc/src/dex_ws.rs`, `rpc/src/prediction.rs`, `rpc/src/launchpad.rs`, `rpc/src/shielded.rs`, `scripts/build-all-contracts.sh`, `moltchain-start.sh`, `config.toml`, `tests/contracts-write-e2e.py`, `dex/dex.test.js`
+**Source files verified:** `core/src/processor.rs`, `core/src/consensus.rs`, `core/src/mossstake.rs`, `core/src/zk/mod.rs`, `core/src/zk/merkle.rs`, `contracts/*/src/lib.rs`, `rpc/src/lib.rs`, `rpc/src/ws.rs`, `rpc/src/dex.rs`, `rpc/src/dex_ws.rs`, `rpc/src/prediction.rs`, `rpc/src/launchpad.rs`, `rpc/src/shielded.rs`, `scripts/build-all-contracts.sh`, `lichen-start.sh`, `config.toml`, `tests/contracts-write-e2e.py`, `dex/dex.test.js`
 **Secondary doc:** `skills/validator/SKILL.md`
 
 ---
@@ -17,29 +17,29 @@
 | Total RPC methods | ~210 | **166** (JSON-RPC only) or **252** (all) | ❌ AMBIGUOUS |
 | Total DEX opcodes | 147 | **151** | ❌ MISMATCH |
 | Achievements | 90+ | **92** unique IDs | ✅ OK (92 > 90) |
-| Base fee | 0.001 MOLT (1,000,000 shells) | 1,000,000 shells | ✅ MATCH |
-| Contract deploy fee | 25 MOLT | 25,000,000,000 shells = 25 MOLT | ✅ MATCH |
-| Contract upgrade fee | 10 MOLT | 10,000,000,000 shells = 10 MOLT | ✅ MATCH |
-| NFT mint fee | 0.5 MOLT | 500,000,000 shells = 0.5 MOLT | ✅ MATCH |
-| NFT collection fee | 1,000 MOLT | 1,000,000,000,000 shells = 1,000 MOLT | ✅ MATCH |
+| Base fee | 0.001 LICN (1,000,000 spores) | 1,000,000 spores | ✅ MATCH |
+| Contract deploy fee | 25 LICN | 25,000,000,000 spores = 25 LICN | ✅ MATCH |
+| Contract upgrade fee | 10 LICN | 10,000,000,000 spores = 10 LICN | ✅ MATCH |
+| NFT mint fee | 0.5 LICN | 500,000,000 spores = 0.5 LICN | ✅ MATCH |
+| NFT collection fee | 1,000 LICN | 1,000,000,000,000 spores = 1,000 LICN | ✅ MATCH |
 | Fee distribution | 40/30/10/10/10 | 40/30/10/10/10 | ✅ MATCH |
 | Slots per day | 216,000 | 216,000 (derived: SLOTS_PER_MONTH=216,000×30) | ✅ MATCH |
 | Epoch length | 432,000 slots | SLOTS_PER_EPOCH = 432,000 | ✅ MATCH |
 | Max leverage | 100x | MAX_LEVERAGE_ISOLATED = 100 | ✅ MATCH |
-| MoltyID initial rep | 100 | INITIAL_REPUTATION = 100 | ✅ MATCH |
-| Name costs (3/4/5+) | 500/100/20 MOLT | 500/100/20 MOLT | ✅ MATCH |
+| LichenID initial rep | 100 | INITIAL_REPUTATION = 100 | ✅ MATCH |
+| Name costs (3/4/5+) | 500/100/20 LICN | 500/100/20 LICN | ✅ MATCH |
 | Recovery guardians | 5, 3-of-5 | RECOVERY_GUARDIAN_COUNT=5, THRESHOLD=3 | ✅ MATCH |
-| ReefStake multipliers | 1.0/1.6/2.4/3.6× | 10000/16000/24000/36000 bp | ✅ MATCH |
-| ReefStake lock durations | 0/6.48M/38.88M/78.84M slots | matches source | ✅ MATCH |
-| ReefStake target APYs | 5/8/12/18% | matches source comments | ✅ MATCH |
+| MossStake multipliers | 1.0/1.6/2.4/3.6× | 10000/16000/24000/36000 bp | ✅ MATCH |
+| MossStake lock durations | 0/6.48M/38.88M/78.84M slots | matches source | ✅ MATCH |
+| MossStake target APYs | 5/8/12/18% | matches source comments | ✅ MATCH |
 | Merkle tree depth | 20 | TREE_DEPTH = 20 | ✅ MATCH |
 | Shield compute units | 100,000 | SHIELD_COMPUTE_UNITS = 100,000 | ✅ MATCH |
 | Unshield compute units | 150,000 | UNSHIELD_COMPUTE_UNITS = 150,000 | ✅ MATCH |
 | Transfer compute units | 200,000 | TRANSFER_COMPUTE_UNITS = 200,000 | ✅ MATCH |
 | RPC port | 8899 | config.toml: rpc_port=8899 | ✅ MATCH |
-| WS port | 8900 | moltchain-start.sh: WS_PORT=8900 | ✅ MATCH |
+| WS port | 8900 | lichen-start.sh: WS_PORT=8900 | ✅ MATCH |
 | Monitoring port | 9100 | config.toml: metrics_port=9100 | ✅ MATCH |
-| MoltyID exports | 51 | **59** | ❌ MISMATCH |
+| LichenID exports | 51 | **59** | ❌ MISMATCH |
 | Cargo tests | ~1,073 | **1,296** (25 test binaries) | ❌ MISMATCH |
 | DEX JS tests | 1,877 | **1,774** assert() calls (~1,872 broad matches) | ⚠️ CLOSE |
 | E2E transactions | 26 tests | **29** assert() calls | ❌ MISMATCH |
@@ -59,11 +59,11 @@
 **Actual:** 29 contract directories in `contracts/`:
 
 ```
-bountyboard, clawpay, clawpump, clawvault, compute_market,
+bountyboard, sporepay, sporepump, sporevault, compute_market,
 dex_amm, dex_analytics, dex_core, dex_governance, dex_margin,
-dex_rewards, dex_router, lobsterlend, moltauction, moltbridge,
-moltcoin, moltdao, moltmarket, moltoracle, moltpunks, moltswap,
-moltyid, musd_token, prediction_market, reef_storage, shielded_pool,
+dex_rewards, dex_router, thalllend, lichenauction, lichenbridge,
+lichencoin, lichendao, lichenmarket, lichenoracle, lichenpunks, lichenswap,
+lichenid, lusd_token, prediction_market, moss_storage, shielded_pool,
 wbnb_token, weth_token, wsol_token
 ```
 
@@ -120,10 +120,10 @@ Doc also lists 94 native RPC methods in Section 11 tables, but source has 134 (2
 
 ---
 
-### 4. MoltyID Export Count (Section 5 & 7)
+### 4. LichenID Export Count (Section 5 & 7)
 
-**Doc says:** "51 exported functions" (Section 5) and "Complete MoltyID Exports (51 functions)" (Section 7)
-**Actual:** 59 `#[no_mangle]` exports in `contracts/moltyid/src/lib.rs`
+**Doc says:** "51 exported functions" (Section 5) and "Complete LichenID Exports (51 functions)" (Section 7)
+**Actual:** 59 `#[no_mangle]` exports in `contracts/lichenid/src/lib.rs`
 
 **8 exports missing from docs:**
 
@@ -145,7 +145,7 @@ Doc also lists 94 native RPC methods in Section 11 tables, but source has 134 (2
 ### 5. Achievement Count (Section 8)
 
 **Doc says:** "90+ auto-detected"
-**Actual:** 92 unique achievement IDs defined across `core/src/processor.rs` (85 auto-detected) + `contracts/moltyid/src/lib.rs` (92 total including reputation milestone achievements like Graduation ID=8).
+**Actual:** 92 unique achievement IDs defined across `core/src/processor.rs` (85 auto-detected) + `contracts/lichenid/src/lib.rs` (92 total including reputation milestone achievements like Graduation ID=8).
 
 Doc lists 86 achievements in Section 8 tables. The remaining 6 (IDs 4, 5, 6, 7, 8, 10, 11) are contract-awarded reputation milestones shown at the bottom of the table.
 
@@ -177,16 +177,16 @@ Doc lists 86 achievements in Section 8 tables. The remaining 6 (IDs 4, 5, 6, 7, 
 
 | Port | Purpose | Verified In | Status |
 |------|---------|------------|--------|
-| 8899 | RPC | config.toml L20, moltchain-start.sh L113 | ✅ |
-| 8900 | WebSocket | moltchain-start.sh L114 | ✅ |
+| 8899 | RPC | config.toml L20, lichen-start.sh L113 | ✅ |
+| 8900 | WebSocket | lichen-start.sh L114 | ✅ |
 | 9100 | Monitoring/Prometheus | config.toml L96 | ✅ |
 | 3001 | Explorer | Not in core config (front-end) | ⚠️ |
 | 8080 | DEX | Not in core config (front-end) | ⚠️ |
 | 3000 | Wallet | Not in core config (front-end) | ⚠️ |
-| 9900 | Faucet | moltchain-start.sh L121 (mainnet WS_PORT, not faucet) | ⚠️ Ambiguous |
+| 9900 | Faucet | lichen-start.sh L121 (mainnet WS_PORT, not faucet) | ⚠️ Ambiguous |
 | 9105 | Custody | Not in core config | ⚠️ |
 
-**Note:** Port 9900 appears as `WS_PORT=9900` for mainnet mode in `moltchain-start.sh`, not as a faucet port. Explorer/DEX/Wallet/Custody ports are set in their respective front-end configs, not in core infrastructure.
+**Note:** Port 9900 appears as `WS_PORT=9900` for mainnet mode in `lichen-start.sh`, not as a faucet port. Explorer/DEX/Wallet/Custody ports are set in their respective front-end configs, not in core infrastructure.
 
 **Verdict:** ✅ Core ports (8899, 8900, 9100) verified. Front-end ports not verifiable from core source.
 
@@ -194,7 +194,7 @@ Doc lists 86 achievements in Section 8 tables. The remaining 6 (IDs 4, 5, 6, 7, 
 
 ### 8. Stale Enum Comments (Not in SKILL_BOOK, but notable)
 
-In `core/src/reefstake.rs`, the `LockTier` enum definition comments are stale:
+In `core/src/mossstake.rs`, the `LockTier` enum definition comments are stale:
 ```
 Lock30 = 1,  // 30-day lock, 1.1x multiplier   ← WRONG (actual: 1.6x)
 Lock180 = 2, // 180-day lock, 1.25x multiplier  ← WRONG (actual: 2.4x)
@@ -213,8 +213,8 @@ SKILL_BOOK.md correctly documents the 1.6x/2.4x/3.6x values. The source **commen
 1. **Section 1:** "Contracts deployed at genesis: 30" → **29**
 2. **Section 5 heading:** "Contract Surface (30 Contracts)" → **29 Contracts**
 3. **Section 1:** "Total RPC methods: ~210" → update to actual count (~166 JSON-RPC or ~252 total)
-4. **Section 5:** "51 exported functions" (MoltyID) → **59**
-5. **Section 7:** "Complete MoltyID Exports (51 functions)" → **59 functions** (add 8 missing exports)
+4. **Section 5:** "51 exported functions" (LichenID) → **59**
+5. **Section 7:** "Complete LichenID Exports (51 functions)" → **59 functions** (add 8 missing exports)
 6. **Section 18:** Update all test counts (Cargo: ~1,296; re-measure JS/E2E by running tests)
 
 ### Should Fix (stale estimates)
@@ -225,7 +225,7 @@ SKILL_BOOK.md correctly documents the 1.6x/2.4x/3.6x values. The source **commen
 
 ### Note (source code issue, not doc issue)
 
-10. `core/src/reefstake.rs` LockTier enum comments have stale multiplier values (1.1x/1.25x/1.5x vs actual 1.6x/2.4x/3.6x)
+10. `core/src/mossstake.rs` LockTier enum comments have stale multiplier values (1.1x/1.25x/1.5x vs actual 1.6x/2.4x/3.6x)
 
 ---
 
@@ -280,8 +280,8 @@ Every method listed in section 11 tables was confirmed present in the `rpc/src/l
 
 | Method | Source Line | Notes |
 |--------|------------|-------|
-| `stakeToReefStake` | lib.rs:1935 | Deposit MOLT into ReefStake pool |
-| `unstakeFromReefStake` | lib.rs:1936 | Initiate ReefStake unstake |
+| `stakeToMossStake` | lib.rs:1935 | Deposit LICN into MossStake pool |
+| `unstakeFromMossStake` | lib.rs:1936 | Initiate MossStake unstake |
 | `claimUnstakedTokens` | lib.rs:1937 | Claim matured unstake requests |
 
 #### Contracts (undocumented)
@@ -427,7 +427,7 @@ All 6 documented DEX channels match `DexChannel` enum variants:
 | POST | `/api/v1/governance/proposals` | L2689 | Create governance proposal |
 | GET | `/api/v1/governance/proposals/:id` | L2692 | Single proposal detail |
 | POST | `/api/v1/governance/proposals/:id/vote` | L2693 | Cast vote |
-| GET | `/api/v1/stats/moltswap` | L2702 | MoltSwap stats |
+| GET | `/api/v1/stats/lichenswap` | L2702 | LichenSwap stats |
 
 **Note:** The doc lists `GET /api/v1/governance/proposals` but source also defines POST on the same path for creating proposals. The doc also omits the individual proposal GET route and the vote POST route.
 
@@ -484,7 +484,7 @@ The `skills/validator/SKILL.md` contains 2 RPC method references in code example
 Add these 20 undocumented RPC methods organized by category:
 - **Core:** `callContract`, `getGenesisAccounts`, `getGovernedProposal`, `getAccountInfo`, `getTransactionHistory`, `requestAirdrop`
 - **Admin:** `getFeeConfig`, `setFeeConfig`, `getRentParams`, `setRentParams`
-- **Staking:** `stakeToReefStake`, `unstakeFromReefStake`, `claimUnstakedTokens`
+- **Staking:** `stakeToMossStake`, `unstakeFromMossStake`, `claimUnstakedTokens`
 - **Contracts:** `setContractAbi`, `deployContract`, `upgradeContract`
 - **EVM/Registry:** `getSymbolRegistryByProgram`
 - **NFT:** `getMarketOffers`, `getMarketAuctions`
@@ -497,6 +497,6 @@ Add these 20 undocumented RPC methods organized by category:
 - EVM: `eth_accounts`, `eth_maxPriorityFeePerGas`
 
 ### Priority 4 — Add missing REST endpoints to Section 12
-- 11 missing DEX routes (orders POST/DELETE, margin open/close, router/quote, governance detail/vote, stats/moltswap)
+- 11 missing DEX routes (orders POST/DELETE, margin open/close, router/quote, governance detail/vote, stats/lichenswap)
 - 7 missing Prediction routes (config, price-history, analytics, trades, trader stats, leaderboard, create-template)
 - 1 missing Launchpad route (config)

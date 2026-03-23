@@ -1,12 +1,12 @@
-# MoltChain RPC Layer — Exhaustive Production Audit
+# Lichen RPC Layer — Exhaustive Production Audit
 
-> Audit date: 2026-02-27 | Root: `/moltchain/` | Auditor: Senior Blockchain/DB Engineer
+> Audit date: 2026-02-27 | Root: `/lichen/` | Auditor: Senior Blockchain/DB Engineer
 
 ---
 
 ## A. COLUMN FAMILY INVENTORY
 
-Defined in `core/src/state.rs` L42-L81. MoltChain uses RocksDB with 34 column families:
+Defined in `core/src/state.rs` L42-L81. Lichen uses RocksDB with 34 column families:
 
 | CF Name | Key Format | Value | Scan Strategy |
 |---|---|---|---|
@@ -21,7 +21,7 @@ Defined in `core/src/state.rs` L42-L81. MoltChain uses RocksDB with 34 column fa
 | `CF_EVM_ACCOUNTS` | EVM addr (20B) | EVM account JSON | Point lookup. |
 | `CF_EVM_STORAGE` | EVM addr(20)+slot(32) | storage value(32) | Point lookup. |
 | `CF_EVM_TXS` / `CF_EVM_RECEIPTS` | EVM tx\_hash | metadata / receipt | Point lookup. |
-| `CF_REEFSTAKE` / `CF_STAKE_POOL` | pool\_id / pubkey | pool JSON / stake JSON | Point lookup. |
+| `CF_MOSSSTAKE` / `CF_STAKE_POOL` | pool\_id / pubkey | pool JSON / stake JSON | Point lookup. |
 | `CF_NFT_BY_OWNER` | owner(32)+token(32) | empty | Prefix scan by owner → O(limit). |
 | `CF_NFT_BY_COLLECTION` | collection(32)+token(32) OR `"tid:"`+collection(32)+token\_id(8) | empty / token\_pubkey(32) | Prefix scan by collection → O(limit). |
 | `CF_NFT_ACTIVITY` | collection(32)+slot(8,BE)+seq(4,BE)+token(32) | activity JSON | Prefix-reverse scan by collection → O(limit). |
@@ -218,11 +218,11 @@ Moderate (2,000/s per IP): getTransactionsByAddress, getTransactionHistory,
                             getMarketSales, getProgramCalls, getProgramStorage,
                             getPrograms, getAllContracts, getAllSymbolRegistry,
                             getPredictionMarkets, getPredictionLeaderboard,
-                            batchReverseMoltNames, searchMoltNames, getUnstakingQueue
+                            batchReverseLichenNames, searchLichenNames, getUnstakingQueue
 
 Expensive (500/s per IP): sendTransaction, simulateTransaction, deployContract,
-                           upgradeContract, stake, unstake, stakeToReefStake,
-                           unstakeFromReefStake, claimUnstakedTokens, requestAirdrop,
+                           upgradeContract, stake, unstake, stakeToMossStake,
+                           unstakeFromMossStake, claimUnstakedTokens, requestAirdrop,
                            setFeeConfig, setRentParams, setContractAbi
 ```
 
@@ -419,9 +419,9 @@ No bare `.unwrap()` calls in request handler paths. Notable safe uses:
 ### ❌ HIGH — Raw RocksDB Error String Exposure
 
 **84 raw RocksDB error strings** are returned to RPC clients via `format!("Database error: {}", e)`. Examples of real-world RocksDB errors that would be exposed:
-- `"IO error: /var/moltchain/db/OPTIONS-000003: too many open files"`
+- `"IO error: /var/lichen/db/OPTIONS-000003: too many open files"`
 - `"Corruption: block checksum mismatch: address column family accounts"`
-- `"Resource busy: lock file /var/moltchain/db/LOCK: Resource temporarily unavailable"`
+- `"Resource busy: lock file /var/lichen/db/LOCK: Resource temporarily unavailable"`
 
 These leak:
 - Absolute filesystem paths of the database

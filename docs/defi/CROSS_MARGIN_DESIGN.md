@@ -143,7 +143,7 @@ reduce cascading liquidation risk. This is intentionally conservative.
 ### 5.3 Pair Restrictions
 
 Initially, cross-margin should only be available for major pairs (e.g.,
-MOLT/mUSD) with deep liquidity and reliable oracle prices.
+LICN/lUSD) with deep liquidity and reliable oracle prices.
 
 ## 6. Migration Path
 
@@ -165,4 +165,4 @@ MOLT/mUSD) with deep liquidity and reliable oracle prices.
 2. Should cross-margin positions support SL/TP? Yes — reuse Phase 2 logic
 3. Should partial close work with cross-margin? Yes — proportional margin
    release back to pool instead of host unlock
-4. Should there be a minimum cross-margin pool deposit? Suggest 10 mUSD
+4. Should there be a minimum cross-margin pool deposit? Suggest 10 lUSD

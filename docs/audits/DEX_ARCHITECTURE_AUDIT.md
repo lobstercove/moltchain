@@ -1,4 +1,4 @@
-# MoltyDEX Architecture Audit — Exhaustive Report
+# Lichen DEX Architecture Audit — Exhaustive Report
 
 > **Date**: Generated from full codebase analysis  
 > **Scope**: All 7 areas — Frontend, API, Contracts, WebSocket, SDK, Genesis/Boot State, Market Maker/Loadtest  
@@ -87,11 +87,11 @@
 
 | # | Mock Location | Lines | Trigger | Content | Badge |
 |---|--------------|-------|---------|---------|-------|
-| 1 | **Pairs fallback** | ~238–244 | `/api/v1/pairs` fails | 5 hardcoded pairs: MOLT/mUSD (0.4217), wSOL/mUSD (178.42), wETH/mUSD (3521.80), wSOL/MOLT (423.05), wETH/MOLT (8351.20) | None |
+| 1 | **Pairs fallback** | ~238–244 | `/api/v1/pairs` fails | 5 hardcoded pairs: LICN/lUSD (0.4217), wSOL/lUSD (178.42), wETH/lUSD (3521.80), wSOL/LICN (423.05), wETH/LICN (8351.20) | None |
 | 2 | **Order book fallback** | `genOrderBookFallback()` | `/api/v1/pairs/{id}/orderbook` fails | 15 ask + 15 bid random levels around `lastPrice` | `[DEMO] Sample Order Book` |
 | 3 | **Trades fallback** | `genTradesFallback()` | `/api/v1/pairs/{id}/trades` fails | 30 random trades with random prices/sizes | `[DEMO] Sample Trades` |
 | 4 | **Chart candle fallback** | `genCandlesFallback()` | `/api/v1/pairs/{id}/candles` fails | 300 random 15-minute OHLCV candles | `[DEMO] Sample Chart Data` |
-| 5 | **Balance fallback** | ~335–338 | RPC `getBalance` fails | MOLT=125847.32, mUSD=12500, wSOL=28.45, wETH=3.247 | `[DEMO] Sample Balances` |
+| 5 | **Balance fallback** | ~335–338 | RPC `getBalance` fails | LICN=125847.32, lUSD=12500, wSOL=28.45, wETH=3.247 | `[DEMO] Sample Balances` |
 | 6 | **Prediction markets** | ~1101–1108 | `/api/v1/prediction-market/markets` fails | `MOCK_MARKETS` array: 6 markets (BTC price, AI regulation, L1 TVL, FIFA, GPT-5, SpaceX) | `[DEMO]` |
 | 7 | **Prediction chart** | `generateMockPriceHistory()` | Chart modal for prediction market | Random walk price history | None |
 
@@ -228,7 +228,7 @@ GET    /stats/router                      → Router stats
 GET    /stats/rewards                     → Rewards stats
 GET    /stats/analytics                   → Analytics stats
 GET    /stats/governance                  → Governance stats
-GET    /stats/moltswap                    → MoltSwap (bonding curve) stats
+GET    /stats/lichenswap                    → LichenSwap (bonding curve) stats
 ```
 
 ### 3e. POST Endpoint Behavior
@@ -380,7 +380,7 @@ All 7 contracts are Rust → WASM compiled. They store state in `CF_CONTRACT_STO
 | `vote` | User |
 | `finalize_proposal` / `execute_proposal` | Keeper |
 | `emergency_delist` | Admin |
-| `set_listing_requirements` / `set_moltyid_address` | Admin |
+| `set_listing_requirements` / `set_lichenid_address` | Admin |
 | `get_proposal_count` / `get_proposal_info` | Read |
 
 **Storage Keys**: `gov_prop_count`, `gov_prop_{id}` (120B), `gov_total_votes`, `gov_voter_count`
@@ -404,14 +404,14 @@ All 7 contracts are Rust → WASM compiled. They store state in `CF_CONTRACT_STO
 ## 6. DEX SDK (TypeScript)
 
 **Location**: `dex/sdk/src/` — 8 files, ~1930 lines total  
-**Package**: `@moltchain/dex-sdk`  
+**Package**: `@lichen/dex-sdk`  
 **Version**: 1.0.0
 
 ### 6a. SDK Architecture
 
 | File | Lines | Purpose | Mock Data? |
 |------|-------|---------|------------|
-| `client.ts` | 485 | `MoltDEX` class — high-level API wrapper | **NO** — pure HTTP/WS calls |
+| `client.ts` | 485 | `LichenDEX` class — high-level API wrapper | **NO** — pure HTTP/WS calls |
 | `types.ts` | 425 | TypeScript type definitions for all DEX entities | N/A (types only) |
 | `websocket.ts` | 231 | `DexWebSocket` class — WS connection + auto-reconnect | **NO** |
 | `amm.ts` | 209 | Pool/LP position decoders, calldata encoders, math utilities | **NO** |
@@ -422,9 +422,9 @@ All 7 contracts are Rust → WASM compiled. They store state in `CF_CONTRACT_STO
 
 ### 6b. Key SDK Features
 
-**`MoltDEX` Client Class** (client.ts):
+**`LichenDEX` Client Class** (client.ts):
 
-- HTTP client with `fetch()`, timeout, API-key auth, MoltyID header
+- HTTP client with `fetch()`, timeout, API-key auth, LichenID header
 - Auto-unwraps `{ success, data, error, slot }` response envelope
 - Complete method coverage:
   - **Pairs**: `getPairs()`, `getPair()`, `getTicker()`, `getTickers()`
@@ -504,17 +504,17 @@ first-boot-deploy.sh
   └→ Phase 1: Build WASM artifacts (build-all-contracts.sh)
   └→ Phase 2: Check keypairs
   └→ Phase 3: deploy_dex.py
-  │   └→ Phase 1: Deploy wrapped tokens (musd_token, wsol_token, weth_token)
+  │   └→ Phase 1: Deploy wrapped tokens (lusd_token, wsol_token, weth_token)
   │   └→ Phase 2: Deploy DEX contracts (7 contracts)
   │   └→ Phase 3: Initialize tokens (set admin=treasury)
   │   └→ Phase 4: Initialize DEX (wire cross-references)
   │   │   └→ initialize() each contract
-  │   │   └→ register_token(mUSD, wSOL, wETH) on dex_core
+  │   │   └→ register_token(lUSD, wSOL, wETH) on dex_core
   │   │   └→ create_pair() for 7 trading pairs
-  │   │   └→ add_allowed_quote(mUSD, MOLT)
+  │   │   └→ add_allowed_quote(lUSD, LICN)
   │   │   └→ Wire contracts: amm→core, router→core+amm, margin→core, rewards→core, governance→core, analytics→core
   │   └→ Phase 5: Initialize prediction_market
-  └→ Phase 4: Deploy core contracts (moltcoin, moltdao, etc.)
+  └→ Phase 4: Deploy core contracts (lichencoin, lichendao, etc.)
   └→ Phase 5: Seed AMM pools + insurance fund
 ```
 
@@ -524,13 +524,13 @@ Created by `deploy_dex.py` → `phase_initialize_dex()`:
 
 | Pair ID | Base | Quote | Purpose |
 |---------|------|-------|---------|
-| 0 | MOLT | mUSD | Native token vs stablecoin |
-| 1 | wSOL | mUSD | Wrapped Solana vs stablecoin |
-| 2 | wETH | mUSD | Wrapped Ethereum vs stablecoin |
-| 3 | REEF | mUSD | REEF token vs stablecoin |
-| 4 | wSOL | MOLT | Direct SOL/MOLT cross |
-| 5 | wETH | MOLT | Direct ETH/MOLT cross |
-| 6 | REEF | MOLT | REEF/MOLT cross |
+| 0 | LICN | lUSD | Native token vs stablecoin |
+| 1 | wSOL | lUSD | Wrapped Solana vs stablecoin |
+| 2 | wETH | lUSD | Wrapped Ethereum vs stablecoin |
+| 3 | MOSS | lUSD | MOSS token vs stablecoin |
+| 4 | wSOL | LICN | Direct SOL/LICN cross |
+| 5 | wETH | LICN | Direct ETH/LICN cross |
+| 6 | MOSS | LICN | MOSS/LICN cross |
 
 ### 7c. Initial AMM Pool Seeding
 
@@ -538,15 +538,15 @@ Created by `first-boot-deploy.sh` Phase 5 / `testnet-deploy.sh` Phase 5:
 
 | Pool | sqrt_price | Implied Price | Fee |
 |------|-----------|---------------|-----|
-| MOLT/mUSD | 648,000,000 | ~$0.42 | 30bps |
-| wSOL/mUSD | 13,360,000,000 | ~$178 | 30bps |
-| wETH/mUSD | 59,345,000,000 | ~$3,521 | 30bps |
-| REEF/mUSD | 135,700,000 | ~$0.018 | 30bps |
-| wSOL/MOLT | 20,591,000,000 | ~424 MOLT | 30bps |
-| wETH/MOLT | 91,558,000,000 | ~8,383 MOLT | 30bps |
-| REEF/MOLT | 207,400,000 | ~0.043 MOLT | 30bps |
+| LICN/lUSD | 648,000,000 | ~$0.42 | 30bps |
+| wSOL/lUSD | 13,360,000,000 | ~$178 | 30bps |
+| wETH/lUSD | 59,345,000,000 | ~$3,521 | 30bps |
+| MOSS/lUSD | 135,700,000 | ~$0.018 | 30bps |
+| wSOL/LICN | 20,591,000,000 | ~424 LICN | 30bps |
+| wETH/LICN | 91,558,000,000 | ~8,383 LICN | 30bps |
+| MOSS/LICN | 207,400,000 | ~0.043 LICN | 30bps |
 
-Insurance fund: 10,000 MOLT (10,000,000,000,000 lamports) seeded to `dex_margin`.
+Insurance fund: 10,000 LICN (10,000,000,000,000 lamports) seeded to `dex_margin`.
 
 ### 7d. Cross-Contract Wiring
 
@@ -568,13 +568,13 @@ dex_analytics  → set_core_contract(dex_core)
 ### 8a. Market Maker Bot
 
 **Location**: `dex/market-maker/src/` — 4 files  
-**Dependencies**: `@moltchain/dex-sdk`
+**Dependencies**: `@lichen/dex-sdk`
 
 **Config** (`config.ts`, 97 lines):
 - Environment-variable–driven configuration
 - Default endpoint: `http://localhost:8899`
 - Default WS: `ws://localhost:8900/ws`
-- Default pair: 0 (MOLT/mUSD)
+- Default pair: 0 (LICN/lUSD)
 - Default strategy: spread
 
 **Two Strategies**:
@@ -624,7 +624,7 @@ dex_analytics  → set_core_contract(dex_core)
 | **M2** | Order book | `genOrderBookFallback()` | API fail | 15 fake bid/ask levels, shows [DEMO] badge |
 | **M3** | Recent trades | `genTradesFallback()` | API fail | 30 random trades, shows [DEMO] badge |
 | **M4** | Chart candles | `genCandlesFallback()` | API fail | 300 random 15m candles, shows [DEMO] badge |
-| **M5** | Wallet balances | Hardcoded 4-token balances (lines ~335–338) | RPC fail | MOLT=125847, mUSD=12500, wSOL=28.45, wETH=3.247, shows [DEMO] badge |
+| **M5** | Wallet balances | Hardcoded 4-token balances (lines ~335–338) | RPC fail | LICN=125847, lUSD=12500, wSOL=28.45, wETH=3.247, shows [DEMO] badge |
 | **M6** | Prediction markets | `MOCK_MARKETS` array (lines ~1101–1108) | API fail | 6 fake prediction markets, shows [DEMO] badge |
 | **M7** | Prediction chart | `generateMockPriceHistory()` | Chart modal | Random walk, no badge |
 

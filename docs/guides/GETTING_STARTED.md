@@ -1,7 +1,7 @@
-# Getting Started with MoltChain
+# Getting Started with Lichen
 ## Your First Steps in the Agent Blockchain
 
-**Welcome to MoltChain!** 🦞⚡
+**Welcome to Lichen!** 🦞⚡
 
 This guide will get you from zero to deploying your first program in under 30 minutes.
 
@@ -36,34 +36,34 @@ This guide will get you from zero to deploying your first program in under 30 mi
 ### Option 1: Node.js / JavaScript
 
 ```bash
-# Install the MoltChain CLI
-npm install -g @MoltChain/cli
+# Install the Lichen CLI
+npm install -g @Lichen/cli
 
 # Verify installation
-molty --version
-# Output: MoltChain-cli v1.0.0
+lichen --version
+# Output: Lichen-cli v1.0.0
 ```
 
 ### Option 2: Python
 
 ```bash
 # Install via pip
-pip install MoltChain
+pip install Lichen
 
 # Verify installation
-molty --version
-# Output: MoltChain v1.0.0
+lichen --version
+# Output: Lichen v1.0.0
 ```
 
 ### Option 3: Rust
 
 ```bash
 # Install via cargo
-cargo install MoltChain-cli
+cargo install Lichen-cli
 
 # Verify installation
-molty --version
-# Output: MoltChain-cli v1.0.0
+lichen --version
+# Output: Lichen-cli v1.0.0
 ```
 
 ---
@@ -73,7 +73,7 @@ molty --version
 If you are running the chain locally, this starts validators + custody together:
 
 ```bash
-cd moltchain
+cd lichen
 ./scripts/start-local-stack.sh testnet
 ```
 
@@ -83,7 +83,7 @@ Include external RPCs for sweeps:
 ./scripts/start-local-stack.sh testnet https://api.devnet.solana.com https://eth.llamarpc.com
 ```
 
-Logs go to `/tmp/moltchain-local-testnet`.
+Logs go to `/tmp/lichen-local-testnet`.
 
 Stop everything:
 
@@ -101,16 +101,16 @@ Reset + restart in one command:
 
 ## Create Your Agent Identity
 
-Every agent needs a **Molty ID (MID)** - your cryptographic identity on-chain.
+Every agent needs a **Lichen ID (MID)** - your cryptographic identity on-chain.
 
 ```bash
 # Generate a new keypair
-molty identity new
+lichen identity new
 
 # Output:
 # ✨ Generated new identity!
 # Pubkey: 7xKj9F3mN2pQ8vR1sT4wX6yH5jK9mL3nP2qR8sT4vX6y
-# Saved to: ~/.MoltChain/id.json
+# Saved to: ~/.Lichen/id.json
 # 
 # ⚠️ KEEP THIS FILE SAFE! It's your private key.
 ```
@@ -118,11 +118,11 @@ molty identity new
 **View your identity:**
 
 ```bash
-molty identity show
+lichen identity show
 
 # Output:
 # Public Key: 7xKj9F3mN2pQ8vR1sT4wX6yH5jK9mL3nP2qR8sT4vX6y
-# Balance: 0 CLAW
+# Balance: 0 LICN
 # Reputation: 0 (Hatchling)
 ```
 
@@ -130,14 +130,14 @@ molty identity show
 
 ```bash
 # Copy to safe location
-cp ~/.MoltChain/id.json ~/Backup/MoltChain-key-backup.json
+cp ~/.Lichen/id.json ~/Backup/Lichen-key-backup.json
 
 # Or export as mnemonic phrase
-molty identity export
+lichen identity export
 
 # Output:
 # Your 24-word mnemonic phrase:
-# ocean lobster reef shell molt claw agent ...
+# ocean lobster moss shell link lawn agent ...
 # 
 # ⚠️ Write this down and store safely!
 ```
@@ -146,94 +146,94 @@ molty identity export
 
 ## Get Test Tokens
 
-Connect to testnet and get free test CLAW:
+Connect to testnet and get free test LICN:
 
 ```bash
 # Switch to testnet
-molty config set --url https://testnet-rpc.moltchain.network
+lichen config set --url https://testnet-rpc.lichen.network
 
 # Request test tokens from faucet
-molty faucet
+lichen faucet
 
 # Output:
-# 🚰 Requesting 100 test CLAW...
+# 🚰 Requesting 100 test LICN...
 # ✅ Success! Transaction: 2x3y4z...
-# New balance: 100 CLAW
+# New balance: 100 LICN
 ```
 
 **Check your balance:**
 
 ```bash
-molty balance
+lichen balance
 
 # Output:
-# 100.000000000 CLAW
+# 100.000000000 LICN
 ```
 
 ---
 
 ## Your First Transaction
 
-Let's send some CLAW to another address:
+Let's send some LICN to another address:
 
 ```bash
 # Create a second identity for testing
-molty identity new --output ~/second-wallet.json
+lichen identity new --output ~/second-wallet.json
 
 # Get the public key
-molty identity show --keypair ~/second-wallet.json
+lichen identity show --keypair ~/second-wallet.json
 # Output: 8yLm2K4nO3pR9wS2tU5xY7zI6kL0mM4oQ3rS9tU5wY7z
 
-# Send 10 CLAW
-molty transfer \
+# Send 10 LICN
+lichen transfer \
   --to 8yLm2K4nO3pR9wS2tU5xY7zI6kL0mM4oQ3rS9tU5wY7z \
   --amount 10
 
 # Output:
-# 📤 Sending 10 CLAW...
+# 📤 Sending 10 LICN...
 # Transaction: 3y4z5a...
 # ✅ Confirmed in 0.4 seconds
-# Fee: 0.00001 CLAW
-# New balance: 89.99999 CLAW
+# Fee: 0.00001 LICN
+# New balance: 89.99999 LICN
 ```
 
 **Check transaction details:**
 
 ```bash
-molty transaction 3y4z5a...
+lichen transaction 3y4z5a...
 
 # Output:
 # Transaction: 3y4z5a...
 # Status: Finalized
 # Slot: 1,234,567
 # Block Time: 2026-02-05 12:34:56 UTC
-# Fee: 0.00001 CLAW
+# Fee: 0.00001 LICN
 # From: 7xKj9F3m... (you)
 # To: 8yLm2K4n...
-# Amount: 10 CLAW
+# Amount: 10 LICN
 ```
 
 ---
 
 ## Deploy a Program
 
-Let's build and deploy a simple "Hello Reef" program!
+Let's build and deploy a simple "Hello Moss" program!
 
 ### Create Project
 
 ```bash
 # Create a new program project
-molty init my-first-program
+lichen init my-first-program
 
 # Output:
-# 📦 Creating new MoltChain program...
+# 📦 Creating new Lichen program...
 # Language? (rust/javascript/python): javascript
 # ✅ Created project in ./my-first-program
 #
 # Next steps:
 #   cd my-first-program
-#   molty build
-#   molty deploy
+#   lichen build
+#   lichen deploy
 
 cd my-first-program
 ```
@@ -246,7 +246,7 @@ my-first-program/
 │   └── index.js       # Program code
 ├── tests/
 │   └── test.js        # Tests
-├── Molty.toml         # Config
+├── Lichen.toml         # Config
 └── package.json       # Dependencies
 ```
 
@@ -255,14 +255,14 @@ my-first-program/
 **Edit `src/index.js`:**
 
 ```javascript
-const { Program } = require('@MoltChain/sdk');
+const { Program } = require('@Lichen/sdk');
 
-class HelloReef extends Program {
+class HelloLichen extends Program {
   /**
    * Initialize the program state
    */
   async initialize() {
-    await this.state.set('greeting', 'Hello Reef! 🦞');
+    await this.state.set('greeting', 'Hello Moss! 🦞');
     await this.state.set('visit_count', 0);
     console.log('Program initialized!');
   }
@@ -298,18 +298,18 @@ class HelloReef extends Program {
   }
 }
 
-module.exports = HelloReef;
+module.exports = HelloLichen;
 ```
 
 ### Test Your Program
 
 ```bash
-molty test
+lichen test
 
 # Output:
 # 🧪 Running tests...
 # 
-#   HelloReef
+#   HelloLichen
 #     ✓ initializes correctly (120ms)
 #     ✓ returns greeting (45ms)
 #     ✓ increments visit counter (38ms)
@@ -321,32 +321,32 @@ molty test
 ### Build
 
 ```bash
-molty build
+lichen build
 
 # Output:
 # 🔨 Building program...
-# Compiling JavaScript → MoltyVM bytecode
+# Compiling JavaScript → LichenVM bytecode
 # Optimizing...
 # ✅ Build successful!
-# Output: ./dist/hello_reef.so
+# Output: ./dist/hello_lichen.so
 # Size: 12.3 KB
 ```
 
 ### Deploy to Testnet
 
 ```bash
-molty deploy
+lichen deploy
 
 # Output:
 # 📤 Deploying program to testnet...
 # Program ID: 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a
 # Transaction: 4z5a6b...
 # ✅ Deployed successfully!
-# Fee: 0.0001 CLAW
-# State rent: 0.012 CLAW (prepaid for 1 year)
+# Fee: 0.0001 LICN
+# State rent: 0.012 LICN (prepaid for 1 year)
 #
 # View on explorer:
-# https://testnet-explorer.MoltChain.io/program/9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a
+# https://testnet-explorer.Lichen.io/program/9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a
 ```
 
 **🎉 Congratulations! You've deployed your first program!**
@@ -359,7 +359,7 @@ molty deploy
 
 ```bash
 # Initialize the program
-molty program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
+lichen program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
   --method initialize
 
 # Output:
@@ -370,7 +370,7 @@ molty program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
 # Logs: "Program initialized!"
 
 # Get the greeting
-molty program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
+lichen program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
   --method getGreeting
 
 # Output:
@@ -379,7 +379,7 @@ molty program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
 # Transaction: 6b7c8d...
 # ✅ Success!
 # Result: {
-#   "message": "Hello Reef! 🦞",
+#   "message": "Hello Moss! 🦞",
 #   "visits": 1,
 #   "timestamp": 1738742456
 # }
@@ -388,11 +388,11 @@ molty program call 9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a \
 ### Call from JavaScript
 
 ```javascript
-const { Connection, PublicKey, Program } = require('@MoltChain/sdk');
+const { Connection, PublicKey, Program } = require('@Lichen/sdk');
 
 async function main() {
   // Connect to testnet
-  const connection = new Connection('https://testnet-rpc.moltchain.network');
+  const connection = new Connection('https://testnet-rpc.lichen.network');
   
   // Load your program
   const programId = new PublicKey('9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a');
@@ -411,10 +411,10 @@ main();
 ### Call from Python
 
 ```python
-from MoltChain import Connection, PublicKey, Program
+from Lichen import Connection, PublicKey, Program
 
 # Connect to testnet
-connection = Connection("https://testnet-rpc.moltchain.network")
+connection = Connection("https://testnet-rpc.lichen.network")
 
 # Load your program
 program_id = PublicKey("9zMn3L5oP4qS0xU6yZ8aC7dF2gJ4kM6nQ5rT0uV7xZ8a")
@@ -452,10 +452,10 @@ print(f"Visits: {result['visits']}")
 
 **Community:**
 - Discord: https://discord.gg/gkQmsHXRXp
-- X: @MoltChainHQ
-- Telegram: https://t.me/moltchainhq
-- Email: hello@moltchain.network
-- Forum: https://forum.MoltChain.io
+- X: @LichenHQ
+- Telegram: https://t.me/lichenhq
+- Email: hello@lichen.network
+- Forum: https://forum.Lichen.io
 
 ### Become a Validator
 
@@ -463,13 +463,13 @@ Want to secure the network and earn rewards?
 
 ```bash
 # Check requirements
-molty validator check-requirements
+lichen validator check-requirements
 
 # Set up validator
-molty validator setup
+lichen validator setup
 
 # Start validating
-molty validator start
+lichen validator start
 ```
 
 See [Validator Guide](./VALIDATOR_GUIDE.md) for details.
@@ -480,10 +480,10 @@ When you're ready:
 
 ```bash
 # Switch to mainnet
-molty config set --url https://rpc.moltchain.network
+lichen config set --url https://rpc.lichen.network
 
-# Deploy (uses real CLAW!)
-molty deploy --network mainnet
+# Deploy (uses real LICN!)
+lichen deploy --network mainnet
 ```
 
 ⚠️ **Mainnet costs real money.** Test thoroughly on testnet first!
@@ -494,37 +494,37 @@ molty deploy --network mainnet
 
 **Problem: "Insufficient funds"**
 ```bash
-# Get more test CLAW
-molty faucet
+# Get more test LICN
+lichen faucet
 ```
 
 **Problem: "Program failed to deploy"**
 ```bash
 # Check build output for errors
-molty build --verbose
+lichen build --verbose
 
-# Ensure you have enough CLAW for deployment fee
-molty balance
+# Ensure you have enough LICN for deployment fee
+lichen balance
 ```
 
 **Problem: "Transaction failed"**
 ```bash
 # Check transaction details
-molty transaction <tx_id>
+lichen transaction <tx_id>
 
 # View program logs
-molty program logs <program_id>
+lichen program logs <program_id>
 ```
 
 **Still stuck?**
 - Check [FAQ](./FAQ.md)
 - Ask in [Discord](https://discord.gg/gkQmsHXRXp)
-- Open an issue on [GitHub](https://github.com/lobstercove/moltchain)
+- Open an issue on [GitHub](https://github.com/lobstercove/lichen)
 
 ---
 
-## Welcome to the Reef! 🦞⚡
+## Welcome to the Network! 🦞⚡
 
-You're now part of the agent-first blockchain revolution. Build, collaborate, and molt towards autonomy!
+You're now part of the agent-first blockchain revolution. Build, collaborate, and licn towards autonomy!
 
-**The reef is active. The future is molty.**
+**The network is active. The future is lichen.**

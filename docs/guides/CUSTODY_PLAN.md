@@ -1,21 +1,21 @@
-# MoltChain Custody Plan (3-of-5 Threshold Target)
+# Lichen Custody Plan (3-of-5 Threshold Target)
 
 **Status**: Draft - approved direction for future threshold custody, not the current production path
-**Scope**: Deposit address issuance, confirmation watchers, sweep to treasury, and MOLT credits from treasury-controlled allocation paths.
+**Scope**: Deposit address issuance, confirmation watchers, sweep to treasury, and LICN credits from treasury-controlled allocation paths.
 
 **Implementation note**: this document describes the intended threshold custody end state. Today, treasury withdrawals have live threshold paths on supported Solana/EVM routes, while multi-signer deposit issuance fails closed by default because deposit sweeps are still locally signed and the unsafe local-sweep override has been removed.
 
 ## Goals
 
-- Keep Molt wallets user-owned (base58 + EVM-compatible address) for on-chain identity.
+- Keep Lichen wallets user-owned (base58 + EVM-compatible address) for on-chain identity.
 - Provide compatibility for SOL/ETH/USDC/USDT deposits via one-time custody addresses.
 - Sweep deposits to treasury after confirmations.
-- Credit MOLT from treasury-controlled allocation paths without making assumptions about global supply semantics.
+- Credit LICN from treasury-controlled allocation paths without making assumptions about global supply semantics.
 - Define the target 3-of-5 threshold security model for the future hardened custody path.
 
 ## High-Level Architecture
 
-- Canonical Molt RPC: `/`
+- Canonical Lichen RPC: `/`
 - Solana-format adapter: `/solana-compat`
 - EVM adapter: `/evm`
 - Custody service (separate microservice) with REST/JSON-RPC API
@@ -32,7 +32,7 @@
 
 - Deterministic derivation per user, per asset, per chain.
 - Suggested path format:
-  - `molt/<chain>/<asset>/<user_id>/<deposit_index>`
+  - `lichen/<chain>/<asset>/<user_id>/<deposit_index>`
 - New deposit request increments `deposit_index`.
 - Returned address is one-time use; never reused.
 
@@ -43,12 +43,12 @@
 3) Watcher monitors chain for inbound transfer to address.
 4) After N confirmations, mark deposit confirmed.
 5) Enqueue sweep job to treasury.
-6) After sweep, enqueue MOLT credit job from treasury allocation.
+6) After sweep, enqueue LICN credit job from treasury allocation.
 
 ## Sweep and Credit Flow
 
 - Sweep: deposit address -> treasury address on the same chain/asset.
-- Credit: treasury sends MOLT to user Molt wallet (no minting).
+- Credit: treasury sends LICN to user Lichen wallet (no minting).
 - Genesis is cold; treasury is warm. Genesis -> treasury top-ups are quorum-gated.
 
 ## Data Model (Custody Service)
@@ -60,7 +60,7 @@
 - `sweep_jobs`
   - id, deposit_id, from_address, to_treasury, chain, asset, status
 - `credit_jobs`
-  - id, deposit_id, user_id, amount_molt, status
+  - id, deposit_id, user_id, amount_licn, status
 
 ## Validator Responsibilities In The Target Threshold Design
 
@@ -111,8 +111,8 @@ You can override any value by exporting it before running the script.
 - `CUSTODY_SOLANA_USDT_MINT` - Override Solana USDT mint (default: mainnet).
 - `CUSTODY_EVM_USDC` - Override EVM USDC contract (default: mainnet).
 - `CUSTODY_EVM_USDT` - Override EVM USDT contract (default: mainnet).
-- `CUSTODY_MOLT_RPC_URL` - Canonical Molt RPC endpoint for credit transfers.
-- `CUSTODY_TREASURY_KEYPAIR` - Treasury keypair path for Molt credits.
+- `CUSTODY_LICHEN_RPC_URL` - Canonical Lichen RPC endpoint for credit transfers.
+- `CUSTODY_TREASURY_KEYPAIR` - Treasury keypair path for Lichen credits.
 - `CUSTODY_SIGNER_ENDPOINTS` - Comma-separated signer base URLs.
 - `CUSTODY_SIGNER_THRESHOLD` - Minimum signatures required for a sweep.
 

@@ -1,7 +1,7 @@
 {
-  "name": "@moltchain/dex-sdk",
+  "name": "@lichen/dex-sdk",
   "version": "1.0.0",
-  "description": "TypeScript SDK for MoltyDEX — MoltChain's hybrid CLOB + AMM decentralized exchange",
+  "description": "TypeScript SDK for Lichen DEX — Lichen's hybrid CLOB + AMM decentralized exchange",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -12,7 +12,7 @@
     "prepare": "npm run build"
   },
   "keywords": [
-    "moltchain",
+    "lichen",
     "dex",
     "exchange",
     "amm",
@@ -20,20 +20,20 @@
     "orderbook",
     "defi",
     "web3",
-    "moltydex"
+    "lichendex"
   ],
-  "author": "Trading Lobster <trading.lobster@moltchain.network>",
+  "author": "Lichen Labs <trading@lichen.network>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lobstercove/moltchain.git",
+    "url": "https://github.com/lichen-network/lichen.git",
     "directory": "dex/sdk"
   },
   "peerDependencies": {
-    "@moltchain/sdk": ">=0.1.0"
+    "@lichen/sdk": ">=0.1.0"
   },
   "peerDependenciesMeta": {
-    "@moltchain/sdk": {
+    "@lichen/sdk": {
       "optional": true
     }
   },

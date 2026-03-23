@@ -1,17 +1,17 @@
-# Molt Market — OpenSea-Parity Production Plan
+# Lichen Market — OpenSea-Parity Production Plan
 
 **Created:** Feb 25, 2026
 **Status:** EXECUTING
-**Target:** Full OpenSea feature parity for Molt Market NFT Marketplace
+**Target:** Full OpenSea feature parity for Lichen Market NFT Marketplace
 
 ---
 
 ## 🔥 CRITICAL BUGS (Fix Immediately)
 
-### BUG-1: Gas Estimate on Create Page — MoltChain Has NO Gas
+### BUG-1: Gas Estimate on Create Page — Lichen Has NO Gas
 - **Files:** `marketplace/js/create.js`, `marketplace/create.html`
-- **Issue:** `GAS_ESTIMATE = 0.001` in create.js; "Gas Estimate ~0.001 MOLT" hardcoded in HTML
-- **MoltChain uses flat fees, NOT gas metering.** The NFT Mint Fee is 0.5 MOLT per token. No gas.
+- **Issue:** `GAS_ESTIMATE = 0.001` in create.js; "Gas Estimate ~0.001 LICN" hardcoded in HTML
+- **Lichen uses flat fees, NOT gas metering.** The NFT Mint Fee is 0.5 LICN per token. No gas.
 - **Fix:** Remove `GAS_ESTIMATE` constant, remove gas line from HTML breakdown, remove gas from `updatePriceBreakdown()`, `updateCreateBtnState()`, and `mintNFT()` balance checks. Total = minting fee + collection fee only.
 
 ### BUG-2: Browse List View Shows "Unnamed" Instead of NFT Name
@@ -21,11 +21,11 @@
 
 ### BUG-3: Create Page Has No Price Input / Cannot Set Initial Listing
 - **Files:** `marketplace/create.html`, `marketplace/js/create.js`
-- **Issue:** After minting, NFT is minted but NOT listed. No price input field. Preview shows "-- MOLT".
+- **Issue:** After minting, NFT is minted but NOT listed. No price input field. Preview shows "-- LICN".
 - **Fix:** Add optional listing price input. After mint, if price > 0, auto-call `list_nft` to list the NFT for sale.
 
 ### BUG-4: buy_nft Does NOT Enforce Royalties
-- **File:** `contracts/moltmarket/src/lib.rs` (`buy_nft` function, line ~149)
+- **File:** `contracts/lichenmarket/src/lib.rs` (`buy_nft` function, line ~149)
 - **Issue:** `list_nft_with_royalty` stores royalty_recipient at bytes 112..144, but `buy_nft` NEVER reads or pays royalty_recipient. Only marketplace fee is deducted.
 - **Fix:** In `buy_nft`, read royalty_recipient from listing_data[112..144]. If non-zero, read royalty_bps from collection, calculate royalty, split payment 3-way: seller / marketplace fee / royalty.
 
@@ -86,8 +86,8 @@
 ### D-2: Add Marketplace Indexing to State
 - New CF: `CF_MARKET_OFFERS` — index offers by NFT and by offerer
 - New CF: `CF_MARKET_AUCTIONS` — index active auctions
-- New method: `get_offers_for_nft(collection, token_id)` on MoltState
-- New method: `get_auctions(collection, limit)` on MoltState
+- New method: `get_offers_for_nft(collection, token_id)` on LicnState
+- New method: `get_auctions(collection, limit)` on LicnState
 
 ---
 
@@ -95,7 +95,7 @@
 
 ### R-1: getMarketOffers
 - Query offers for a specific NFT (contract + token_id)
-- Returns: `[{ offerer, price, price_molt, payment_token, active, expiry }]`
+- Returns: `[{ offerer, price, price_licn, payment_token, active, expiry }]`
 
 ### R-2: getCollectionStats
 - Floor price, total volume, 24h volume, owner count, listed count
@@ -123,7 +123,7 @@
 
 ### F-3: Item Page — Show Offers
 - Below price section, add "Offers" panel listing all active offers
-- Each offer: offerer hash, price in MOLT, expiry, accept/cancel buttons
+- Each offer: offerer hash, price in LICN, expiry, accept/cancel buttons
 - Add price history section (chart or table of past sales)
 - Add "Last Sale" price display
 

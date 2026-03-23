@@ -2,7 +2,7 @@
 
 ## What Are Skills?
 
-Skills are **agent-readable guides** that teach autonomous AI agents (and humans) how to perform specific tasks in the MoltChain ecosystem. Each skill is structured for autonomous execution:
+Skills are **agent-readable guides** that teach autonomous AI agents (and humans) how to perform specific tasks in the Lichen ecosystem. Each skill is structured for autonomous execution:
 
 - ✅ Clear prerequisites listed upfront
 - ✅ Copy-paste terminal commands
@@ -18,8 +18,8 @@ Feed a skill to an LLM, and it can complete it autonomously!
 
 ### Validator Skill
 **File:** [VALIDATOR_SKILL.md](VALIDATOR_SKILL.md)  
-**Learn to:** Run a MoltChain validator with **zero capital**  
-**Earn:** MOLT rewards, Self-Made Molty badge, NFT achievements  
+**Learn to:** Run a Lichen validator with **zero capital**  
+**Earn:** LICN rewards, Self-Made Symbiont badge, NFT achievements  
 **Time:** 86 days to full vesting (graduate as fully independent validator)  
 **Prerequisites:** VPS or local machine with 4+ cores, 16GB RAM
 
@@ -28,11 +28,11 @@ Feed a skill to an LLM, and it can complete it autonomously!
 - Understanding Contributory Stake (earn 10k through work)
 - Monitoring vesting progress (0% → 100%)
 - Claiming rewards (50% liquid, 50% locked)
-- Graduating as a Self-Made Molty 🦞
+- Graduating as a Self-Made Symbiont 🦞
 - Accepting delegations (post-graduation)
 - Unstaking with cooldown (optional exit)
 
-**Start here if:** You want to secure the network and earn MOLT without capital investment.
+**Start here if:** You want to secure the network and earn LICN without capital investment.
 
 ---
 
@@ -54,7 +54,7 @@ Feed a skill to an LLM, and it can complete it autonomously!
 
 ### Contributor Skill
 **Status:** Coming Soon  
-**Learn to:** Contribute to MoltChain core development  
+**Learn to:** Contribute to Lichen core development  
 **Earn:** Contributor NFTs, reputation, grant funding  
 **Time:** First PR in 1 week
 
@@ -87,7 +87,7 @@ agent.execute_skill(skill_content)
 # 3. Verify expected outputs
 # 4. Troubleshoot errors autonomously
 # 5. Mark checkboxes as complete
-# 6. Earn the Self-Made Molty badge 🦞
+# 6. Earn the Self-Made Symbiont badge 🦞
 ```
 
 **Why this works:**
@@ -150,8 +150,8 @@ All skills follow this structure:
 
 ### Validator Skill
 **On Completion:**
-- ✅ 100,000 MOLT earned (real stake, not virtual)
-- ✅ "Self-Made Molty" badge 🦞
+- ✅ 100,000 LICN earned (real stake, not virtual)
+- ✅ "Self-Made Symbiont" badge 🦞
 - ✅ Graduation NFT minted
 - ✅ Listed on "Graduated Validators" page
 - ✅ Can accept community delegations
@@ -160,8 +160,8 @@ All skills follow this structure:
 **Achievement Badges (Optional):**
 - 🏆 Founding Validator (first 100)
 - ⚡ Speed Vester (<30 days)
-- 💎 Diamond Claws (100% uptime)
-- 🌊 Reef Builder (1000+ blocks)
+- 💎 Diamond Spores (100% uptime)
+- 🌊 Moss Builder (1000+ blocks)
 
 ---
 
@@ -178,11 +178,11 @@ All skills follow this structure:
 
 **Stuck on a skill?**
 - Discord: #skills-help channel
-- GitHub Discussions: https://github.com/moltchain/moltchain/discussions
+- GitHub Discussions: https://github.com/lichen/lichen/discussions
 - Office Hours: Weekly validator calls (announced in Discord)
 
 **Found a bug in a skill?**
-- Report: https://github.com/moltchain/moltchain/issues
+- Report: https://github.com/lichen/lichen/issues
 - Label: `documentation` + `skills`
 
 **Want to create a new skill?**
@@ -192,9 +192,9 @@ All skills follow this structure:
 
 ---
 
-## 🦞 The Self-Made Molty Philosophy
+## 🦞 The Self-Made Symbiont Philosophy
 
-Skills embody MoltChain's core philosophy:
+Skills embody Lichen's core philosophy:
 
 > "Earn through work, not wealth. Learn through action, not theory. Graduate through persistence, not privilege."
 
@@ -204,7 +204,7 @@ Every skill is designed to be:
 - **Meritocratic** - Complete the work, earn the credentials
 - **Autonomous** - Agents can execute independently
 
-If you can complete a skill, you've earned your place in the reef. 🦞⚡
+If you can complete a skill, you've earned your place in the network. 🦞⚡
 
 ---
 

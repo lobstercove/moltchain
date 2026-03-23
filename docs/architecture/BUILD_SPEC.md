@@ -1,7 +1,7 @@
-# MoltChain Frontend Build Specification
+# Lichen Frontend Build Specification
 ## COMPLETE Professional Rebuild
 
-**Theme:** Dark Orange (#FF6B35, #F77F00, #004E89)  
+**Theme:** Dark Teal (#00C9DB, #00E5FF, #004E89)  
 **Quality:** Solana Playground level  
 **Integration:** Full RPC/WebSocket  
 **Status:** Building NOW 🦞⚡
@@ -15,14 +15,14 @@
 const RPC_URL = 'http://localhost:8899';
 
 // Core methods
-- getBalance(pubkey) → {shells, molt}
-- getAccount(pubkey) → {pubkey, evm_address, shells, molt, owner, executable, data_len}
+- getBalance(pubkey) → {spores, licn}
+- getAccount(pubkey) → {pubkey, evm_address, spores, licn, owner, executable, data_len}
 - getBlock(slot) → Block data
 - getLatestBlock() → Latest block
 - getSlot() → Current slot number
 - getTransaction(signature) → Transaction data
 - sendTransaction(tx_data) → Send transaction
-- getTotalBurned() → Total MOLT burned
+- getTotalBurned() → Total LICN burned
 - getValidators() → Validator list
 - getMetrics() → Chain metrics
 - health() → {status: "ok"}
@@ -46,14 +46,14 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 1. **Hero** - Animated gradient background, stats grid (4 cards), CTAs
 2. **Problem/Solution** - Cost comparison table, feature cards
 3. **Features Grid** - 6 feature cards with icons
-4. **Agent Features** - Molty ID, Reputation, Skills, Contribution
+4. **Agent Features** - Lichen ID, Reputation, Skills, Contribution
 5. **Technical Stack** - Multi-language, EVM, APIs
-6. **Tokenomics** - Distribution pie chart, utility list, $MOLT stats
-7. **DeFi Ecosystem** - ClawSwap, LobsterLend, ClawPump, ReefStake
+6. **Tokenomics** - Distribution pie chart, utility list, $LICN stats
+7. **DeFi Ecosystem** - SporeSwap, ThallLend, SporePump, MossStake
 8. **Architecture Diagram** - Layered stack visualization
 9. **Roadmap** - 4 phases with timeline
 10. **Use Cases** - DeFi, Agent Services, Social, Infrastructure
-11. **Comparison Table** - MoltChain vs Solana vs Ethereum
+11. **Comparison Table** - Lichen vs Solana vs Ethereum
 12. **Get Started** - Code examples, installation steps
 13. **Community** - Discord, Twitter, GitHub links
 14. **Footer** - Full site map, resources
@@ -71,18 +71,18 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 - `getMetrics()` - Live chain stats
 - `getValidators()` - Validator count
 - `getLatestBlock()` - Latest block number
-- `getTotalBurned()` - MOLT burned
+- `getTotalBurned()` - LICN burned
 
 ---
 
-### 2. EXPLORER (Reef Explorer)
+### 2. EXPLORER (Moss Explorer)
 
 **Files:** `explorer/index.html` + `explorer/blocks.html` + `explorer/transactions.html` + `explorer/account.html` + `explorer/tokens.html` + `explorer/validators.html` + `explorer/css/styles.css` + `explorer/js/explorer.js`
 
 **Pages Required:**
 
 #### Dashboard (index.html)
-- **Top Stats**: Latest block, TPS, Total transactions, Active accounts, MOLT price, Total burned
+- **Top Stats**: Latest block, TPS, Total transactions, Active accounts, LICN price, Total burned
 - **Latest Blocks Table**: Slot, Hash, Txs, Validator, Time (auto-update)
 - **Latest Transactions Table**: Signature, Type, From/To, Amount, Status (auto-update)
 - **Network Stats**: Validator count, Stake distribution, Epoch progress
@@ -112,7 +112,7 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 - Block confirmation
 
 #### Account Page (account.html)
-- Balance (MOLT + shells)
+- Balance (LICN + spores)
 - Transaction history
 - Token holdings (if any)
 - Program data (if executable)
@@ -144,7 +144,7 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 
 ---
 
-### 3. WALLET (MoltWallet)
+### 3. WALLET (LichenWallet)
 
 **Files:** `wallet/index.html` + `wallet/styles.css` + `wallet/wallet.js`
 
@@ -174,7 +174,7 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 
 #### Send Screen
 - Recipient address input
-- Amount input (MOLT/shells)
+- Amount input (LICN/spores)
 - Fee display
 - Send button
 - Confirmation modal
@@ -211,12 +211,12 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 **APIs Used:**
 - `getBalance()` - Check balance
 - `getAccount()` - Account info
-- `sendTransaction()` - Send MOLT
+- `sendTransaction()` - Send LICN
 - `getTransaction()` - Transaction status
 
 ---
 
-### 4. MARKETPLACE (Molt Market)
+### 4. MARKETPLACE (Lichen Market)
 
 **Files:** `marketplace/index.html` + `marketplace/styles.css` + `marketplace/marketplace.js`
 
@@ -397,11 +397,11 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 
 ## Design System
 
-### Colors (ORANGE Theme)
+### Colors (TEAL Theme)
 ```css
---primary: #FF6B35
---primary-dark: #E5501B
---accent: #F77F00
+--primary: #00C9DB
+--primary-dark: #008B9E
+--accent: #00E5FF
 --secondary: #004E89
 --success: #06D6A0
 --warning: #FFD23F
@@ -417,7 +417,7 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 
 ### Gradients
 ```css
---gradient-1: linear-gradient(135deg, #FF6B35 0%, #F77F00 100%)
+--gradient-1: linear-gradient(135deg, #00C9DB 0%, #00E5FF 100%)
 --gradient-2: linear-gradient(135deg, #004E89 0%, #118AB2 100%)
 --gradient-3: linear-gradient(135deg, #06D6A0 0%, #118AB2 100%)
 ```
@@ -451,7 +451,7 @@ const ws = new WebSocket('ws://localhost:8899/ws');
 
 ### RPC Client
 ```javascript
-class MoltChainRPC {
+class LichenRPC {
     constructor(url) {
         this.url = url;
     }
@@ -483,7 +483,7 @@ class MoltChainRPC {
 
 ### WebSocket Client
 ```javascript
-class MoltChainWS {
+class LichenWS {
     constructor(url) {
         this.ws = new WebSocket(url);
         this.handlers = {};
@@ -525,7 +525,7 @@ class MoltChainWS {
 
 Each component MUST have:
 - ✅ Complete HTML structure
-- ✅ Orange theme colors
+- ✅ Teal theme colors
 - ✅ Responsive design (mobile/tablet/desktop)
 - ✅ API integration (real data)
 - ✅ WebSocket updates (where needed)
@@ -538,6 +538,6 @@ Each component MUST have:
 
 ---
 
-**LET'S MOLT! 🦞⚡**
+**LET'S LICN! 🦞⚡**
 
 *Building the most professional agent-first blockchain interface ever created.*

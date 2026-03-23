@@ -1,4 +1,4 @@
-# MoltChain ZK Privacy Layer — Full Implementation Plan
+# Lichen ZK Privacy Layer — Full Implementation Plan
 
 **Status:** ✅ Complete — all phases implemented and passing tests  
 **Completed:** February 2026  
@@ -111,7 +111,7 @@ rand = "0.8"
 ```rust
 struct Note {
     owner: PublicKey,     // Recipient's shielded pubkey
-    value: u64,           // Amount in shells
+    value: u64,           // Amount in spores
     blinding: Fr,         // Randomness for Pedersen commitment
     serial: Fr,           // Unique serial number (for nullifier derivation)
 }
@@ -231,7 +231,7 @@ nullifier:{hex} -> u8                Spent nullifier set (1 = spent)
 vk_shield       -> Vec<u8>          Shield verification key
 vk_unshield     -> Vec<u8>          Unshield verification key
 vk_transfer     -> Vec<u8>          Transfer verification key
-pool_balance    -> u64               Total shielded MOLT (shells)
+pool_balance    -> u64               Total shielded LICN (spores)
 ```
 
 Entry points:
@@ -313,7 +313,7 @@ Wallet files: `wallet/src/shielded.rs` (or JS equivalent for web wallet)
 
 #### 6.4 Deposit/Withdrawal Amount Privacy
 - Shield/unshield amounts are public (necessary for transparent ↔ shielded accounting)
-- Use fixed denominations (e.g., 1, 10, 100, 1000 MOLT) to reduce linkability
+- Use fixed denominations (e.g., 1, 10, 100, 1000 LICN) to reduce linkability
 - OR: allow arbitrary amounts but warn users about privacy implications
 
 #### 6.5 Compliance Hook (Optional)
@@ -340,7 +340,7 @@ Wallet files: `wallet/src/shielded.rs` (or JS equivalent for web wallet)
 - Nullifier: deterministic, no collisions across different notes
 
 #### 7.2 Integration Tests
-- End-to-end: shield 1000 MOLT → transfer 500 to Bob → Bob unshields 500
+- End-to-end: shield 1000 LICN → transfer 500 to Bob → Bob unshields 500
 - Double-spend: attempt to reuse nullifier → rejected
 - Invalid proof: tampered proof bytes → rejected
 - Cross-validator: prove on node A, verify on node B → same result
@@ -417,7 +417,7 @@ The existing `core/src/privacy.rs` gets **deleted** and replaced by `core/src/zk
 ## 6. Non-Goals (Out of Scope)
 
 - **Privacy for smart contract interactions** — only token transfers are shielded
-- **Cross-chain private bridges** — shielded pool is MoltChain-internal
+- **Cross-chain private bridges** — shielded pool is Lichen-internal
 - **Private NFTs** — future extension, different circuit
 - **Recursive proofs** — not needed for v1, could improve scalability later
 - **GPU proving** — CPU-only for v1, GPU optimization is an enhancement

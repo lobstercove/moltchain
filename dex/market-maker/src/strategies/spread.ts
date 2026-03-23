@@ -3,7 +3,7 @@
 // Places symmetric bid/ask orders around a reference price
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { MoltDEX, DexWebSocket } from '@moltchain/dex-sdk';
+import { LichenDEX, DexWebSocket } from '@lichen/dex-sdk';
 import { SpreadConfig } from '../config';
 
 interface ActiveOrder {
@@ -14,7 +14,7 @@ interface ActiveOrder {
 }
 
 export class SpreadStrategy {
-  private dex: MoltDEX;
+  private dex: LichenDEX;
   private ws: DexWebSocket;
   private config: SpreadConfig;
   private pairId: number;
@@ -27,7 +27,7 @@ export class SpreadStrategy {
   private traderAddress: string;
 
   constructor(
-    dex: MoltDEX,
+    dex: LichenDEX,
     ws: DexWebSocket,
     pairId: number,
     config: SpreadConfig,

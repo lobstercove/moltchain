@@ -1,4 +1,4 @@
-# MoltChain Production Gaps Tracker
+# Lichen Production Gaps Tracker
 
 > Last updated: 2026-02-18
 > Tracking all remaining gaps from the 3 production audits.
@@ -9,9 +9,9 @@
 
 | # | Gap | File(s) | Status |
 |---|-----|---------|--------|
-| U1 | CLI `molt upgrade` command | cli/src/main.rs, cli/src/client.rs | ✅ Done |
+| U1 | CLI `lichen upgrade` command | cli/src/main.rs, cli/src/client.rs | ✅ Done |
 | U2 | RPC `upgradeContract` endpoint | rpc/src/lib.rs | ✅ Done |
-| U3 | `ProgramDeployer.upgrade()` method | programs/js/moltchain-sdk.js | ✅ Done |
+| U3 | `ProgramDeployer.upgrade()` method | programs/js/lichen-sdk.js | ✅ Done |
 | U4 | Playground upgrade button handler | programs/js/playground-complete.js | ✅ Done |
 | U5 | Version field in ContractAccount | core/src/contract.rs | ✅ Done |
 | U6 | Version tracking on upgrade (bump + history) | core/src/processor.rs | ✅ Done |

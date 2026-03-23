@@ -1,11 +1,11 @@
-# MoltChain Blockchain Standards Audit Plan
+# Lichen Blockchain Standards Audit Plan
 
 > Repo-wide credibility and standards audit for the post-v0.4.5 codebase.
 > This document starts a new workstream after the original alignment plan was closed.
 
 **Created:** 2026-03-19
 **Status:** DRAFT — audit started, remediation planning in progress
-**Goal:** identify protocol, runtime, contract, RPC, storage, oracle, bridge, and operational gaps that would make experienced blockchain engineers question MoltChain's seriousness.
+**Goal:** identify protocol, runtime, contract, RPC, storage, oracle, bridge, and operational gaps that would make experienced blockchain engineers question Lichen's seriousness.
 
 Related follow-on documents:
 
@@ -26,13 +26,13 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-core --lib block::tests::test_block_signature_covers_validators_hash -- --exact`
+- `cargo test -p lichen-core --lib block::tests::test_block_signature_covers_validators_hash -- --exact`
 
 ### Closed Task 2 — Canonical Oracle Unification Onto Native Consensus Oracle
 
 **Status:** CLOSED
 
-**Outcome:** canonical user-facing oracle reads now use the validator-attested native consensus oracle rather than MoltOracle contract storage.
+**Outcome:** canonical user-facing oracle reads now use the validator-attested native consensus oracle rather than LichenOracle contract storage.
 
 **Code:**
 
@@ -43,11 +43,11 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo check -p moltchain-rpc`
-- `cargo test -p moltchain-core --lib consensus::tests::test_consensus_oracle_price_from_state_reads_native_price -- --exact`
-- `cargo test -p moltchain-core --lib consensus::tests::test_molt_price_from_state_falls_back_when_consensus_price_is_stale -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_rest_dex_oracle_prices -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_oracle_prices_uses_consensus_oracle -- --exact`
+- `cargo check -p lichen-rpc`
+- `cargo test -p lichen-core --lib consensus::tests::test_consensus_oracle_price_from_state_reads_native_price -- --exact`
+- `cargo test -p lichen-core --lib consensus::tests::test_licn_price_from_state_falls_back_when_consensus_price_is_stale -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_rest_dex_oracle_prices -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_oracle_prices_uses_consensus_oracle -- --exact`
 
 ### Closed Task 3 — BFT Finality Commitment Alignment
 
@@ -64,10 +64,10 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-core --lib consensus::tests::test_finality_tracker_finalizes_on_confirmation -- --exact`
-- `cargo test -p moltchain-core --lib consensus::tests::test_finality_tracker_normalizes_legacy_persisted_finalized_slot -- --exact`
-- `cargo test -p moltchain-rpc --lib ws::tests::signature_commitment_status_uses_finality_tracker -- --exact`
-- `cargo test -p moltchain-rpc --lib ws::tests::signature_commitment_status_without_finality_tracker_falls_back -- --exact`
+- `cargo test -p lichen-core --lib consensus::tests::test_finality_tracker_finalizes_on_confirmation -- --exact`
+- `cargo test -p lichen-core --lib consensus::tests::test_finality_tracker_normalizes_legacy_persisted_finalized_slot -- --exact`
+- `cargo test -p lichen-rpc --lib ws::tests::signature_commitment_status_uses_finality_tracker -- --exact`
+- `cargo test -p lichen-rpc --lib ws::tests::signature_commitment_status_without_finality_tracker_falls_back -- --exact`
 
 ### Closed Task 4 — Native Anchored Account Proofs
 
@@ -82,9 +82,9 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_account_proof_returns_anchored_finalized_context -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_account_proof_rejects_unanchored_state_root -- --exact`
-- `cargo check -p moltchain-rpc`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_account_proof_returns_anchored_finalized_context -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_account_proof_rejects_unanchored_state_root -- --exact`
+- `cargo check -p lichen-rpc`
 
 ### Closed Task 5 — Self-Contained Commit Certificate Verification
 
@@ -103,11 +103,11 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-core --lib block::tests::test_verify_commit_valid_supermajority -- --exact`
-- `cargo test -p moltchain-core --lib block::tests::test_verify_commit_wrong_round_fails -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_account_proof_returns_anchored_finalized_context -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_block_commit_exposes_commit_round -- --exact`
-- `cargo check -p moltchain-core -p moltchain-p2p -p moltchain-rpc -p moltchain-validator`
+- `cargo test -p lichen-core --lib block::tests::test_verify_commit_valid_supermajority -- --exact`
+- `cargo test -p lichen-core --lib block::tests::test_verify_commit_wrong_round_fails -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_account_proof_returns_anchored_finalized_context -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_block_commit_exposes_commit_round -- --exact`
+- `cargo check -p lichen-core -p lichen-p2p -p lichen-rpc -p lichen-validator`
 
 ### Closed Task 6 — Verified Finalized Checkpoint Snapshot Serving
 
@@ -121,8 +121,8 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-validator latest_verified_checkpoint_requires_finalized_committed_block -- --nocapture`
-- `cargo check -p moltchain-validator`
+- `cargo test -p lichen-validator latest_verified_checkpoint_requires_finalized_committed_block -- --nocapture`
+- `cargo check -p lichen-validator`
 
 ### Closed Task 7 — Authenticated Checkpoint Metadata On Warp Sync
 
@@ -138,9 +138,9 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-validator latest_verified_checkpoint_requires_finalized_committed_block -- --nocapture`
-- `cargo test -p moltchain-validator verify_checkpoint_anchor_requires_signed_committed_header -- --nocapture`
-- `cargo check -p moltchain-p2p -p moltchain-validator`
+- `cargo test -p lichen-validator latest_verified_checkpoint_requires_finalized_committed_block -- --nocapture`
+- `cargo test -p lichen-validator verify_checkpoint_anchor_requires_signed_committed_header -- --nocapture`
+- `cargo check -p lichen-p2p -p lichen-validator`
 
 ### Closed Task 8 — Atomic Canonical Block Persistence
 
@@ -155,8 +155,8 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-core test_put_block_atomic_persists_slot_and_finality_metadata -- --nocapture`
-- `cargo check -p moltchain-validator`
+- `cargo test -p lichen-core test_put_block_atomic_persists_slot_and_finality_metadata -- --nocapture`
+- `cargo check -p lichen-validator`
 
 ### Closed Task 9 — Public RPC Control-Plane Hardening
 
@@ -171,14 +171,14 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_disabled_on_public_networks -- --exact`
-- `cargo check -p moltchain-rpc`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_disabled_on_public_networks -- --exact`
+- `cargo check -p lichen-rpc`
 
 ### Closed Task 10 — Deterministic Genesis Inputs And Replay
 
 **Status:** CLOSED
 
-**Outcome:** genesis creation no longer performs live HTTP price fetches, wall-clock timestamping, faucet key generation, or random founding-validator generation during block-zero creation. The `moltchain-genesis` create path now consumes explicit wallet artifacts, requires explicit initial validator identities, writes deterministic slot-0 validator registrations into the genesis block, and replays fixed oracle/analytics/margin seed data from the stored genesis timestamp.
+**Outcome:** genesis creation no longer performs live HTTP price fetches, wall-clock timestamping, faucet key generation, or random founding-validator generation during block-zero creation. The `lichen-genesis` create path now consumes explicit wallet artifacts, requires explicit initial validator identities, writes deterministic slot-0 validator registrations into the genesis block, and replays fixed oracle/analytics/margin seed data from the stored genesis timestamp.
 
 **Code:**
 
@@ -189,9 +189,9 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo check -p moltchain-genesis -p moltchain-validator -p moltchain-core`
-- `cargo test -p moltchain-core --lib genesis::tests::test_default_genesis_time_is_deterministic -- --exact`
-- `cargo test -p moltchain-genesis --lib tests::test_genesis_pair_prices_are_deterministic -- --exact`
+- `cargo check -p lichen-genesis -p lichen-validator -p lichen-core`
+- `cargo test -p lichen-core --lib genesis::tests::test_default_genesis_time_is_deterministic -- --exact`
+- `cargo test -p lichen-genesis --lib tests::test_genesis_pair_prices_are_deterministic -- --exact`
 
 ### Closed Task 11 — Oracle Authority Unification
 
@@ -205,9 +205,9 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo check -p moltchain-validator`
-- `cargo test -p moltchain-validator tests::apply_oracle_from_block_uses_consensus_prices_not_block_payload -- --exact`
-- `cargo test -p moltchain-validator tests::build_oracle_attestation_tx_encodes_native_instruction -- --exact`
+- `cargo check -p lichen-validator`
+- `cargo test -p lichen-validator tests::apply_oracle_from_block_uses_consensus_prices_not_block_payload -- --exact`
+- `cargo test -p lichen-validator tests::build_oracle_attestation_tx_encodes_native_instruction -- --exact`
 
 ### Closed Task 12 — Canonical Contract Storage Unification
 
@@ -224,9 +224,9 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo check -p moltchain-core`
-- `cargo test -p moltchain-core test_prepare_execution_context_preserves_live_storage -- --nocapture`
-- `cargo test -p moltchain-core --test cross_contract_call -- --nocapture`
+- `cargo check -p lichen-core`
+- `cargo test -p lichen-core test_prepare_execution_context_preserves_live_storage -- --nocapture`
+- `cargo test -p lichen-core --test cross_contract_call -- --nocapture`
 
 ### Closed Task 13 — Finality Public Claim Alignment
 
@@ -246,7 +246,7 @@ Related follow-on documents:
 
 **Validation:**
 
-- `cargo test -p moltchain-rpc --lib ws::tests::signature_commitment_status_uses_finality_tracker -- --exact`
+- `cargo test -p lichen-rpc --lib ws::tests::signature_commitment_status_uses_finality_tracker -- --exact`
 
 ---
 
@@ -271,7 +271,7 @@ The goal of this workstream is not to weaken public claims. It is to make the st
 
 Decisions for the audit:
 
-- **Oracle:** the canonical user-facing oracle must converge to the native validator-attested consensus oracle. The MoltOracle contract remains an application-layer contract for feeds, attestations, VRF, and domain-specific composition, but it should not remain the long-term canonical price authority for chain-wide trust claims.
+- **Oracle:** the canonical user-facing oracle must converge to the native validator-attested consensus oracle. The LichenOracle contract remains an application-layer contract for feeds, attestations, VRF, and domain-specific composition, but it should not remain the long-term canonical price authority for chain-wide trust claims.
 - **Custody:** threshold signing should be completed, tested end-to-end, and promoted to the real production path. Public custody claims should be earned in code rather than diluted in marketing.
 
 Why these directions match blockchain standards:
@@ -311,7 +311,7 @@ Reference standards used implicitly in this audit:
 
 ## Executive Summary
 
-MoltChain is no longer a toy codebase. The core architecture now contains real BFT machinery, commit evidence, validator lifecycle work, state-proof primitives, and a growing contract platform.
+Lichen is no longer a toy codebase. The core architecture now contains real BFT machinery, commit evidence, validator lifecycle work, state-proof primitives, and a growing contract platform.
 
 The remaining credibility risks cluster in five areas:
 
@@ -402,9 +402,9 @@ This materially hardens the authenticated sync boundary, but it does **not** yet
 
 **Focused validation completed**
 
-- `cargo test -p moltchain-validator tests::verify_block_validators_hash_rejects_mismatch -- --exact`
-- `cargo test -p moltchain-validator tests::checkpoint_anchor_support_counts_matching_peers -- --exact`
-- `cargo test -p moltchain-validator tests::verify_checkpoint_anchor_requires_signed_committed_header -- --exact`
+- `cargo test -p lichen-validator tests::verify_block_validators_hash_rejects_mismatch -- --exact`
+- `cargo test -p lichen-validator tests::checkpoint_anchor_support_counts_matching_peers -- --exact`
+- `cargo test -p lichen-validator tests::verify_checkpoint_anchor_requires_signed_committed_header -- --exact`
 
 ### C-3. Contract Call Surface Is Not One Coherent Platform
 
@@ -424,15 +424,15 @@ The runtime mixes named-export dispatch, opcode dispatch, partial ABI discovery,
 - the router/core CLOB mismatch has been reduced by adding a canonical exact-input `swap_exact_in` surface in `dex_core` and routing `dex_router` through that function instead of a non-existent `place_order_market` export.
 - the router AMM leg now invokes the logical `swap_exact_in` surface with ABI layout metadata instead of manually targeting raw `call()` opcode dispatch.
 - the `dex_core` sell-side token balance check now calls named-export token functions with the correct raw account bytes instead of prepending an opcode byte that corrupted `balance_of` arguments for named-export token contracts.
-- the `clawpump` graduation threshold path no longer emits malformed `create_pair` / `create_pool` / `add_liquidity` cross-contract calls with ABI-incompatible argument shapes; until a real asset-and-pool migration surface exists, threshold crossings stay on the bonding curve instead of falsely claiming DEX graduation.
+- the `sporepump` graduation threshold path no longer emits malformed `create_pair` / `create_pool` / `add_liquidity` cross-contract calls with ABI-incompatible argument shapes; until a real asset-and-pool migration surface exists, threshold crossings stay on the bonding curve instead of falsely claiming DEX graduation.
 - `dex_governance` proposal execution no longer treats failed downstream `create_pair` / `update_pair_fees` / `pause_pair` calls as executed work; those proposals now remain in the passed state with explicit failure logs until the cross-contract application succeeds.
-- `lobsterlend` no longer queries `moltoracle` with borrower bytes through the out-buffer `get_price` export; oracle-backed collateral valuation now uses a configured feed key plus a cross-contract-safe `get_price_value` return-data export.
-- `dex_router` no longer exposes any legacy MoltSwap route surface; routing is now limited to the supported `dex_core` and `dex_amm` call models instead of carrying an unused third ABI family.
-- `clawvault` no longer cross-calls non-existent `moltswap.get_lp_rewards` exports during harvest, and its lending strategy now queries a real `lobsterlend.get_accrued_interest` yield-quote export instead of depending on an unwired protocol interface.
-- `prediction_market` no longer cross-calls a non-existent `moltoracle.get_attestation` export during resolution submission; oracle-gated resolution now targets the real `moltoracle.get_attestation_data` surface and has a regression that locks the dispatched function name.
-- the SDK's token/NFT cross-contract helpers no longer assume a single `1 == success` return-code convention; they now accept the repo's live LE-encoded `0`-success and `1`-success transfer surfaces, which removes a real caller/runtime mismatch for `moltcoin` versus wrapped-token and NFT contracts.
+- `thalllend` no longer queries `lichenoracle` with borrower bytes through the out-buffer `get_price` export; oracle-backed collateral valuation now uses a configured feed key plus a cross-contract-safe `get_price_value` return-data export.
+- `dex_router` no longer exposes any legacy LichenSwap route surface; routing is now limited to the supported `dex_core` and `dex_amm` call models instead of carrying an unused third ABI family.
+- `sporevault` no longer cross-calls non-existent `lichenswap.get_lp_rewards` exports during harvest, and its lending strategy now queries a real `thalllend.get_accrued_interest` yield-quote export instead of depending on an unwired protocol interface.
+- `prediction_market` no longer cross-calls a non-existent `lichenoracle.get_attestation` export during resolution submission; oracle-gated resolution now targets the real `lichenoracle.get_attestation_data` surface and has a regression that locks the dispatched function name.
+- the SDK's token/NFT cross-contract helpers no longer assume a single `1 == success` return-code convention; they now accept the repo's live LE-encoded `0`-success and `1`-success transfer surfaces, which removes a real caller/runtime mismatch for `lichencoin` versus wrapped-token and NFT contracts.
 
-This materially reduces the broken-call-surface risk in live protocol flows, but it does **not** yet close the broader platform finding because MoltChain still exposes multiple ABI families and does not yet have one final public contract model.
+This materially reduces the broken-call-surface risk in live protocol flows, but it does **not** yet close the broader platform finding because Lichen still exposes multiple ABI families and does not yet have one final public contract model.
 
 **Why this matters**
 
@@ -454,26 +454,26 @@ An open L1 contract platform must define one credible external call model. If no
 
 **Focused validation completed**
 
-- `cargo check -p moltchain-core`
-- `cargo test -p moltchain-core test_contract_abi_parses_repo_json_shape`
-- `cargo test -p moltchain-core test_build_opcode_dispatch_args_prefixes_selector`
+- `cargo check -p lichen-core`
+- `cargo test -p lichen-core test_contract_abi_parses_repo_json_shape`
+- `cargo test -p lichen-core test_build_opcode_dispatch_args_prefixes_selector`
 - `cd contracts/dex_core && cargo test swap_exact_in`
 - `cd contracts/dex_core && cargo test balance_check_passes_named_export_account_bytes`
 - `cd contracts/dex_core && cargo test place_limit_sell`
-- `cd contracts/clawpump && cargo test threshold_crossing`
-- `cd contracts/clawpump && cargo test g24_threshold_without_dex_keeps_curve_active`
+- `cd contracts/sporepump && cargo test threshold_crossing`
+- `cd contracts/sporepump && cargo test g24_threshold_without_dex_keeps_curve_active`
 - `cd contracts/dex_governance && cargo test execute_new_pair`
 - `cd contracts/dex_governance && cargo test execute_fee_change`
-- `cd contracts/moltoracle && cargo test get_price_value`
-- `cd contracts/lobsterlend && cargo test get_oracle_price_uses_configured_feed_surface`
-- `cd contracts/lobsterlend && cargo test get_accrued_interest_returns_current_quote -- --exact`
+- `cd contracts/lichenoracle && cargo test get_price_value`
+- `cd contracts/thalllend && cargo test get_oracle_price_uses_configured_feed_surface`
+- `cd contracts/thalllend && cargo test get_accrued_interest_returns_current_quote -- --exact`
 - `cd contracts/dex_router && cargo test swap`
-- `cd contracts/clawvault && cargo test test_query_protocol_yield_test_mode -- --exact`
-- `cd contracts/clawvault && cargo test test_harvest_with_protocol_addresses_configured -- --exact`
+- `cd contracts/sporevault && cargo test test_query_protocol_yield_test_mode -- --exact`
+- `cd contracts/sporevault && cargo test test_harvest_with_protocol_addresses_configured -- --exact`
 - `cd contracts/prediction_market && cargo test submit_resolution_with_oracle_rejects_in_mock`
 - `cd contracts/dex_router && cargo test test_build_amm_swap_exact_in_args_layout -- --exact`
 - `cd sdk && cargo test crosscall::tests::test_decode_success_status_accepts_zero_and_one_codes -- --exact`
-- `cd sdk && cargo test crosscall::tests::test_call_token_transfer_accepts_moltcoin_zero_code -- --exact`
+- `cd sdk && cargo test crosscall::tests::test_call_token_transfer_accepts_lichencoin_zero_code -- --exact`
 - `cd sdk && cargo test crosscall::tests::test_call_nft_transfer_accepts_one_code -- --exact`
 
 ### H-1. Commit Certificates Need Exact Verification Semantics
@@ -542,8 +542,8 @@ The live RPC proof surface already returns anchored account inclusion proofs rat
 
 **Validation**
 
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_account_proof_returns_anchored_finalized_context -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_get_account_proof_rejects_unanchored_state_root -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_account_proof_returns_anchored_finalized_context -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_get_account_proof_rejects_unanchored_state_root -- --exact`
 
 ### H-4. Genesis Still Does Too Much Privileged, Live-Time Work
 
@@ -572,11 +572,11 @@ Serious L1 genesis should be reproducible from versioned inputs, not partly asse
 
 **Closure note**
 
-Genesis creation already moved onto explicit wallet artifacts, deterministic validator inputs, and fixed bootstrap price data. The remaining live-time leak in MoltyID genesis cross-attestation timestamps now uses the configured genesis block timestamp during both fresh creation and sync replay, so genesis initialization no longer depends on wall-clock time.
+Genesis creation already moved onto explicit wallet artifacts, deterministic validator inputs, and fixed bootstrap price data. The remaining live-time leak in LichenID genesis cross-attestation timestamps now uses the configured genesis block timestamp during both fresh creation and sync replay, so genesis initialization no longer depends on wall-clock time.
 
 **Validation**
 
-- `cargo check -p moltchain-genesis -p moltchain-validator`
+- `cargo check -p lichen-genesis -p lichen-validator`
 
 ### H-5. Contract Storage Has Two Sources Of Truth
 
@@ -594,9 +594,9 @@ Dual-authority storage models are fragile, hard to audit, and likely to drift. C
 
 **Validation**
 
-- `cargo check -p moltchain-core`
-- `cargo test -p moltchain-core test_prepare_execution_context_preserves_live_storage -- --nocapture`
-- `cargo test -p moltchain-core --test cross_contract_call -- --nocapture`
+- `cargo check -p lichen-core`
+- `cargo test -p lichen-core test_prepare_execution_context_preserves_live_storage -- --nocapture`
+- `cargo test -p lichen-core --test cross_contract_call -- --nocapture`
 
 ### H-6. Custody Trust Model Is Over-Claimed
 
@@ -635,31 +635,31 @@ This materially reduces `H-6`, but it does **not** fully close the finding yet: 
 
 **Focused validation completed**
 
-- `cargo check -p moltchain-custody`
-- `cargo test -p moltchain-custody -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_determine_withdrawal_signing_mode_self_custody -- --exact`
-- `cargo test -p moltchain-custody tests::test_determine_withdrawal_signing_mode_routes_native_solana_to_frost -- --exact`
-- `cargo test -p moltchain-custody tests::test_determine_withdrawal_signing_mode_routes_solana_stablecoin_to_frost -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_determine_withdrawal_signing_mode_routes_threshold_evm_to_safe -- --exact`
-- `cargo test -p moltchain-custody tests::test_build_threshold_solana_withdrawal_message_rejects_dust -- --exact`
-- `cargo test -p moltchain-custody tests::test_build_threshold_solana_withdrawal_message_supports_stablecoins -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_normalize_evm_signature_promotes_recovery_id -- --exact`
-- `cargo test -p moltchain-custody tests::test_build_evm_safe_exec_transaction_calldata_uses_exec_selector -- --exact`
-- `cargo test -p moltchain-custody tests::test_collect_and_assemble_threshold_evm_safe_flow -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_assemble_signed_evm_tx_rejects_mismatched_safe_hash -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_assemble_signed_evm_tx_rejects_duplicate_signers -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_promote_locally_signed_sweep_jobs_clears_placeholder_signatures -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_promote_locally_signed_sweep_jobs_emits_local_signing_metadata -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_sweep_jobs_multi_signer_uses_local_sweep_path -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_sweep_jobs_multi_signer_without_override_blocks_local_sweep_execution -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_sweep_jobs_confirmed_enqueues_credit_and_updates_status -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_sweep_jobs_reverted_receipt_marks_failed_without_credit -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_create_deposit_rejects_multi_signer_local_sweep_mode_by_default -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_withdrawal_jobs_burn_caller_mismatch_permanently_fails_without_broadcast -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_withdrawal_jobs_burn_contract_mismatch_permanently_fails_without_broadcast -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_withdrawal_jobs_burn_amount_mismatch_permanently_fails_without_broadcast -- --nocapture`
-- `cargo test -p moltchain-custody tests::test_process_withdrawal_jobs_burn_method_mismatch_permanently_fails_without_broadcast -- --nocapture`
-- `cargo test -p moltchain-custody safe`
+- `cargo check -p lichen-custody`
+- `cargo test -p lichen-custody -- --nocapture`
+- `cargo test -p lichen-custody tests::test_determine_withdrawal_signing_mode_self_custody -- --exact`
+- `cargo test -p lichen-custody tests::test_determine_withdrawal_signing_mode_routes_native_solana_to_frost -- --exact`
+- `cargo test -p lichen-custody tests::test_determine_withdrawal_signing_mode_routes_solana_stablecoin_to_frost -- --nocapture`
+- `cargo test -p lichen-custody tests::test_determine_withdrawal_signing_mode_routes_threshold_evm_to_safe -- --exact`
+- `cargo test -p lichen-custody tests::test_build_threshold_solana_withdrawal_message_rejects_dust -- --exact`
+- `cargo test -p lichen-custody tests::test_build_threshold_solana_withdrawal_message_supports_stablecoins -- --nocapture`
+- `cargo test -p lichen-custody tests::test_normalize_evm_signature_promotes_recovery_id -- --exact`
+- `cargo test -p lichen-custody tests::test_build_evm_safe_exec_transaction_calldata_uses_exec_selector -- --exact`
+- `cargo test -p lichen-custody tests::test_collect_and_assemble_threshold_evm_safe_flow -- --nocapture`
+- `cargo test -p lichen-custody tests::test_assemble_signed_evm_tx_rejects_mismatched_safe_hash -- --nocapture`
+- `cargo test -p lichen-custody tests::test_assemble_signed_evm_tx_rejects_duplicate_signers -- --nocapture`
+- `cargo test -p lichen-custody tests::test_promote_locally_signed_sweep_jobs_clears_placeholder_signatures -- --nocapture`
+- `cargo test -p lichen-custody tests::test_promote_locally_signed_sweep_jobs_emits_local_signing_metadata -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_sweep_jobs_multi_signer_uses_local_sweep_path -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_sweep_jobs_multi_signer_without_override_blocks_local_sweep_execution -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_sweep_jobs_confirmed_enqueues_credit_and_updates_status -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_sweep_jobs_reverted_receipt_marks_failed_without_credit -- --nocapture`
+- `cargo test -p lichen-custody tests::test_create_deposit_rejects_multi_signer_local_sweep_mode_by_default -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_withdrawal_jobs_burn_caller_mismatch_permanently_fails_without_broadcast -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_withdrawal_jobs_burn_contract_mismatch_permanently_fails_without_broadcast -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_withdrawal_jobs_burn_amount_mismatch_permanently_fails_without_broadcast -- --nocapture`
+- `cargo test -p lichen-custody tests::test_process_withdrawal_jobs_burn_method_mismatch_permanently_fails_without_broadcast -- --nocapture`
+- `cargo test -p lichen-custody safe`
 
 ### H-7. Oracle Authority Is Transitional And Split
 
@@ -688,8 +688,8 @@ Canonical block persistence no longer advances `tx_by_slot` sequence state outsi
 
 **Validation**
 
-- `cargo test -p moltchain-core --lib state::tests::test_put_block_atomic_persists_slot_and_finality_metadata -- --exact`
-- `cargo test -p moltchain-core --lib state::tests::test_put_block_atomic_does_not_persist_tx_slot_seq_side_counter -- --exact`
+- `cargo test -p lichen-core --lib state::tests::test_put_block_atomic_persists_slot_and_finality_metadata -- --exact`
+- `cargo test -p lichen-core --lib state::tests::test_put_block_atomic_does_not_persist_tx_slot_seq_side_counter -- --exact`
 
 ### M-2. Bearer-Token Admin Mutation RPCs Remain Non-Standard
 
@@ -713,9 +713,9 @@ Public-style networks already hard-disabled the legacy mutation RPCs; the remain
 
 **Validation**
 
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_disabled_on_public_networks -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_accept_bearer_header_on_dev_networks -- --exact`
-- `cargo test -p moltchain-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_require_loopback_on_dev_networks -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_disabled_on_public_networks -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_accept_bearer_header_on_dev_networks -- --exact`
+- `cargo test -p lichen-rpc --test rpc_full_coverage test_native_legacy_admin_rpcs_require_loopback_on_dev_networks -- --exact`
 
 ### M-3. P2P Discovery Is Better, Dissemination Still Looks Transitional
 
@@ -738,8 +738,8 @@ Non-consensus dissemination now uses the structured overlay already present in t
 
 **Validation**
 
-- `cargo test -p moltchain-p2p test_non_consensus_targets_use_bounded_kademlia_fanout -- --exact`
-- `cargo test -p moltchain-p2p test_non_consensus_targets_fall_back_to_all_peers_without_overlay_entries -- --exact`
+- `cargo test -p lichen-p2p test_non_consensus_targets_use_bounded_kademlia_fanout -- --exact`
+- `cargo test -p lichen-p2p test_non_consensus_targets_fall_back_to_all_peers_without_overlay_entries -- --exact`
 
 ### M-4. Openness And Operational Hygiene Need Hardening
 

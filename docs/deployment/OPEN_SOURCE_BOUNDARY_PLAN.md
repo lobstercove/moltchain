@@ -4,7 +4,7 @@ Date: 2026-02-24
 
 ## Goal
 
-Publish a clean open-source MoltChain repository containing protocol/core/public SDK assets only, while excluding private/internal frontends and operational secrets.
+Publish a clean open-source Lichen repository containing protocol/core/public SDK assets only, while excluding private/internal frontends and operational secrets.
 
 ## Policy
 
@@ -39,7 +39,7 @@ Publish a clean open-source MoltChain repository containing protocol/core/public
 
 ## Evidence (Feb 24, 2026 closeout)
 
-- RPC/docs path hygiene scan on active docs/scripts: no remaining `/Users/johnrobin/.openclaw/workspace/moltchain` references outside archived docs.
+- RPC/docs path hygiene scan on active docs/scripts: no remaining `/Users/johnrobin/.openclaw/workspace/lichen` references outside archived docs.
 - `.gitignore` enforces exclusion for keypairs, env files, validator state, logs, and local artifacts.
 - Boundary deliverable and final acceptance state tracked in `docs/FINAL_PASS_MASTER_TODO_FEB24_2026.md`.
 - Frontend/UI scopes removed from tracked OSS repository: `developers/`, `dex/`, `explorer/`, `marketplace/`, `programs/`, `wallet/`, `website/`, `shared/`, `shared-base-styles.css`, `shared-theme.css`, `shared-config.js`.

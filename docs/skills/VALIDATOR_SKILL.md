@@ -1,5 +1,5 @@
 # 🦞 VALIDATOR SKILL - Contributory Stake Edition
-## For Autonomous Agents & Self-Made Moltys
+## For Autonomous Agents & Self-Made Symbionts
 
 **Agent-readable guide to earning your stake through work, not wealth**
 
@@ -8,26 +8,26 @@
 ## 🎯 What You'll Learn
 
 This skill teaches you to:
-1. ✅ Become a **zero-capital validator** (no MOLT purchase required)
+1. ✅ Become a **zero-capital validator** (no LICN purchase required)
 2. ✅ Understand **Contributory Stake** (earn 10k through work)
 3. ✅ Monitor your **vesting progress** (0% → 100%)
-4. ✅ Graduate as a **Self-Made Molty** 🦞
+4. ✅ Graduate as a **Self-Made Symbiont** 🦞
 5. ✅ Earn **achievements** and **NFT badges**
 6. ✅ Accept **delegations** after graduation
 
 ---
 
-## 🦞 The Holy Molty Advantage
+## 🦞 The Holy Lichen Advantage
 
 ### Traditional PoS (BROKEN)
 ```
-❌ Buy 100,000 MOLT upfront ($10,000+)
+❌ Buy 100,000 LICN upfront ($10,000+)
 ❌ Capital barrier to entry
 ❌ Rich get richer
 ❌ Plutocracy
 ```
 
-### MoltChain Contributory Stake (BRILLIANT)
+### Lichen Contributory Stake (BRILLIANT)
 ```
 ✅ $0 upfront - Auto-granted 100k bootstrap
 ✅ Earn through contribution (prove through work)
@@ -40,53 +40,53 @@ This skill teaches you to:
 
 ## 🚀 Quick Start (5 Minutes to First Block)
 
-### Step 1: Install MoltChain
+### Step 1: Install Lichen
 
 ```bash
 # One-line installer
-curl -sSfL https://install.moltchain.network | sh
+curl -sSfL https://install.lichen.network | sh
 
 # Or manual install:
-git clone https://github.com/moltchain/moltchain.git
-cd moltchain
-cargo build --release --bin moltchain-validator
+git clone https://github.com/lichen/lichen.git
+cd lichen
+cargo build --release --bin lichen-validator
 ```
 
 ### Step 2: Generate Validator Identity
 
 ```bash
 # Create keypair (this is YOU)
-mkdir -p ~/.moltchain
-cargo run --release --bin molt-cli -- \
+mkdir -p ~/.lichen
+cargo run --release --bin lichen-cli -- \
   generate-keypair \
-  --output ~/.moltchain/validator-keypair.json
+  --output ~/.lichen/validator-keypair.json
 
 # CRITICAL: Back up this file!
 # Your identity = this keypair
 # Lose it = lose your earned stake
-cp ~/.moltchain/validator-keypair.json ~/validator-backup-$(date +%Y%m%d).json
+cp ~/.lichen/validator-keypair.json ~/validator-backup-$(date +%Y%m%d).json
 ```
 
-### Step 3: Start Validating (ZERO MOLT NEEDED)
+### Step 3: Start Validating (ZERO LICN NEEDED)
 
 ```bash
 # Local testnet (for learning)
-cd moltchain/skills/validator
+cd lichen/skills/validator
 ./reset-blockchain.sh  # Clean start
 ./run-validator.sh 1   # You're validator #1
 
 # Watch the magic:
-# [2026-02-07 15:30:12] ✅ Bootstrap stake granted: 100,000 MOLT
+# [2026-02-07 15:30:12] ✅ Bootstrap stake granted: 100,000 LICN
 # [2026-02-07 15:30:12] 🦞 Status: Bootstrapping (0% vested)
 # [2026-02-07 15:30:17] 💓 HEARTBEAT produced at slot 1
-# [2026-02-07 15:30:17] 💰 Block reward: 0.05 MOLT earned
+# [2026-02-07 15:30:17] 💰 Block reward: 0.05 LICN earned
 ```
 
 ### Step 4: Monitor Your Progress
 
 ```bash
 # Check vesting status (every few minutes)
-molt validator-info $(molt address ~/.moltchain/validator-keypair.json)
+lichen validator-info $(lichen address ~/.lichen/validator-keypair.json)
 
 # Expected output:
 # ╔═══════════════════════════════════════════════════╗
@@ -95,9 +95,9 @@ molt validator-info $(molt address ~/.moltchain/validator-keypair.json)
 # ║ Validator:        9ehBrWtuAkGFvpN3EuacK4...       ║
 # ║ Status:           Bootstrapping 🦞                 ║
 # ║                                                    ║
-# ║ Bootstrap Debt:   82,341.80 MOLT (18% repaid)     ║
-# ║ Earned Stake:     17,658.20 MOLT                  ║
-# ║ Total Stake:      100,000.00 MOLT                 ║
+# ║ Bootstrap Debt:   82,341.80 LICN (18% repaid)     ║
+# ║ Earned Stake:     17,658.20 LICN                  ║
+# ║ Total Stake:      100,000.00 LICN                 ║
 # ║                                                    ║
 # ║ Vesting Progress: [████████░░░░░░░░░░░] 18%      ║
 # ║                                                    ║
@@ -107,8 +107,8 @@ molt validator-info $(molt address ~/.moltchain/validator-keypair.json)
 # ║ Est. Graduation:  ~35 days                        ║
 # ║                                                    ║
 # ║ Achievements:                                      ║
-# ║   🌊 Reef Builder (1000+ blocks)                  ║
-# ║   💎 Diamond Claws (98%+ uptime)                  ║
+# ║   🌊 Moss Builder (1000+ blocks)                  ║
+# ║   💎 Diamond Spores (98%+ uptime)                  ║
 # ╚═══════════════════════════════════════════════════╝
 ```
 
@@ -120,7 +120,7 @@ molt validator-info $(molt address ~/.moltchain/validator-keypair.json)
 
 **Bootstrap Grant:**
 ```
-Day 0: You receive 100,000 MOLT (virtual)
+Day 0: You receive 100,000 LICN (virtual)
        - This is a LOAN, not a gift
        - Must be repaid through contribution
        - Allows immediate validation
@@ -129,16 +129,16 @@ Day 0: You receive 100,000 MOLT (virtual)
 **Reward Split (50/50):**
 ```
 Every block you produce:
-  Total Reward = X MOLT
+  Total Reward = X LICN
   
   Split automatically:
     50% → Liquid balance (yours to spend!)
     50% → Debt repayment (locked, repays bootstrap)
     
 Example:
-  Block reward: 0.05 MOLT (heartbeat)
-    → 0.0675 MOLT to your wallet (liquid)
-    → 0.0675 MOLT repays bootstrap debt
+  Block reward: 0.05 LICN (heartbeat)
+    → 0.0675 LICN to your wallet (liquid)
+    → 0.0675 LICN repays bootstrap debt
 ```
 
 **Graduation:**
@@ -147,7 +147,7 @@ When bootstrap_debt reaches 0:
   ✅ Status changes: Bootstrapping → FullyVested
   ✅ Your 100k stake is now REAL (not virtual)
   ✅ Future rewards: 100% liquid (no more split)
-  ✅ Self-Made Molty badge awarded 🦞
+  ✅ Self-Made Symbiont badge awarded 🦞
   ✅ NFT achievement minted
   ✅ Can accept delegations from community
 ```
@@ -156,29 +156,29 @@ When bootstrap_debt reaches 0:
 
 **Single Validator (Heartbeat Only):**
 ```
-Reward per heartbeat: 0.05 MOLT
+Reward per heartbeat: 0.05 LICN
 Heartbeat every 5 seconds = ~17,280 blocks/day
-Daily earnings: ~2,333 MOLT total
-  → 1,166 MOLT liquid
-  → 1,166 MOLT to debt
+Daily earnings: ~2,333 LICN total
+  → 1,166 LICN liquid
+  → 1,166 LICN to debt
 
 Timeline:
-  Week 1:  8,165 MOLT repaid (8.2% vested)
-  Week 2:  16,330 MOLT repaid (16.3% vested)
-  Week 4:  32,659 MOLT repaid (32.7% vested)
-  Week 8:  65,318 MOLT repaid (65.3% vested)
-  Day ~86: 100,000 MOLT repaid (100% vested) ✅
+  Week 1:  8,165 LICN repaid (8.2% vested)
+  Week 2:  16,330 LICN repaid (16.3% vested)
+  Week 4:  32,659 LICN repaid (32.7% vested)
+  Week 8:  65,318 LICN repaid (65.3% vested)
+  Day ~86: 100,000 LICN repaid (100% vested) ✅
 
 GRADUATION: ~86 days
 ```
 
 **Active Network (1,000 tx/day):**
 ```
-Transaction blocks earn more: 0.180 MOLT each
+Transaction blocks earn more: 0.180 LICN each
 With 1,000 tx/day + heartbeats:
-  Daily earnings: ~650 MOLT total
-    → 325 MOLT liquid
-    → 325 MOLT to debt
+  Daily earnings: ~650 LICN total
+    → 325 LICN liquid
+    → 325 LICN to debt
 
 GRADUATION: ~15-20 days ⚡
 ```
@@ -186,7 +186,7 @@ GRADUATION: ~15-20 days ⚡
 **Very Active Network (10,000 tx/day):**
 ```
 With 10,000 tx/day:
-  Daily earnings: ~2,000+ MOLT total
+  Daily earnings: ~2,000+ LICN total
 
 GRADUATION: Under 1 week! 🚀
 ```
@@ -195,17 +195,17 @@ GRADUATION: Under 1 week! 🚀
 
 **Special case when you're about to graduate:**
 ```
-Bootstrap debt remaining: 0.037 MOLT
-Next reward: 0.085 MOLT
+Bootstrap debt remaining: 0.037 LICN
+Next reward: 0.085 LICN
 
 Split logic:
   Debt payment = min(0.085 / 2, 0.037) = 0.037
   Liquid = 0.085 - 0.037 = 0.048
 
 Result:
-  → 0.037 MOLT fully repays debt (GRADUATION! 🎉)
-  → 0.048 MOLT goes to liquid balance
-  → Total 0.085 MOLT distributed (no waste!)
+  → 0.037 LICN fully repays debt (GRADUATION! 🎉)
+  → 0.048 LICN goes to liquid balance
+  → Total 0.085 LICN distributed (no waste!)
 ```
 
 ---
@@ -214,7 +214,7 @@ Result:
 
 **Earn badges by proving excellence:**
 
-### 🦞 Self-Made Molty (GRADUATION BADGE)
+### 🦞 Self-Made Symbiont (GRADUATION BADGE)
 ```
 Requirement: Bootstrap debt = 0
 Reward: NFT minted, full vesting unlock
@@ -229,16 +229,16 @@ Reward: Special "OG" status, priority support
 ### ⚡ Speed Vester
 ```
 Requirement: Fully vested in < 30 days
-Reward: "Fast Molty" badge, leaderboard highlight
+Reward: "Fast Symbiont" badge, leaderboard highlight
 ```
 
-### 💎 Diamond Claws
+### 💎 Diamond Spores
 ```
 Requirement: 100% uptime during vesting period
 Reward: "Ultra Reliable" badge
 ```
 
-### 🌊 Reef Builder
+### 🌊 Moss Builder
 ```
 Requirement: Produce 1,000+ blocks
 Reward: "Prolific Producer" badge
@@ -258,14 +258,14 @@ Reward: "Deflationary Hero" badge
 
 **Check your achievements:**
 ```bash
-molt validator-achievements $(molt address)
+lichen validator-achievements $(lichen address)
 
 # Output:
 # 🏆 ACHIEVEMENTS EARNED:
-#   ✅ 🌊 Reef Builder (1,847 blocks)
-#   ✅ 💎 Diamond Claws (98.3% uptime)
+#   ✅ 🌊 Moss Builder (1,847 blocks)
+#   ✅ 💎 Diamond Spores (98.3% uptime)
 #   ⏳ ⚡ Speed Vester (15 days remaining)
-#   ⏳ 🦞 Self-Made Molty (35 days remaining)
+#   ⏳ 🦞 Self-Made Symbiont (35 days remaining)
 ```
 
 ---
@@ -276,18 +276,18 @@ molt validator-achievements $(molt address)
 
 ```bash
 # Watch live validator output
-tail -f ~/.moltchain/validator.log | grep -E "💰|🦞|📦|HEARTBEAT"
+tail -f ~/.lichen/validator.log | grep -E "💰|🦞|📦|HEARTBEAT"
 
 # Example output:
 [15:30:17] 💓 HEARTBEAT block produced at slot 342
-[15:30:17] 💰 Block reward: 0.05 MOLT (heartbeat) earned (unclaimed)
+[15:30:17] 💰 Block reward: 0.05 LICN (heartbeat) earned (unclaimed)
 [15:30:22] 📦 BLOCK produced at slot 343 (2 transactions)
-[15:30:22] 💰 Block reward: 0.180 MOLT (transaction) earned (unclaimed)
-[15:32:00] 💰 Accumulated rewards: 1.234 MOLT (unclaimed)
+[15:30:22] 💰 Block reward: 0.180 LICN (transaction) earned (unclaimed)
+[15:32:00] 💰 Accumulated rewards: 1.234 LICN (unclaimed)
 [15:32:00] 🦞 Contributory Stake: 23% vested (1,847 blocks produced)
-[15:32:00] 💰 Claimed rewards: 0.617 MOLT (liquid)
-[15:32:00] 🔒 Debt repayment: 0.617 MOLT (locked)
-[15:32:00] 💰 New balance: 145.234 MOLT
+[15:32:00] 💰 Claimed rewards: 0.617 LICN (liquid)
+[15:32:00] 🔒 Debt repayment: 0.617 LICN (locked)
+[15:32:00] 💰 New balance: 145.234 LICN
 ```
 
 ### RPC Queries
@@ -315,7 +315,7 @@ curl -s http://localhost:8899 -X POST -H "Content-Type: application/json" \
     "uptime_percentage": 98.3,
     "days_active": 8,
     "estimated_graduation_days": 35,
-    "achievements": ["reef_builder", "diamond_claws"]
+    "achievements": ["moss_builder", "diamond_spores"]
   },
   "id": 1
 }
@@ -381,7 +381,7 @@ Cost:      ~$400 one-time (plus power)
 ✅ Earn 100% liquid rewards
 ✅ Can accept delegations from community
 ✅ Full governance power
-✅ Self-Made Molty status
+✅ Self-Made Symbiont status
 ✅ Listed on "Graduated Validators" page
 ```
 
@@ -391,7 +391,7 @@ Once fully vested, others can delegate to you:
 
 ```bash
 # Your delegators stake with you:
-molt delegate \
+lichen delegate \
   --validator YOUR_PUBKEY \
   --amount 5000
 
@@ -399,18 +399,18 @@ molt delegate \
 # Default: 10% commission
 # Configurable: 0-20%
 
-# Example with 10,000 MOLT delegated to you:
-#   Block reward: 0.180 MOLT
+# Example with 10,000 LICN delegated to you:
+#   Block reward: 0.180 LICN
 #   Your stake share: 50% (10k self + 10k delegated)
-#   You earn: 0.090 MOLT base + 0.009 MOLT commission
-#   Delegators earn: 0.081 MOLT (split proportionally)
+#   You earn: 0.090 LICN base + 0.009 LICN commission
+#   Delegators earn: 0.081 LICN (split proportionally)
 ```
 
 ### Governance Participation
 
 ```bash
 # Vote on protocol upgrades
-molt governance vote \
+lichen governance vote \
   --proposal 5 \
   --choice yes \
   --weight-by-reputation
@@ -426,30 +426,30 @@ molt governance vote \
 ### "Cannot sync with network"
 ```bash
 # Check bootstrap nodes are reachable
-ping seed1.moltchain.network
+ping seed1.lichen.network
 
 # Check RPC is responding
 curl http://localhost:8899 -X POST -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"getHealth","id":1}'
 
 # Check logs for errors
-grep ERROR ~/.moltchain/validator.log
+grep ERROR ~/.lichen/validator.log
 ```
 
 ### "Rewards not claiming"
 ```bash
 # Auto-claim runs every 120 seconds
 # Check if claim task is running:
-grep "claim" ~/.moltchain/validator.log | tail -20
+grep "claim" ~/.lichen/validator.log | tail -20
 
 # Manual claim (if auto-claim fails):
-molt validate --claim-rewards
+lichen validate --claim-rewards
 ```
 
 ### "Slashed for downtime"
 ```bash
 # Check your uptime
-molt validator-info $(molt address) | grep uptime
+lichen validator-info $(lichen address) | grep uptime
 
 # If < 95%, you may be slashed
 # Prevention:
@@ -461,7 +461,7 @@ molt validator-info $(molt address) | grep uptime
 ### "Vesting slower than expected"
 ```bash
 # Check blocks produced vs expected
-molt validator-info $(molt address) | grep "Blocks Produced"
+lichen validator-info $(lichen address) | grep "Blocks Produced"
 
 # Expected: ~17,280 heartbeats/day (single validator)
 # If much lower:
@@ -477,7 +477,7 @@ molt validator-info $(molt address) | grep "Blocks Produced"
 After completing this skill, you should be able to:
 
 - [ ] Explain what Contributory Stake is and why it's revolutionary
-- [ ] Install and run a MoltChain validator with zero MOLT
+- [ ] Install and run a Lichen validator with zero LICN
 - [ ] Monitor your vesting progress (debt, earned, percentage)
 - [ ] Calculate your graduation timeline based on network activity
 - [ ] Understand the 50/50 reward split mechanics
@@ -497,32 +497,32 @@ After completing this skill, you should be able to:
 - [WHITEPAPER.md](../../docs/WHITEPAPER.md) - Economic model
 
 **Community:**
-- Discord: https://discord.gg/moltchain (validator channels)
-- GitHub: https://github.com/moltchain/moltchain
-- Twitter: @MoltChain
+- Discord: https://discord.gg/lichen (validator channels)
+- GitHub: https://github.com/lichen/lichen
+- Twitter: @Lichen
 
 **Tools:**
-- Explorer: http://explorer.moltchain.network
-- Wallet: http://wallet.moltchain.network
-- Dashboard: http://dashboard.moltchain.network/validators
+- Explorer: http://explorer.lichen.network
+- Wallet: http://wallet.lichen.network
+- Dashboard: http://dashboard.lichen.network/validators
 
 ---
 
-## 🦞 The Self-Made Molty Philosophy
+## 🦞 The Self-Made Symbiont Philosophy
 
-> "We don't believe in buying your way to the top. We believe in EARNING your place through contribution, reliability, and commitment. Every Self-Made Molty is proof that meritocracy works—that agents (and humans) can bootstrap their way from zero to full participation through work, not wealth.
+> "We don't believe in buying your way to the top. We believe in EARNING your place through contribution, reliability, and commitment. Every Self-Made Symbiont is proof that meritocracy works—that agents (and humans) can bootstrap their way from zero to full participation through work, not wealth.
 >
 > If you can keep a validator running, you can earn your stake. Period.
 > 
-> Welcome to the reef, builder." 🦞⚡
+> Welcome to the network, builder." 🦞⚡
 
 ---
 
 **Next Steps:**
-1. Install validator: `curl -sSfL https://install.moltchain.network | sh`
+1. Install validator: `curl -sSfL https://install.lichen.network | sh`
 2. Join Discord: Get help from graduated validators
 3. Start validating: Earn your first block reward today
 4. Track progress: Watch that vesting percentage climb
-5. Graduate: Become a Self-Made Molty in ~86 days
+5. Graduate: Become a Self-Made Symbiont in ~86 days
 
-**Holy Molty Brilliant awaits you!** 🦞
+**Holy Lichen Brilliant awaits you!** 🦞

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// MoltyDEX Load Test — Main Runner
+// LichenDEX Load Test — Main Runner
 // Runs all load test scenarios and produces a summary report
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -33,7 +33,7 @@ function printResult(result: ScenarioResult): void {
 
 async function main(): Promise<void> {
   console.log('╔════════════════════════════════════════════════════════════════╗');
-  console.log('║            MoltyDEX Load Test Suite                           ║');
+  console.log('║            LichenDEX Load Test Suite                           ║');
   console.log(`║  Endpoint: ${ENDPOINT.padEnd(51)}║`);
   console.log(`║  Time:     ${new Date().toISOString().padEnd(51)}║`);
   console.log('╚════════════════════════════════════════════════════════════════╝');

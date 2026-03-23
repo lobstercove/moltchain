@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — AMM Module
+// @lichen/dex-sdk — AMM Module
 // Pool creation, concentrated liquidity management, direct pool swaps
 // ═══════════════════════════════════════════════════════════════════════════════
 

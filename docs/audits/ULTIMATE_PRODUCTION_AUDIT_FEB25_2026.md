@@ -1,4 +1,4 @@
-# MoltChain Ultimate Production Audit — Feb 25, 2026
+# Lichen Ultimate Production Audit — Feb 25, 2026
 
 ## Executive Summary
 
@@ -12,7 +12,7 @@ This audit is a deep production-readiness sweep across chain core, contracts, RP
 - DEX frontend assertions: **1879 pass / 0 fail** (`node dex/dex.test.js`)
 - Wallet audits: **60/60 pass** (`node tests/test_wallet_audit.js`)
 - Wallet extension audits: **70/70 pass** (`node tests/test_wallet_extension_audit.js`)
-- RPC crate compile: **PASS** (`cargo check -p moltchain-rpc`)
+- RPC crate compile: **PASS** (`cargo check -p lichen-rpc`)
 
 ## Scope & Methodology
 
@@ -23,7 +23,7 @@ This sweep combined:
    - `node dex/dex.test.js`
    - `node tests/test_wallet_audit.js`
    - `node tests/test_wallet_extension_audit.js`
-   - `cargo check -p moltchain-rpc`
+   - `cargo check -p lichen-rpc`
 
 2. **Static risk scans**
    - Rust crash-prone patterns (`.unwrap()`, `.expect()`, `panic!()`)
@@ -158,7 +158,7 @@ One marker found (`dex/DEX_PLAN.md`) in docs only.
 - **Status:** Red
 
 ### RPC / WebSocket
-- `cargo check -p moltchain-rpc` passes.
+- `cargo check -p lichen-rpc` passes.
 - Runtime access in matrix is inconsistent for some phases and SDK clients.
 - **Status:** Yellow
 
@@ -196,7 +196,7 @@ One marker found (`dex/DEX_PLAN.md`) in docs only.
    - `sdk/js/test-subscriptions.js` ✅
    - `sdk/rust/examples/test_transactions` ✅
 10. Hardened Python RPC/test paths against transient chain boot windows:
-   - `sdk/python/moltchain/connection.py` now retries `RPC Error: No blocks yet` with bounded backoff.
+   - `sdk/python/lichen/connection.py` now retries `RPC Error: No blocks yet` with bounded backoff.
    - `tests/comprehensive-e2e.py` now gates on chain readiness (`slot > 0`) and retries send/confirm calls on transient `No blocks yet`.
    - `tests/contracts-write-e2e.py` now includes chain-ready preflight before write-path execution.
 11. Hardened DEX E2E read-model consistency checks:
@@ -245,7 +245,7 @@ The following exchange-grade gaps were reported and are now explicitly tracked i
    - Auto-restore no longer silently reconnects unsignable saved sessions.
 
 3. **Predict tab consistency improvements** (`dex/dex.js`, `dex/index.html`)
-   - Predict view refresh now also updates mUSD balance display immediately on tab switch.
+   - Predict view refresh now also updates lUSD balance display immediately on tab switch.
    - Market loader now includes RPC fallback (`getPredictionMarkets`) when REST list is empty.
    - `My Markets` now formats volume consistently and avoids oversized raw values.
    - Predict sort selector now includes `Traders` option to match implemented sorting logic.
@@ -309,14 +309,14 @@ User-mandated requirement: prediction + trading + positions must behave as live,
 
 ### Keeper Daemon (Safe Scope)
 
-- Added: [moltchain/scripts/prediction_keeper_daemon.py](moltchain/scripts/prediction_keeper_daemon.py)
+- Added: [lichen/scripts/prediction_keeper_daemon.py](lichen/scripts/prediction_keeper_daemon.py)
 - Scope: close expired ACTIVE markets + finalize RESOLVING markets after dispute window.
-- Default mode: dry-run (`MOLT_KEEPER_DRY_RUN=true`).
+- Default mode: dry-run (`LICHEN_KEEPER_DRY_RUN=true`).
 - Run (dry-run):
-   - `cd moltchain`
-   - `MOLT_RPC_URL=http://127.0.0.1:8899 MOLT_KEEPER_DRY_RUN=true python3 scripts/prediction_keeper_daemon.py`
+   - `cd lichen`
+   - `LICHEN_RPC_URL=http://127.0.0.1:8899 LICHEN_KEEPER_DRY_RUN=true python3 scripts/prediction_keeper_daemon.py`
 - Run (live submit):
-   - `MOLT_KEEPER_DRY_RUN=false MOLT_KEEPER_KEYPAIR=~/.moltchain/keypairs/id.json python3 scripts/prediction_keeper_daemon.py`
+   - `LICHEN_KEEPER_DRY_RUN=false LICHEN_KEEPER_KEYPAIR=~/.lichen/keypairs/id.json python3 scripts/prediction_keeper_daemon.py`
 
 ### Full Tab-by-Tab DEX Wiring + Realtime Audit (Feb 26 continuation)
 
@@ -349,7 +349,7 @@ Scope reviewed line-by-line in `dex/dex.js` against active RPC/contract paths.
 - **Status:** **Wired + near-live updates.**
 - **Residual risk:** funding rate surface is endpoint-backed but still static-tier logic server-side (not market-dynamic).
 
-#### 3) Predict (PredictionReef)
+#### 3) Predict (PredictionMoss)
 
 - **View entry:** `switchView('predict')` loads stats/markets/positions/history/created + starts countdown ticker + subscribes WS.
 - **Reads:**
@@ -401,13 +401,13 @@ Scope reviewed line-by-line in `dex/dex.js` against active RPC/contract paths.
 - **Status:** **Wired for available opcodes; polling-based updates.**
 - **Gap:** delist/param-change submit path still constrained by backend opcode/support scope.
 
-#### 7) Launchpad (ClawPump)
+#### 7) Launchpad (SporePump)
 
 - **View entry:** `switchView('launchpad')` loads stats + token list.
 - **Reads:**
    - REST: `/launchpad/stats`, `/launchpad/tokens`, `/launchpad/tokens/{id}/holders?address=...`, `/launchpad/config`
 - **Writes (on-chain):**
-   - `clawpump`: `buy`, `sell`, `create_token`
+   - `sporepump`: `buy`, `sell`, `create_token`
 - **Realtime:**
    - Slow fallback poll: 30s (launchpad view), plus immediate refresh after each write
 - **Status:** **Wired; polling-live with post-write instant refresh.**

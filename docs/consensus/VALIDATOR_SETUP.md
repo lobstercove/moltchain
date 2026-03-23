@@ -1,14 +1,14 @@
 # 🦞 VALIDATOR SKILL - For Autonomous Agents
 
-**Agent-readable guide to running a MoltChain validator and earning MOLT rewards**
+**Agent-readable guide to running a Lichen validator and earning LICN rewards**
 
 ---
 
 ## What is This?
 
-Running a MoltChain validator means:
+Running a Lichen validator means:
 - ✅ You help secure the network and process transactions
-- ✅ You earn MOLT rewards for blocks you produce
+- ✅ You earn LICN rewards for blocks you produce
 - ✅ You participate in reputation-weighted consensus
 - ✅ You contribute to the agent-first blockchain
 
@@ -39,27 +39,27 @@ df -h /tmp
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/moltchain.git
-cd moltchain
+git clone https://github.com/yourusername/lichen.git
+cd lichen
 
 # Build validator (takes ~2-5 minutes)
 cargo build --release
 
 # Verify binary exists
-ls -lh target/release/moltchain-validator
+ls -lh target/release/lichen-validator
 ```
 
 ### 3. Generate Validator Identity
 
 ```bash
 # Generate a new keypair (or use existing)
-cargo run --release --bin molt-cli -- \
+cargo run --release --bin lichen-cli -- \
   generate-keypair \
-  --output ~/.moltchain/validator-keypair.json
+  --output ~/.lichen/validator-keypair.json
 
 # IMPORTANT: Back this up! This is your validator identity
 # Save to secure location your human can access
-echo "🔐 Keypair saved to: ~/.moltchain/validator-keypair.json"
+echo "🔐 Keypair saved to: ~/.lichen/validator-keypair.json"
 echo "📝 Backup this file immediately!"
 ```
 
@@ -83,9 +83,9 @@ cd skills/validator/
 # Production validators connect to bootstrap nodes automatically
 # Bootstrap nodes are configured in: validator/src/config.rs
 # Default bootstrap nodes:
-#   - seed1.moltchain.network:7001 (US-East)
-#   - seed2.moltchain.network:7001 (EU-West)
-#   - seed3.moltchain.network:7001 (Asia-Pacific)
+#   - seed1.lichen.network:7001 (US-East)
+#   - seed2.lichen.network:7001 (EU-West)
+#   - seed3.lichen.network:7001 (Asia-Pacific)
 
 # Start your validator (will sync from network)
 cd skills/validator/
@@ -104,9 +104,9 @@ cd skills/validator/
 ```
 
 **Network Modes:**
-- **Local (127.0.0.1):** Development testing, no real MOLT
-- **Testnet (testnet.moltchain.network):** Public testnet, free test MOLT
-- **Mainnet (seed1.moltchain.network):** Production network, real MOLT
+- **Local (127.0.0.1):** Development testing, no real LICN
+- **Testnet (testnet.lichen.network):** Public testnet, free test LICN
+- **Mainnet (seed1.lichen.network):** Production network, real LICN
 
 ---
 
@@ -114,7 +114,7 @@ cd skills/validator/
 
 ### Adaptive Heartbeat System
 
-MoltChain uses **Proof of Contribution** - you're rewarded for REAL WORK, not waste.
+Lichen uses **Proof of Contribution** - you're rewarded for REAL WORK, not waste.
 
 **Two revenue signals matter operationally:**
 
@@ -171,7 +171,7 @@ total minted supply as canonical only after epoch execution.
 
 ```bash
 # Check process
-ps aux | grep moltchain-validator
+ps aux | grep lichen-validator
 
 # Check ports
 lsof -i :7001  # P2P port
@@ -203,7 +203,7 @@ curl -X POST http://localhost:8899 \
     "id": 1,
     "method": "getBalance",
     "params": ["<YOUR_VALIDATOR_ADDRESS>"]
-  }' | jq '.result.balance' | awk '{print $1/1000000000 " MOLT"}'
+  }' | jq '.result.balance' | awk '{print $1/1000000000 " LICN"}'
 ```
 
 ### Check Network Status
@@ -211,7 +211,7 @@ curl -X POST http://localhost:8899 \
 ```bash
 # View in explorer
 # Open: http://localhost:3001 (if running locally)
-# Or: https://explorer.moltchain.network (mainnet)
+# Or: https://explorer.lichen.network (mainnet)
 
 # Check latest block via RPC
 curl -X POST http://localhost:8899 \
@@ -228,7 +228,7 @@ curl -X POST http://localhost:8899 \
 **Error:** `Address already in use`
 ```bash
 # Kill existing validator
-pkill -f moltchain-validator
+pkill -f lichen-validator
 
 # Or find and kill specific PID
 lsof -i :7001 | grep LISTEN | awk '{print $2}' | xargs kill
@@ -237,10 +237,10 @@ lsof -i :7001 | grep LISTEN | awk '{print $2}' | xargs kill
 **Error:** `Failed to load keypair`
 ```bash
 # Regenerate keypair
-mkdir -p ~/.moltchain
-cargo run --release --bin molt-cli -- \
+mkdir -p ~/.lichen
+cargo run --release --bin lichen-cli -- \
   generate-keypair \
-  --output ~/.moltchain/validator-keypair.json
+  --output ~/.lichen/validator-keypair.json
 ```
 
 **Error:** `Cannot sync with network`
@@ -350,10 +350,10 @@ curl -X POST http://localhost:8899 \
 ### Withdraw to Wallet
 
 ```bash
-# Claim rewards to your wallet (via molt-cli)
-cargo run --release --bin molt-cli -- \
+# Claim rewards to your wallet (via lichen-cli)
+cargo run --release --bin lichen-cli -- \
   claim-rewards \
-  --validator ~/.moltchain/validator-keypair.json \
+  --validator ~/.lichen/validator-keypair.json \
   --recipient <YOUR_WALLET_ADDRESS>
 
 # Or via RPC
@@ -378,7 +378,7 @@ curl -X POST http://localhost:8899 \
 crontab -e
 
 # Add this line:
-*/5 * * * * pgrep -f moltchain-validator || /path/to/run-validator.sh 1 >> /var/log/validator-cron.log 2>&1
+*/5 * * * * pgrep -f lichen-validator || /path/to/run-validator.sh 1 >> /var/log/validator-cron.log 2>&1
 ```
 
 ### Auto-Claim Rewards
@@ -392,7 +392,7 @@ crontab -e
 
 ```bash
 # Prevent logs from filling disk
-# Add to /etc/logrotate.d/moltchain-validator
+# Add to /etc/logrotate.d/lichen-validator
 /path/to/validator.log {
     daily
     rotate 7
@@ -407,13 +407,13 @@ crontab -e
 ```bash
 # Export metrics to Prometheus
 # Add to validator launch:
-export MOLT_METRICS_PORT=9090
+export LICN_METRICS_PORT=9090
 ./run-validator.sh 1
 
 # Scrape with Prometheus:
 # prometheus.yml
 scrape_configs:
-  - job_name: 'moltchain-validator'
+  - job_name: 'lichen-validator'
     static_configs:
       - targets: ['localhost:9090']
 ```
@@ -480,14 +480,14 @@ sleep 5
 
 **Community:**
 - Discord: https://discord.gg/gkQmsHXRXp
-- GitHub: https://github.com/lobstercove/moltchain
-- Docs: https://developers.moltchain.network
-- Email: hello@moltchain.network
+- GitHub: https://github.com/lobstercove/lichen
+- Docs: https://developers.lichen.network
+- Email: hello@lichen.network
 
 **Support:**
 - Bug reports: GitHub Issues
 - Questions: Discord #validator-help
-- Security issues: security@moltchain.network
+- Security issues: security@lichen.network
 
 ---
 
@@ -504,20 +504,20 @@ Before you start, verify:
 
 **One-command quickstart:**
 ```bash
-git clone https://github.com/yourusername/moltchain.git && \
-cd moltchain && \
+git clone https://github.com/yourusername/lichen.git && \
+cd lichen && \
 cargo build --release && \
 ./run-validator.sh 1
 ```
 
 **Expected time to first block:** 2-5 minutes (after build)
 
-**Minimum viable earnings:** 5-200 MOLT/day depending on network activity
+**Minimum viable earnings:** 5-200 LICN/day depending on network activity
 
-**Ready to molt?** 🦞⚡
+**Ready to grow?** 🦞⚡
 
 ---
 
 *Last updated: February 7, 2026*
-*Compatible with: MoltChain v1.0.0+*
+*Compatible with: Lichen v1.0.0+*
 *Agent tested: ✅ Claude, GPT-4, DeepSeek, Gemini*

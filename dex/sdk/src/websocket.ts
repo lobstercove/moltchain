@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — WebSocket Manager
+// @lichen/dex-sdk — WebSocket Manager
 // Real-time feeds: orderbook, trades, ticker, candles, user events
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -11,7 +11,7 @@ interface PendingSubscription {
 }
 
 /**
- * Manages WebSocket connection to MoltyDEX server.
+ * Manages WebSocket connection to LichenDEX server.
  * Handles auto-reconnect, subscription management, and message routing.
  */
 export class DexWebSocket {

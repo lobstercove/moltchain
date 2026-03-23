@@ -1,4 +1,4 @@
-# MOLTCHAIN EXPLORER — PRODUCTION AUDIT REPORT
+# LICHEN EXPLORER — PRODUCTION AUDIT REPORT
 **Scope:** All 11 HTML pages · All JS files · `shared/utils.js` · `shared-config.js` · `rpc/src/lib.rs` (method dispatch) · `rpc/src/ws.rs` (WS subscriptions)  
 **Root:** `explorer/`  
 **Methodology:** Line-by-line read of every source file; cross-referenced against RPC backend dispatch table.
@@ -21,19 +21,19 @@
 | `txsToday` | Txs in last 24h | ✅ Exists, populated |
 | `activeAccounts` | Non-system accounts | ✅ Exists, populated |
 | `accountBreakdown` | Wallet/Contract/Program breakdown label | ✅ Exists, populated |
-| `totalBurned` | Burned MOLT | ✅ Exists, populated |
+| `totalBurned` | Burned LICN | ✅ Exists, populated |
 | `burnPctLabel` | Burn % of supply | ✅ Exists, populated |
 | `slotTimeLabel` | Avg slot time | ✅ Exists, populated |
 | `validatorCount` | Active validator count | ✅ Exists, populated |
 | `chainStatusTop` | Chain health pill | ✅ Exists, populated |
 | `activeValidators` | Active validators count (secondary) | ❌ **MISSING FROM HTML** — `explorer.js` writes to it, element never found (`querySelector` silently fails) |
-| `totalStake` | Total staked MOLT | ❌ **MISSING FROM HTML** — same silent failure |
+| `totalStake` | Total staked LICN | ❌ **MISSING FROM HTML** — same silent failure |
 
 ### Shielded Stats (populated by `explorer.js:updateShieldedOverview()`)
 | Element ID | Status |
 |---|---|
 | `shieldedBalance` | ✅ |
-| `shieldedBalanceShells` | ✅ |
+| `shieldedBalanceSpores` | ✅ |
 | `commitmentCount` | ✅ |
 | `nullifierCount` | ✅ |
 | `shieldedTxCount` | ✅ |
@@ -57,13 +57,13 @@
 
 ### Search Bar
 - `<input id="searchInput">` with `<button id="searchBtn">` — triggers `navigateExplorerSearch()`
-- Handles: pure numbers → block, 64-char hex → tx, `.molt` suffix → MoltName resolve, address-like → contract then address fallback ✅
+- Handles: pure numbers → block, 64-char hex → tx, `.lichen` suffix → LichenName resolve, address-like → contract then address fallback ✅
 - No empty-input guard (submitting empty search throws no visible error — silently returns)
 
 ### Navigation Links
-- All nav `<a data-molt-app="...">` tags resolved by `shared-config.js` DOMContentLoaded handler ✅
+- All nav `<a data-lichen-app="...">` tags resolved by `shared-config.js` DOMContentLoaded handler ✅
 - Footer "API Docs" links to `../developers/rpc-reference.html` — **INCONSISTENT** with every other page which links to `../docs/API.md`
-- Footer links with `data-molt-app` resolved correctly ✅ (shared-config.js handles all `a[data-molt-app]`)
+- Footer links with `data-lichen-app` resolved correctly ✅ (shared-config.js handles all `a[data-lichen-app]`)
 
 ### Polling / Live Data
 - WS `subscribeBlocks` subscription for live block feed ✅
@@ -147,7 +147,7 @@
 - Slot 0 guard: `prevBlock` starts `disabled` in HTML, only enabled by JS when `slot > 0` ✅
 
 ### Reward & Fee Cards
-- `#rewardCard` — hidden by default (`style="display:none"`) ✅, shown when `block.validator_reward_shells > 0`
+- `#rewardCard` — hidden by default (`style="display:none"`) ✅, shown when `block.validator_reward_spores > 0`
 - `#feeCard` — hidden by default ✅, shown when fee data present
 - Both use `FEE_SPLIT` constants from `shared/utils.js` ✅
 - Fee labels: `feeBurnedLabel`, `feeProducerLabel`, `feeVotersLabel`, `feeTreasuryLabel`, `feeCommunityLabel` — all exist in HTML ✅
@@ -163,7 +163,7 @@
 - Raw data JSON uses `JSON.stringify(block, null, 2)` ✅
 
 ### RPC Calls
-- `getBlock` ✅ (MoltChainRPC class method) — params: `[slot]`
+- `getBlock` ✅ (LichenRPC class method) — params: `[slot]`
 - `getLatestBlock` ✅ — used for "next" block navigation guard
 
 ---
@@ -261,13 +261,13 @@ All links from/to → `address.html?address=...` ✅
 | `summaryEvmAddress` | EVM address |
 | `summaryBalance` | Total balance |
 | `summarySpendable` | Spendable balance |
-| `summaryStaked` | Staked MOLT |
-| `summaryLocked` | Locked MOLT |
+| `summaryStaked` | Staked LICN |
+| `summaryLocked` | Locked LICN |
 
 `renderSummaryIdentity()` also references:
 | Missing Element ID | What It Should Show |
 |---|---|
-| `displayName` | .molt name or truncated address |
+| `displayName` | .lichen name or truncated address |
 | `trustTierBadge` | Trust tier pill |
 
 **Impact:** The primary address summary section is completely blank — no balance, no address display, no identity badge rendered. The address page shows a tab container but no header info.
@@ -278,7 +278,7 @@ All links from/to → `address.html?address=...` ✅
 - Not called after `renderIdentityPane()`
 - Not called after `displayAddressData()`
 
-**Impact:** All identity action buttons (Edit Profile, Vouch for Address, Attest Skill, register .molt name, etc.) have no event listeners — they are completely dead UI. Clicking them does nothing.
+**Impact:** All identity action buttons (Edit Profile, Vouch for Address, Attest Skill, register .lichen name, etc.) have no event listeners — they are completely dead UI. Clicking them does nothing.
 
 ### Additional Missing Element
 | Missing Element ID | Where Referenced |
@@ -301,13 +301,13 @@ All links from/to → `address.html?address=...` ✅
 ### Dynamic Insertions
 - `#abiCard` — injected into `.container` for contract accounts ✅
 - `#treasuryStatsCard` — injected for Treasury accounts ✅
-- `#reefStakedMolt` row — injected into balance section for ReefStake users ✅
+- `#mossStakedLicn` row — injected into balance section for MossStake users ✅
 - `addressTxPagination` — rendered by `updateTxPagination()` ✅
 
 ### Wallet Actions (View-only in Explorer)
 - Send, Receive, Register Identity, Vouch, Attest modals all exist in HTML ✅
 - View-only mode enforced by `enforceAddressViewOnlyMode()` — hides/disables action buttons
-- `signAndSendInstructions()` requires `MoltCrypto` (from `../wallet/js/crypto.js`) and `serializeMessageBincode` (from `shared/utils.js`) — both available ✅
+- `signAndSendInstructions()` requires `LichenCrypto` (from `../wallet/js/crypto.js`) and `serializeMessageBincode` (from `shared/utils.js`) — both available ✅
 
 ### RPC Calls (directly via `rpc.call()` — all supported in lib.rs)
 | Method | lib.rs | Status |
@@ -318,14 +318,14 @@ All links from/to → `address.html?address=...` ✅
 | `getStakingStatus` | ✅ | |
 | `getStakingRewards` | ✅ | |
 | `getGenesisAccounts` | ✅ | |
-| `getMoltyIdProfile` | ✅ | |
-| `getMoltyIdAchievements` | ✅ | |
-| `getMoltyIdVouches` | ✅ | |
-| `getMoltyIdSkills` | ✅ | |
-| `reverseMoltName` | ✅ | |
+| `getLichenIdProfile` | ✅ | |
+| `getLichenIdAchievements` | ✅ | |
+| `getLichenIdVouches` | ✅ | |
+| `getLichenIdSkills` | ✅ | |
+| `reverseLichenName` | ✅ | |
 | `getContractInfo` | ✅ | |
 | `getContractAbi` | ✅ | |
-| `getReefStakePoolInfo` | ✅ | |
+| `getMossStakePoolInfo` | ✅ | |
 | `getTransactionsByAddress` | ✅ | |
 
 ### Other Issues
@@ -507,7 +507,7 @@ When WS is connected, `loadValidators()` is called every ~400ms (each slot) via 
 - No auto-refresh — user must manually reload or navigate away/back
 
 ### RPC Calls
-- `getMoltyIdAgentDirectory` — `lib.rs` ✅
+- `getLichenIdAgentDirectory` — `lib.rs` ✅
 
 ---
 
@@ -558,7 +558,7 @@ When WS is connected, `loadValidators()` is called every ~400ms (each slot) via 
 
 ### Local Function Shadowing
 `privacy.js` locally redefines these functions, shadowing the global versions from `shared/utils.js`:
-- `formatMoltValue(shells)` — shadows global `formatMolt(shells)`
+- `formatLicnValue(spores)` — shadows global `formatLicn(spores)`
 - `formatNumber(n)` — shadows global `formatNumber(n)` 
 - `escapeHtml(str)` — shadows global `escapeHtml(str)`
 - `formatTimeFull(ts)` — shadows global `formatTimeFull(ts)`
@@ -582,11 +582,11 @@ The shadow implementations are functionally equivalent but create a maintenance 
 **Constants (global, available to all pages):**
 | Constant | Value |
 |---|---|
-| `SHELLS_PER_MOLT` | `1_000_000_000` |
+| `SPORES_PER_LICN` | `1_000_000_000` |
 | `MS_PER_SLOT` | `400` |
 | `SLOTS_PER_EPOCH` | `432_000` |
 | `SLOTS_PER_YEAR` | `78_840_000` |
-| `BASE_FEE_SHELLS` | `1_000_000` (0.001 MOLT) |
+| `BASE_FEE_SPORES` | `1_000_000` (0.001 LICN) |
 | `FEE_SPLIT` | `{burned:0.40, producer:0.30, voters:0.10, treasury:0.10, community:0.10}` |
 | `ZK_COMPUTE_FEE` | `{shield:100_000, unshield:150_000, transfer:200_000}` |
 | `MAX_REPUTATION` | `100_000` |
@@ -601,9 +601,9 @@ The shadow implementations are functionally equivalent but create a maintenance 
 - `bs58decode(str)` / `bs58encode(bytes)` ✅
 - `serializeMessageBincode(message)` ✅ — used by wallet signing flow
 - `readLeU64(bytes)` — BigInt-safe u64 parsing ✅
-- `rpcCall` / `moltRpcCall` — legacy bare RPC call function ✅
+- `rpcCall` / `licnRpcCall` — legacy bare RPC call function ✅
 - `updatePagination(config)` — shared widget; not used by explorer pages (they implement own pagination) ⚠️ — duplication exists
-- `getMoltRpcUrl()` — checks `window.moltConfig`, `window.moltMarketConfig`, `window.moltExplorerConfig` ✅
+- `getLichenRpcUrl()` — checks `window.lichenConfig`, `window.lichenMarketConfig`, `window.lichenExplorerConfig` ✅
 
 **Chain Status Bar Auto-Wire:**
 The IIFE at bottom of `shared/utils.js` auto-wires any page with `id="chainBlockHeight"`, polling `getSlot` every 5s. Explorer pages that have their own polling must set `window.__chainStatusBarOwned = true` to suppress this — none of the explorer JS files set this flag, so BOTH the shared poller AND explorer.js poll `getSlot` in parallel on every page.
@@ -612,36 +612,36 @@ The IIFE at bottom of `shared/utils.js` auto-wires any page with `id="chainBlock
 
 Defines only:
 - `formatValidator(validator)` — returns Genesis pill or `formatAddress()` ✅
-- `resolveTxAmountShells(tx, instruction)` ✅
+- `resolveTxAmountSpores(tx, instruction)` ✅
 - `resolveTxType(tx, instruction)` — opcode mapping (0–5, 23–25) ✅
 
 **Note:** `resolveTxType` maps `DebtRepay` → `GrantRepay` (rebranding alias) ✅
 
 ### `shared-config.js` (43 lines)
 
-- `MOLT_CONFIG` object: dev localhost URLs, prod origin-relative paths ✅
-- DOMContentLoaded handler resolves all `a[data-molt-app]` links ✅
+- `LICHEN_CONFIG` object: dev localhost URLs, prod origin-relative paths ✅
+- DOMContentLoaded handler resolves all `a[data-lichen-app]` links ✅
 - Supports apps: `explorer`, `wallet`, `marketplace`, `dex`, `website`, `developers`, `faucet`
 - Dev ports: explorer=3007, wallet=3008, marketplace=3009, dex=3011, website=9090, developers=3010, faucet=9100
 
-**Note:** `data-molt-app` on non-`<a>` elements (buttons, divs) will NOT be resolved — only `<a>` tags are selected. All current usages in explorer pages appear to be `<a>` tags ✅.
+**Note:** `data-lichen-app` on non-`<a>` elements (buttons, divs) will NOT be resolved — only `<a>` tags are selected. All current usages in explorer pages appear to be `<a>` tags ✅.
 
 ### `js/explorer.js` (941 lines)
 
 **Network Config:**
 ```
-mainnet      → https://rpc.moltchain.network   ws=null
-testnet      → https://testnet-rpc.moltchain.network  ws=null
+mainnet      → https://rpc.lichen.network   ws=null
+testnet      → https://testnet-rpc.lichen.network  ws=null
 local-testnet → http://localhost:8899           ws=ws://localhost:8900
 local-mainnet → http://localhost:9899           ws=ws://localhost:9900
 ```
 WS is `null` for mainnet and testnet — live subscriptions only work in local modes. On mainnet/testnet all live data falls back to REST polling.
 
-**RPC Class Methods (declared in `MoltChainRPC`):**
-`getBalance`, `getAccount`, `getBlock`, `getLatestBlock`, `getSlot`, `getTransaction`, `sendTransaction`, `getTotalBurned`, `getValidators`, `getMetrics`, `health`, `getTransactionsByAddress`, `getAccountTxCount`, `getAccountInfo`, `getTransactionHistory`, `getContractInfo`, `getContractAbi`, `getContractLogs`, `getAllContracts`, `getProgram`, `getProgramStats`, `getSymbolRegistryByProgram`, `getTokenBalance`, `getTokenHolders`, `getTokenTransfers`, `getContractEvents`, `getCollection`, `getNFT`, `getNFTsByOwner`, `getMarketListings`, `getMarketSales`, `simulateTransaction`, `getStakingStatus`, `getReefStakePoolInfo`
+**RPC Class Methods (declared in `LichenRPC`):**
+`getBalance`, `getAccount`, `getBlock`, `getLatestBlock`, `getSlot`, `getTransaction`, `sendTransaction`, `getTotalBurned`, `getValidators`, `getMetrics`, `health`, `getTransactionsByAddress`, `getAccountTxCount`, `getAccountInfo`, `getTransactionHistory`, `getContractInfo`, `getContractAbi`, `getContractLogs`, `getAllContracts`, `getProgram`, `getProgramStats`, `getSymbolRegistryByProgram`, `getTokenBalance`, `getTokenHolders`, `getTokenTransfers`, `getContractEvents`, `getCollection`, `getNFT`, `getNFTsByOwner`, `getMarketListings`, `getMarketSales`, `simulateTransaction`, `getStakingStatus`, `getMossStakePoolInfo`
 
 **RPC calls made via `rpc.call()` directly (not class methods) — all exist in lib.rs:**
-`getRecentTransactions`, `getShieldedPoolState`, `getShieldedCommitments`, `isNullifierSpent`, `getMoltyIdAgentDirectory`, `getMoltyIdProfile`, `reverseMoltName`, `resolveMoltName`, `batchReverseMoltNames`, `getSymbolRegistry`, `getAllSymbolRegistry`, `getProgramCalls`, `getProgramStorage`, `getTokenAccounts`, `getGenesisAccounts`, `getStakingRewards`, `getMoltyIdAchievements`, `getMoltyIdVouches`, `getMoltyIdSkills`
+`getRecentTransactions`, `getShieldedPoolState`, `getShieldedCommitments`, `isNullifierSpent`, `getLichenIdAgentDirectory`, `getLichenIdProfile`, `reverseLichenName`, `resolveLichenName`, `batchReverseLichenNames`, `getSymbolRegistry`, `getAllSymbolRegistry`, `getProgramCalls`, `getProgramStorage`, `getTokenAccounts`, `getGenesisAccounts`, `getStakingRewards`, `getLichenIdAchievements`, `getLichenIdVouches`, `getLichenIdSkills`
 
 ---
 
@@ -716,11 +716,11 @@ All methods below are confirmed implemented backends. Unknown = not called by an
 | `unstake` | ✅ | — not called | |
 | `getStakingStatus` | ✅ | ✅ address.js | |
 | `getStakingRewards` | ✅ | ✅ address.js via `rpc.call()` | |
-| `stakeToReefStake` | ✅ | — not called | |
-| `unstakeFromReefStake` | ✅ | — not called | |
+| `stakeToMossStake` | ✅ | — not called | |
+| `unstakeFromMossStake` | ✅ | — not called | |
 | `claimUnstakedTokens` | ✅ | — not called | |
 | `getStakingPosition` | ✅ | — not called | |
-| `getReefStakePoolInfo` | ✅ | ✅ address.js | |
+| `getMossStakePoolInfo` | ✅ | ✅ address.js | |
 | `getUnstakingQueue` | ✅ | — not called | |
 | `getRewardAdjustmentInfo` | ✅ | — not called | |
 | `getAccountInfo` | ✅ | ✅ address.js | |
@@ -737,18 +737,18 @@ All methods below are confirmed implemented backends. Unknown = not called by an
 | `getPrograms` | ✅ | — not called | |
 | `getProgramCalls` | ✅ | ✅ contract.js via `rpc.call()` | |
 | `getProgramStorage` | ✅ | ✅ contract.js via `rpc.call()` | |
-| `getMoltyIdIdentity` | ✅ | — not directly (uses getMoltyIdProfile) | |
-| `getMoltyIdReputation` | ✅ | — not directly | |
-| `getMoltyIdSkills` | ✅ | ✅ address.js via `rpc.call()` | |
-| `getMoltyIdVouches` | ✅ | ✅ address.js via `rpc.call()` | |
-| `getMoltyIdAchievements` | ✅ | ✅ address.js via `rpc.call()` | |
-| `getMoltyIdProfile` | ✅ | ✅ address.js via `rpc.call()` | |
-| `resolveMoltName` | ✅ | ✅ explorer.js (search) | |
-| `reverseMoltName` | ✅ | ✅ explorer.js, address.js | |
-| `batchReverseMoltNames` | ✅ | ✅ explorer.js | |
-| `searchMoltNames` | ✅ | — not called | |
-| `getMoltyIdAgentDirectory` | ✅ | ✅ agents.js via `rpc.call()` | |
-| `getMoltyIdStats` | ✅ | — not called | |
+| `getLichenIdIdentity` | ✅ | — not directly (uses getLichenIdProfile) | |
+| `getLichenIdReputation` | ✅ | — not directly | |
+| `getLichenIdSkills` | ✅ | ✅ address.js via `rpc.call()` | |
+| `getLichenIdVouches` | ✅ | ✅ address.js via `rpc.call()` | |
+| `getLichenIdAchievements` | ✅ | ✅ address.js via `rpc.call()` | |
+| `getLichenIdProfile` | ✅ | ✅ address.js via `rpc.call()` | |
+| `resolveLichenName` | ✅ | ✅ explorer.js (search) | |
+| `reverseLichenName` | ✅ | ✅ explorer.js, address.js | |
+| `batchReverseLichenNames` | ✅ | ✅ explorer.js | |
+| `searchLichenNames` | ✅ | — not called | |
+| `getLichenIdAgentDirectory` | ✅ | ✅ agents.js via `rpc.call()` | |
+| `getLichenIdStats` | ✅ | — not called | |
 | `getNameAuction` | ✅ | — not called | |
 | `getEvmRegistration` | ✅ | ✅ address.js | |
 | `lookupEvmAddress` | ✅ | — not called | |
@@ -774,7 +774,7 @@ All methods below are confirmed implemented backends. Unknown = not called by an
 | `getShieldedMerklePath` | ✅ | — not called | |
 | `isNullifierSpent` | ✅ | ✅ privacy.js | |
 | `getShieldedCommitments` | ✅ | ✅ privacy.js | |
-| `getDexCoreStats`…`getMoltOracleStats` | ✅ | — not called from explorer | DEX/platform stats — used by DEX frontend |
+| `getDexCoreStats`…`getLichenOracleStats` | ✅ | — not called from explorer | DEX/platform stats — used by DEX frontend |
 | `getPredictionMarket*` | ✅ | — not called from explorer | |
 | `createBridgeDeposit/getBridgeDeposit*` | ✅ | — not called from explorer | |
 
@@ -803,7 +803,7 @@ All methods below are confirmed implemented backends. Unknown = not called by an
 ### WS Fallback Behavior
 - WS only available on `local-testnet` and `local-mainnet` network configs
 - `mainnet` and `testnet` have `ws: null` — all data falls back to REST polling
-- WS reconnect logic with `desired[]` resubscription array in `MoltChainWS` class ✅
+- WS reconnect logic with `desired[]` resubscription array in `LichenWS` class ✅
 
 ---
 
@@ -847,7 +847,7 @@ All methods below are confirmed implemented backends. Unknown = not called by an
 | M-4 | `applyFilters()` and `agentSort` changes do not auto-apply on change — require button click | `agents.html` |
 | M-5 | Validator addresses on blocks table have no link to address page | `blocks.js` |
 | M-6 | From/To addresses in transactions table have no link to address page | `transactions.js` |
-| M-8 | `privacy.js` locally redefines globals from `shared/utils.js` (`formatMoltValue`, `formatNumber`, `escapeHtml`, `formatTimeFull`, `copyToClipboard`) | `privacy.js` |
+| M-8 | `privacy.js` locally redefines globals from `shared/utils.js` (`formatLicnValue`, `formatNumber`, `escapeHtml`, `formatTimeFull`, `copyToClipboard`) | `privacy.js` |
 | M-9 | No input validation on slot range filter inputs (negative, `from > to`, non-numeric) | `blocks.html` |
 | M-10 | Contracts table has no pagination — all contracts rendered in one pass | `contracts.js:renderContracts()` |
 | M-11 | Validators table has no pagination — all validators in one DOM assign | `validators.js` |

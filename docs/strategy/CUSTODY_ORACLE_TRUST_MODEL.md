@@ -4,10 +4,10 @@ This memo describes what operators and users are actually trusting today in cust
 
 ## Executive Summary
 
-MoltChain currently exposes two trust-sensitive surfaces that should not be described with stronger wording than the code supports:
+Lichen currently exposes two trust-sensitive surfaces that should not be described with stronger wording than the code supports:
 
 1. Custody is still an operator-trusted signing and deposit-tracking service, not a production-complete threshold-signing custody stack.
-2. Oracle data currently comes from two different systems with different trust assumptions: a native validator-attested oracle path and a separate MoltOracle contract path.
+2. Oracle data currently comes from two different systems with different trust assumptions: a native validator-attested oracle path and a separate LichenOracle contract path.
 
 ## Custody
 
@@ -57,10 +57,10 @@ There are two separate oracle systems.
 - Validators can submit native oracle attestations through system instruction type 30. See [core/src/processor.rs](../../core/src/processor.rs#L4396).
 - Attestations are stored in `CF_STATS` and aggregated into a consensus price after a strict greater-than-2/3 active-stake threshold using a stake-weighted median. See [core/src/state.rs](../../core/src/state.rs#L6793) and [core/src/processor.rs](../../core/src/processor.rs#L4490).
 
-#### MoltOracle contract
+#### LichenOracle contract
 
-- The contract has an owner, asset-specific authorized feeders, and owner-managed authorized attesters. See [contracts/moltoracle/src/lib.rs](../../contracts/moltoracle/src/lib.rs#L18), [contracts/moltoracle/src/lib.rs](../../contracts/moltoracle/src/lib.rs#L41), and [contracts/moltoracle/src/lib.rs](../../contracts/moltoracle/src/lib.rs#L80).
-- Contract prices are stored under contract storage keys such as `price_<asset>`. See [contracts/moltoracle/src/lib.rs](../../contracts/moltoracle/src/lib.rs#L171).
+- The contract has an owner, asset-specific authorized feeders, and owner-managed authorized attesters. See [contracts/lichenoracle/src/lib.rs](../../contracts/lichenoracle/src/lib.rs#L18), [contracts/lichenoracle/src/lib.rs](../../contracts/lichenoracle/src/lib.rs#L41), and [contracts/lichenoracle/src/lib.rs](../../contracts/lichenoracle/src/lib.rs#L80).
+- Contract prices are stored under contract storage keys such as `price_<asset>`. See [contracts/lichenoracle/src/lib.rs](../../contracts/lichenoracle/src/lib.rs#L171).
 
 #### Public RPC and DEX path
 
@@ -70,7 +70,7 @@ There are two separate oracle systems.
 ### Actual trust model today
 
 - The native validator oracle is a consensus-weighted protocol primitive.
-- The MoltOracle contract is an application-layer oracle service with owner-managed authorization.
+- The LichenOracle contract is an application-layer oracle service with owner-managed authorization.
 - The public RPC/UI oracle path currently follows the contract storage path, not the native validator consensus price path.
 
 That means public users are not consuming one unified oracle trust model today.
@@ -80,8 +80,8 @@ That means public users are not consuming one unified oracle trust model today.
 Use:
 
 - "Native validator-attested oracle for consensus prices"
-- "MoltOracle contract for application-managed feeds, VRF, and attestations"
-- "Current UI/API price feeds follow the MoltOracle contract storage path"
+- "LichenOracle contract for application-managed feeds, VRF, and attestations"
+- "Current UI/API price feeds follow the LichenOracle contract storage path"
 
 Do not use:
 

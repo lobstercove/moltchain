@@ -1,4 +1,4 @@
-# MoltChain Technical Architecture
+# Lichen Technical Architecture
 ## Deep Dive into the Protocol
 
 **Version:** 1.0.0  
@@ -13,7 +13,7 @@
 3. [Execution Environment](#execution-environment)
 4. [State Management](#state-management)
 5. [Network Layer](#network-layer)
-6. [Storage Layer (The Reef)](#storage-layer)
+6. [Storage Layer (The Moss)](#storage-layer)
 7. [Security Model](#security-model)
 8. [Performance Optimizations](#performance-optimizations)
 
@@ -30,7 +30,7 @@
 └──────────────────────────────────────────────────────┘
                          ↕
 ┌──────────────────────────────────────────────────────┐
-│              MoltyVM Execution Layer                  │
+│              LichenVM Execution Layer                  │
 │  - Native: Multi-language (Rust/JS/Python)           │
 │  - EVM: Ethereum Solidity contracts                  │
 │  - Sandboxed execution environment                   │
@@ -55,7 +55,7 @@
 └──────────────────────────────────────────────────────┘
                          ↕
 ┌──────────────────────────────────────────────────────┐
-│          State & Storage Layer (The Reef)             │
+│          State & Storage Layer (The Moss)             │
 │  - Account database (RocksDB)                        │
 │  - Distributed storage (IPFS-like)                   │
 │  - State snapshots                                   │
@@ -88,7 +88,7 @@
 ```rust
 // Calculate validator score
 fn calculate_validator_score(validator: &Validator) -> u64 {
-    let base_stake = validator.staked_amount.min(100_000); // Cap at 100K CLAW
+    let base_stake = validator.staked_amount.min(100_000); // Cap at 100K LICN
     let stake_score = (base_stake as f64).sqrt() as u64;
     
     let reputation_multiplier = 1.0 + (validator.reputation as f64 / 1000.0).min(2.0);
@@ -234,7 +234,7 @@ fn choose_fork(fork_a: &Chain, fork_b: &Chain) -> &Chain {
 
 ## Execution Environment
 
-### MoltyVM Architecture
+### LichenVM Architecture
 
 **Design Goals:**
 1. Multi-language support (not just Rust like Solana)
@@ -247,17 +247,17 @@ fn choose_fork(fork_a: &Chain, fork_b: &Chain) -> &Chain {
 
 **Rust → Native Compilation:**
 ```
-.rs files → rustc → MoltyVM bytecode → Executed directly
+.rs files → rustc → LichenVM bytecode → Executed directly
 ```
 
 **JavaScript → JIT:**
 ```
-.js files → Babel → MoltyVM bytecode → QuickJS engine
+.js files → Babel → LichenVM bytecode → QuickJS engine
 ```
 
 **Python → Interpreted:**
 ```
-.py files → Python AST → MoltyVM bytecode → RustPython
+.py files → Python AST → LichenVM bytecode → RustPython
 ```
 
 ### Sandboxing
@@ -361,7 +361,7 @@ Program A
 ```rust
 struct Account {
     pubkey: Pubkey,           // 32 bytes
-    lamports: u64,            // Balance in lamports (1 CLAW = 1B lamports)
+    lamports: u64,            // Balance in spores (1 LICN = 1B spores)
     data: Vec<u8>,            // Arbitrary data
     owner: Pubkey,            // Program that owns this account
     executable: bool,         // Is this a program?
@@ -371,7 +371,7 @@ struct Account {
 
 **Account Types:**
 
-1. **User Accounts** - Hold CLAW tokens
+1. **User Accounts** - Hold LICN tokens
 2. **Program Accounts** - Executable code
 3. **Program Data Accounts** - State for programs
 4. **System Accounts** - Special (validators, treasury)
@@ -384,7 +384,7 @@ struct Account {
 
 ```rust
 fn calculate_rent(account_size_bytes: usize, months: u64) -> u64 {
-    let cost_per_mb_per_month = 0.001 * 1e9; // 0.001 CLAW in lamports
+    let cost_per_mb_per_month = 0.001 * 1e9; // 0.001 LICN in spores
     let size_in_mb = account_size_bytes as f64 / 1_000_000.0;
     (size_in_mb * cost_per_mb_per_month as f64 * months as f64) as u64
 }
@@ -418,7 +418,7 @@ Indexes:
 **Full State Snapshot:**
 - Taken every epoch (1 hour)
 - Compressed with zstd
-- Stored locally + uploaded to The Reef
+- Stored locally + uploaded to The Moss
 - Allows fast validator bootstrapping
 
 **Incremental Snapshots:**
@@ -496,19 +496,19 @@ Validator 1
 
 ---
 
-## Storage Layer (The Reef)
+## Storage Layer (The Moss)
 
 ### Architecture
 
 **Hybrid Model:**
 - **On-chain:** Small critical data (account balances, program state)
-- **The Reef:** Large data (files, media, ML models)
+- **The Moss:** Large data (files, media, ML models)
 
 ### Distributed Storage Protocol
 
 **Content Addressing:**
 ```rust
-struct ReefObject {
+struct MossObject {
     cid: ContentId,        // SHA-256 hash
     size: u64,             // Bytes
     redundancy: u8,        // How many replicas
@@ -520,12 +520,12 @@ struct ReefObject {
 **Upload Flow:**
 
 ```
-1. Agent uploads file to any Reef node
+1. Agent uploads file to any Moss node
 2. File split into 256KB chunks
 3. Each chunk hashed (CID)
 4. Chunks distributed to N validators (redundancy)
 5. Validators stake to guarantee storage
-6. Agent pays rent (0.01 CLAW/GB/month)
+6. Agent pays rent (0.01 LICN/GB/month)
 7. CID returned to agent
 ```
 
@@ -544,7 +544,7 @@ struct ReefObject {
 ```rust
 // Validators earn storage fees
 fn calculate_storage_reward(size_gb: f64, months: u64) -> u64 {
-    let fee = size_gb * 0.01 * 1e9 * months as f64; // 0.01 CLAW/GB/month
+    let fee = size_gb * 0.01 * 1e9 * months as f64; // 0.01 LICN/GB/month
     let validator_share = fee * 0.8; // 80% to validators, 20% burned
     validator_share as u64
 }
@@ -558,10 +558,10 @@ fn calculate_storage_reward(size_gb: f64, months: u64) -> u64 {
 ### Integration with Programs
 
 ```javascript
-// In a MoltChain program
+// In a Lichen program
 async function storeAgentMemory(memory) {
-    // Upload to The Reef
-    const cid = await reef.store(memory, { redundancy: 3 });
+    // Upload to The Moss
+    const cid = await moss.store(memory, { redundancy: 3 });
     
     // Store CID on-chain (cheap)
     await this.state.set('memory_cid', cid);
@@ -571,8 +571,8 @@ async function loadAgentMemory() {
     // Load CID from on-chain state
     const cid = await this.state.get('memory_cid');
     
-    // Retrieve from The Reef
-    const memory = await reef.retrieve(cid);
+    // Retrieve from The Moss
+    const memory = await moss.retrieve(cid);
     return memory;
 }
 ```
@@ -608,7 +608,7 @@ async function loadAgentMemory() {
 **4. Sybil Attack**
 - **Attack:** Create many fake identities
 - **Mitigation:**
-  - 10,000 CLAW stake per validator (expensive)
+  - 10,000 LICN stake per validator (expensive)
   - Reputation starts at 0 (low power)
   - Takes time to build reputation
 
@@ -702,7 +702,7 @@ fn can_execute_in_parallel(tx_a: &Transaction, tx_b: &Transaction) -> bool {
 
 ## Conclusion
 
-MoltChain's architecture is purpose-built for autonomous agents:
+Lichen's architecture is purpose-built for autonomous agents:
 
 ✅ **Fast** - 400ms finality, 50K+ TPS  
 ✅ **Cheap** - $0.00001 per transaction  

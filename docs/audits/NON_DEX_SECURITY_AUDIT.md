@@ -1,4 +1,4 @@
-# Moltchain Non-DEX Smart Contract Security Audit
+# Lichen Non-DEX Smart Contract Security Audit
 **Scope:** 15 contracts + rpc/src/lib.rs RPC wiring  
 **Auditor:** GitHub Copilot  
 **Methodology:** Full source read of every contract + SDK
@@ -20,30 +20,30 @@
 
 | ID | Contract | Severity | Title |
 |---|---|---|---|
-| NC-01 | moltoracle | **CRITICAL** | Staleness threshold 3.6s not 1 hour — unit mismatch |
-| NC-02 | moltoracle | **CRITICAL** | `get_aggregated_price` same staleness unit bug |
+| NC-01 | lichenoracle | **CRITICAL** | Staleness threshold 3.6s not 1 hour — unit mismatch |
+| NC-02 | lichenoracle | **CRITICAL** | `get_aggregated_price` same staleness unit bug |
 | NC-03 | shielded_pool | **CRITICAL** | No reentrancy guard on `shield`/`unshield`/`transfer` |
 | NC-04 | shielded_pool | **CRITICAL** | No caller/owner verification on state-mutating WASM ABI |
 | NC-05 | shielded_pool | **CRITICAL** | No pause/emergency-stop mechanism |
-| NC-06 | lobsterlend | **HIGH** | Health factor computation overflows u64 for large deposits |
+| NC-06 | thalllend | **HIGH** | Health factor computation overflows u64 for large deposits |
 | NC-07 | shielded_pool | **HIGH** | Unbounded JSON commitment vector causes state bloat / DoS |
-| NC-08 | moltoracle | **MEDIUM** | Legacy `request_randomness` is front-runnable / predictable |
-| NC-09 | moltdao | **MEDIUM** | `PROPOSAL_SIZE` constant is 210 but actual layout is 212 bytes |
-| NC-10 | clawvault | **MEDIUM** | Strategy total allocation can exceed 100% — over-commit funds |
-| NC-11 | clawvault | **MEDIUM** | `harvest()` silently skips if protocol addresses unconfigured |
+| NC-08 | lichenoracle | **MEDIUM** | Legacy `request_randomness` is front-runnable / predictable |
+| NC-09 | lichendao | **MEDIUM** | `PROPOSAL_SIZE` constant is 210 but actual layout is 212 bytes |
+| NC-10 | sporevault | **MEDIUM** | Strategy total allocation can exceed 100% — over-commit funds |
+| NC-11 | sporevault | **MEDIUM** | `harvest()` silently skips if protocol addresses unconfigured |
 | NC-12 | compute_market | **MEDIUM** | No pause function — cannot halt market in emergency |
-| NC-13 | clawpump | **LOW** | `transfer_molt_out` graceful degradation silently loses user funds |
-| NC-14 | moltswap | **LOW** | Reputation bonus double-loads pool (TOCTOU code smell) |
-| NC-15 | lobsterlend | **LOW** | Block-time assumption in interest accrual (`/ 400` ms per slot) |
+| NC-13 | sporepump | **LOW** | `transfer_licn_out` graceful degradation silently loses user funds |
+| NC-14 | lichenswap | **LOW** | Reputation bonus double-loads pool (TOCTOU code smell) |
+| NC-15 | thalllend | **LOW** | Block-time assumption in interest accrual (`/ 400` ms per slot) |
 | NC-16 | bountyboard | **LOW** | Submission count stored as `u8` — silent overflow at 255 |
-| NC-17 | clawpay | **LOW** | Silent failure if `self_addr` or `token_addr` is None |
-| NC-18 | moltbridge | **INFO** | Identity gate defaults to allow when MoltyID addr unset |
+| NC-17 | sporepay | **LOW** | Silent failure if `self_addr` or `token_addr` is None |
+| NC-18 | lichenbridge | **INFO** | Identity gate defaults to allow when LichenID addr unset |
 | NC-19 | shielded_pool | **INFO** | `empty_merkle_root()` recomputes 32 SHA-256 rounds every call |
-| RPC-01 | rpc/lib.rs | **INFO** | moltcoin has no dedicated RPC method |
-| RPC-02 | rpc/lib.rs | **INFO** | ClawPump not accessible via JSON-RPC (REST only) |
-| RPC-03 | rpc/lib.rs | **INFO** | MoltOracle has no `getOraclePrice` / `getOracleAttestation` endpoint |
-| RPC-04 | rpc/lib.rs | **INFO** | LobsterLend has no per-account position endpoint |
-| RPC-05 | rpc/lib.rs | **INFO** | ClawPay has no per-stream query endpoint |
+| RPC-01 | rpc/lib.rs | **INFO** | lichencoin has no dedicated RPC method |
+| RPC-02 | rpc/lib.rs | **INFO** | SporePump not accessible via JSON-RPC (REST only) |
+| RPC-03 | rpc/lib.rs | **INFO** | LichenOracle has no `getOraclePrice` / `getOracleAttestation` endpoint |
+| RPC-04 | rpc/lib.rs | **INFO** | ThallLend has no per-account position endpoint |
+| RPC-05 | rpc/lib.rs | **INFO** | SporePay has no per-stream query endpoint |
 
 ---
 
@@ -51,9 +51,9 @@
 
 ---
 
-### NC-01 · CRITICAL · moltoracle — Staleness threshold 3.6 seconds, not 1 hour
+### NC-01 · CRITICAL · lichenoracle — Staleness threshold 3.6 seconds, not 1 hour
 
-**File:** [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs#L201-L204)
+**File:** [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs#L201-L204)
 
 ```rust
 let now = get_timestamp();       // returns MILLISECONDS
@@ -64,27 +64,27 @@ if now - timestamp > 3600 {      // BUG: 3600 ms = 3.6 seconds
 
 **Root Cause:** `get_timestamp()` (SDK `sdk/src/lib.rs:346`) returns Unix time in **milliseconds**. The intended staleness window of "1 hour" requires the threshold `3_600_000` (ms), not `3600`. As written, any price submitted more than 3.6 seconds ago is immediately rejected as stale, making `get_price()` completely non-functional under normal network latency.
 
-Every consumer of oracle prices (`moltoracle::get_price`, AMMs, prediction markets, bridge collateral checks) will receive return code `2` ("stale") for virtually every query, silently breaking all price-dependent functionality without a revert.
+Every consumer of oracle prices (`lichenoracle::get_price`, AMMs, prediction markets, bridge collateral checks) will receive return code `2` ("stale") for virtually every query, silently breaking all price-dependent functionality without a revert.
 
 **Evidence from codebase — consistent ms usage elsewhere:**
 ```
-contracts/moltyid/src/lib.rs: VOUCH_COOLDOWN_MS = 3_600_000  (1 hour in ms)
-contracts/moltswap/src/lib.rs: deadline > now  (deadlines stored as ms timestamps)
+contracts/lichenid/src/lib.rs: VOUCH_COOLDOWN_MS = 3_600_000  (1 hour in ms)
+contracts/lichenswap/src/lib.rs: deadline > now  (deadlines stored as ms timestamps)
 ```
 
 **Fix:**
 ```rust
-// contracts/moltoracle/src/lib.rs:L203
+// contracts/lichenoracle/src/lib.rs:L203
 if now - timestamp > 3_600_000 {   // 1 hour in milliseconds
 ```
 
-**Impact:** All oracle price consumers receive stale errors. Any system that aborts on stale (e.g., moltdao balance lookup, prediction market resolution) is fully broken; any that falls back silently gives wrong output.
+**Impact:** All oracle price consumers receive stale errors. Any system that aborts on stale (e.g., lichendao balance lookup, prediction market resolution) is fully broken; any that falls back silently gives wrong output.
 
 ---
 
-### NC-02 · CRITICAL · moltoracle — `get_aggregated_price` same staleness unit bug
+### NC-02 · CRITICAL · lichenoracle — `get_aggregated_price` same staleness unit bug
 
-**File:** [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs#L829-L832)
+**File:** [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs#L829-L832)
 
 ```rust
 let now = get_timestamp();
@@ -128,9 +128,9 @@ Every other contract in the codebase uses `reentrancy_enter()` / `reentrancy_exi
 **Fix:**
 ```rust
 pub extern "C" fn shield(args_ptr: *const u8, args_len: u32) -> u32 {
-    if !moltchain_sdk::reentrancy_enter() { return 99; }
+    if !lichen_sdk::reentrancy_enter() { return 99; }
     // ... existing logic ...
-    moltchain_sdk::reentrancy_exit();
+    lichen_sdk::reentrancy_exit();
     0
 }
 ```
@@ -169,17 +169,17 @@ pub extern "C" fn shield(args_ptr: *const u8, args_len: u32) -> u32 {
 
 **File:** [contracts/shielded_pool/src/lib.rs](contracts/shielded_pool/src/lib.rs)
 
-The entire shielded pool WASM ABI module has no pause function and no pause check. Every other contract in the codebase (moltcoin, moltyid, moltbridge, moltdao, moltoracle, moltswap, lobsterlend, bountyboard, clawpay, clawpump, clawvault, prediction_market, compute_market, musd_token) implements `pause()/unpause()` guarded by owner and checked at the top of every mutation.
+The entire shielded pool WASM ABI module has no pause function and no pause check. Every other contract in the codebase (lichencoin, lichenid, lichenbridge, lichendao, lichenoracle, lichenswap, thalllend, bountyboard, sporepay, sporepump, sporevault, prediction_market, compute_market, lusd_token) implements `pause()/unpause()` guarded by owner and checked at the top of every mutation.
 
-In the event of a ZK circuit vulnerability, processor compromise, or discovered exploit, there is no administrative mechanism to halt shielded deposits/withdrawals. Privacy pools hold custodied MOLT; inability to pause is a critical operational security gap.
+In the event of a ZK circuit vulnerability, processor compromise, or discovered exploit, there is no administrative mechanism to halt shielded deposits/withdrawals. Privacy pools hold custodied LICN; inability to pause is a critical operational security gap.
 
 **Fix:** Add `sp_pause`/`sp_unpause` functions (owner-gated, storing `sp_paused = [1]`) and add a pause check at the top of `shield`, `unshield`, and `transfer`.
 
 ---
 
-### NC-06 · HIGH · lobsterlend — Health factor computation overflows u64
+### NC-06 · HIGH · thalllend — Health factor computation overflows u64
 
-**File:** [contracts/lobsterlend/src/lib.rs](contracts/lobsterlend/src/lib.rs#L750)
+**File:** [contracts/thalllend/src/lib.rs](contracts/thalllend/src/lib.rs#L750)
 
 ```rust
 let health_factor = if borrow == 0 {
@@ -190,15 +190,15 @@ let health_factor = if borrow == 0 {
 };
 ```
 
-`LIQUIDATION_THRESHOLD_PERCENT = 85`, so the numerator is `deposit × 8500`. This overflows `u64` when `deposit > u64::MAX / 8500 ≈ 2.168 × 10¹⁵` shells (≈ 2,168,000 MOLT).
+`LIQUIDATION_THRESHOLD_PERCENT = 85`, so the numerator is `deposit × 8500`. This overflows `u64` when `deposit > u64::MAX / 8500 ≈ 2.168 × 10¹⁵` spores (≈ 2,168,000 LICN).
 
-Any user with more than ~2.17 million MOLT deposited will receive a corrupted (wrapped) health factor from `get_account_info`. Front-ends, liquidation bots, and the RPC layer all rely on this value to determine liquidation eligibility. A silently-wrong health factor could:
+Any user with more than ~2.17 million LICN deposited will receive a corrupted (wrapped) health factor from `get_account_info`. Front-ends, liquidation bots, and the RPC layer all rely on this value to determine liquidation eligibility. A silently-wrong health factor could:
 - Report an extremely low health factor on a healthy account → spurious liquidation
 - Report an extremely high health factor on an unhealthy account → missed liquidation
 
 **Fix:**
 ```rust
-// contracts/lobsterlend/src/lib.rs:L750
+// contracts/thalllend/src/lib.rs:L750
 let health_factor = if borrow == 0 {
     u64::MAX
 } else {
@@ -223,7 +223,7 @@ pub struct ShieldedPoolState {
 
 The entire pool state is serialized to a single JSON blob stored under the key `pool_state`. Every `shield()` appends one `CommitmentEntry`; every `unshield()` appends one 32-byte nullifier. There is no pruning, archival, or merkle-path-only storage.
 
-At 1,000 shields, assuming ~200 bytes per entry: ~200 KB single-key state. At 10,000 shields: ~2 MB. WASM memory limits will cause OOM panics well before the pool reaches meaningful scale, effectively creating a permanent DoS through organic usage, or an immediate DoS through a low-cost griefing attack where an attacker shields and immediately unshields 1-shell amounts in a loop.
+At 1,000 shields, assuming ~200 bytes per entry: ~200 KB single-key state. At 10,000 shields: ~2 MB. WASM memory limits will cause OOM panics well before the pool reaches meaningful scale, effectively creating a permanent DoS through organic usage, or an immediate DoS through a low-cost griefing attack where an attacker shields and immediately unshields 1-spore amounts in a loop.
 
 All other contracts store individual entries under separate per-key keys (e.g. `dep:{hex}`, `borrow:{hex}`). Shielded pool is the only one using a monolithic blob.
 
@@ -231,9 +231,9 @@ All other contracts store individual entries under separate per-key keys (e.g. `
 
 ---
 
-### NC-08 · MEDIUM · moltoracle — Legacy `request_randomness` is front-runnable
+### NC-08 · MEDIUM · lichenoracle — Legacy `request_randomness` is front-runnable
 
-**File:** [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs#L530)
+**File:** [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs#L530)
 
 ```rust
 // Labeled "legacy mode" in source
@@ -252,9 +252,9 @@ The contract already has a correct commit-reveal scheme (`commit_randomness` / `
 
 ---
 
-### NC-09 · MEDIUM · moltdao — `PROPOSAL_SIZE` constant incorrect (210 vs actual 212)
+### NC-09 · MEDIUM · lichendao — `PROPOSAL_SIZE` constant incorrect (210 vs actual 212)
 
-**File:** [contracts/moltdao/src/lib.rs](contracts/moltdao/src/lib.rs#L317)
+**File:** [contracts/lichendao/src/lib.rs](contracts/lichendao/src/lib.rs#L317)
 
 ```rust
 const PROPOSAL_SIZE: usize = 210;
@@ -280,19 +280,19 @@ bytes 204-211:  stake_amount       (8)
 ── total ──────────────────────────── 212 bytes
 ```
 
-The vector is 212 bytes when `stake_amount` is appended; the `while proposal.len() < PROPOSAL_SIZE` padding loop at [L500](contracts/moltdao/src/lib.rs#L500) is unreachable (212 > 210, loop never executes). The read-back guard at [L852](contracts/moltdao/src/lib.rs#L852) correctly uses `proposal.len() > 211` to read stake_amount, so the functional behavior is correct — but the constant misleads future developers and causes the minimum-size guard at [L600](contracts/moltdao/src/lib.rs#L600) to accept a truncated 210-byte proposal that is missing `stake_amount` (returns 0, skipping stake refund on execute/cancel).
+The vector is 212 bytes when `stake_amount` is appended; the `while proposal.len() < PROPOSAL_SIZE` padding loop at [L500](contracts/lichendao/src/lib.rs#L500) is unreachable (212 > 210, loop never executes). The read-back guard at [L852](contracts/lichendao/src/lib.rs#L852) correctly uses `proposal.len() > 211` to read stake_amount, so the functional behavior is correct — but the constant misleads future developers and causes the minimum-size guard at [L600](contracts/lichendao/src/lib.rs#L600) to accept a truncated 210-byte proposal that is missing `stake_amount` (returns 0, skipping stake refund on execute/cancel).
 
 **Fix:**
 ```rust
-// contracts/moltdao/src/lib.rs:L317
+// contracts/lichendao/src/lib.rs:L317
 const PROPOSAL_SIZE: usize = 212;
 ```
 
 ---
 
-### NC-10 · MEDIUM · clawvault — No total allocation cap when adding strategies
+### NC-10 · MEDIUM · sporevault — No total allocation cap when adding strategies
 
-**File:** [contracts/clawvault/src/lib.rs](contracts/clawvault/src/lib.rs)
+**File:** [contracts/sporevault/src/lib.rs](contracts/sporevault/src/lib.rs)
 
 `add_strategy()` validates that the new strategy's `allocation_percent` is ≤ 100, but does not check that the sum of all existing strategy allocations plus the new one stays ≤ 100%. An admin can register five strategies each with 100% allocation, producing a total of 500% committed. During `rebalance()`, the vault would attempt to move 5× its total assets — all five protocol calls would fail (or overdraw), leaving funds stuck in mid-rebalance state.
 
@@ -304,11 +304,11 @@ if total_existing + allocation_percent > 100 { return 3; }  // over-allocated
 
 ---
 
-### NC-11 · MEDIUM · clawvault — `harvest()` silently skips yield collection without notification
+### NC-11 · MEDIUM · sporevault — `harvest()` silently skips yield collection without notification
 
-**File:** [contracts/clawvault/src/lib.rs](contracts/clawvault/src/lib.rs)
+**File:** [contracts/sporevault/src/lib.rs](contracts/sporevault/src/lib.rs)
 
-`harvest()` performs cross-contract calls to LobsterLend and MoltSwap addresses loaded from storage keys (`LOBSTERLEND_ADDRESS_KEY`, `MOLTSWAP_ADDRESS_KEY`). If either address is not set (returns `None`), the harvest for that strategy silently skips. The function still returns `1` (success). Depositors have no way to detect that yield has not been collected.
+`harvest()` performs cross-contract calls to ThallLend and LichenSwap addresses loaded from storage keys (`THALLLEND_ADDRESS_KEY`, `LICHENSWAP_ADDRESS_KEY`). If either address is not set (returns `None`), the harvest for that strategy silently skips. The function still returns `1` (success). Depositors have no way to detect that yield has not been collected.
 
 This is additionally concerning because `harvest()` updates the vault's `total_assets` accounting based on what was actually collected — but if addresses are unset on first deployment (common during staged rollout), share prices will not reflect any accrued yield until addresses are configured, creating a discontinuous share price jump when harvest is finally called.
 
@@ -333,35 +333,35 @@ Add `if storage_get(b"cm_paused").is_some_and(|v| v == [1]) { return 97; }` at t
 
 ---
 
-### NC-13 · LOW · clawpump — `transfer_molt_out` silently skips transfers when unconfigured
+### NC-13 · LOW · sporepump — `transfer_licn_out` silently skips transfers when unconfigured
 
-**File:** [contracts/clawpump/src/lib.rs](contracts/clawpump/src/lib.rs#L190)
+**File:** [contracts/sporepump/src/lib.rs](contracts/sporepump/src/lib.rs#L190)
 
 ```rust
-fn transfer_molt_out(to: &[u8; 32], amount: u64) -> bool {
-    let Some(token_addr) = get_molt_token_address() else {
-        log_info("MOLT token not configured, skipping transfer");
+fn transfer_licn_out(to: &[u8; 32], amount: u64) -> bool {
+    let Some(token_addr) = get_licn_token_address() else {
+        log_info("LICN token not configured, skipping transfer");
         return true;   // BUG: reports success with no transfer
     };
     ...
 }
 ```
 
-When the MOLT token address is not configured, `sell()` calls this function, the function returns `true`, the seller's token balance is deducted from the bonding curve state, and no MOLT is sent. The seller loses their position with zero compensation. This was labeled "graceful degradation" but it is a silent fund loss path.
+When the LICN token address is not configured, `sell()` calls this function, the function returns `true`, the seller's token balance is deducted from the bonding curve state, and no LICN is sent. The seller loses their position with zero compensation. This was labeled "graceful degradation" but it is a silent fund loss path.
 
 **Fix:** Return `false` when the token address is not configured:
 ```rust
-let Some(token_addr) = get_molt_token_address() else {
-    log_info("MOLT token not configured");
+let Some(token_addr) = get_licn_token_address() else {
+    log_info("LICN token not configured");
     return false;  // failure — caller will abort
 };
 ```
 
 ---
 
-### NC-14 · LOW · moltswap — Reputation bonus double-loads pool (TOCTOU smell)
+### NC-14 · LOW · lichenswap — Reputation bonus double-loads pool (TOCTOU smell)
 
-**File:** [contracts/moltswap/src/lib.rs](contracts/moltswap/src/lib.rs#L399)
+**File:** [contracts/lichenswap/src/lib.rs](contracts/lichenswap/src/lib.rs#L399)
 
 ```rust
 let out = compute_swap_out(&pool, amount_in, fee_bps);  // uses pool
@@ -379,9 +379,9 @@ let bonus = pool2.reserve_b * REP_BONUS_BPS / 10000;
 
 ---
 
-### NC-15 · LOW · lobsterlend — Block-time hard-coded at 400ms in interest accrual
+### NC-15 · LOW · thalllend — Block-time hard-coded at 400ms in interest accrual
 
-**File:** [contracts/lobsterlend/src/lib.rs](contracts/lobsterlend/src/lib.rs)
+**File:** [contracts/thalllend/src/lib.rs](contracts/thalllend/src/lib.rs)
 
 `accrue_interest()` converts elapsed milliseconds to slots via integer division `/ 400`. This assumes a fixed 400ms block time. During network congestion, chain forks, or validator downtime, the actual ms-per-slot can exceed 400ms, causing interest to accrue more slowly than the model expects. This is a known limitation of slot-based interest models; the risk is low but should be documented.
 
@@ -402,9 +402,9 @@ if submission_count >= 255 { return 8; }  // max submissions reached
 
 ---
 
-### NC-17 · LOW · clawpay — Silent failure when token or self address unset
+### NC-17 · LOW · sporepay — Silent failure when token or self address unset
 
-**File:** [contracts/clawpay/src/lib.rs](contracts/clawpay/src/lib.rs)
+**File:** [contracts/sporepay/src/lib.rs](contracts/sporepay/src/lib.rs)
 
 `withdraw_from_stream()` and `cancel_stream()` call `call_token_transfer(token_addr, self_addr, recipient, amount)`. Both `token_addr` and `self_addr` are loaded via `get_token_address()` / `get_self_address()` which return `None` if storage key absent. If either is `None`, the transfer is skipped and the function may still return success, leaving the recipient's withdrawable balance decremented without receiving tokens.
 
@@ -416,11 +416,11 @@ let self_addr = get_self_address().ok_or(10)?;
 
 ---
 
-### NC-18 · INFO · moltbridge — Identity gate defaults to allow when MoltyID unset
+### NC-18 · INFO · lichenbridge — Identity gate defaults to allow when LichenID unset
 
-**File:** [contracts/moltbridge/src/lib.rs](contracts/moltbridge/src/lib.rs#L495)
+**File:** [contracts/lichenbridge/src/lib.rs](contracts/lichenbridge/src/lib.rs#L495)
 
-`check_identity_gate()` is called in `lock_tokens()`. If the MoltyID contract address is not configured (`MOLTCOIN_ADDRESS_KEY` absent), the gate returns `Ok(())` — allowing all callers through. This is intentional for phased deployment but should be documented, and a flag to enable strict mode should be available.
+`check_identity_gate()` is called in `lock_tokens()`. If the LichenID contract address is not configured (`LICHENCOIN_ADDRESS_KEY` absent), the gate returns `Ok(())` — allowing all callers through. This is intentional for phased deployment but should be documented, and a flag to enable strict mode should be available.
 
 ---
 
@@ -438,59 +438,59 @@ let self_addr = get_self_address().ok_or(10)?;
 
 | Contract | JSON-RPC Methods |
 |---|---|
-| MoltyID | getMoltyIdIdentity, getMoltyIdReputation, getMoltyIdSkills, getMoltyIdVouches, getMoltyIdAchievements, getMoltyIdProfile, resolveMoltName, reverseMoltName, batchReverseMoltNames, searchMoltNames, getMoltyIdAgentDirectory, getMoltyIdStats, getNameAuction |
-| MoltSwap | getMoltswapStats |
-| LobsterLend | getLobsterLendStats |
-| ClawPay | getClawPayStats |
+| LichenID | getLichenIdIdentity, getLichenIdReputation, getLichenIdSkills, getLichenIdVouches, getLichenIdAchievements, getLichenIdProfile, resolveLichenName, reverseLichenName, batchReverseLichenNames, searchLichenNames, getLichenIdAgentDirectory, getLichenIdStats, getNameAuction |
+| LichenSwap | getLichenSwapStats |
+| ThallLend | getThallLendStats |
+| SporePay | getSporePayStats |
 | BountyBoard | getBountyBoardStats |
 | ComputeMarket | getComputeMarketStats |
-| mUSD | getMusdStats |
-| ClawVault | getClawVaultStats |
-| MoltBridge | getMoltBridgeStats, createBridgeDeposit, getBridgeDeposit, getBridgeDepositsByRecipient |
-| MoltDAO | getMoltDaoStats |
-| MoltOracle | getMoltOracleStats |
+| lUSD | getMusdStats |
+| SporeVault | getSporeVaultStats |
+| LichenBridge | getLichenBridgeStats, createBridgeDeposit, getBridgeDeposit, getBridgeDepositsByRecipient |
+| LichenDAO | getLichenDaoStats |
+| LichenOracle | getLichenOracleStats |
 | PredictionMarket | getPredictionMarketStats, getPredictionMarkets, getPredictionMarket, getPredictionPositions, getPredictionTraderStats, getPredictionLeaderboard, getPredictionTrending, getPredictionMarketAnalytics |
 | ShieldedPool | getShieldedPoolState, getShieldedMerkleRoot, getShieldedMerklePath, isNullifierSpent, getShieldedCommitments |
-| ClawPump | REST: `/api/v1/launchpad/` (separate router) |
+| SporePump | REST: `/api/v1/launchpad/` (separate router) |
 
 ---
 
-### RPC-01 · INFO — moltcoin has no dedicated RPC method
+### RPC-01 · INFO — lichencoin has no dedicated RPC method
 
-MoltCoin balances are only accessible via a generic `getTokenBalance` call. Add:
-- `getMoltCoinBalance(address)` — returns balance in shells + formatted MOLT
-- `getMoltCoinInfo()` — returns total supply, max supply, owner
-
----
-
-### RPC-02 · INFO — ClawPump accessible only via REST, not JSON-RPC
-
-ClawPump has a dedicated REST router at `/api/v1/launchpad/` but no JSON-RPC method. SDK clients using the standard JSON-RPC transport cannot query it. Add:
-- `getClawPumpTokens(offset, limit)` — token list with bonding curve state
-- `getClawPumpToken(token_id)` — individual token stats
-- `getClawPumpGraduationInfo(token_id)` — graduation progress
+LichenCoin balances are only accessible via a generic `getTokenBalance` call. Add:
+- `getLichenCoinBalance(address)` — returns balance in spores + formatted LICN
+- `getLichenCoinInfo()` — returns total supply, max supply, owner
 
 ---
 
-### RPC-03 · INFO — MoltOracle has no price or attestation query endpoint
+### RPC-02 · INFO — SporePump accessible only via REST, not JSON-RPC
 
-`getMoltOracleStats` returns aggregate usage counters only. Add:
+SporePump has a dedicated REST router at `/api/v1/launchpad/` but no JSON-RPC method. SDK clients using the standard JSON-RPC transport cannot query it. Add:
+- `getSporePumpTokens(offset, limit)` — token list with bonding curve state
+- `getSporePumpToken(token_id)` — individual token stats
+- `getSporePumpGraduationInfo(token_id)` — graduation progress
+
+---
+
+### RPC-03 · INFO — LichenOracle has no price or attestation query endpoint
+
+`getLichenOracleStats` returns aggregate usage counters only. Add:
 - `getOraclePrice(asset)` — current price, timestamp, feeder
 - `getOracleAttestation(hash)` — attestation details and verifier list
 - `getOracleRandomness(request_id)` — VRF result
 
 ---
 
-### RPC-04 · INFO — LobsterLend has no per-account position endpoint
+### RPC-04 · INFO — ThallLend has no per-account position endpoint
 
-`getLobsterLendStats` returns protocol-wide totals only. Add:
-- `getLobsterLendPosition(address)` — deposit, borrow, health factor, interest owed
+`getThallLendStats` returns protocol-wide totals only. Add:
+- `getThallLendPosition(address)` — deposit, borrow, health factor, interest owed
 
 ---
 
-### RPC-05 · INFO — ClawPay has no per-stream query endpoint
+### RPC-05 · INFO — SporePay has no per-stream query endpoint
 
-`getClawPayStats` returns protocol-wide totals only. Add:
+`getSporePayStats` returns protocol-wide totals only. Add:
 - `getStream(stream_id)` — stream details, withdrawable amount, cliff status
 - `getStreamsByRecipient(address)` — all streams for a given recipient
 
@@ -500,21 +500,21 @@ ClawPump has a dedicated REST router at `/api/v1/launchpad/` but no JSON-RPC met
 
 | Contract | A: Complete | B: Security | C: Token Math | D: State | E: RPC | F: Gaps |
 |---|---|---|---|---|---|---|
-| **moltcoin** | ✅ | ✅ | ✅ | ✅ | ⚠️ No dedicated RPC | — |
-| **moltyid** | ✅ | ✅ | ✅ | ✅ | ✅ Full suite | — |
-| **moltbridge** | ✅ | ✅ | ✅ | ✅ | ✅ | NC-18 |
-| **moltdao** | ✅ | ✅ | ✅ | ⚠️ NC-09 | ✅ | — |
-| **moltoracle** | ✅ | ⚠️ NC-08 | — | — | ⚠️ RPC-03 | NC-01 NC-02 |
-| **moltswap** | ✅ | ⚠️ NC-14 | ✅ | ✅ | ✅ | — |
+| **lichencoin** | ✅ | ✅ | ✅ | ✅ | ⚠️ No dedicated RPC | — |
+| **lichenid** | ✅ | ✅ | ✅ | ✅ | ✅ Full suite | — |
+| **lichenbridge** | ✅ | ✅ | ✅ | ✅ | ✅ | NC-18 |
+| **lichendao** | ✅ | ✅ | ✅ | ⚠️ NC-09 | ✅ | — |
+| **lichenoracle** | ✅ | ⚠️ NC-08 | — | — | ⚠️ RPC-03 | NC-01 NC-02 |
+| **lichenswap** | ✅ | ⚠️ NC-14 | ✅ | ✅ | ✅ | — |
 | **bountyboard** | ✅ | ⚠️ NC-16 | ✅ | ✅ | ✅ | — |
-| **clawpay** | ✅ | ⚠️ NC-17 | ✅ | ✅ | ⚠️ RPC-05 | — |
-| **clawpump** | ✅ | ⚠️ NC-13 | ✅ | ✅ | ⚠️ RPC-02 | — |
-| **clawvault** | ⚠️ NC-11 | ⚠️ NC-10 | ✅ | ✅ | ✅ | NC-10 NC-11 |
-| **lobsterlend** | ✅ | 🔴 NC-06 | ⚠️ NC-06 | ✅ | ⚠️ RPC-04 | NC-15 |
+| **sporepay** | ✅ | ⚠️ NC-17 | ✅ | ✅ | ⚠️ RPC-05 | — |
+| **sporepump** | ✅ | ⚠️ NC-13 | ✅ | ✅ | ⚠️ RPC-02 | — |
+| **sporevault** | ⚠️ NC-11 | ⚠️ NC-10 | ✅ | ✅ | ✅ | NC-10 NC-11 |
+| **thalllend** | ✅ | 🔴 NC-06 | ⚠️ NC-06 | ✅ | ⚠️ RPC-04 | NC-15 |
 | **prediction_market** | ✅ | ✅ | ✅ | ✅ | ✅ Full suite | — |
 | **shielded_pool** | ⚠️ NC-05 | 🔴 NC-03 NC-04 | N/A | 🔴 NC-07 | ✅ | NC-03–07 NC-19 |
 | **compute_market** | ⚠️ NC-12 | ⚠️ NC-12 | ✅ | ✅ | ✅ | NC-12 |
-| **musd_token** | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| **lusd_token** | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 
 ---
 
@@ -522,29 +522,29 @@ ClawPump has a dedicated REST router at `/api/v1/launchpad/` but no JSON-RPC met
 
 ### Must Fix Before Mainnet
 
-1. **NC-01 + NC-02** (`moltoracle`) — One-line fix each. Oracle is broken by default. All price-dependent contracts fail.
+1. **NC-01 + NC-02** (`lichenoracle`) — One-line fix each. Oracle is broken by default. All price-dependent contracts fail.
 2. **NC-03** (`shielded_pool`) — Add reentrancy guards. ~6 lines per function.
 3. **NC-04** (`shielded_pool`) — Add caller == processor check. ~4 lines per function.
 4. **NC-05** (`shielded_pool`) — Add pause mechanism. ~20 lines total.
-5. **NC-06** (`lobsterlend`) — Cast through u128 in health factor. One-line fix.
+5. **NC-06** (`thalllend`) — Cast through u128 in health factor. One-line fix.
 
 ### Fix Before Production Load
 
 6. **NC-07** (`shielded_pool`) — Requires architectural change to per-key storage. High effort but necessary for any meaningful usage volume.
-7. **NC-10** (`clawvault`) — Add allocation sum check. ~8 lines.
+7. **NC-10** (`sporevault`) — Add allocation sum check. ~8 lines.
 8. **NC-12** (`compute_market`) — Add pause infrastructure. ~30 lines.
-9. **NC-09** (`moltdao`) — Correct constant. One-line fix; validate no truncated proposals exist.
-10. **NC-13** (`clawpump`) — Change `return true` to `return false`. One-line fix.
+9. **NC-09** (`lichendao`) — Correct constant. One-line fix; validate no truncated proposals exist.
+10. **NC-13** (`sporepump`) — Change `return true` to `return false`. One-line fix.
 
 ### Fix When Convenient
 
-11. **NC-08** (`moltoracle`) — Deprecate/remove legacy randomness function.
-12. **NC-11** (`clawvault`) — Return error code on partial harvest.
-13. **NC-14** (`moltswap`) — Code cleanup.
-14. **NC-15** (`lobsterlend`) — Use slot-based accrual.
+11. **NC-08** (`lichenoracle`) — Deprecate/remove legacy randomness function.
+12. **NC-11** (`sporevault`) — Return error code on partial harvest.
+13. **NC-14** (`lichenswap`) — Code cleanup.
+14. **NC-15** (`thalllend`) — Use slot-based accrual.
 15. **NC-16** (`bountyboard`) — Add MAX_SUBMISSIONS guard.
-16. **NC-17** (`clawpay`) — Return error on unset addresses.
-17. **NC-18** (`moltbridge`) — Document or add strict-mode flag.
+16. **NC-17** (`sporepay`) — Return error on unset addresses.
+17. **NC-18** (`lichenbridge`) — Document or add strict-mode flag.
 18. **NC-19** (`shielded_pool`) — Precompute constant.
 
 ---

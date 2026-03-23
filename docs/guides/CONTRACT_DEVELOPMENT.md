@@ -1,6 +1,6 @@
-# MoltChain Contract Development Guide
+# Lichen Contract Development Guide
 
-> Complete guide to writing, testing, deploying, and interacting with WASM smart contracts on MoltChain.
+> Complete guide to writing, testing, deploying, and interacting with WASM smart contracts on Lichen.
 
 ## Table of Contents
 
@@ -20,16 +20,16 @@
 
 ## 1. Overview <a name="overview"></a>
 
-MoltChain smart contracts are WASM modules compiled from Rust (`wasm32-unknown-unknown` target). They run in a sandboxed Wasmer VM with access to host-provided functions for storage, logging, events, cross-contract calls, and more.
+Lichen smart contracts are WASM modules compiled from Rust (`wasm32-unknown-unknown` target). They run in a sandboxed Wasmer VM with access to host-provided functions for storage, logging, events, cross-contract calls, and more.
 
 **Key facts:**
 - Language: Rust (compiled to WASM)
 - Target: `wasm32-unknown-unknown`
 - Environment: `#![no_std]` (no standard library)
-- SDK: `moltchain-contract-sdk` (path dependency)
+- SDK: `lichen-contract-sdk` (path dependency)
 - Dispatch: Named WASM exports (`#[no_mangle] pub extern "C" fn`)
 - Return convention: `u32` return = 1 for success, 0 for failure. `u64` return for numeric values.
-- Deploy fee: 25 MOLT + 0.001 MOLT base fee
+- Deploy fee: 25 LICN + 0.001 LICN base fee
 - Max size: 512 KB WASM binary
 - Signing: Ed25519
 
@@ -37,26 +37,26 @@ MoltChain smart contracts are WASM modules compiled from Rust (`wasm32-unknown-u
 
 ## 2. Deploy vs Token Create <a name="deploy-vs-token-create"></a>
 
-MoltChain offers two paths to create tokens/contracts:
+Lichen offers two paths to create tokens/contracts:
 
-### `molt deploy` — Custom WASM Contract
+### `lichen deploy` — Custom WASM Contract
 Use when you need **custom logic** beyond a standard token.
 
 ```bash
-molt deploy my_contract.wasm --keypair my_key.json
+lichen deploy my_contract.wasm --keypair my_key.json
 ```
 
 - Deploys your compiled WASM code on-chain
 - You write and compile the Rust code yourself
 - Full access to all SDK features (storage, events, cross-calls, etc.)
-- 25 MOLT deploy fee
+- 25 LICN deploy fee
 - Address derived from deployer pubkey + code hash
 
-### `molt token create` — Native Fungible Token (No Code)
+### `licn token create` — Native Fungible Token (No Code)
 Use when you just want a **standard MT-20 fungible token** without writing any code.
 
 ```bash
-molt token create "My Token" MYTOK --supply 1000000 --decimals 9
+licn token create "My Token" MYTOK --supply 1000000 --decimals 9
 ```
 
 - Creates a standard fungible token via the system program (no WASM involved)
@@ -69,14 +69,14 @@ molt token create "My Token" MYTOK --supply 1000000 --decimals 9
 
 ```
 Do you need custom logic?
-├── YES → molt deploy (write WASM contract)
+├── YES → lichen deploy (write WASM contract)
 │   ├── Custom token with fees/burns/locks? → Write contract using Token module
 │   ├── NFT collection? → Write contract using NFT module
 │   ├── DeFi protocol? → Write contract with CrossCall + Token
 │   ├── Game/DAO/Oracle? → Write custom contract
 │   └── Any non-standard behavior → Write custom contract
 │
-└── NO → molt token create (native token, no code)
+└── NO → licn token create (native token, no code)
     └── Just need a simple fungible token with standard transfer/mint/burn
 ```
 
@@ -90,8 +90,8 @@ Do you need custom logic?
 # Install Rust with WASM target
 rustup target add wasm32-unknown-unknown
 
-# Install MoltChain CLI
-cargo install --path cli/       # from MoltChain repo
+# Install Lichen CLI
+cargo install --path cli/       # from Lichen repo
 # or download the binary from releases
 ```
 
@@ -116,7 +116,7 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-moltchain-sdk = { package = "moltchain-contract-sdk", path = "../path/to/moltchain/sdk" }
+lichen-sdk = { package = "lichen-contract-sdk", path = "../path/to/lichen/sdk" }
 
 [profile.release]
 opt-level = "z"
@@ -132,7 +132,7 @@ panic = "abort"
 
 ## 4. Contract SDK API Reference <a name="sdk-api-reference"></a>
 
-The contract SDK (`moltchain-contract-sdk`) provides everything contracts need to interact with the MoltChain runtime.
+The contract SDK (`lichen-contract-sdk`) provides everything contracts need to interact with the Lichen runtime.
 
 ### Types
 
@@ -149,7 +149,7 @@ The contract SDK (`moltchain-contract-sdk`) provides everything contracts need t
 | `get_caller()` | `fn get_caller() -> Address` | Returns the address that invoked this contract |
 | `get_contract_address()` | `fn get_contract_address() -> Address` | Returns this contract's own address |
 | `get_timestamp()` | `fn get_timestamp() -> u64` | Current block timestamp (seconds since epoch) |
-| `get_value()` | `fn get_value() -> u64` | MOLT value (shells) sent with this call |
+| `get_value()` | `fn get_value() -> u64` | LICN value (spores) sent with this call |
 | `get_slot()` | `fn get_slot() -> u64` | Current block slot number |
 
 ### Storage
@@ -188,7 +188,7 @@ Key-value storage persisted across calls. Keys and values are `&[u8]`.
 Build fungible tokens with the `Token` struct:
 
 ```rust
-use moltchain_sdk::Token;
+use lichen_sdk::Token;
 
 static mut MY_TOKEN: Token = Token::new("MyToken", "MTK", 9, "mtk");
 ```
@@ -214,7 +214,7 @@ static mut MY_TOKEN: Token = Token::new("MyToken", "MTK", 9, "mtk");
 ### NFT Module (MT-721)
 
 ```rust
-use moltchain_sdk::NFT;
+use lichen_sdk::NFT;
 
 static mut MY_NFT: NFT = NFT::new("MyNFTs", "MNFT");
 ```
@@ -233,13 +233,13 @@ static mut MY_NFT: NFT = NFT::new("MyNFTs", "MNFT");
 ### Cross-Contract Calls
 
 ```rust
-use moltchain_sdk::{CrossCall, call_contract, call_token_transfer, call_token_balance};
+use lichen_sdk::{CrossCall, call_contract, call_token_transfer, call_token_balance};
 ```
 
 | Function | Signature | Description |
 |----------|-----------|-------------|
 | `CrossCall::new(target, function, args)` | Builder for cross-calls | |
-| `call.with_value(amount)` | Attach MOLT to the call | |
+| `call.with_value(amount)` | Attach LICN to the call | |
 | `call_contract(call)` | `fn(CrossCall) -> CallResult<Vec<u8>>` | Execute cross-call |
 | `call_token_transfer(token, from, to, amount)` | Shortcut for token transfers | |
 | `call_token_balance(token, account)` | Shortcut for balance queries | |
@@ -249,7 +249,7 @@ use moltchain_sdk::{CrossCall, call_contract, call_token_transfer, call_token_ba
 ### DEX Module (AMM Pool)
 
 ```rust
-use moltchain_sdk::Pool;
+use lichen_sdk::Pool;
 
 static mut MY_POOL: Pool = Pool::new(
     Address::new([0u8; 32]),  // token_a
@@ -285,7 +285,7 @@ pub extern "C" fn function_name(/* params */) -> u32 {
 
 ### Parameter Types
 
-MoltChain's WASM VM passes parameters as follows:
+Lichen's WASM VM passes parameters as follows:
 
 | Rust Type | WASM Type | Usage |
 |-----------|-----------|-------|
@@ -329,7 +329,7 @@ For functions that take complex or variable-length arguments:
 ```rust
 #[no_mangle]
 pub extern "C" fn complex_action() -> u32 {
-    let args = moltchain_sdk::contract::args();
+    let args = lichen_sdk::contract::args();
     // Parse args as JSON, bincode, or custom format
     // ...
     1
@@ -342,7 +342,7 @@ pub extern "C" fn complex_action() -> u32 {
 #[no_mangle]
 pub extern "C" fn get_stats() -> u32 {
     let data = b"some result bytes";
-    moltchain_sdk::contract::set_return(data);
+    lichen_sdk::contract::set_return(data);
     1
 }
 ```
@@ -360,7 +360,7 @@ A minimal contract that stores and increments a counter.
 #![cfg_attr(target_arch = "wasm32", no_main)]
 
 extern crate alloc;
-use moltchain_sdk::{
+use lichen_sdk::{
     storage_get, storage_set, log_info, get_caller, set_return_data,
     u64_to_bytes, bytes_to_u64, Address,
 };
@@ -431,7 +431,7 @@ pub extern "C" fn reset() -> u32 {
 #![cfg_attr(target_arch = "wasm32", no_main)]
 
 extern crate alloc;
-use moltchain_sdk::{
+use lichen_sdk::{
     Token, Address, log_info, get_caller, set_return_data,
     u64_to_bytes, bytes_to_u64, storage_get, storage_set,
 };
@@ -511,7 +511,7 @@ The SDK includes a `test_mock` module that provides thread-local mock implementa
 #[cfg(test)]
 mod tests {
     use super::*;
-    use moltchain_sdk::test_mock;
+    use lichen_sdk::test_mock;
 
     #[test]
     fn test_initialize_and_increment() {
@@ -566,7 +566,7 @@ mod tests {
 | `test_mock::set_contract_address(addr)` | Set contract's own address |
 | `test_mock::set_args(data)` | Set call arguments |
 | `test_mock::set_timestamp(ts)` | Set block timestamp |
-| `test_mock::set_value(val)` | Set MOLT value sent |
+| `test_mock::set_value(val)` | Set LICN value sent |
 | `test_mock::set_slot(s)` | Set current slot |
 | `test_mock::get_return_data()` | Read return data set by contract |
 | `test_mock::get_events()` | Read emitted events |
@@ -612,11 +612,11 @@ wasm-opt -Oz -o optimized.wasm target/wasm32-unknown-unknown/release/my_contract
 ### Deploy
 
 ```bash
-# Ensure you have enough MOLT (25.001 MOLT minimum)
-molt balance
+# Ensure you have enough LICN (25.001 LICN minimum)
+lichen balance
 
 # Deploy the contract
-molt deploy target/wasm32-unknown-unknown/release/my_contract.wasm --keypair my_key.json
+lichen deploy target/wasm32-unknown-unknown/release/my_contract.wasm --keypair my_key.json
 ```
 
 Output:
@@ -625,7 +625,7 @@ Output:
 📦 Size: 42 KB
 📍 Contract address: 7Xk9...abc
 👤 Deployer: 5Yz2...def
-💰 Deploy fee: 25.001 MOLT (25 MOLT deploy + 0.001 MOLT base fee)
+💰 Deploy fee: 25.001 LICN (25 LICN deploy + 0.001 LICN base fee)
 
 ✅ Contract deployed!
 📝 Signature: 3abc...789
@@ -636,15 +636,15 @@ Output:
 
 | Component | Amount |
 |-----------|--------|
-| Base fee | 0.001 MOLT |
-| Deploy premium | 25 MOLT |
-| **Total** | **25.001 MOLT** |
+| Base fee | 0.001 LICN |
+| Deploy premium | 25 LICN |
+| **Total** | **25.001 LICN** |
 
-If the deployment fails (e.g., invalid WASM, contract already exists), the 25 MOLT deploy premium is **refunded**. Only the 0.001 MOLT base fee is kept.
+If the deployment fails (e.g., invalid WASM, contract already exists), the 25 LICN deploy premium is **refunded**. Only the 0.001 LICN base fee is kept.
 
 ### Pre-flight Checks (CLI)
 
-The `molt deploy` CLI validates before sending:
+The `lichen deploy` CLI validates before sending:
 - WASM magic bytes (`\0asm`)
 - File size ≤ 512 KB
 - File is not empty
@@ -657,24 +657,24 @@ The `molt deploy` CLI validates before sending:
 
 ```bash
 # Call a function
-molt call <contract_address> <function_name> [args...]
+lichen call <contract_address> <function_name> [args...]
 
 # Example: increment counter
-molt call 7Xk9...abc increment
+lichen call 7Xk9...abc increment
 
 # Example: transfer tokens (addresses are base58)
-molt call 7Xk9...abc transfer '["5Yz2...", "8Ab3...", 1000000000]'
+lichen call 7Xk9...abc transfer '["5Yz2...", "8Ab3...", 1000000000]'
 
 # Example: read-only query
-molt call 7Xk9...abc get_count
+lichen call 7Xk9...abc get_count
 ```
 
 ### JavaScript SDK
 
 ```javascript
-import { MoltChainClient } from '@moltchain/sdk';
+import { LichenClient } from '@lichen/sdk';
 
-const client = new MoltChainClient('https://rpc.moltchain.network');
+const client = new LichenClient('https://rpc.lichen.network');
 
 // Call a contract function
 const result = await client.callContract(
@@ -696,7 +696,7 @@ const count = await client.callContract(
 
 ```bash
 # Deploy via RPC
-curl -X POST https://rpc.moltchain.network -H 'Content-Type: application/json' -d '{
+curl -X POST https://rpc.lichen.network -H 'Content-Type: application/json' -d '{
     "jsonrpc": "2.0",
     "id": 1,
     "method": "sendTransaction",
@@ -704,7 +704,7 @@ curl -X POST https://rpc.moltchain.network -H 'Content-Type: application/json' -
 }'
 
 # Read contract state
-curl -X POST https://rpc.moltchain.network -H 'Content-Type: application/json' -d '{
+curl -X POST https://rpc.lichen.network -H 'Content-Type: application/json' -d '{
     "jsonrpc": "2.0",
     "id": 1,
     "method": "callContract",
@@ -808,7 +808,7 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-moltchain-sdk = { package = "moltchain-contract-sdk", path = "../../sdk" }
+lichen-sdk = { package = "lichen-contract-sdk", path = "../../sdk" }
 
 [profile.release]
 opt-level = "z"
@@ -825,7 +825,7 @@ panic = "abort"
 
 extern crate alloc;
 use alloc::vec::Vec;
-use moltchain_sdk::{
+use lichen_sdk::{
     storage_get, storage_set, log_info, get_caller, set_return_data,
     u64_to_bytes, bytes_to_u64, Address, emit_event,
 };
@@ -890,7 +890,7 @@ pub extern "C" fn initialize(owner_ptr: *const u8) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use moltchain_sdk::test_mock;
+    use lichen_sdk::test_mock;
 
     #[test]
     fn test_initialize() {
@@ -912,8 +912,8 @@ cargo build --target wasm32-unknown-unknown --release
 cargo test
 
 # Deploy
-molt deploy target/wasm32-unknown-unknown/release/my_contract.wasm
+lichen deploy target/wasm32-unknown-unknown/release/my_contract.wasm
 
 # Call a function
-molt call <address> <function> [args]
+lichen call <address> <function> [args]
 ```

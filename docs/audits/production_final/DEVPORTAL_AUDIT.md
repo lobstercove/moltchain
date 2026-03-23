@@ -1,4 +1,4 @@
-# MoltChain Developer Portal — Deep Production Audit
+# Lichen Developer Portal — Deep Production Audit
 
 **Audit Date:** 2026-02-25  
 **Auditor:** GitHub Copilot (Claude Sonnet 4.6)  
@@ -24,7 +24,7 @@
 
 ## 1. Executive Summary
 
-The MoltChain Developer Portal is a well-structured static HTML documentation site (16 content pages, ~15,000 lines) that covers the full chain API, SDKs, smart contracts, validator setup, ZK privacy, and the MoltyID identity system. The **content quality is high** — the technical depth of RPC references, contract function tables, WASM ABI conventions, and ZK circuit layouts is excellent.
+The Lichen Developer Portal is a well-structured static HTML documentation site (16 content pages, ~15,000 lines) that covers the full chain API, SDKs, smart contracts, validator setup, ZK privacy, and the LichenID identity system. The **content quality is high** — the technical depth of RPC references, contract function tables, WASM ABI conventions, and ZK circuit layouts is excellent.
 
 However, the portal has a cluster of **critical infrastructure bugs** that silently fail for every user:
 
@@ -35,7 +35,7 @@ However, the portal has a cluster of **critical infrastructure bugs** that silen
 5. **25+ server RPC methods have no full documentation cards** — they appear only in a bullet-list "Live Additions" section.
 6. **Three pages are orphaned** from the main nav (`architecture.html`, `validator.html`, `changelog.html`).
 7. **`contract-reference.html` is isolated from the shared CSS system** — it defines its own inline variables and skips both shared CSS files, resulting in a completely different visual theme.
-8. **The search index uses an incorrect `molt_` method name prefix** that doesn't match actual RPC method names, causing zero useful results for any user searching for real method names.
+8. **The search index uses an incorrect `licn_` method name prefix** that doesn't match actual RPC method names, causing zero useful results for any user searching for real method names.
 
 The portal would benefit from a CSS audit pass, a single-source ENDPOINTS map, and a search index rebuild.
 
@@ -48,12 +48,12 @@ The portal would benefit from a CSS audit pass, a single-source ENDPOINTS map, a
 | File | Lines | Status | Notes |
 |------|-------|--------|-------|
 | `shared-base-styles.css` | 1,323 | ✅ Read | Full component CSS; defines `--primary`, `--shadow`, etc. |
-| `shared-theme.css` | 357 | ✅ Read | Design tokens; defines `--orange-primary`, `--bg-hover`, etc. |
+| `shared-theme.css` | 357 | ✅ Read | Design tokens; defines `--teal-primary`, `--bg-hover`, etc. |
 | `css/developers.css` | 1,187 | ✅ Read | Page-specific overrides; loaded on all pages |
 | `shared-config.js` | 42 | ✅ Read | URL resolver; only loaded on `index.html` |
 | `js/developers.js` | 681 | ✅ Read | All portal JS: search, sidebar, scrollspy, network selector |
 | `shared/utils.js` | 507 | ✅ Read | Protocol constants, RPC client, formatters |
-| `shared/wallet-connect.js` | 343 | ✅ Read | `MoltWallet` class |
+| `shared/wallet-connect.js` | 343 | ✅ Read | `LichenWallet` class |
 | `index.html` | 443 | ✅ Read | Hub page with live stats |
 | `getting-started.html` | 481 | ✅ Read | Onboarding guide |
 | `playground.html` | 294 | ✅ Read | Guide only — NOT an interactive playground |
@@ -65,7 +65,7 @@ The portal would benefit from a CSS audit pass, a single-source ENDPOINTS map, a
 | `architecture.html` | 674 | ✅ Read | Technical architecture (orphaned from nav) |
 | `contracts.html` | 873 | ✅ Read | Contract development guide |
 | `contract-reference.html` | 1,003 | ✅ Read | 27 contract reference (different CSS theme) |
-| `moltyid.html` | 736 | ✅ Read | MoltyID guide |
+| `lichenid.html` | 736 | ✅ Read | LichenID guide |
 | `validator.html` | 1,164 | ✅ Read | Validator setup guide (orphaned from nav) |
 | `zk-privacy.html` | 545 | ✅ Read | ZK shielded pool reference |
 | `cli-reference.html` | 2,373 | ✅ Read | Full CLI reference |
@@ -117,35 +117,35 @@ These methods exist in the `rpc/src/lib.rs` dispatch table (lines 1357–1531) b
 | `getDexRouterStats` | ~1478 | Bullet only |
 | `getDexAnalyticsStats` | ~1480 | Bullet only |
 | `getDexGovernanceStats` | ~1482 | Bullet only |
-| `getMoltswapStats` | ~1484 | Bullet only |
-| `getLobsterLendStats` | ~1486 | Bullet only |
-| `getClawPayStats` | ~1488 | Bullet only |
+| `getLichenSwapStats` | ~1484 | Bullet only |
+| `getThallLendStats` | ~1486 | Bullet only |
+| `getSporePayStats` | ~1488 | Bullet only |
 | `getBountyBoardStats` | ~1490 | Bullet only |
 | `getComputeMarketStats` | ~1492 | Bullet only |
-| `getReefStorageStats` | ~1494 | Bullet only |
-| `getMoltMarketStats` | ~1496 | Bullet only |
-| `getMoltAuctionStats` | ~1498 | Bullet only |
-| `getMoltPunksStats` | ~1500 | Bullet only |
+| `getMossStorageStats` | ~1494 | Bullet only |
+| `getLichenMarketStats` | ~1496 | Bullet only |
+| `getLichenAuctionStats` | ~1498 | Bullet only |
+| `getLichenPunksStats` | ~1500 | Bullet only |
 | `getMusdStats` | ~1508 | Not documented |
 | `getWethStats` | ~1509 | Not documented |
 | `getWsolStats` | ~1510 | Not documented |
-| `getClawVaultStats` | ~1511 | Not documented |
-| `getMoltBridgeStats` | ~1512 | Not documented |
+| `getSporeVaultStats` | ~1511 | Not documented |
+| `getLichenBridgeStats` | ~1512 | Not documented |
 | `createBridgeDeposit` | ~1514 | Not documented |
 | `getBridgeDeposit` | ~1516 | Not documented |
 | `getBridgeDepositsByRecipient` | ~1518 | Not documented |
-| `getMoltDaoStats` | ~1520 | Not documented |
-| `getMoltOracleStats` | ~1522 | Not documented |
+| `getLichenDaoStats` | ~1520 | Not documented |
+| `getLichenOracleStats` | ~1522 | Not documented |
 | `getShieldedPoolState` | ~1524 | Documented in `zk-privacy.html` only |
 | `getShieldedMerkleRoot` | ~1526 | Documented in `zk-privacy.html` only |
 | `getShieldedMerklePath` | ~1527 | Documented in `zk-privacy.html` only |
 | `isNullifierSpent` | ~1528 | Documented in `zk-privacy.html` only |
 | `getShieldedCommitments` | ~1530 | Documented in `zk-privacy.html` only |
-| `stakeToReefStake` | ~1383 | Not documented |
-| `unstakeFromReefStake` | ~1385 | Not documented |
+| `stakeToMossStake` | ~1383 | Not documented |
+| `unstakeFromMossStake` | ~1385 | Not documented |
 | `claimUnstakedTokens` | ~1387 | Not documented |
 | `getStakingPosition` | ~1389 | Not documented |
-| `getReefStakePoolInfo` | ~1391 | Not documented |
+| `getMossStakePoolInfo` | ~1391 | Not documented |
 | `getUnstakingQueue` | ~1393 | Not documented |
 | `setContractAbi` | ~1410 | Not documented |
 | `upgradeContract` | ~1412 | Not documented |
@@ -155,7 +155,7 @@ These methods exist in the `rpc/src/lib.rs` dispatch table (lines 1357–1531) b
 | `getAllSymbolRegistry` | ~1448 | Not documented |
 | `getEvmRegistration` | ~1442 | Not documented |
 | `lookupEvmAddress` | ~1443 | Not documented |
-| `batchReverseMoltNames` | ~1440 | Not documented |
+| `batchReverseLichenNames` | ~1440 | Not documented |
 
 **Total**: ~66 server methods have no full method card in `rpc-reference.html`.
 
@@ -256,7 +256,7 @@ These subscriptions appear in the `ws-reference.html` sidebar but have no corres
 | Constructor port in example | ✅ | `http://localhost:8899` ✅ |
 | Unit conversion | ✅ | `balance / 1e9` correct |
 | WS methods documented | ✅ | All match ws.rs dispatch |
-| Missing RPC wrapper methods | 🟡 Medium | SDK docs don't cover `getMoltyIdIdentity`, `getMoltyIdProfile`, `resolveMoltName`, `getShieldedPoolState`, bridge methods, all stats methods — these are accessible via the generic `rpcCall()` method but no named wrappers documented |
+| Missing RPC wrapper methods | 🟡 Medium | SDK docs don't cover `getLichenIdIdentity`, `getLichenIdProfile`, `resolveLichenName`, `getShieldedPoolState`, bridge methods, all stats methods — these are accessible via the generic `rpcCall()` method but no named wrappers documented |
 
 ### 6.2 Python SDK (`sdk-python.html`)
 
@@ -273,28 +273,28 @@ These subscriptions appear in the `ws-reference.html` sidebar but have no corres
 |-------|----------|--------|
 | Nav marks `sdk-js.html` active | 🟡 Medium | The nav has no distinct "Rust SDK" entry — "SDK" links to `sdk-js.html`. Sidebar correctly marks Rust active. Acceptable but could be confusing |
 | `send_raw_transaction` documented | 🟡 Medium | No `send_raw_transaction` method visible in main RPC dispatch; may map to `sendTransaction` internally |
-| WS `lamports` field | 🟡 Medium | `on_account_change` callback example shows `account.lamports` but MoltChain uses `shells` — Solana terminology leak in Rust SDK docs |
+| WS `lamports` field | 🟡 Medium | `on_account_change` callback example shows `account.lamports` but Lichen uses `spores` — Solana terminology leak in Rust SDK docs |
 | Error codes listed | ✅ | `-32601`, `-32602`, `-32003`, `-32005` documented ✅ |
 | `ClientBuilder` | ✅ | Well documented |
 | No `getProgramAccounts` | ✅ | Correctly absent from Rust SDK |
 
-### 6.4 MoltyID SDK Examples (`moltyid.html`)
+### 6.4 LichenID SDK Examples (`lichenid.html`)
 
 | Issue | Severity | Detail |
 |-------|----------|--------|
 | Tab switching uses `onclick` | 🔵 Low | Inline `onclick` in `<button>` tags; non-standard and harder to CSP-harden |
-| Rust example uses `moltchain_client` | 🟡 Medium | Package name is `moltchain-sdk` throughout other docs but import is `use moltchain_client::...` — inconsistent crate name |
-| Python example imports `Client` not `Connection` | 🟡 Medium | `sdk-python.html` uses `Connection("http://...")` but `moltyid.html` Python example uses `client = Client("http://localhost:8899")` — inconsistent class name |
+| Rust example uses `lichen_client` | 🟡 Medium | Package name is `lichen-sdk` throughout other docs but import is `use lichen_client::...` — inconsistent crate name |
+| Python example imports `Client` not `Connection` | 🟡 Medium | `sdk-python.html` uses `Connection("http://...")` but `lichenid.html` Python example uses `client = Client("http://localhost:8899")` — inconsistent class name |
 
 ### 6.5 ZK Privacy SDK Examples (`zk-privacy.html`)
 
-The Python SDK examples in `zk-privacy.html` import `shield_instruction`, `unshield_instruction`, `transfer_instruction` from `moltchain`. These are not documented in `sdk-python.html`. Users would have no way to discover these imports from normal SDK docs. The ZK guide is self-contained and accurate, but cross-references to `sdk-python.html` are absent.
+The Python SDK examples in `zk-privacy.html` import `shield_instruction`, `unshield_instruction`, `transfer_instruction` from `lichen`. These are not documented in `sdk-python.html`. Users would have no way to discover these imports from normal SDK docs. The ZK guide is self-contained and accurate, but cross-references to `sdk-python.html` are absent.
 
 ### 6.6 `getting-started.html` CLI Example vs CLI Reference Mismatch
 
-`getting-started.html` uses `molt wallet new` in its tutorial, but `cli-reference.html` documents the command as `molt wallet create` — a naming mismatch that will confuse users following the getting-started guide.
+`getting-started.html` uses `lichen wallet new` in its tutorial, but `cli-reference.html` documents the command as `lichen wallet create` — a naming mismatch that will confuse users following the getting-started guide.
 
-**Note:** `molt airdrop` and `molt transfer` ARE fully documented in `cli-reference.html` with complete `cmd-section` blocks, syntax, flags, and examples. Only the `wallet new` vs `wallet create` naming is a genuine mismatch.
+**Note:** `lichen airdrop` and `lichen transfer` ARE fully documented in `cli-reference.html` with complete `cmd-section` blocks, syntax, flags, and examples. Only the `wallet new` vs `wallet create` naming is a genuine mismatch.
 
 This means the Getting Started guide cannot be completed using the CLI reference as a supplement.
 
@@ -317,7 +317,7 @@ This means the Getting Started guide cannot be completed using the CLI reference
 | `contracts.html` | Contracts | Contracts | ✅ |
 | `contract-reference.html` | Contracts | **None** | ⚠️ No item active |
 | `cli-reference.html` | CLI | CLI | ✅ |
-| `moltyid.html` | MoltyID | MoltyID | ✅ |
+| `lichenid.html` | LichenID | LichenID | ✅ |
 | `zk-privacy.html` | Privacy | Privacy | ✅ |
 | `architecture.html` | none | none | ✅ (not in nav) |
 | `validator.html` | none | none | ✅ (not in nav) |
@@ -340,16 +340,16 @@ Users arriving on these pages for the first time cannot orient themselves in the
 | `../programs/index.html` | `playground.html` | Programs IDE | ⚠️ Path may not resolve depending on deployment |
 | `../faucet/index.html` | `getting-started.html` | Faucet app | ⚠️ Same path-resolution concern |
 | `../explorer/index.html` | `getting-started.html` | Block Explorer app | ⚠️ Same path-resolution concern |
-| `contract-reference.html#moltyid` | `moltyid.html` sidebar | MoltyID section | ✅ Anchor exists |
-| `contracts.html#crosscall` | `moltyid.html` sidebar | Cross-call section | ✅ Anchor exists |
+| `contract-reference.html#lichenid` | `lichenid.html` sidebar | LichenID section | ✅ Anchor exists |
+| `contracts.html#crosscall` | `lichenid.html` sidebar | Cross-call section | ✅ Anchor exists |
 | `ws-reference.html` | `rpc-reference.html` | WS reference | ✅ |
 | `validator.html` | `architecture.html` sidebar | Validator guide | ✅ |
 
 ### 7.4 Mainnet RPC Port Inconsistency
 
 `validator.html` documents mainnet RPC port as **9899** (testnet 8899, mainnet 9899). However:
-- `shared/utils.js` `MOLT_ENDPOINTS.mainnet_rpc` = `https://rpc.moltchain.io` (no port — assumes 443)
-- `developers.js` `NETWORK_ENDPOINTS.mainnet` = `https://rpc.moltchain.io` (no port)
+- `shared/utils.js` `LICN_ENDPOINTS.mainnet_rpc` = `https://rpc.lichen.network` (no port — assumes 443)
+- `developers.js` `NETWORK_ENDPOINTS.mainnet` = `https://rpc.lichen.network` (no port)
 - `wallet-connect.js` fallback = `http://localhost:9000` (wrong port)
 
 The port 9000 in `wallet-connect.js` is wrong regardless of network. If mainnet truly runs on 9899 locally, every local mainnet connection via `wallet-connect.js` will also fail.
@@ -364,14 +364,14 @@ The portal loads **two CSS files** that both define design tokens, in this order
 
 1. `shared-base-styles.css` — defines `--primary`, `--primary-dark`, `--secondary`, `--accent`, `--success`, `--warning`, `--info`, `--bg-dark`, `--bg-darker`, `--bg-card`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border`, `--gradient-1/2/3`, `--shadow`, `--shadow-lg`
 
-2. `shared-theme.css` — defines `--orange-primary`, `--orange-dark`, `--orange-accent`, `--blue-primary`, `--blue-accent`, `--green-success`, `--yellow-warning`, `--bg-dark`, `--bg-darker`, `--bg-card`, `--bg-hover`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border`, `--border-light`, `--space-*`, `--radius-*`, `--shadow-sm`, `--shadow-md`, `--shadow-lg`, `--shadow-glow`
+2. `shared-theme.css` — defines `--teal-primary`, `--teal-dark`, `--cyan-accent`, `--blue-primary`, `--blue-accent`, `--green-success`, `--yellow-warning`, `--bg-dark`, `--bg-darker`, `--bg-card`, `--bg-hover`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border`, `--border-light`, `--space-*`, `--radius-*`, `--shadow-sm`, `--shadow-md`, `--shadow-lg`, `--shadow-glow`
 
 **Conflicts and gaps:**
 
 | Variable | In base-styles? | In theme? | Result |
 |----------|----------------|-----------|--------|
-| `--primary` | ✅ `#FF6B35` | ❌ | Only via base-styles |
-| `--orange-primary` | ❌ | ✅ `#FF6B35` | Only via theme |
+| `--primary` | ✅ `#00C9DB` | ❌ | Only via base-styles |
+| `--teal-primary` | ❌ | ✅ `#00C9DB` | Only via theme |
 | `--shadow` | ✅ flat value | ❌ | Only via base-styles |
 | `--shadow-sm/md/lg` | ❌ | ✅ | Only via theme |
 | `--shadow-lg` | ✅ (different value) | ✅ (different value) | **Conflict — theme wins** |
@@ -391,7 +391,7 @@ Any component that uses `--bg-surface` silently falls back to `unset`. Search `c
     --bg-primary: #0a0e1a;    /* Not in shared system */
     --bg-secondary: #111827;
     --bg-card: #1a1f35;       /* Overrides shared --bg-card via inline */
-    --accent: #f97316;        /* Same value as --orange-primary but different name */
+    --accent: #f97316;        /* Same value as --teal-primary but different name */
     --blue: #3b82f6;          /* Not in shared system */
     --green: #22c55e;
     --purple: #a855f7;
@@ -413,9 +413,9 @@ This means `contract-reference.html` has a completely different visual language 
 1. `<script src="js/developers.js"></script>` (early in `<body>`)
 2. `<script src="shared-config.js"></script>` (at bottom of `<body>`)
 
-`developers.js` calls `getMoltRpcUrl()` which checks `window.moltConfig.rpcUrl`. Since `shared-config.js` hasn't loaded yet when `developers.js` initializes, `window.moltConfig` is `undefined` and the live-stats RPC calls use the fallback `http://localhost:8899`. This is accidentally correct for local dev but breaks if `shared-config.js` is intended to override the URL. The script should be loaded **before** `developers.js`.
+`developers.js` calls `getLichenRpcUrl()` which checks `window.lichenConfig.rpcUrl`. Since `shared-config.js` hasn't loaded yet when `developers.js` initializes, `window.lichenConfig` is `undefined` and the live-stats RPC calls use the fallback `http://localhost:8899`. This is accidentally correct for local dev but breaks if `shared-config.js` is intended to override the URL. The script should be loaded **before** `developers.js`.
 
-Furthermore, `shared-config.js` is loaded **only on `index.html`**. All other pages (rpc-reference.html, sdk-js.html, etc.) that also call `getMoltRpcUrl()` from `utils.js` will always use the hardcoded fallback.
+Furthermore, `shared-config.js` is loaded **only on `index.html`**. All other pages (rpc-reference.html, sdk-js.html, etc.) that also call `getLichenRpcUrl()` from `utils.js` will always use the hardcoded fallback.
 
 ---
 
@@ -427,15 +427,15 @@ The search system is a hardcoded `SEARCH_INDEX` array (~55 entries) in `js/devel
 
 ### 9.2 Method Name Prefix Bug
 
-The `SEARCH_INDEX` stores RPC method entries with a `molt_` prefix format:
+The `SEARCH_INDEX` stores RPC method entries with a `licn_` prefix format:
 
 ```javascript
-{ title: "molt_getBalance", ... }
-{ title: "molt_getBlock", ... }
-{ title: "molt_sendTransaction", ... }
+{ title: "licn_getBalance", ... }
+{ title: "licn_getBlock", ... }
+{ title: "licn_sendTransaction", ... }
 ```
 
-The actual RPC methods are `getBalance`, `getBlock`, `sendTransaction` (no prefix). A developer searching for `getBalance` will find zero results. A developer searching for `molt_getBalance` (which they are unlikely to do since nothing in the docs uses this prefix) will find the entry. **The entire RPC method search is broken for any realistic query.**
+The actual RPC methods are `getBalance`, `getBlock`, `sendTransaction` (no prefix). A developer searching for `getBalance` will find zero results. A developer searching for `licn_getBalance` (which they are unlikely to do since nothing in the docs uses this prefix) will find the entry. **The entire RPC method search is broken for any realistic query.**
 
 ### 9.3 Coverage Gaps in Search Index
 
@@ -443,7 +443,7 @@ The hardcoded index (~55 entries) does not cover:
 - Any ZK privacy methods (`getShieldedPoolState`, etc.)
 - Any bridge methods (`createBridgeDeposit`, etc.)
 - Any stats endpoints (`getDexCoreStats`, etc.)
-- Any MoltyID RPC methods (`getMoltyIdIdentity`, `resolveMoltName`, etc.)
+- Any LichenID RPC methods (`getLichenIdIdentity`, `resolveLichenName`, etc.)
 - Validator guide, Architecture page, Changelog
 
 These 66+ methods and 3 pages are completely unsearchable.
@@ -451,7 +451,7 @@ These 66+ methods and 3 pages are completely unsearchable.
 ### 9.4 Search UX Issues
 
 - Nav `#searchInput` does not actually search — it only opens the overlay (correct, opens with `Cmd+K`)
-- But on most pages, the inline search wiring (`navInput.addEventListener('focus', ...)`) is only present in `getting-started.html`, `architecture.html`, `changelog.html`, and `index.html`. Pages like `sdk-js.html`, `moltyid.html`, `zk-privacy.html`, `contracts.html` do NOT have this inline wiring. On these pages, `developers.js` handles the overlay via `initSearch()` — BUT `initSearch()` uses `document.addEventListener('keydown', ...)` for `Cmd+K`. The nav input focus-to-overlay delegation is **missing from most pages**.
+- But on most pages, the inline search wiring (`navInput.addEventListener('focus', ...)`) is only present in `getting-started.html`, `architecture.html`, `changelog.html`, and `index.html`. Pages like `sdk-js.html`, `lichenid.html`, `zk-privacy.html`, `contracts.html` do NOT have this inline wiring. On these pages, `developers.js` handles the overlay via `initSearch()` — BUT `initSearch()` uses `document.addEventListener('keydown', ...)` for `Cmd+K`. The nav input focus-to-overlay delegation is **missing from most pages**.
 
 ---
 
@@ -464,31 +464,31 @@ These 66+ methods and 3 pages are completely unsearchable.
 | 3 | 🔴 Critical | JavaScript | `shared/wallet-connect.js:43` | Default fallback RPC URL is `http://localhost:9000` — wrong port. Actual RPC server is on port 8899 | Change `localhost:9000` to `localhost:8899` |
 | 4 | 🟠 High | SDK Docs | `sdk-js.html` | `getProgramAccounts` documented in JS SDK but absent from `rpc/src/lib.rs` dispatch table — will return JSON-RPC error -32601. Not present in Python or Rust SDK docs. | Remove from `sdk-js.html` or implement the server method |
 | 5 | 🟠 High | Navigation | `sdk-python.html` | `<a href="sdk-js.html" class="active">SDK</a>` — JS nav item marked active on Python SDK page | Change to `<a href="sdk-python.html" class="active">...` or restructure SDK nav |
-| 6 | 🟠 High | Search | `js/developers.js:244-350` | `SEARCH_INDEX` entries use `molt_getBalance`, `molt_sendTransaction` etc. with `molt_` prefix — actual method names have no prefix. All RPC method searches return zero results | Remove `molt_` prefix from all search index method names |
-| 7 | 🟠 High | RPC Docs | `rpc-reference.html` | ~66 server methods (bridge, shielded, all stats endpoints, ReefStake, DAO, Oracle, name auction, EVM lookup) have no full documentation card — only listed in bullets or missing entirely | Write method-card blocks for all live methods |
+| 6 | 🟠 High | Search | `js/developers.js:244-350` | `SEARCH_INDEX` entries use `licn_getBalance`, `licn_sendTransaction` etc. with `licn_` prefix — actual method names have no prefix. All RPC method searches return zero results | Remove `licn_` prefix from all search index method names |
+| 7 | 🟠 High | RPC Docs | `rpc-reference.html` | ~66 server methods (bridge, shielded, all stats endpoints, MossStake, DAO, Oracle, name auction, EVM lookup) have no full documentation card — only listed in bullets or missing entirely | Write method-card blocks for all live methods |
 | 8 | 🟠 High | CSS | `contract-reference.html` | Does not load `shared-base-styles.css` or `shared-theme.css`. Has inline `<style>` block with completely different variables. Renders with different visual design from every other portal page | Add `<link rel="stylesheet" href="shared-base-styles.css">` and `<link rel="stylesheet" href="shared-theme.css">` and remove inline styles |
 | 9 | 🟠 High | Navigation | `architecture.html`, `validator.html`, `changelog.html` | Three content-rich pages are orphaned from the main nav menu. Users cannot discover them through normal navigation | Add links to main nav or create a prominent "More" section |
-| 10 | 🟠 High | CLI Docs | `getting-started.html` / `cli-reference.html` | `getting-started.html` uses `molt wallet new` but CLI reference documents `molt wallet create` — naming mismatch. (`molt airdrop` and `molt transfer` ARE fully documented in `cli-reference.html`.) | Align `wallet new` → `wallet create` in getting-started guide |
-| 11 | 🟡 Medium | JavaScript | `index.html` | `shared-config.js` is loaded after `js/developers.js` — `window.moltConfig` is undefined during initialization. Also not loaded on any other page | Move `<script src="shared-config.js">` before `developers.js`; load it on all pages |
-| 12 | 🟡 Medium | CSS | `shared-base-styles.css` / `shared-theme.css` | Two parallel CSS variable systems — `--primary` vs `--orange-primary`, `--shadow` vs `--shadow-sm/md/lg`. `--shadow-lg` defined in both with different values (theme wins). `--bg-surface` undefined in both but may be referenced | Consolidate to single variable system or add explicit alias rules |
+| 10 | 🟠 High | CLI Docs | `getting-started.html` / `cli-reference.html` | `getting-started.html` uses `lichen wallet new` but CLI reference documents `lichen wallet create` — naming mismatch. (`lichen airdrop` and `lichen transfer` ARE fully documented in `cli-reference.html`.) | Align `wallet new` → `wallet create` in getting-started guide |
+| 11 | 🟡 Medium | JavaScript | `index.html` | `shared-config.js` is loaded after `js/developers.js` — `window.lichenConfig` is undefined during initialization. Also not loaded on any other page | Move `<script src="shared-config.js">` before `developers.js`; load it on all pages |
+| 12 | 🟡 Medium | CSS | `shared-base-styles.css` / `shared-theme.css` | Two parallel CSS variable systems — `--primary` vs `--teal-primary`, `--shadow` vs `--shadow-sm/md/lg`. `--shadow-lg` defined in both with different values (theme wins). `--bg-surface` undefined in both but may be referenced | Consolidate to single variable system or add explicit alias rules |
 | 13 | 🟡 Medium | RPC Docs | `rpc-reference.html` | `stake` and `unstake` documented with a `from` field parameter format, but server handlers accept base64-encoded signed transactions. No `require_single_validator` guard exists on these endpoints (they do NOT return -32003). Parameter format documentation is misleading | Correct parameter documentation to match actual handler signature |
 | 14 | 🟡 Medium | WS Docs | `ws-reference.html` | `subscribeBridgeLocks` and `subscribeBridgeMints` are in the sidebar but have no method card in the page body | Add full method cards with payload examples for both |
-| 15 | 🟡 Medium | SDK Docs | `sdk-rust.html` WS section | `account.lamports` in `on_account_change` callback example — Solana terminology. MoltChain uses `shells` | Change `account.lamports` to `account.shells` |
-| 16 | 🟡 Medium | SDK Docs | `moltyid.html` Rust examples | `use moltchain_client::...` — inconsistent with `moltchain-sdk` used throughout all other SDK docs | Change to `use moltchain_sdk::...` |
-| 17 | 🟡 Medium | SDK Docs | `moltyid.html` Python examples | Uses `Client(...)` but `sdk-python.html` uses `Connection(...)` | Standardise to `Connection` (as in Python SDK reference) |
-| 18 | 🟡 Medium | Content | `moltyid.html` / `architecture.html` | Trust tier 1 is named "Known" in `moltyid.html` but "Verified" in `architecture.html` | Standardise name — pick one |
+| 15 | 🟡 Medium | SDK Docs | `sdk-rust.html` WS section | `account.lamports` in `on_account_change` callback example — Solana terminology. Lichen uses `spores` | Change `account.lamports` to `account.spores` |
+| 16 | 🟡 Medium | SDK Docs | `lichenid.html` Rust examples | `use lichen_client::...` — inconsistent with `lichen-sdk` used throughout all other SDK docs | Change to `use lichen_sdk::...` |
+| 17 | 🟡 Medium | SDK Docs | `lichenid.html` Python examples | Uses `Client(...)` but `sdk-python.html` uses `Connection(...)` | Standardise to `Connection` (as in Python SDK reference) |
+| 18 | 🟡 Medium | Content | `lichenid.html` / `architecture.html` | Trust tier 1 is named "Known" in `lichenid.html` but "Verified" in `architecture.html` | Standardise name — pick one |
 | 19 | 🟡 Medium | Search | `js/developers.js` | Search index covers only ~55 items. ZK methods, bridge methods, all stats endpoints, validator guide, architecture page are completely unsearchable | Expand search index to cover all documented methods and all pages |
 | 20 | 🟡 Medium | Links | `getting-started.html` | `../faucet/index.html` and `../explorer/index.html` are relative paths that depend on deployment serving structure. On local `file://` open they will fail | Use absolute paths or document the required server setup |
-| 21 | 🟡 Medium | Search | Multiple pages | Nav search input focus-to-overlay delegation inline script missing from `sdk-js.html`, `moltyid.html`, `zk-privacy.html`, `contracts.html`, `sdk-python.html`, `sdk-rust.html`, `contract-reference.html`, `rpc-reference.html`, `ws-reference.html` (9 pages). `cli-reference.html` and `validator.html` already have it. | Add inline delegation script to the 9 remaining pages or move it into `developers.js` `initSearch()` |
+| 21 | 🟡 Medium | Search | Multiple pages | Nav search input focus-to-overlay delegation inline script missing from `sdk-js.html`, `lichenid.html`, `zk-privacy.html`, `contracts.html`, `sdk-python.html`, `sdk-rust.html`, `contract-reference.html`, `rpc-reference.html`, `ws-reference.html` (9 pages). `cli-reference.html` and `validator.html` already have it. | Add inline delegation script to the 9 remaining pages or move it into `developers.js` `initSearch()` |
 | 22 | 🟡 Medium | CSS | `zk-privacy.html` | Main element uses class `docs-content` but all other pages use `docs-main` — may cause layout inconsistency if `css/developers.css` only targets `.docs-main` | Change to `docs-main` or add `.docs-content` as alias in CSS |
 | 23 | 🔵 Low | Navigation | `ws-reference.html` | `rpc-reference.html` nav has `rpc-reference.html` active even when viewing `ws-reference.html` — these are considered the same "API" nav item. Borderline acceptable | Consider adding WS reference as a separate nav entry or sub-item |
 | 24 | 🔵 Low | Content | `rpc-reference.html` | `getMarketSales` and `getMarketListings` are in the full-card section, but `getMarketOffers` and `getMarketAuctions` (which exist in the server dispatch table) are completely absent from `rpc-reference.html` — not even bullet entries | Add full method cards or at minimum bullet entries |
 | 25 | 🔵 Low | Content | `architecture.html` | States ZK proof verification is "in active transition" and "partial" — but `zk-privacy.html` documents the full API as if it's production-ready. Contradiction | Align status messaging across both pages |
 | 26 | 🔵 Low | Content | `validator.html` | Documents `config.toml` configuration sections but adds a callout saying "These settings are passed as command-line flags" — the section headings imply TOML but the reality is CLI flags. User confusion risk | Either implement proper `config.toml` support or remove the section-heading format and use flat flag table |
-| 27 | 🔵 Low | Content | `contract-reference.html` | Header stat says "227 Public Functions" but MoltyID card says "33 fns" while function list shows 33 chips. Other contract cards say "33 fns" but moltyid.html says "API Reference (34 fns)". Inconsistency in function count | Audit and reconcile function counts; use a single source of truth |
+| 27 | 🔵 Low | Content | `contract-reference.html` | Header stat says "227 Public Functions" but LichenID card says "33 fns" while function list shows 33 chips. Other contract cards say "33 fns" but lichenid.html says "API Reference (34 fns)". Inconsistency in function count | Audit and reconcile function counts; use a single source of truth |
 | 28 | 🔵 Low | Content | `contract-reference.html` | Opcode dispatcher contracts (DEX Core, DEX AMM, etc.) noted but no opcode table provided in this file | Link to or embed opcode tables for dispatcher contracts |
-| 29 | 🔵 Low | Content | `getting-started.html` | Deployment cost callout says "flat fee of 25 MOLT (CONTRACT_DEPLOY_FEE)" but `shared/utils.js` has `CONTRACT_DEPLOY_FEE = 25 * SHELLS_PER_MOLT = 25_000_000_000` shells = 25 MOLT. Value is consistent, but the WASM fee is per-byte (`fee = wasm_size * FEE_PER_BYTE_SHELL` in the server). The "flat 25 MOLT" description is inaccurate | Fix to: "base fee of ~25 MOLT minimum; actual fee scales with WASM binary size" |
-| 30 | 🔵 Low | Navigation | `contract-reference.html` | No active nav item — the page is reachable from `moltyid.html` and `contracts.html` sidebars but has no active nav highlight at all | Add `class="active"` to the `<a href="contracts.html">Contracts</a>` nav item since it's a contracts sub-page |
+| 29 | 🔵 Low | Content | `getting-started.html` | Deployment cost callout says "flat fee of 25 LICN (CONTRACT_DEPLOY_FEE)" but `shared/utils.js` has `CONTRACT_DEPLOY_FEE = 25 * SPORES_PER_LICN = 25_000_000_000` spores = 25 LICN. Value is consistent, but the WASM fee is per-byte (`fee = wasm_size * FEE_PER_BYTE_SHELL` in the server). The "flat 25 LICN" description is inaccurate | Fix to: "base fee of ~25 LICN minimum; actual fee scales with WASM binary size" |
+| 30 | 🔵 Low | Navigation | `contract-reference.html` | No active nav item — the page is reachable from `lichenid.html` and `contracts.html` sidebars but has no active nav highlight at all | Add `class="active"` to the `<a href="contracts.html">Contracts</a>` nav item since it's a contracts sub-page |
 | 31 | 🔵 Low | WS Docs | `ws-reference.html` / `index.html` | `index.html` WS example uses `slotSubscribe` (Solana-style alias). `ws-reference.html` canonical name is `subscribeSlots`. Both work, but mixing styles within the same portal is confusing | Update `index.html` example to use canonical `subscribeSlots` |
 
 ---
@@ -500,12 +500,12 @@ These 66+ methods and 3 pages are completely unsearchable.
 2. Fix `sdk-python.html` nav active: `sdk-js.html` → current page
 3. Fix `developers.js` `initNetworkSelector()` to target `#devNetworkSelect`
 4. Align `NETWORK_ENDPOINTS` keys with `<select>` option values
-5. Fix search index — remove `molt_` prefix from all RPC method entries
+5. Fix search index — remove `licn_` prefix from all RPC method entries
 
 **Do before launch (user-facing content issues):**
 6. Remove `getProgramAccounts` from `sdk-js.html` or implement server method
 7. Add `shared-base-styles.css` and `shared-theme.css` to `contract-reference.html`
-8. Align `molt wallet new` in `getting-started.html` to `molt wallet create` (as documented in `cli-reference.html`)
+8. Align `lichen wallet new` in `getting-started.html` to `lichen wallet create` (as documented in `cli-reference.html`)
 9. Add nav links for `architecture.html`, `validator.html`, `changelog.html`
 10. Add nav search focus delegation to the 9 remaining pages (cli-reference.html and validator.html already have it)
 

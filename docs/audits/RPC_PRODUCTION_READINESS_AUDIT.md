@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The Moltchain RPC codebase is **remarkably mature**. Multiple prior audit rounds
+The Lichen RPC codebase is **remarkably mature**. Multiple prior audit rounds
 have left extensive `AUDIT-FIX` annotations (F-1, F-2, F-5, F-13, 0.13, 2.15,
 2.16, 3.25, A11-01/02, P9-RPC-01, P10-RPC-01/02/03/04/05, RPC-03/04/05/06,
 D1-01, GX-07, etc.). There are:
@@ -181,7 +181,7 @@ if it will never be enabled.
     vec![
         "localhost".to_string(),
         "127.0.0.1".to_string(),
-        "moltchain.io".to_string(),
+        "lichen.network".to_string(),
         // ...
     ]
 });
@@ -189,7 +189,7 @@ if it will never be enabled.
 
 ### Risk
 
-The defaults include local origins. In production the `MOLTCHAIN_CORS_ORIGINS`
+The defaults include local origins. In production the `LICHEN_CORS_ORIGINS`
 env var should be set. The code already has a hard abort if `*` is used on
 mainnet (line 1752, `RPC-05`), which mitigates the worst case.
 

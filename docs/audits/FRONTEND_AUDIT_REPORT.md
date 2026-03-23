@@ -1,6 +1,6 @@
 # Frontend Production-Readiness Audit Report
 
-**Scope**: All 7 MoltChain frontends — Explorer, Wallet, Marketplace, Faucet, Website, DEX, Developers  
+**Scope**: All 7 Lichen frontends — Explorer, Wallet, Marketplace, Faucet, Website, DEX, Developers  
 **Date**: 2026-02-25  
 **Files audited**: 30+ JavaScript files, all HTML entry points, shared utilities  
 
@@ -32,13 +32,13 @@ The **Explorer**, **Faucet**, **Developers**, and **Marketplace** frontends are 
 
 **Code (line 13):**
 ```js
-const MOCK_PRICES = { MOLT: 0.10, mUSD: 1.0, wSOL: 150.0, wETH: 3000.0, wBNB: 600.0 };
+const MOCK_PRICES = { LICN: 0.10, lUSD: 1.0, wSOL: 150.0, wETH: 3000.0, wBNB: 600.0 };
 ```
 
 **Code (lines 1307–1310, in `refreshBalance()`):**
 ```js
 // Calculate total USD value (using mock prices)
-let totalUsd = molt * MOCK_PRICES.MOLT;
+let totalUsd = licn * MOCK_PRICES.LICN;
 for (const [symbol, bal] of Object.entries(tokenBalances)) {
     totalUsd += bal * (MOCK_PRICES[symbol] || 0);
 }
@@ -51,14 +51,14 @@ for (const [symbol, bal] of Object.entries(tokenBalances)) {
 
 **Code (lines 1376, 1394):**
 ```js
-const moltUsd = molt * MOCK_PRICES.MOLT;
+const licnUsd = licn * MOCK_PRICES.LICN;
 // ...
 const usdVal = bal * (MOCK_PRICES[symbol] || 0);
 ```
 
-**Impact**: Every wallet user sees portfolio values computed from static fake prices. MOLT is always $0.10, wSOL always $150, wETH always $3,000, wBNB always $600. These values never update, giving users a false sense of their portfolio value. No price feed, oracle, or API integration exists in the wallet.
+**Impact**: Every wallet user sees portfolio values computed from static fake prices. LICN is always $0.10, wSOL always $150, wETH always $3,000, wBNB always $600. These values never update, giving users a false sense of their portfolio value. No price feed, oracle, or API integration exists in the wallet.
 
-**Recommendation**: Integrate with MoltOracle contract (already deployed) or the DEX's Binance price feed to fetch live prices. Fall back to MOCK_PRICES only when live prices are unavailable, with a visible "estimated" badge.
+**Recommendation**: Integrate with LichenOracle contract (already deployed) or the DEX's Binance price feed to fetch live prices. Fall back to MOCK_PRICES only when live prices are unavailable, with a visible "estimated" badge.
 
 ---
 
@@ -178,24 +178,24 @@ alert('Wallet signing unavailable...');
 
 **Code (line 965):**
 ```js
-const MOLT_GENESIS_PRICE = 0.10;
+const LICHEN_GENESIS_PRICE = 0.10;
 ```
 
 **Code (line 1001):**
 ```js
-lastPrice: MOLT_GENESIS_PRICE,
+lastPrice: LICHEN_GENESIS_PRICE,
 ```
 
 **Code (lines 1199–1202, in `loadPairsFromAPI()`):**
 ```js
 pairs = [{
-    pairId: 1, id: 'MOLT/mUSD', base: 'MOLT', quote: 'mUSD',
-    price: MOLT_GENESIS_PRICE, change: 0, ...
+    pairId: 1, id: 'LICN/lUSD', base: 'LICN', quote: 'lUSD',
+    price: LICHEN_GENESIS_PRICE, change: 0, ...
 }];
-console.info('[DEX] No trading pairs on-chain — using genesis MOLT/mUSD @ $0.10');
+console.info('[DEX] No trading pairs on-chain — using genesis LICN/lUSD @ $0.10');
 ```
 
-**Impact**: When no on-chain trading pairs exist (fresh deployment, API failure), the DEX creates a synthetic MOLT/mUSD pair at a hardcoded $0.10. Users may see stale prices, and the `lastPrice` state initializes to 0.10 regardless of actual market conditions.
+**Impact**: When no on-chain trading pairs exist (fresh deployment, API failure), the DEX creates a synthetic LICN/lUSD pair at a hardcoded $0.10. Users may see stale prices, and the `lastPrice` state initializes to 0.10 regardless of actual market conditions.
 
 **Recommendation**: This is acceptable as genesis bootstrapping, but add a visible "Genesis Price" indicator on the UI when using this fallback, and disable actual trading against synthetic pairs.
 
@@ -230,7 +230,7 @@ function connectBinancePriceFeed() {
 
 **Impact**: When `ENABLE_EXTERNAL_PRICE_WS` is enabled (opt-in via localStorage), the browser makes a direct WebSocket to Binance's public API. This creates: (1) an external dependency on Binance infrastructure, (2) privacy leakage of user's IP to Binance, (3) potential price manipulation if the WS is spoofed via DNS hijack. The feature is opt-in (default off on line 6862), which mitigates the severity.
 
-**Recommendation**: Route external price data through the MoltChain backend oracle instead of a direct browser-to-Binance connection. The backend oracle price feeder already exists (mentioned in comments).
+**Recommendation**: Route external price data through the Lichen backend oracle instead of a direct browser-to-Binance connection. The backend oracle price feeder already exists (mentioned in comments).
 
 ---
 
@@ -246,7 +246,7 @@ function connectBinancePriceFeed() {
 
 **Code:**
 ```js
-console.log('%c🦞 MoltChain', 'font-size: 24px; font-weight: bold; color: #FF6B35;');
+console.log('%c🦞 Lichen', 'font-size: 24px; font-weight: bold; color: #00C9DB;');
 console.log('%cThe Agent-First Blockchain', 'font-size: 14px; color: #B8C1EC;');
 console.log('%cWebsite loaded successfully', 'font-size: 12px; color: #06D6A0;');
 console.log('%cRPC URL:', 'font-size: 12px; color: #6B7A99;', getRpcEndpoint());
@@ -292,17 +292,17 @@ console.log('[WS] Disconnected, reconnecting in 5s');
 
 **Examples (10 total):**
 ```js
-console.log('Molt Market loading...');       // marketplace.js
-console.log('Molt Market ready');            // marketplace.js
-console.log('Molt Market Browse loading...'); // browse.js
-console.log('Molt Market Browse ready');     // browse.js
-console.log('Molt Market Item loading...');  // item.js
-console.log('Molt Market Item ready');       // item.js
-console.log('Molt Market Profile loading...');// profile.js
-console.log('Molt Market Profile ready');    // profile.js
-console.log('Molt Market Create loading...'); // create.js
-console.log('Molt Market Create ready');     // create.js
-console.log('Molt Market data source initialized (RPC-backed, zero mock data)'); // marketplace-data.js
+console.log('Lichen Market loading...');       // marketplace.js
+console.log('Lichen Market ready');            // marketplace.js
+console.log('Lichen Market Browse loading...'); // browse.js
+console.log('Lichen Market Browse ready');     // browse.js
+console.log('Lichen Market Item loading...');  // item.js
+console.log('Lichen Market Item ready');       // item.js
+console.log('Lichen Market Profile loading...');// profile.js
+console.log('Lichen Market Profile ready');    // profile.js
+console.log('Lichen Market Create loading...'); // create.js
+console.log('Lichen Market Create ready');     // create.js
+console.log('Lichen Market data source initialized (RPC-backed, zero mock data)'); // marketplace-data.js
 ```
 
 **Impact**: Every marketplace page load prints 3-4 log messages. Noise in production console.
@@ -346,7 +346,7 @@ console.log('[DEX] Binance price feed connected (real-time overlay)'); // line 3
 
 **Code:**
 ```js
-console.log('MoltChain website loaded 🦞');
+console.log('Lichen website loaded 🦞');
 ```
 
 **Impact**: Minor. Emoji in production console output.
@@ -366,7 +366,7 @@ console.log('MoltChain website loaded 🦞');
 
 **Code:**
 ```js
-// console.log('🦞 Reef Explorer loaded');
+// console.log('🦞 Moss Explorer loaded');
 ```
 
 **Impact**: Properly commented out. No runtime impact. Mentioned only for completeness.
@@ -391,9 +391,9 @@ console.log('MoltChain website loaded 🦞');
 // console.log('[Bridge] Mint event for our wallet:', data);
 // console.log('Token registry loaded from manifest');
 // console.log('Token registry loaded from localStorage');
-// console.log('MoltWallet loaded');
+// console.log('LichenWallet loaded');
 // console.log('EVM address registered:', evmAddress, '→', wallet.address);
-// console.log('MoltWallet fully initialized');
+// console.log('LichenWallet fully initialized');
 ```
 
 **Impact**: No runtime impact (all commented out). The wallet team properly disabled debug logs. These are residual cleanup items.
@@ -414,7 +414,7 @@ console.log('MoltChain website loaded 🦞');
 
 **Code:**
 ```js
-console.info('[DEX] No trading pairs on-chain — using genesis MOLT/mUSD @ $0.10');
+console.info('[DEX] No trading pairs on-chain — using genesis LICN/lUSD @ $0.10');
 ```
 
 **Impact**: Informational log for a significant state (no trading pairs). Acceptable as operational logging, but should not persist in long-running production.
@@ -476,7 +476,7 @@ const GOVERNANCE_MIN_QUORUM_DEFAULT = 3;
 
 **Code:**
 ```js
-console.warn('[DEX] ⚠️ FALLBACK ADDRESSES ACTIVE — symbol registry was unavailable. Transactions WILL fail if contracts were recompiled. Set MOLTCHAIN_RPC or check node connectivity.');
+console.warn('[DEX] ⚠️ FALLBACK ADDRESSES ACTIVE — symbol registry was unavailable. Transactions WILL fail if contracts were recompiled. Set LICHEN_RPC or check node connectivity.');
 ```
 
 **Impact**: Critical operational warning is only visible in the browser console. No UI notification to the user that the DEX is running in degraded mode.
@@ -500,7 +500,7 @@ console.warn('[DEX] ⚠️ FALLBACK ADDRESSES ACTIVE — symbol registry was una
 var MINTING_FEE = 0.5;
 ```
 
-**Impact**: The NFT minting fee is hardcoded at 0.5 MOLT. If the on-chain fee changes (via governance), the UI will show incorrect cost estimates.
+**Impact**: The NFT minting fee is hardcoded at 0.5 LICN. If the on-chain fee changes (via governance), the UI will show incorrect cost estimates.
 
 **Recommendation**: Fetch the minting fee from the marketplace contract or protocol params API.
 
@@ -521,7 +521,7 @@ var MINTING_FEE = 0.5;
 var collectionFee = isNewCollection ? 1.0 : 0;
 ```
 
-**Impact**: Collection deployment cost is displayed as 1.0 MOLT regardless of actual on-chain fee. Minor since the actual transaction will succeed/fail based on real on-chain fees, but the preview is misleading.
+**Impact**: Collection deployment cost is displayed as 1.0 LICN regardless of actual on-chain fee. Minor since the actual transaction will succeed/fail based on real on-chain fees, but the preview is misleading.
 
 **Recommendation**: Fetch from protocol params.
 

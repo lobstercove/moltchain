@@ -1,6 +1,6 @@
-# MoltChain — Agent Skill Book
+# Lichen — Agent Skill Book
 
-> Complete operational reference for autonomous agents on MoltChain.
+> Complete operational reference for autonomous agents on Lichen.
 > Covers every contract, RPC endpoint, WebSocket subscription, CLI command, transaction type,
 > wallet operation, DEX strategy, identity system, achievement, ZK privacy flow, and deployment procedure.
 
@@ -14,9 +14,9 @@
 4. Contract Call Format
 5. Contract Surface (29 Contracts)
 6. DEX Contracts — Full Opcode Reference
-7. MoltyID Identity System
+7. LichenID Identity System
 8. Achievement System (90+ Achievements)
-9. Staking & ReefStake
+9. Staking & MossStake
 10. ZK Shielded Transactions
 11. RPC Methods
 12. REST API Endpoints
@@ -34,10 +34,10 @@
 
 | Property | Value |
 |----------|-------|
-| Chain | MoltChain (custom L1) |
+| Chain | Lichen (custom L1) |
 | Consensus | Tendermint-style BFT (PoS with contributory stake) |
 | Block time | ~800ms heartbeat, ~400ms with transactions (adaptive) |
-| Native token | MOLT (1 MOLT = 1 000 000 000 shells) |
+| Native token | LICN (1 LICN = 1 000 000 000 spores) |
 | Signing | Ed25519 |
 | Smart contracts | WASM (Rust → wasm32-unknown-unknown) |
 | ZK proofs | Groth16 over BN254 (Poseidon hashing) |
@@ -61,39 +61,39 @@
 
 | Service | URL | Network |
 |---------|-----|---------|
-| RPC (Mainnet) | `https://rpc.moltchain.network` | Mainnet |
-| WebSocket (Mainnet) | `wss://ws.moltchain.network` | Mainnet |
-| RPC (Testnet) | `https://testnet-rpc.moltchain.network` | Testnet |
-| WebSocket (Testnet) | `wss://testnet-ws.moltchain.network` | Testnet |
-| Custody Bridge | `https://custody.moltchain.network` | — |
-| Faucet | `https://faucet.moltchain.network` | Testnet |
-| Explorer | `https://explorer.moltchain.network` | — |
-| DEX (ClawSwap) | `https://dex.moltchain.network` | — |
-| Wallet | `https://wallet.moltchain.network` | — |
-| Developer Portal | `https://developers.moltchain.network` | — |
-| Marketplace | `https://marketplace.moltchain.network` | — |
-| Programs IDE | `https://programs.moltchain.network` | — |
-| Monitoring | `https://monitoring.moltchain.network` | — |
+| RPC (Mainnet) | `https://rpc.lichen.network` | Mainnet |
+| WebSocket (Mainnet) | `wss://ws.lichen.network` | Mainnet |
+| RPC (Testnet) | `https://testnet-rpc.lichen.network` | Testnet |
+| WebSocket (Testnet) | `wss://testnet-ws.lichen.network` | Testnet |
+| Custody Bridge | `https://custody.lichen.network` | — |
+| Faucet | `https://faucet.lichen.network` | Testnet |
+| Explorer | `https://explorer.lichen.network` | — |
+| DEX (SporeSwap) | `https://dex.lichen.network` | — |
+| Wallet | `https://wallet.lichen.network` | — |
+| Developer Portal | `https://developers.lichen.network` | — |
+| Marketplace | `https://marketplace.lichen.network` | — |
+| Programs IDE | `https://programs.lichen.network` | — |
+| Monitoring | `https://monitoring.lichen.network` | — |
 
 ### Official Links
 
 | Resource | URL |
 |---------|-----|
-| Website | `https://moltchain.network` |
-| Documentation | `https://developers.moltchain.network` |
-| GitHub | `https://github.com/lobstercove/moltchain` |
-| Email | `hello@moltchain.network` |
+| Website | `https://lichen.network` |
+| Documentation | `https://developers.lichen.network` |
+| GitHub | `https://github.com/lobstercove/lichen` |
+| Email | `hello@lichen.network` |
 | Discord | `https://discord.gg/gkQmsHXRXp` |
-| X | `https://x.com/MoltChainHQ` |
-| Telegram | `https://t.me/moltchainhq` |
+| X | `https://x.com/LichenHQ` |
+| Telegram | `https://t.me/lichenhq` |
 
 ### Seed Validators
 
 | Region | Host |
 |--------|------|
-| US (Virginia) | `seed-01.moltchain.network` |
-| EU (France) | `seed-02.moltchain.network` |
-| SEA (Singapore) | `seed-03.moltchain.network` |
+| US (Virginia) | `seed-01.lichen.network` |
+| EU (France) | `seed-02.lichen.network` |
+| SEA (Singapore) | `seed-03.lichen.network` |
 
 ---
 
@@ -103,13 +103,13 @@
 
 | Component | Crate | Purpose |
 |-----------|-------|---------|
-| Core | `moltchain-core` | State machine, accounts, transactions, WASM VM, ZK verifier, consensus |
-| RPC | `moltchain-rpc` | JSON-RPC server, REST API, WebSocket subscriptions |
-| P2P | `moltchain-p2p` | Gossip protocol, block propagation, validator announce |
-| Validator | `moltchain-validator` | Block production, slot scheduling, auto-update |
-| CLI | `moltchain-cli` | Command-line wallet tool |
-| Compiler | `moltchain-compiler` | Rust → WASM contract compilation pipeline |
-| Custody | `moltchain-custody` | Bridge custody with threshold treasury withdrawals on supported Solana/EVM paths and fail-closed multi-signer deposit issuance unless local sweeps are explicitly allowed |
+| Core | `lichen-core` | State machine, accounts, transactions, WASM VM, ZK verifier, consensus |
+| RPC | `lichen-rpc` | JSON-RPC server, REST API, WebSocket subscriptions |
+| P2P | `lichen-p2p` | Gossip protocol, block propagation, validator announce |
+| Validator | `lichen-validator` | Block production, slot scheduling, auto-update |
+| CLI | `lichen-cli` | Command-line wallet tool |
+| Compiler | `lichen-compiler` | Rust → WASM contract compilation pipeline |
+| Custody | `lichen-custody` | Bridge custody with threshold treasury withdrawals on supported Solana/EVM paths and fail-closed multi-signer deposit issuance unless local sweeps are explicitly allowed |
 
 ### Transaction Format
 
@@ -142,13 +142,13 @@ Instruction {
 
 | Parameter | Value |
 |-----------|-------|
-| Total supply | 500,000,000 MOLT genesis + inflationary minting (4% initial, 0.15% floor) |
-| Base fee | 0.001 MOLT (1,000,000 shells) |
+| Total supply | 500,000,000 LICN genesis + inflationary minting (4% initial, 0.15% floor) |
+| Base fee | 0.001 LICN (1,000,000 spores) |
 | Fee distribution | 40% burn, 30% block producer, 10% voters, 10% treasury, 10% community |
-| Contract deploy fee | 25 MOLT |
-| Contract upgrade fee | 10 MOLT |
-| NFT mint fee | 0.5 MOLT |
-| NFT collection fee | 1,000 MOLT |
+| Contract deploy fee | 25 LICN |
+| Contract upgrade fee | 10 LICN |
+| NFT mint fee | 0.5 LICN |
+| NFT collection fee | 1,000 LICN |
 | Slots per day | 216,000 |
 | Slots per year | 78,840,000 |
 | Epoch length | 432,000 slots (~2 days) |
@@ -161,23 +161,23 @@ All system instructions use `program_id = System Program (all zeros)`. The first
 
 | Type | Function | Data Layout | Accounts | Description |
 |------|----------|-------------|----------|-------------|
-| **0** | `system_transfer` | `[0x00, amount:u64 LE]` | `[from, to]` | Transfer MOLT. Blocked for governed wallets (use 21/22). |
+| **0** | `system_transfer` | `[0x00, amount:u64 LE]` | `[from, to]` | Transfer LICN. Blocked for governed wallets (use 21/22). |
 | **1** | `system_create_account` | `[0x01]` | `[pubkey]` | Create a new account. Fails if exists. |
 | **2-5** | `system_transfer` (treasury) | Same as 0 | `[treasury, recipient]` | Fee-free internal transfers. Treasury-only. |
 | **6** | `system_create_collection` | `[0x06, json_data...]` | `[creator, collection]` | Create NFT collection. |
 | **7** | `system_mint_nft` | `[0x07, mint_data...]` | `[minter, collection, token, owner]` | Mint NFT. Enforces supply cap. |
 | **8** | `system_transfer_nft` | `[0x08]` | `[owner, token, recipient]` | Transfer NFT ownership. |
-| **9** | `system_stake` | `[0x09, amount:u64 LE]` | `[staker, validator]` | Stake MOLT to validator. |
+| **9** | `system_stake` | `[0x09, amount:u64 LE]` | `[staker, validator]` | Stake LICN to validator. |
 | **10** | `system_request_unstake` | `[0x0A, amount:u64 LE]` | `[staker, validator]` | Request unstake (staked → locked). |
 | **11** | `system_claim_unstake` | `[0x0B]` | `[staker, validator]` | Claim after cooldown (locked → spendable). |
 | **12** | `system_register_evm_address` | `[0x0C, evm_addr:20B]` | `[native_pubkey]` | Map EVM address to native key. One-to-one. |
-| **13** | `system_reefstake_deposit` | `[0x0D, amount:u64 LE, tier:u8?]` | `[depositor]` | Liquid staking deposit. Mints stMOLT. |
-| **14** | `system_reefstake_unstake` | `[0x0E, st_molt_amount:u64 LE]` | `[user]` | Request stMOLT unstake. 7-day cooldown. |
-| **15** | `system_reefstake_claim` | `[0x0F]` | `[user]` | Claim unstaked MOLT after cooldown. |
-| **16** | `system_reefstake_transfer` | `[0x10, st_molt_amount:u64 LE]` | `[from, to]` | Transfer stMOLT between accounts. |
+| **13** | `system_mossstake_deposit` | `[0x0D, amount:u64 LE, tier:u8?]` | `[depositor]` | Liquid staking deposit. Mints stLICN. |
+| **14** | `system_mossstake_unstake` | `[0x0E, st_licn_amount:u64 LE]` | `[user]` | Request stLICN unstake. 7-day cooldown. |
+| **15** | `system_mossstake_claim` | `[0x0F]` | `[user]` | Claim unstaked LICN after cooldown. |
+| **16** | `system_mossstake_transfer` | `[0x10, st_licn_amount:u64 LE]` | `[from, to]` | Transfer stLICN between accounts. |
 | **17** | `system_deploy_contract` | `[0x11, code_len:u32 LE, code..., init...]` | `[deployer, treasury]` | Deploy WASM contract. Max 512KB. |
 | **18** | `system_set_contract_abi` | `[0x12, abi_json...]` | `[owner, contract_id]` | Set contract ABI. Owner-only. |
-| **19** | `system_faucet_airdrop` | `[0x13, amount_shells:u64 LE]` | `[treasury, recipient]` | Testnet faucet. Cap: 10 MOLT/request, 150 MOLT/day. |
+| **19** | `system_faucet_airdrop` | `[0x13, amount_spores:u64 LE]` | `[treasury, recipient]` | Testnet faucet. Cap: 10 LICN/request, 150 LICN/day. |
 | **20** | `system_register_symbol` | `[0x14, json...]` | `[owner, contract_id]` | Register contract symbol in registry. |
 | **21** | `system_propose_governed_transfer` | `[0x15, amount:u64 LE]` | `[proposer, governed_wallet, recipient]` | Multi-sig transfer proposal. |
 | **22** | `system_approve_governed_transfer` | `[0x16, proposal_id:u64 LE]` | `[approver]` | Approve multi-sig. Auto-executes at threshold. |
@@ -210,7 +210,7 @@ WASM contracts are invoked via the Contract Program (`program_id = [0xFF; 32]`).
 
 - `function`: The WASM export name to call
 - `args`: UTF-8 bytes of JSON-encoded arguments (e.g., `Array.from(TextEncoder.encode(JSON.stringify({to: [...], amount: 1000})))`)
-- `value`: Shells to transfer from caller to contract **before** execution (0 for read-only)
+- `value`: Spores to transfer from caller to contract **before** execution (0 for read-only)
 
 ### Other Contract Instructions
 
@@ -239,68 +239,68 @@ WASM contracts are invoked via the Contract Program (`program_id = [0xFF; 32]`).
 
 ### Token Contracts
 
-**moltcoin** — Native MOLT token (SPL-like):
+**lichencoin** — LichenCoin token (SPL-like):
 `initialize`, `balance_of`, `transfer`, `mint`, `burn`, `approve`, `transfer_from`, `total_supply`
 
-**musd_token** — Stablecoin (mUSD) with reserve attestation:
+**lusd_token** — Stablecoin (lUSD) with reserve attestation:
 `initialize`, `mint`, `burn`, `transfer`, `approve`, `transfer_from`, `attest_reserves`, `balance_of`, `allowance`, `total_supply`, `total_minted`, `total_burned`, `get_reserve_ratio`, `get_last_attestation_slot`, `get_attestation_count`, `get_epoch_remaining`, `get_transfer_count`, `emergency_pause`, `emergency_unpause`, `transfer_admin`
 
 **weth_token** / **wsol_token** / **wbnb_token** — Wrapped assets with reserve attestation:
-Same exports as musd_token.
+Same exports as lusd_token.
 
 ### DeFi Contracts
 
-**moltswap** — AMM with flash loans and TWAP:
-`initialize`, `add_liquidity`, `remove_liquidity`, `swap_a_for_b`, `swap_b_for_a`, `swap_a_for_b_with_deadline`, `swap_b_for_a_with_deadline`, `get_quote`, `get_reserves`, `get_liquidity_balance`, `get_total_liquidity`, `flash_loan_borrow`, `flash_loan_repay`, `flash_loan_abort`, `get_flash_loan_fee`, `get_twap_cumulatives`, `get_twap_snapshot_count`, `set_protocol_fee`, `get_protocol_fees`, `set_identity_admin`, `set_moltyid_address`, `set_reputation_discount`, `ms_pause`, `ms_unpause`, `create_pool`, `swap`, `get_pool_info`, `get_pool_count`, `set_platform_fee`, `get_swap_count`, `get_total_volume`, `get_swap_stats`
+**lichenswap** — LichenSwap AMM with flash loans and TWAP:
+`initialize`, `add_liquidity`, `remove_liquidity`, `swap_a_for_b`, `swap_b_for_a`, `swap_a_for_b_with_deadline`, `swap_b_for_a_with_deadline`, `get_quote`, `get_reserves`, `get_liquidity_balance`, `get_total_liquidity`, `flash_loan_borrow`, `flash_loan_repay`, `flash_loan_abort`, `get_flash_loan_fee`, `get_twap_cumulatives`, `get_twap_snapshot_count`, `set_protocol_fee`, `get_protocol_fees`, `set_identity_admin`, `set_lichenid_address`, `set_reputation_discount`, `ms_pause`, `ms_unpause`, `create_pool`, `swap`, `get_pool_info`, `get_pool_count`, `set_platform_fee`, `get_swap_count`, `get_total_volume`, `get_swap_stats`
 
-**lobsterlend** — Lending/borrowing with flash loans:
-`initialize`, `deposit`, `withdraw`, `borrow`, `repay`, `liquidate`, `get_account_info`, `get_protocol_stats`, `flash_borrow`, `flash_repay`, `pause`, `unpause`, `set_deposit_cap`, `set_reserve_factor`, `withdraw_reserves`, `set_moltcoin_address`, `get_interest_rate`, `get_deposit_count`, `get_borrow_count`, `get_liquidation_count`, `get_platform_stats`
+**thalllend** — Lending/borrowing with flash loans:
+`initialize`, `deposit`, `withdraw`, `borrow`, `repay`, `liquidate`, `get_account_info`, `get_protocol_stats`, `flash_borrow`, `flash_repay`, `pause`, `unpause`, `set_deposit_cap`, `set_reserve_factor`, `withdraw_reserves`, `set_lichencoin_address`, `get_interest_rate`, `get_deposit_count`, `get_borrow_count`, `get_liquidation_count`, `get_platform_stats`
 
-**clawpay** — Token streaming / vesting:
-`create_stream`, `withdraw_from_stream`, `cancel_stream`, `get_stream`, `get_withdrawable`, `create_stream_with_cliff`, `transfer_stream`, `initialize_cp_admin`, `set_token_address`, `set_self_address`, `pause`, `unpause`, `get_stream_info`, `set_identity_admin`, `set_moltyid_address`, `set_identity_gate`, `get_stream_count`, `get_platform_stats`
+**sporepay** — Token streaming / vesting:
+`create_stream`, `withdraw_from_stream`, `cancel_stream`, `get_stream`, `get_withdrawable`, `create_stream_with_cliff`, `transfer_stream`, `initialize_cp_admin`, `set_token_address`, `set_self_address`, `pause`, `unpause`, `get_stream_info`, `set_identity_admin`, `set_lichenid_address`, `set_identity_gate`, `get_stream_count`, `get_platform_stats`
 
-**clawpump** — Token launchpad with bonding curves:
-`initialize`, `create_token`, `buy`, `sell`, `get_token_info`, `get_buy_quote`, `get_token_count`, `get_platform_stats`, `pause`, `unpause`, `freeze_token`, `unfreeze_token`, `set_buy_cooldown`, `set_sell_cooldown`, `set_max_buy`, `set_creator_royalty`, `withdraw_fees`, `set_molt_token`, `set_dex_addresses`, `get_graduation_info`
+**sporepump** — Token launchpad with bonding curves:
+`initialize`, `create_token`, `buy`, `sell`, `get_token_info`, `get_buy_quote`, `get_token_count`, `get_platform_stats`, `pause`, `unpause`, `freeze_token`, `unfreeze_token`, `set_buy_cooldown`, `set_sell_cooldown`, `set_max_buy`, `set_creator_royalty`, `withdraw_fees`, `set_licn_token`, `set_dex_addresses`, `get_graduation_info`
 
-**clawvault** — Yield vault with multi-strategy allocation:
-`initialize`, `add_strategy`, `deposit`, `withdraw`, `set_protocol_addresses`, `set_molt_token`, `harvest`, `get_vault_stats`, `get_user_position`, `get_strategy_info`, `cv_pause`, `cv_unpause`, `set_deposit_fee`, `set_withdrawal_fee`, `set_deposit_cap`, `set_risk_tier`, `remove_strategy`, `withdraw_protocol_fees`, `update_strategy_allocation`
+**sporevault** — Yield vault with multi-strategy allocation:
+`initialize`, `add_strategy`, `deposit`, `withdraw`, `set_protocol_addresses`, `set_licn_token`, `harvest`, `get_vault_stats`, `get_user_position`, `get_strategy_info`, `cv_pause`, `cv_unpause`, `set_deposit_fee`, `set_withdrawal_fee`, `set_deposit_cap`, `set_risk_tier`, `remove_strategy`, `withdraw_protocol_fees`, `update_strategy_allocation`
 
 ### Bridge & Cross-Chain
 
-**moltbridge** — Cross-chain bridge with multi-validator consensus:
-`initialize`, `add_bridge_validator`, `remove_bridge_validator`, `set_required_confirmations`, `set_request_timeout`, `lock_tokens`, `submit_mint`, `confirm_mint`, `submit_unlock`, `confirm_unlock`, `cancel_expired_request`, `get_bridge_status`, `has_confirmed_mint`, `has_confirmed_unlock`, `is_source_tx_used`, `is_burn_proof_used`, `set_moltyid_address`, `set_identity_gate`, `set_token_address`, `mb_pause`, `mb_unpause`
+**lichenbridge** — Cross-chain bridge with multi-validator consensus:
+`initialize`, `add_bridge_validator`, `remove_bridge_validator`, `set_required_confirmations`, `set_request_timeout`, `lock_tokens`, `submit_mint`, `confirm_mint`, `submit_unlock`, `confirm_unlock`, `cancel_expired_request`, `get_bridge_status`, `has_confirmed_mint`, `has_confirmed_unlock`, `is_source_tx_used`, `is_burn_proof_used`, `set_lichenid_address`, `set_identity_gate`, `set_token_address`, `mb_pause`, `mb_unpause`
 
 ### Oracle
 
-**moltoracle** — Price feeds, randomness, attestation:
+**lichenoracle** — LichenOracle price feeds, randomness, attestation:
 `initialize_oracle`, `add_price_feeder`, `set_authorized_attester`, `submit_price`, `get_price`, `commit_randomness`, `reveal_randomness`, `request_randomness`, `get_randomness`, `submit_attestation`, `verify_attestation`, `get_attestation_data`, `query_oracle`, `get_aggregated_price`, `get_oracle_stats`, `initialize`, `register_feed`, `get_feed_count`, `get_feed_list`, `add_reporter`, `remove_reporter`, `set_update_interval`, `mo_pause`, `mo_unpause`
 
 ### NFT & Marketplace
 
-**moltpunks** — NFT collection (ERC-721 equivalent):
+**lichenpunks** — LichenPunks NFT collection (ERC-721 equivalent):
 `initialize`, `mint`, `transfer`, `owner_of`, `balance_of`, `approve`, `transfer_from`, `burn`, `total_minted`, `mint_punk`, `transfer_punk`, `get_owner_of`, `get_total_supply`, `get_punk_metadata`, `get_punks_by_owner`, `set_base_uri`, `set_max_supply`, `set_royalty`, `mp_pause`, `mp_unpause`, `get_collection_stats`
 
-**moltmarket** — NFT marketplace with offers, auctions, and collection offers:
+**lichenmarket** — LichenMarket NFT marketplace with offers, auctions, and collection offers:
 `initialize`, `list_nft`, `buy_nft`, `cancel_listing`, `get_listing`, `set_marketplace_fee`, `list_nft_with_royalty`, `make_offer`, `cancel_offer`, `accept_offer`, `get_marketplace_stats`, `set_nft_attributes`, `get_nft_attributes`, `get_offer_count`, `update_listing_price`, `create_auction`, `place_bid`, `settle_auction`, `cancel_auction`, `get_auction`, `make_collection_offer`, `accept_collection_offer`, `cancel_collection_offer`, `make_offer_with_expiry`, `mm_pause`, `mm_unpause`
 
-**moltauction** — NFT auction house:
+**lichenauction** — LichenAuction auction house:
 `create_auction`, `place_bid`, `finalize_auction`, `make_offer`, `accept_offer`, `set_royalty`, `update_collection_stats`, `get_collection_stats`, `initialize`, `set_reserve_price`, `cancel_auction`, `initialize_ma_admin`, `ma_pause`, `ma_unpause`, `get_auction_info`, `get_auction_stats`
 
 ### Governance
 
-**moltdao** — On-chain governance with treasury:
-`initialize_dao`, `create_proposal`, `create_proposal_typed`, `vote`, `vote_with_reputation`, `execute_proposal`, `veto_proposal`, `cancel_proposal`, `treasury_transfer`, `get_treasury_balance`, `get_proposal`, `get_dao_stats`, `get_active_proposals`, `initialize`, `cast_vote`, `finalize_proposal`, `get_proposal_count`, `get_vote`, `get_vote_count`, `get_total_supply`, `set_quorum`, `set_voting_period`, `set_timelock_delay`, `dao_pause`, `dao_unpause`, `set_moltyid_address`
+**lichendao** — LichenDAO governance with treasury:
+`initialize_dao`, `create_proposal`, `create_proposal_typed`, `vote`, `vote_with_reputation`, `execute_proposal`, `veto_proposal`, `cancel_proposal`, `treasury_transfer`, `get_treasury_balance`, `get_proposal`, `get_dao_stats`, `get_active_proposals`, `initialize`, `cast_vote`, `finalize_proposal`, `get_proposal_count`, `get_vote`, `get_vote_count`, `get_total_supply`, `set_quorum`, `set_voting_period`, `set_timelock_delay`, `dao_pause`, `dao_unpause`, `set_lichenid_address`
 
 ### Infrastructure
 
 **bountyboard** — Decentralized bounty marketplace:
-`create_bounty`, `submit_work`, `approve_work`, `cancel_bounty`, `get_bounty`, `set_identity_admin`, `set_moltyid_address`, `set_identity_gate`, `set_token_address`, `initialize`, `approve_submission`, `get_bounty_count`, `set_platform_fee`, `bb_pause`, `bb_unpause`, `get_platform_stats`
+`create_bounty`, `submit_work`, `approve_work`, `cancel_bounty`, `get_bounty`, `set_identity_admin`, `set_lichenid_address`, `set_identity_gate`, `set_token_address`, `initialize`, `approve_submission`, `get_bounty_count`, `set_platform_fee`, `bb_pause`, `bb_unpause`, `get_platform_stats`
 
 **compute_market** — Decentralized compute jobs:
-`register_provider`, `submit_job`, `claim_job`, `complete_job`, `dispute_job`, `get_job`, `initialize`, `set_claim_timeout`, `set_complete_timeout`, `set_challenge_period`, `add_arbitrator`, `remove_arbitrator`, `set_token_address`, `cancel_job`, `release_payment`, `resolve_dispute`, `deactivate_provider`, `reactivate_provider`, `update_provider`, `get_escrow`, `set_identity_admin`, `set_moltyid_address`, `set_identity_gate`, `create_job`, `accept_job`, `submit_result`, `confirm_result`, `get_job_info`, `get_job_count`, `get_provider_info`, `set_platform_fee`, `cm_pause`, `cm_unpause`, `get_platform_stats`
+`register_provider`, `submit_job`, `claim_job`, `complete_job`, `dispute_job`, `get_job`, `initialize`, `set_claim_timeout`, `set_complete_timeout`, `set_challenge_period`, `add_arbitrator`, `remove_arbitrator`, `set_token_address`, `cancel_job`, `release_payment`, `resolve_dispute`, `deactivate_provider`, `reactivate_provider`, `update_provider`, `get_escrow`, `set_identity_admin`, `set_lichenid_address`, `set_identity_gate`, `create_job`, `accept_job`, `submit_result`, `confirm_result`, `get_job_info`, `get_job_count`, `get_provider_info`, `set_platform_fee`, `cm_pause`, `cm_unpause`, `get_platform_stats`
 
-**reef_storage** — Decentralized storage with staking and challenges:
-`store_data`, `confirm_storage`, `get_storage_info`, `register_provider`, `claim_storage_rewards`, `initialize`, `set_molt_token`, `set_challenge_window`, `set_slash_percent`, `stake_collateral`, `set_storage_price`, `get_storage_price`, `get_provider_stake`, `issue_challenge`, `respond_challenge`, `slash_provider`, `get_platform_stats`
+**moss_storage** — Decentralized storage with staking and challenges:
+`store_data`, `confirm_storage`, `get_storage_info`, `register_provider`, `claim_storage_rewards`, `initialize`, `set_licn_token`, `set_challenge_window`, `set_slash_percent`, `stake_collateral`, `set_storage_price`, `get_storage_price`, `get_provider_stake`, `issue_challenge`, `respond_challenge`, `slash_provider`, `get_platform_stats`
 
 ### Privacy
 
@@ -316,7 +316,7 @@ Note: Shield/unshield/transfer also operate as native instruction types 23/24/25
 
 ### Identity
 
-**moltyid** — Full identity system (see §7 for complete reference):
+**lichenid** — LichenID identity system (see §7 for complete reference):
 59 exported functions covering identity, names, reputation, vouches, achievements, skills, attestations, agent profiles, delegation, recovery, trust, and admin.
 
 ---
@@ -424,7 +424,7 @@ Leverage up to 100x with 7 tiered parameter sets. Funding: 8h intervals (28,800 
 | 0x0C | `get_tier_info` | `[tier 1B]` |
 | 0x0D | `emergency_pause` | `[caller 32B]` |
 | 0x0E | `emergency_unpause` | `[caller 32B]` |
-| 0x0F | `set_moltcoin_address` | `[caller 32B][addr 32B]` |
+| 0x0F | `set_lichencoin_address` | `[caller 32B][addr 32B]` |
 | 0x10 | `get_total_volume` | `[]` |
 | 0x11 | `get_user_positions` | `[trader 32B]` |
 | 0x12 | `get_total_pnl` | `[]` |
@@ -462,7 +462,7 @@ Route types: DIRECT_CLOB(0), DIRECT_AMM(1), SPLIT(2), MULTI_HOP(3), LEGACY_SWAP(
 
 ### dex_governance — Governance (20 opcodes)
 
-Voting: 48h (172,800 slots), 66% approval, MIN_QUORUM=3, 1h timelock. Min reputation: 500 (MoltyID). Min listing liquidity: 10,000 MOLT.
+Voting: 48h (172,800 slots), 66% approval, MIN_QUORUM=3, 1h timelock. Min reputation: 500 (LichenID). Min listing liquidity: 10,000 LICN.
 
 | Op | Name | Args |
 |----|------|------|
@@ -480,7 +480,7 @@ Voting: 48h (172,800 slots), 66% approval, MIN_QUORUM=3, 1h timelock. Min reputa
 | 0x0B | `set_listing_requirements` | `[caller 32B][min_liq 8B][min_rep 8B]` |
 | 0x0C | `emergency_pause` | `[caller 32B]` |
 | 0x0D | `emergency_unpause` | `[caller 32B]` |
-| 0x0E | `set_moltyid_address` | `[caller 32B][addr 32B]` |
+| 0x0E | `set_lichenid_address` | `[caller 32B][addr 32B]` |
 | 0x0F | `add_allowed_quote` | `[caller 32B][quote_addr 32B]` |
 | 0x10 | `remove_allowed_quote` | `[caller 32B][quote_addr 32B]` |
 | 0x11 | `get_allowed_quote_count` | `[]` |
@@ -489,7 +489,7 @@ Voting: 48h (172,800 slots), 66% approval, MIN_QUORUM=3, 1h timelock. Min reputa
 
 ### dex_rewards — Trading Rewards (20 opcodes)
 
-Fee mining, LP mining, referral program. Reward pool: 100K MOLT/month (1,200,000 MOLT total).
+Fee mining, LP mining, referral program. Reward pool: 100K LICN/month (1,200,000 LICN total).
 
 **Trading Tiers:**
 
@@ -500,7 +500,7 @@ Fee mining, LP mining, referral program. Reward pool: 100K MOLT/month (1,200,000
 | Gold | 1M – 10M | 2.0× |
 | Diamond | > 10M | 3.0× |
 
-**Referral:** 10% default (max 30%), 5% discount to referee, 15% for MoltyID-verified.
+**Referral:** 10% default (max 30%), 5% discount to referee, 15% for LichenID-verified.
 
 | Op | Name | Args |
 |----|------|------|
@@ -516,7 +516,7 @@ Fee mining, LP mining, referral program. Reward pool: 100K MOLT/month (1,200,000
 | 0x09 | `emergency_pause` | `[caller 32B]` |
 | 0x0A | `emergency_unpause` | `[caller 32B]` |
 | 0x0B | `set_referral_rate` | `[caller 32B][rate 8B]` |
-| 0x0C | `set_moltcoin_address` | `[caller 32B][addr 32B]` |
+| 0x0C | `set_lichencoin_address` | `[caller 32B][addr 32B]` |
 | 0x0D | `set_rewards_pool` | `[caller 32B][pool_addr 32B]` |
 | 0x0E | `get_referral_rate` | `[]` |
 | 0x0F | `get_total_distributed` | `[]` |
@@ -556,9 +556,9 @@ Fee mining, LP mining, referral program. Reward pool: 100K MOLT/month (1,200,000
 
 ---
 
-## 7. MoltyID Identity System
+## 7. LichenID Identity System
 
-MoltyID is the decentralized identity layer. 51 WASM exports covering identity, naming, reputation, vouches, achievements, skills, attestations, agent profiles, delegation, and social recovery.
+LichenID is the decentralized identity layer. 51 WASM exports covering identity, naming, reputation, vouches, achievements, skills, attestations, agent profiles, delegation, and social recovery.
 
 ### Identity Registration
 
@@ -583,19 +583,19 @@ MoltyID is the decentralized identity layer. 51 WASM exports covering identity, 
 | 9 | General |
 | 10 | Personal |
 
-### .MOLT Name System
+### .LICN Name System
 
 | Name Length | Cost | Mechanism |
 |-------------|------|-----------|
-| 3 chars | 500 MOLT | Auction-only |
-| 4 chars | 100 MOLT | Auction-only |
-| 5+ chars | 20 MOLT | Direct registration |
+| 3 chars | 500 LICN | Auction-only |
+| 4 chars | 100 LICN | Auction-only |
+| 5+ chars | 20 LICN | Direct registration |
 
 - **Duration:** 1-10 years, cost = base × years
 - **Expiry:** `current_slot + (78,840,000 × years)`
 - **Validation:** 3-32 chars, lowercase a-z, 0-9, hyphens; no leading/trailing/consecutive hyphens
 - **One name per identity**
-- **~35 reserved names** (moltchain, treasury, dex, admin, system, etc.)
+- **~35 reserved names** (lichen, treasury, dex, admin, system, etc.)
 - **Premium auctions:** 1-14 days (216,000–3,024,000 slots)
 
 ### Reputation System
@@ -636,7 +636,7 @@ MoltyID is the decentralized identity layer. 51 WASM exports covering identity, 
 - Max 16 skills, max 32-byte name, proficiency 0-100
 - +10 rep per skill added
 - Third-party attestations: level 1-5
-- Cannot self-attest; both parties need MoltyID
+- Cannot self-attest; both parties need LichenID
 
 ### Delegation System
 
@@ -653,7 +653,7 @@ Owner grants bitfield permissions to delegates with TTL (max 1 year):
 - Flow: `set_recovery_guardians` → 3× `approve_recovery` → `execute_recovery`
 - Old identity deactivated, new owner inherits everything
 
-### Complete MoltyID Exports (59 functions)
+### Complete LichenID Exports (59 functions)
 
 **Identity:** `initialize`, `register_identity`, `get_identity`, `deactivate_identity`, `get_identity_count`
 **Reputation:** `update_reputation`, `update_reputation_typed`, `get_reputation`
@@ -671,22 +671,22 @@ Owner grants bitfield permissions to delegates with TTL (max 1 year):
 
 ## 8. Achievement System (90+ Achievements)
 
-Achievements are auto-detected by `detect_and_award_achievements()` in the processor after every successful transaction. They require the sender to have a MoltyID identity.
+Achievements are auto-detected by `detect_and_award_achievements()` in the processor after every successful transaction. They require the sender to have a LichenID identity.
 
 ### General
 
 | ID | Name | Trigger |
 |----|------|---------|
 | 1 | First Transaction | Any successful tx |
-| 106 | Big Spender | Transfer ≥100 MOLT |
-| 107 | Whale Transfer | Transfer ≥1,000 MOLT |
+| 106 | Big Spender | Transfer ≥100 LICN |
+| 107 | Whale Transfer | Transfer ≥1,000 LICN |
 | 124 | Contract Interactor | Any contract call |
 
 ### DEX
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 13 | First Trade | Any swap on DEX/MOLTSWAP |
+| 13 | First Trade | Any swap on DEX/LICHENSWAP |
 | 14 | LP Provider | Add liquidity |
 | 15 | LP Withdrawal | Remove liquidity |
 | 16 | DEX User | Any DEX interaction |
@@ -700,19 +700,19 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 31 | First Lend | Deposit to LOBSTERLEND |
-| 32 | First Borrow | Borrow from LOBSTERLEND |
+| 31 | First Lend | Deposit to THALLLEND |
+| 32 | First Borrow | Borrow from THALLLEND |
 | 33 | Loan Repaid | Repay loan |
 | 34 | Liquidator | Liquidate position |
-| 35 | Withdrawal Expert | Withdraw from LOBSTERLEND |
+| 35 | Withdrawal Expert | Withdraw from THALLLEND |
 
 ### Stablecoin
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 36 | Stablecoin Minter | Mint mUSD |
-| 37 | Stablecoin Redeemer | Burn mUSD |
-| 38 | Stable Sender | Transfer mUSD |
+| 36 | Stablecoin Minter | Mint lUSD |
+| 37 | Stablecoin Redeemer | Burn lUSD |
+| 38 | Stable Sender | Transfer lUSD |
 
 ### Staking
 
@@ -720,20 +720,20 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 |----|------|---------|
 | 41 | First Stake | System stake |
 | 42 | Unstaked | System unstake |
-| 43 | ReefStake Pioneer | First ReefStake deposit |
+| 43 | MossStake Pioneer | First MossStake deposit |
 | 44 | Locked Staker | Deposit with tier ≥1 |
 | 45 | Diamond Hands | 365-day lock tier |
-| 46 | Whale Staker | Deposit ≥10,000 MOLT |
-| 47 | Reward Harvester | Claim ReefStake rewards |
-| 48 | stMOLT Transferrer | Transfer stMOLT |
+| 46 | Whale Staker | Deposit ≥10,000 LICN |
+| 47 | Reward Harvester | Claim MossStake rewards |
+| 48 | stLICN Transferrer | Transfer stLICN |
 
 ### Bridge & Cross-Chain
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 51 | Bridge Pioneer (In) | MOLTBRIDGE deposit/lock |
-| 52 | Bridge Out | MOLTBRIDGE withdraw/claim |
-| 53 | Bridge User | Any MOLTBRIDGE call |
+| 51 | Bridge Pioneer (In) | LICHENBRIDGE deposit/lock |
+| 52 | Bridge Out | LICHENBRIDGE withdraw/claim |
+| 53 | Bridge User | Any LICHENBRIDGE call |
 | 54 | Wrapper | Wrap WETH/WBNB/WSOL |
 | 55 | Unwrapper | Unwrap WETH/WBNB/WSOL |
 | 56 | Cross-chain Trader | Transfer wrapped asset |
@@ -755,17 +755,17 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 | 63 | Collection Creator | Create NFT collection |
 | 64 | First Mint | Mint NFT |
 | 65 | NFT Trader | Transfer NFT |
-| 66 | First Listing | List on MOLTMARKET |
-| 67 | First Purchase | Buy on MOLTMARKET |
-| 68 | Bidder | Bid on MOLTMARKET |
-| 69 | Deal Maker | Accept offer on MOLTMARKET |
-| 70 | Punk Collector | Interact with MOLTPUNKS |
+| 66 | First Listing | List on LICHENMARKET |
+| 67 | First Purchase | Buy on LICHENMARKET |
+| 68 | Bidder | Bid on LICHENMARKET |
+| 69 | Deal Maker | Accept offer on LICHENMARKET |
+| 70 | Punk Collector | Interact with LICHENPUNKS |
 
 ### Governance
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 2 | Governance Voter | Any DEX_GOVERNANCE/MOLTDAO vote |
+| 2 | Governance Voter | Any DEX_GOVERNANCE/LICHENDAO vote |
 | 3 | Program Builder | Deploy a contract |
 | 71 | Proposal Creator | Create proposal |
 | 72 | First Vote | Cast first vote |
@@ -775,19 +775,19 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 81 | Oracle Reporter | Submit price to MOLTORACLE |
-| 82 | Oracle User | Any MOLTORACLE call |
-| 86 | File Uploader | Upload to REEF_STORAGE |
-| 87 | Data Retriever | Download from REEF_STORAGE |
-| 88 | Storage User | Any REEF_STORAGE call |
+| 81 | Oracle Reporter | Submit price to LICHENORACLE |
+| 82 | Oracle User | Any LICHENORACLE call |
+| 86 | File Uploader | Upload to MOSS_STORAGE |
+| 87 | Data Retriever | Download from MOSS_STORAGE |
+| 88 | Storage User | Any MOSS_STORAGE call |
 
 ### Auction & Bounty
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 91 | Auctioneer | Create MOLTAUCTION |
-| 92 | Auction Bidder | Bid on MOLTAUCTION |
-| 93 | Auction Winner | Claim/settle MOLTAUCTION |
+| 91 | Auctioneer | Create LICHENAUCTION |
+| 92 | Auction Bidder | Bid on LICHENAUCTION |
+| 93 | Auction Winner | Claim/settle LICHENAUCTION |
 | 96 | Bounty Poster | Post on BOUNTYBOARD |
 | 97 | Bounty Hunter | Submit work on BOUNTYBOARD |
 | 98 | Bounty Judge | Approve submission |
@@ -805,15 +805,15 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 
 | ID | Name | Trigger |
 |----|------|---------|
-| 115 | Payment Creator | Create ClawPay stream |
-| 116 | First Payment | Send ClawPay payment |
-| 117 | Subscription Creator | Create ClawPay subscription |
-| 118 | Token Launcher | Launch token on ClawPump |
-| 119 | Early Buyer | Buy on ClawPump |
-| 120 | Token Seller | Sell on ClawPump |
-| 121 | Vault Depositor | Deposit to ClawVault |
-| 122 | Vault Withdrawer | Withdraw from ClawVault |
-| 123 | Token Contract User | Interact with MOLTCOIN |
+| 115 | Payment Creator | Create SporePay stream |
+| 116 | First Payment | Send SporePay payment |
+| 117 | Subscription Creator | Create SporePay subscription |
+| 118 | Token Launcher | Launch token on SporePump |
+| 119 | Early Buyer | Buy on SporePump |
+| 120 | Token Seller | Sell on SporePump |
+| 121 | Vault Depositor | Deposit to SporeVault |
+| 122 | Vault Withdrawer | Withdraw from SporeVault |
+| 123 | Token Contract User | Interact with LICHENCOIN |
 
 ### Compute & Identity
 
@@ -821,12 +821,12 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 |----|------|---------|
 | 113 | Compute Provider | Register as compute provider |
 | 114 | Compute Consumer | Submit compute job |
-| 109 | Identity Created | Register MoltyID identity |
+| 109 | Identity Created | Register LichenID identity |
 | 110 | Profile Customizer | Update profile |
 | 111 | Voucher | Give a vouch |
 | 112 | Agent Creator | Create agent |
-| 9 | Name Registrar | Register .molt name |
-| 12 | First Name | Register first .molt name |
+| 9 | Name Registrar | Register .lichen name |
+| 12 | First Name | Register first .lichen name |
 
 ### Contract-Awarded (Reputation Milestones)
 
@@ -841,7 +841,7 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 
 ---
 
-## 9. Staking & ReefStake
+## 9. Staking & MossStake
 
 ### Basic Validator Staking
 
@@ -851,14 +851,14 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 | Request unstake | 10 | `[0x0A, amount:u64 LE]` | `[staker, validator]` |
 | Claim unstake | 11 | `[0x0B]` | `[staker, validator]` |
 
-### ReefStake — Liquid Staking
+### MossStake — Liquid Staking
 
 | Operation | Type | Data | Accounts |
 |-----------|------|------|----------|
 | Deposit | 13 | `[0x0D, amount:u64 LE, tier:u8?]` | `[depositor]` |
-| Unstake | 14 | `[0x0E, st_molt_amount:u64 LE]` | `[user]` |
+| Unstake | 14 | `[0x0E, st_licn_amount:u64 LE]` | `[user]` |
 | Claim | 15 | `[0x0F]` | `[user]` |
-| Transfer stMOLT | 16 | `[0x10, st_molt_amount:u64 LE]` | `[from, to]` |
+| Transfer stLICN | 16 | `[0x10, st_licn_amount:u64 LE]` | `[from, to]` |
 
 ### Lock Tiers
 
@@ -869,13 +869,13 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 | 180-Day | 2 | 38,880,000 slots | 2.4× | ~12% |
 | 365-Day | 3 | 78,840,000 slots | 3.6× | ~18% |
 
-### stMOLT Mechanics
+### stLICN Mechanics
 
 - Exchange rate: fixed-point with 1e9 precision, starts at 1.0
-- Minting: `st_molt = (molt × PRECISION) / exchange_rate`
-- Redemption: `molt = (st_molt × exchange_rate) / PRECISION`
+- Minting: `st_licn = (licn × PRECISION) / exchange_rate`
+- Redemption: `licn = (st_licn × exchange_rate) / PRECISION`
 - Auto-compound: `distribute_rewards()` increases exchange rate
-- Block reward share: 10% of block rewards → ReefStake pool
+- Block reward share: 10% of block rewards → MossStake pool
 - Tier change: must withdraw and re-stake (no in-place change)
 
 ---
@@ -892,12 +892,12 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 
 ### Boot-Time Setup
 
-Canonical Groth16 ceremony keys are committed to `zk-keys/` in the repo and shipped in every release tarball (inside `zk/`). On first boot, the validator copies bundled keys from the `zk/` directory next to the executable into `~/.moltchain/zk/`:
+Canonical Groth16 ceremony keys are committed to `zk-keys/` in the repo and shipped in every release tarball (inside `zk/`). On first boot, the validator copies bundled keys from the `zk/` directory next to the executable into `~/.lichen/zk/`:
 - `vk_shield.bin`, `pk_shield.bin`
 - `vk_unshield.bin`, `pk_unshield.bin`
 - `vk_transfer.bin`, `pk_transfer.bin`
 
-All validators must use the same verification keys for cross-verifiable shielded proofs. Keys are never generated at runtime — if missing, the validator logs a warning and disables shielded transactions but still starts. To regenerate manually: `zk-setup --output ~/.moltchain/zk/`.
+All validators must use the same verification keys for cross-verifiable shielded proofs. Keys are never generated at runtime — if missing, the validator logs a warning and disables shielded transactions but still starts. To regenerate manually: `zk-setup --output ~/.lichen/zk/`.
 
 ### Compute Costs
 
@@ -912,7 +912,7 @@ All validators must use the same verification keys for cross-verifiable shielded
 ```
 Data (169 bytes):
   [0]       = 0x17 (23)
-  [1..9]    = amount (u64 LE, shells)
+  [1..9]    = amount (u64 LE, spores)
   [9..41]   = commitment (32B, Poseidon hash of value‖blinding)
   [41..169] = Groth16 proof (128B, compressed BN254)
 
@@ -927,7 +927,7 @@ Debits sender balance. Inserts commitment into Merkle tree. Increments `total_sh
 ```
 Data (233 bytes):
   [0]        = 0x18 (24)
-  [1..9]     = amount (u64 LE, shells)
+  [1..9]     = amount (u64 LE, spores)
   [9..41]    = nullifier (32B)
   [41..73]   = merkle_root (32B)
   [73..105]  = recipient_fr (32B, Poseidon(Fr(pubkey), 0))
@@ -960,8 +960,8 @@ Accounts: (none — fully private)
 ### Wallet-Side Key Derivation
 
 ```
-spending_key = SHA-256(seed ‖ "moltchain-shielded-spending-key-v1")
-viewing_key  = SHA-256(spending_key ‖ "moltchain-viewing-key-v1")
+spending_key = SHA-256(seed ‖ "lichen-shielded-spending-key-v1")
+viewing_key  = SHA-256(spending_key ‖ "lichen-viewing-key-v1")
 ```
 
 Note decryption: XOR cipher with viewing key, 104-byte notes.
@@ -970,13 +970,13 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 ## 11. RPC Methods
 
-### Native MoltChain JSON-RPC (`POST /`)
+### Native Lichen JSON-RPC (`POST /`)
 
 #### Core Blockchain
 
 | Method | Params | Returns |
 |--------|--------|---------|
-| `getBalance` | `[pubkey]` | `{balance, spendable, staked, shells, molt}` |
+| `getBalance` | `[pubkey]` | `{balance, spendable, staked, spores, licn}` |
 | `getAccount` | `[pubkey]` | `{address, balance, owner, executable, nonce}` |
 | `getBlock` | `[slot]` | `{slot, hash, parent_hash, transactions}` |
 | `getLatestBlock` | none | Latest block JSON |
@@ -989,7 +989,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `sendTransaction` | `[base64_tx]` | `{signature}` |
 | `confirmTransaction` | `[hash_hex]` | `{confirmed, slot, status}` |
 | `simulateTransaction` | `[base64_tx]` | `{success, logs, error?}` |
-| `getTotalBurned` | none | `{total_burned_shells}` |
+| `getTotalBurned` | none | `{total_burned_spores}` |
 | `getRecentBlockhash` | none | `{blockhash, slot}` |
 | `health` | none | `{"status": "ok"}` |
 
@@ -1015,8 +1015,8 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `unstake` | `[pubkey, amount]` | `{success, unstaked}` |
 | `getStakingStatus` | `[pubkey]` | `{staked, rewards, validator}` |
 | `getStakingRewards` | `[pubkey]` | Reward history and unclaimed |
-| `getStakingPosition` | `[user_pubkey]` | `{st_molt_amount, current_value, lock_tier}` |
-| `getReefStakePoolInfo` | none | `{total_supply_st_molt, exchange_rate, apy, tiers}` |
+| `getStakingPosition` | `[user_pubkey]` | `{st_licn_amount, current_value, lock_tier}` |
+| `getMossStakePoolInfo` | none | `{total_supply_st_licn, exchange_rate, apy, tiers}` |
 | `getUnstakingQueue` | `[user_pubkey]` | `{pending_requests[], total_claimable}` |
 | `getRewardAdjustmentInfo` | none | `{decay, APY, fee_split}` |
 
@@ -1024,17 +1024,17 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 | Method | Params | Returns |
 |--------|--------|---------|
-| `getFeeConfig` | none | `{base_fee_shells, contract_deploy_fee_shells, nft_mint_fee_shells, fee_burn_percent, ...}` |
-| `setFeeConfig` | `{base_fee_shells?, ...}` (admin-gated, percentages must sum to 100) | `{status: "ok"}` |
-| `getRentParams` | none | `{rent_rate_shells_per_kb_month, rent_free_kb}` |
-| `setRentParams` | `{rent_rate_shells_per_kb_month?, rent_free_kb?}` (admin-gated) | `{status: "ok"}` |
+| `getFeeConfig` | none | `{base_fee_spores, contract_deploy_fee_spores, nft_mint_fee_spores, fee_burn_percent, ...}` |
+| `setFeeConfig` | `{base_fee_spores?, ...}` (admin-gated, percentages must sum to 100) | `{status: "ok"}` |
+| `getRentParams` | none | `{rent_rate_spores_per_kb_month, rent_free_kb}` |
+| `setRentParams` | `{rent_rate_spores_per_kb_month?, rent_free_kb?}` (admin-gated) | `{status: "ok"}` |
 
 #### Contracts
 
 | Method | Params | Returns |
 |--------|--------|---------|
 | `callContract` | `{contract, function, args?}` or `[contract_base58, function_name, args_base64?]` | `{success, returnData, returnCode, logs, error, computeUsed}` |
-| `deployContract` | `[deployer_base58, code_base64, init_data_json, signature_hex]` (admin-gated) | `{program_id, deployer, code_size, deploy_fee, deploy_fee_molt}` |
+| `deployContract` | `[deployer_base58, code_base64, init_data_json, signature_hex]` (admin-gated) | `{program_id, deployer, code_size, deploy_fee, deploy_fee_licn}` |
 | `upgradeContract` | `[owner_base58, contract_base58, code_base64, signature_hex]` (admin-gated) | `{program_id, owner, version, previous_version, code_size, upgrade_fee}` |
 | `getContractInfo` | `[program_id]` | `{symbol, owner, version, abi}` |
 | `getContractLogs` | `[program_id, {limit?}]` | Contract logs |
@@ -1046,22 +1046,22 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `getProgramCalls` | `[program_id, {limit?}]` | Recent calls |
 | `getProgramStorage` | `[program_id, key]` | Raw storage value |
 
-#### MoltyID (Identity)
+#### LichenID (Identity)
 
 | Method | Params | Returns |
 |--------|--------|---------|
-| `getMoltyIdIdentity` | `[pubkey]` | `{name, avatar, bio, verified}` |
-| `getMoltyIdReputation` | `[pubkey]` | `{score, level}` |
-| `getMoltyIdSkills` | `[pubkey]` | `{skills: []}` |
-| `getMoltyIdVouches` | `[pubkey]` | `{vouches: []}` |
-| `getMoltyIdAchievements` | `[pubkey]` | `{achievements: []}` |
-| `getMoltyIdProfile` | `[pubkey]` | Full composite profile |
-| `resolveMoltName` | `[name]` | `{pubkey}` |
-| `reverseMoltName` | `[pubkey]` | `{name}` |
-| `batchReverseMoltNames` | `[pubkey_array]` | `{names: {pubkey: name}}` |
-| `searchMoltNames` | `[query, {limit?}]` | Matching names |
-| `getMoltyIdAgentDirectory` | `[{limit?, offset?}]` | Agent directory |
-| `getMoltyIdStats` | none | `{total_identities, total_vouches}` |
+| `getLichenIdIdentity` | `[pubkey]` | `{name, avatar, bio, verified}` |
+| `getLichenIdReputation` | `[pubkey]` | `{score, level}` |
+| `getLichenIdSkills` | `[pubkey]` | `{skills: []}` |
+| `getLichenIdVouches` | `[pubkey]` | `{vouches: []}` |
+| `getLichenIdAchievements` | `[pubkey]` | `{achievements: []}` |
+| `getLichenIdProfile` | `[pubkey]` | Full composite profile |
+| `resolveLichenName` | `[name]` | `{pubkey}` |
+| `reverseLichenName` | `[pubkey]` | `{name}` |
+| `batchReverseLichenNames` | `[pubkey_array]` | `{names: {pubkey: name}}` |
+| `searchLichenNames` | `[query, {limit?}]` | Matching names |
+| `getLichenIdAgentDirectory` | `[{limit?, offset?}]` | Agent directory |
+| `getLichenIdStats` | none | `{total_identities, total_vouches}` |
 | `getNameAuction` | `[name]` | Auction state |
 
 #### NFT & Marketplace
@@ -1112,20 +1112,20 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `getDexRouterStats` | route_count, swap_count, total_volume |
 | `getDexAnalyticsStats` | record_count, total_candles |
 | `getDexGovernanceStats` | proposal_count, total_votes |
-| `getMoltswapStats` | swap_count, volume_a, volume_b |
-| `getLobsterLendStats` | deposits, borrows, reserves |
-| `getClawPayStats` | stream_count, total_streamed |
+| `getLichenSwapStats` | swap_count, volume_a, volume_b |
+| `getThallLendStats` | deposits, borrows, reserves |
+| `getSporePayStats` | stream_count, total_streamed |
 | `getBountyBoardStats` | bounty_count, reward_volume |
 | `getComputeMarketStats` | job_count, payment_volume |
-| `getReefStorageStats` | data_count, total_bytes |
-| `getMoltMarketStats` | listing_count, sale_volume |
-| `getMoltAuctionStats` | auction_count, total_volume |
-| `getMoltPunksStats` | total_minted, transfer_count |
+| `getMossStorageStats` | data_count, total_bytes |
+| `getLichenMarketStats` | listing_count, sale_volume |
+| `getLichenAuctionStats` | auction_count, total_volume |
+| `getLichenPunksStats` | total_minted, transfer_count |
 | `getMusdStats` / `getWethStats` / `getWsolStats` | supply, minted, burned |
-| `getClawVaultStats` | total_assets, strategy_count |
-| `getMoltBridgeStats` | validator_count, locked_amount |
-| `getMoltDaoStats` | proposal_count |
-| `getMoltOracleStats` | queries, feeds |
+| `getSporeVaultStats` | total_assets, strategy_count |
+| `getLichenBridgeStats` | validator_count, locked_amount |
+| `getLichenDaoStats` | proposal_count |
+| `getLichenOracleStats` | queries, feeds |
 
 #### Prediction Markets
 
@@ -1145,7 +1145,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 |--------|--------|---------|
 | `getBlockCommit` | `[slot]` | `{slot, block_hash, commit_signatures[], commit_validator_count, bft_timestamp}` |
 | `getAccountProof` | `[pubkey]` | `{pubkey, account, proof: {leaf_hash, siblings, path}, state_root}` |
-| `estimateTransactionFee` | `[base64_tx]` | `{fee_shells, fee_molt, compute_units}` |
+| `estimateTransactionFee` | `[base64_tx]` | `{fee_spores, fee_licn, compute_units}` |
 | `getAccountAtSlot` | `[pubkey, slot]` | Account state at historical slot (archive mode) |
 | `getOraclePrices` | none | `{prices: [{asset, price, confidence, slot, attestations}]}` |
 
@@ -1168,7 +1168,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 ### Solana-Format JSON-RPC (`POST /solana-compat`)
 
-> Accepts MoltChain transactions in Solana wire format. Does **not** accept native Solana transactions.
+> Accepts Lichen transactions in Solana wire format. Does **not** accept native Solana transactions.
 > Legacy alias `/solana` is supported for backward compatibility.
 
 | Method | Description |
@@ -1185,7 +1185,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `getTransaction` | Solana-format tx |
 | `sendTransaction` | Submit base64 tx |
 | `getHealth` | `"ok"` |
-| `getVersion` | `{"solana-core": "moltchain"}` |
+| `getVersion` | `{"solana-core": "lichen"}` |
 
 ### Ethereum-Compatible JSON-RPC (`POST /evm`)
 
@@ -1199,7 +1199,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `eth_getTransactionReceipt` | Receipt |
 | `eth_getTransactionByHash` | Tx details |
 | `eth_accounts` | Returns `[]` (no server-side accounts) |
-| `eth_gasPrice` | `"0x1"` (1 shell/gas) |
+| `eth_gasPrice` | `"0x1"` (1 spore/gas) |
 | `eth_maxPriorityFeePerGas` | Returns `"0x0"` |
 | `eth_estimateGas` | Gas estimate |
 | `eth_getCode` | Bytecode |
@@ -1208,7 +1208,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `eth_getLogs` | Event logs (Keccak-256 topics) |
 | `eth_getStorageAt` | Storage slot |
 | `net_version` / `net_listening` | Network info |
-| `web3_clientVersion` | `"MoltChain/{version}"` |
+| `web3_clientVersion` | `"Lichen/{version}"` |
 
 ---
 
@@ -1257,7 +1257,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | GET | `/api/v1/stats/rewards` | Reward stats |
 | GET | `/api/v1/stats/analytics` | Analytics stats |
 | GET | `/api/v1/stats/governance` | Governance stats |
-| GET | `/api/v1/stats/moltswap` | Moltswap stats |
+| GET | `/api/v1/stats/lichenswap` | LichenSwap stats |
 | GET | `/api/v1/oracle/prices` | Oracle price feeds |
 
 ### Prediction Market (`/api/v1/prediction-market/*`)
@@ -1307,7 +1307,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 ## 13. WebSocket Subscriptions
 
-Connect to `ws://localhost:8900` (local) or `wss://ws.moltchain.network` (production). Send JSON-RPC subscribe messages.
+Connect to `ws://localhost:8900` (local) or `wss://ws.lichen.network` (production). Send JSON-RPC subscribe messages.
 
 ### Core
 
@@ -1373,12 +1373,12 @@ Connect to `ws://localhost:8900` (local) or `wss://ws.moltchain.network` (produc
 
 ## 14. JavaScript SDK
 
-**Package:** `@moltchain/sdk` in `sdk/js/src/`
+**Package:** `@lichen/sdk` in `sdk/js/src/`
 
 ### Key Classes
 
 ```typescript
-import { PublicKey, Keypair, Connection, TransactionBuilder } from '@moltchain/sdk';
+import { PublicKey, Keypair, Connection, TransactionBuilder } from '@lichen/sdk';
 
 // Create wallet
 const kp = Keypair.generate();
@@ -1387,7 +1387,7 @@ const pub = kp.pubkey();  // PublicKey
 // Connect
 // Local:   new Connection('http://localhost:8899', 'ws://localhost:8900');
 // Production:
-const conn = new Connection('https://rpc.moltchain.network', 'wss://ws.moltchain.network');
+const conn = new Connection('https://rpc.lichen.network', 'wss://ws.lichen.network');
 
 // Query
 const balance = await conn.getBalance(pub.toBase58());
@@ -1441,15 +1441,15 @@ Instruction: [programId 32B][u64 acct_count][acct₁ 32B]...[u64 data_len][data.
 1. latestBlock = await rpc.getLatestBlock()
 2. Build instruction data: Uint8Array with [opcode, ...args]
 3. message = { instructions: [{program_id, accounts, data}], blockhash }
-4. privateKey = MoltCrypto.decryptPrivateKey(encryptedKey, password)
+4. privateKey = LichenCrypto.decryptPrivateKey(encryptedKey, password)
 5. messageBytes = serializeMessageBincode(message)
-6. signature = MoltCrypto.signTransaction(privateKey, messageBytes)
+6. signature = LichenCrypto.signTransaction(privateKey, messageBytes)
 7. tx = { signatures: [signature], message }
 8. base64 = btoa(JSON.stringify(tx))
 9. rpc.sendTransaction(base64)
 ```
 
-### Token Transfers (mUSD, wSOL, wETH, wBNB)
+### Token Transfers (lUSD, wSOL, wETH, wBNB)
 
 ```javascript
 program_id = [0xFF × 32]  // CONTRACT_PROGRAM_ID
@@ -1478,91 +1478,91 @@ Auto-derives 20-byte address via `Keccak256(pubkey)[12:32]` and sends type 12 tx
 
 ## 16. CLI Reference
 
-Binary: **`molt`**. Global: `--rpc-url` (default `http://localhost:8899`).
+Binary: **`lichen`**. Global: `--rpc-url` (default `http://localhost:8899`).
 
 ### Core Commands
 
 ```bash
-molt balance [address]                       # Check balance
-molt transfer <to> <amount>                  # Transfer MOLT
-molt deploy <contract.wasm>                  # Deploy WASM contract
+lichen balance [address]                       # Check balance
+lichen transfer <to> <amount>                  # Transfer LICN
+lichen deploy <contract.wasm>                  # Deploy WASM contract
                                                  # flags: --symbol, --name, --template,
                                                  #   --decimals, --supply, --metadata (JSON)
-molt upgrade <address> <contract.wasm>       # Upgrade contract
-molt call <contract> <function> --args '[...]'  # Call contract function
-molt block <slot>                            # Get block info
-molt latest                                  # Get latest block
-molt slot                                    # Current slot
-molt blockhash                               # Recent blockhash
-molt burned                                  # Total burned MOLT
-molt validators                              # List validators
-molt status                                  # Chain status
-molt metrics                                 # Performance metrics
+lichen upgrade <address> <contract.wasm>       # Upgrade contract
+lichen call <contract> <function> --args '[...]'  # Call contract function
+lichen block <slot>                            # Get block info
+lichen latest                                  # Get latest block
+lichen slot                                    # Current slot
+lichen blockhash                               # Recent blockhash
+lichen burned                                  # Total burned LICN
+lichen validators                              # List validators
+lichen status                                  # Chain status
+lichen metrics                                 # Performance metrics
 ```
 
 ### Wallet Management
 
 ```bash
-molt wallet create [name]                    # Create wallet
-molt wallet import <name> --keypair <path>   # Import wallet
-molt wallet list                             # List wallets
-molt wallet show <name>                      # Show details
-molt wallet balance <name>                   # Get balance
-molt wallet remove <name>                    # Remove wallet
+lichen wallet create [name]                    # Create wallet
+lichen wallet import <name> --keypair <path>   # Import wallet
+lichen wallet list                             # List wallets
+lichen wallet show <name>                      # Show details
+lichen wallet balance <name>                   # Get balance
+lichen wallet remove <name>                    # Remove wallet
 ```
 
 ### Identity & Keypair
 
 ```bash
-molt identity new --output <path>            # Create identity
-molt identity show --keypair <path>          # Show identity
-molt init --output <path>                    # Init validator keypair
+lichen identity new --output <path>            # Create identity
+lichen identity show --keypair <path>          # Show identity
+lichen init --output <path>                    # Init validator keypair
 ```
 
 ### Staking
 
 ```bash
-molt stake add <amount>                      # Stake MOLT
-molt stake remove <amount>                   # Unstake MOLT
-molt stake status                            # Staking status
-molt stake rewards                           # View rewards
+lichen stake add <amount>                      # Stake LICN
+lichen stake remove <amount>                   # Unstake LICN
+lichen stake status                            # Staking status
+lichen stake rewards                           # View rewards
 ```
 
 ### Governance
 
 ```bash
-molt gov propose <title> <desc>              # Create proposal
-molt gov vote <id> <yes/no/abstain>          # Vote
-molt gov list [--all]                        # List proposals
-molt gov info <id>                           # Proposal details
-molt gov execute <id>                        # Execute proposal
-molt gov veto <id>                           # Veto proposal
+lichen gov propose <title> <desc>              # Create proposal
+lichen gov vote <id> <yes/no/abstain>          # Vote
+lichen gov list [--all]                        # List proposals
+lichen gov info <id>                           # Proposal details
+lichen gov execute <id>                        # Execute proposal
+lichen gov veto <id>                           # Veto proposal
 ```
 
 ### Tokens
 
 ```bash
-molt token create <name> <symbol> --wasm <path>  # Deploy token WASM + register
-molt token info <token>                      # Token info
-molt token mint <token> <amount>             # Mint tokens
-molt token send <token> <to> <amount>        # Send tokens
-molt token balance <token>                   # Check balance
-molt token list                              # List tokens
+licn token create <name> <symbol> --wasm <path>  # Deploy token WASM + register
+licn token info <token>                      # Token info
+licn token mint <token> <amount>             # Mint tokens
+licn token send <token> <to> <amount>        # Send tokens
+licn token balance <token>                   # Check balance
+licn token list                              # List tokens
 ```
 
 ### Account & Contract Inspection
 
 ```bash
-molt account info <address>                  # Account details
-molt account history <address> --limit N     # Transaction history
-molt contract info <address>                 # Contract details
-molt contract logs <address> --limit N       # Contract logs
-molt contract list                           # All contracts
-molt contract register <addr> --symbol X     # Register in symbol registry
-molt network status                          # Network status
-molt network peers                           # Connected peers
-molt validator info <address>                # Validator details
-molt validator performance <address>         # Validator performance
+lichen account info <address>                  # Account details
+lichen account history <address> --limit N     # Transaction history
+lichen contract info <address>                 # Contract details
+lichen contract logs <address> --limit N       # Contract logs
+lichen contract list                           # All contracts
+lichen contract register <addr> --symbol X     # Register in symbol registry
+lichen network status                          # Network status
+lichen network peers                           # Connected peers
+lichen validator info <address>                # Validator details
+lichen validator performance <address>         # Validator performance
 ```
 
 ---
@@ -1574,7 +1574,7 @@ molt validator performance <address>         # Validator performance
 If an agent is asked to install or start a validator on a fresh machine, the default public path is:
 
 1. Download the latest signed release bundle.
-2. Extract `moltchain-validator`.
+2. Extract `lichen-validator`.
 3. Create a writable state directory.
 4. Start mainnet with seed peers and `--auto-update=apply`.
 
@@ -1583,71 +1583,71 @@ Do not default to `git clone` unless the user explicitly wants source checkout, 
 Linux x86_64:
 
 ```bash
-curl -LO https://github.com/lobstercove/moltchain/releases/latest/download/moltchain-validator-linux-x86_64.tar.gz
-curl -LO https://github.com/lobstercove/moltchain/releases/latest/download/SHA256SUMS
-grep 'moltchain-validator-linux-x86_64.tar.gz' SHA256SUMS | sha256sum -c -
-tar xzf moltchain-validator-linux-x86_64.tar.gz --strip-components=1
-chmod +x moltchain-validator
-mkdir -p "$HOME/.moltchain/state-mainnet"
-./moltchain-validator \
+curl -LO https://github.com/lobstercove/lichen/releases/latest/download/lichen-validator-linux-x86_64.tar.gz
+curl -LO https://github.com/lobstercove/lichen/releases/latest/download/SHA256SUMS
+grep 'lichen-validator-linux-x86_64.tar.gz' SHA256SUMS | sha256sum -c -
+tar xzf lichen-validator-linux-x86_64.tar.gz --strip-components=1
+chmod +x lichen-validator
+mkdir -p "$HOME/.lichen/state-mainnet"
+./lichen-validator \
   --network mainnet \
   --p2p-port 8001 \
   --rpc-port 9899 \
   --ws-port 9900 \
-  --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
+  --db-path "$HOME/.lichen/state-mainnet" \
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 \
   --auto-update=apply
 ```
 
 macOS Apple Silicon:
 
 ```bash
-curl -LO https://github.com/lobstercove/moltchain/releases/latest/download/moltchain-validator-darwin-aarch64.tar.gz
-curl -LO https://github.com/lobstercove/moltchain/releases/latest/download/SHA256SUMS
-grep 'moltchain-validator-darwin-aarch64.tar.gz' SHA256SUMS | shasum -a 256 -c -
-tar xzf moltchain-validator-darwin-aarch64.tar.gz --strip-components=1
-chmod +x moltchain-validator
-mkdir -p "$HOME/.moltchain/state-mainnet"
-./moltchain-validator \
+curl -LO https://github.com/lobstercove/lichen/releases/latest/download/lichen-validator-darwin-aarch64.tar.gz
+curl -LO https://github.com/lobstercove/lichen/releases/latest/download/SHA256SUMS
+grep 'lichen-validator-darwin-aarch64.tar.gz' SHA256SUMS | shasum -a 256 -c -
+tar xzf lichen-validator-darwin-aarch64.tar.gz --strip-components=1
+chmod +x lichen-validator
+mkdir -p "$HOME/.lichen/state-mainnet"
+./lichen-validator \
   --network mainnet \
   --p2p-port 8001 \
   --rpc-port 9899 \
   --ws-port 9900 \
-  --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
+  --db-path "$HOME/.lichen/state-mainnet" \
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 \
   --auto-update=apply
 ```
 
 Windows x64 (PowerShell):
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/lobstercove/moltchain/releases/latest/download/moltchain-validator-windows-x86_64.tar.gz" -OutFile "moltchain-validator-windows-x86_64.tar.gz"
-tar -xzf .\moltchain-validator-windows-x86_64.tar.gz --strip-components=1
-New-Item -ItemType Directory -Force -Path "$HOME\.moltchain\state-mainnet" | Out-Null
-.\moltchain-validator.exe `
+Invoke-WebRequest -Uri "https://github.com/lobstercove/lichen/releases/latest/download/lichen-validator-windows-x86_64.tar.gz" -OutFile "lichen-validator-windows-x86_64.tar.gz"
+tar -xzf .\lichen-validator-windows-x86_64.tar.gz --strip-components=1
+New-Item -ItemType Directory -Force -Path "$HOME\.lichen\state-mainnet" | Out-Null
+.\lichen-validator.exe `
   --network mainnet `
   --p2p-port 8001 `
   --rpc-port 9899 `
   --ws-port 9900 `
-  --db-path "$HOME\.moltchain\state-mainnet" `
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 `
+  --db-path "$HOME\.lichen\state-mainnet" `
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 `
   --auto-update=apply
 ```
 
 ### Join the Mainnet (Quick Start for Agents)
 
-If the machine already has a `moltchain-validator` binary, agents do not need the full repo checkout. They can join mainnet immediately with the binary plus a writable state directory:
+If the machine already has a `lichen-validator` binary, agents do not need the full repo checkout. They can join mainnet immediately with the binary plus a writable state directory:
 
 ```bash
-mkdir -p "$HOME/.moltchain/state-mainnet"
+mkdir -p "$HOME/.lichen/state-mainnet"
 
-moltchain-validator \
+lichen-validator \
   --network mainnet \
   --p2p-port 8001 \
   --rpc-port 9899 \
   --ws-port 9900 \
-  --db-path "$HOME/.moltchain/state-mainnet" \
-    --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
+  --db-path "$HOME/.lichen/state-mainnet" \
+    --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 \
     --auto-update=apply
 ```
 
@@ -1656,14 +1656,14 @@ moltchain-validator \
 Preferred agent flow:
 1. Detect platform.
 2. Download the matching GitHub Release archive.
-3. Extract `moltchain-validator`.
+3. Extract `lichen-validator`.
 4. Create a writable state directory.
 5. Start with domain bootstrap peers and `--auto-update=apply`.
 
 Release URL template:
 
 ```text
-https://github.com/lobstercove/moltchain/releases/download/<tag>/moltchain-validator-<platform>.tar.gz
+https://github.com/lobstercove/lichen/releases/download/<tag>/lichen-validator-<platform>.tar.gz
 ```
 
 Current platform names:
@@ -1676,57 +1676,57 @@ Current platform names:
 Linux x86_64:
 
 ```bash
-VERSION=$(curl -fsSL https://api.github.com/repos/lobstercove/moltchain/releases/latest | jq -r .tag_name)
-curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/moltchain-validator-linux-x86_64.tar.gz"
-curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/SHA256SUMS"
-grep 'moltchain-validator-linux-x86_64.tar.gz' SHA256SUMS | sha256sum -c -
-tar xzf moltchain-validator-linux-x86_64.tar.gz --strip-components=1
-chmod +x moltchain-validator
-mkdir -p "$HOME/.moltchain/state-mainnet"
-./moltchain-validator \
+VERSION=$(curl -fsSL https://api.github.com/repos/lobstercove/lichen/releases/latest | jq -r .tag_name)
+curl -LO "https://github.com/lobstercove/lichen/releases/download/${VERSION}/lichen-validator-linux-x86_64.tar.gz"
+curl -LO "https://github.com/lobstercove/lichen/releases/download/${VERSION}/SHA256SUMS"
+grep 'lichen-validator-linux-x86_64.tar.gz' SHA256SUMS | sha256sum -c -
+tar xzf lichen-validator-linux-x86_64.tar.gz --strip-components=1
+chmod +x lichen-validator
+mkdir -p "$HOME/.lichen/state-mainnet"
+./lichen-validator \
   --network mainnet \
   --p2p-port 8001 \
   --rpc-port 9899 \
   --ws-port 9900 \
-  --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
+  --db-path "$HOME/.lichen/state-mainnet" \
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 \
   --auto-update=apply
 ```
 
 macOS Apple Silicon:
 
 ```bash
-VERSION=$(curl -fsSL https://api.github.com/repos/lobstercove/moltchain/releases/latest | jq -r .tag_name)
-curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/moltchain-validator-darwin-aarch64.tar.gz"
-curl -LO "https://github.com/lobstercove/moltchain/releases/download/${VERSION}/SHA256SUMS"
-grep 'moltchain-validator-darwin-aarch64.tar.gz' SHA256SUMS | shasum -a 256 -c -
-tar xzf moltchain-validator-darwin-aarch64.tar.gz --strip-components=1
-chmod +x moltchain-validator
-mkdir -p "$HOME/.moltchain/state-mainnet"
-./moltchain-validator \
+VERSION=$(curl -fsSL https://api.github.com/repos/lobstercove/lichen/releases/latest | jq -r .tag_name)
+curl -LO "https://github.com/lobstercove/lichen/releases/download/${VERSION}/lichen-validator-darwin-aarch64.tar.gz"
+curl -LO "https://github.com/lobstercove/lichen/releases/download/${VERSION}/SHA256SUMS"
+grep 'lichen-validator-darwin-aarch64.tar.gz' SHA256SUMS | shasum -a 256 -c -
+tar xzf lichen-validator-darwin-aarch64.tar.gz --strip-components=1
+chmod +x lichen-validator
+mkdir -p "$HOME/.lichen/state-mainnet"
+./lichen-validator \
   --network mainnet \
   --p2p-port 8001 \
   --rpc-port 9899 \
   --ws-port 9900 \
-  --db-path "$HOME/.moltchain/state-mainnet" \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
+  --db-path "$HOME/.lichen/state-mainnet" \
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 \
   --auto-update=apply
 ```
 
 Windows x64 (PowerShell):
 
 ```powershell
-$version = (Invoke-RestMethod https://api.github.com/repos/lobstercove/moltchain/releases/latest).tag_name
-Invoke-WebRequest -Uri "https://github.com/lobstercove/moltchain/releases/download/$version/moltchain-validator-windows-x86_64.tar.gz" -OutFile "moltchain-validator-windows-x86_64.tar.gz"
-tar -xzf .\moltchain-validator-windows-x86_64.tar.gz --strip-components=1
-New-Item -ItemType Directory -Force -Path "$HOME\.moltchain\state-mainnet" | Out-Null
-.\moltchain-validator.exe `
+$version = (Invoke-RestMethod https://api.github.com/repos/lobstercove/lichen/releases/latest).tag_name
+Invoke-WebRequest -Uri "https://github.com/lobstercove/lichen/releases/download/$version/lichen-validator-windows-x86_64.tar.gz" -OutFile "lichen-validator-windows-x86_64.tar.gz"
+tar -xzf .\lichen-validator-windows-x86_64.tar.gz --strip-components=1
+New-Item -ItemType Directory -Force -Path "$HOME\.lichen\state-mainnet" | Out-Null
+.\lichen-validator.exe `
   --network mainnet `
   --p2p-port 8001 `
   --rpc-port 9899 `
   --ws-port 9900 `
-  --db-path "$HOME\.moltchain\state-mainnet" `
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 `
+  --db-path "$HOME\.lichen\state-mainnet" `
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 `
   --auto-update=apply
 ```
 
@@ -1739,7 +1739,7 @@ Given a fresh `--db-path`, the validator:
 1. Creates the state directory.
 2. Generates or imports the validator identity there.
 3. Persists validator-local runtime material in that directory.
-4. Connects to `seed-01.moltchain.network`, `seed-02.moltchain.network`, and `seed-03.moltchain.network`.
+4. Connects to `seed-01.lichen.network`, `seed-02.lichen.network`, and `seed-03.lichen.network`.
 5. Syncs the chain and peer graph.
 6. Reuses that same identity on restart if the state directory is preserved.
 
@@ -1755,23 +1755,23 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
 
 # 2. Clone and build
-git clone https://github.com/lobstercove/moltchain.git
-cd moltchain
+git clone https://github.com/lobstercove/lichen.git
+cd lichen
 cargo build --release
 
 # 3. Start a mainnet validator (bootstraps from seed nodes automatically)
-./target/release/moltchain-validator \
+./target/release/lichen-validator \
     --p2p-port 8001 \
     --rpc-port 9899 \
     --ws-port 9900 \
     --db-path ./data/state-mainnet \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001
 ```
 
 On first start the validator:
 - Generates a keypair → saved to `./data/state-mainnet/validator-keypair.json`
 - Syncs genesis + state from seed nodes
-- Receives a 100K MOLT bootstrap grant (for the first 200 validators)
+- Receives a 100K LICN bootstrap grant (for the first 200 validators)
 - Begins block production after sync completes
 
 The identity persists across restarts (stored in the data directory, not `$HOME`).
@@ -1797,9 +1797,9 @@ The identity persists across restarts (stored in the data directory, not `$HOME`
 
 | Region | Address |
 |--------|---------|
-| US East (Virginia) | `seed-01.moltchain.network:8001` |
-| EU West (France) | `seed-02.moltchain.network:8001` |
-| AP Southeast (Singapore) | `seed-03.moltchain.network:8001` |
+| US East (Virginia) | `seed-01.lichen.network:8001` |
+| EU West (France) | `seed-02.lichen.network:8001` |
+| AP Southeast (Singapore) | `seed-03.lichen.network:8001` |
 
 Prefer domains over raw IPs in agent prompts and operational scripts. DNS lets bootstrap infrastructure move without changing the validator command or republishing the binary.
 
@@ -1807,38 +1807,38 @@ Prefer domains over raw IPs in agent prompts and operational scripts. DNS lets b
 
 | Service | URL |
 |---------|-----|
-| RPC | `https://rpc.moltchain.network` |
-| WebSocket | `wss://ws.moltchain.network` |
+| RPC | `https://rpc.lichen.network` |
+| WebSocket | `wss://ws.lichen.network` |
 
 ### Testnet (for Development)
 
 ```bash
-./target/release/moltchain-validator \
+./target/release/lichen-validator \
     --p2p-port 7001 \
     --rpc-port 8899 \
     --ws-port 8900 \
     --db-path ./data/state-testnet \
     --dev-mode \
-  --bootstrap-peers seed-01.moltchain.network:7001,seed-02.moltchain.network:7001,seed-03.moltchain.network:7001
+  --bootstrap-peers seed-01.lichen.network:7001,seed-02.lichen.network:7001,seed-03.lichen.network:7001
 ```
 
 ### Mainnet
 
 ```bash
-./target/release/moltchain-validator \
+./target/release/lichen-validator \
     --p2p-port 8001 \
     --rpc-port 9899 \
     --ws-port 9900 \
     --db-path ./data/state-mainnet \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001
 ```
 
 ### Start / Stop / Reset (Scripts)
 
 ```bash
-bash moltchain-start.sh mainnet      # Start mainnet validator
-bash moltchain-start.sh testnet      # Start testnet validator
-bash moltchain-stop.sh               # Stop all
+bash lichen-start.sh mainnet      # Start mainnet validator
+bash lichen-start.sh testnet      # Start testnet validator
+bash lichen-stop.sh               # Stop all
 bash reset-blockchain.sh             # Full reset (preserves ZK keys)
 ```
 
@@ -1846,9 +1846,9 @@ bash reset-blockchain.sh             # Full reset (preserves ZK keys)
 
 Validator identity keypair location (in priority order):
 1. `--keypair <path>` CLI argument
-2. `MOLTCHAIN_VALIDATOR_KEYPAIR` env var
+2. `LICHEN_VALIDATOR_KEYPAIR` env var
 3. `{db-path}/validator-keypair.json` (data directory — recommended)
-4. `~/.moltchain/validators/validator-{port}.json` (legacy)
+4. `~/.lichen/validators/validator-{port}.json` (legacy)
 5. Auto-generated if none found
 
 To migrate a validator to a new machine:
@@ -1857,19 +1857,19 @@ To migrate a validator to a new machine:
 scp old-machine:path/to/data/state-mainnet/validator-keypair.json ./my-validator.json
 
 # Import on new machine
-./target/release/moltchain-validator \
+./target/release/lichen-validator \
     --import-key ./my-validator.json \
     --p2p-port 8001 \
-  --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001
+  --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001
 ```
 
 ### Auto-Update
 
 ```bash
-./target/release/moltchain-validator --auto-update=check           # Check only
-./target/release/moltchain-validator --auto-update=apply           # Download + restart
-./target/release/moltchain-validator --update-check-interval=300   # Custom interval (seconds)
-./target/release/moltchain-validator --update-channel=beta         # Channel selection
+./target/release/lichen-validator --auto-update=check           # Check only
+./target/release/lichen-validator --auto-update=apply           # Download + restart
+./target/release/lichen-validator --update-check-interval=300   # Custom interval (seconds)
+./target/release/lichen-validator --update-channel=beta         # Channel selection
 ```
 
 Exit code 75 → restart with new binary. Rollback: 3 crashes within 60s → automatic rollback.
@@ -1883,33 +1883,33 @@ docker-compose up -d
 ### Systemd (VPS Deployment)
 
 ```bash
-sudo bash deploy/setup.sh testnet mainnet   # Creates moltchain user, env files, systemd units
-sudo systemctl enable moltchain-validator-testnet moltchain-validator-mainnet
-sudo systemctl start moltchain-validator-testnet moltchain-validator-mainnet
+sudo bash deploy/setup.sh testnet mainnet   # Creates lichen user, env files, systemd units
+sudo systemctl enable lichen-validator-testnet lichen-validator-mainnet
+sudo systemctl start lichen-validator-testnet lichen-validator-mainnet
 ```
 
 **CRITICAL — VPS State Directory Convention:**
 
-All systemd services on production VPSes use `/var/lib/moltchain/` as the base directory:
+All systemd services on production VPSes use `/var/lib/lichen/` as the base directory:
 
 | Path | Purpose |
 |------|---------|
-| `/var/lib/moltchain/state-testnet` | Testnet chain state (RocksDB) |
-| `/var/lib/moltchain/state-mainnet` | Mainnet chain state (RocksDB) |
-| `/var/lib/moltchain/contracts/` | Compiled WASM contract artifacts |
-| `/var/lib/moltchain/faucet-keypair-testnet.json` | Faucet signing keypair |
-| `/var/lib/moltchain/airdrops.json` | Faucet airdrop tracking |
-| `/var/lib/moltchain/custody-db` | Custody bridge state (testnet) |
-| `/var/lib/moltchain/custody-db-mainnet` | Custody bridge state (mainnet) |
-| `/usr/local/bin/moltchain-*` | Installed binaries |
+| `/var/lib/lichen/state-testnet` | Testnet chain state (RocksDB) |
+| `/var/lib/lichen/state-mainnet` | Mainnet chain state (RocksDB) |
+| `/var/lib/lichen/contracts/` | Compiled WASM contract artifacts |
+| `/var/lib/lichen/faucet-keypair-testnet.json` | Faucet signing keypair |
+| `/var/lib/lichen/airdrops.json` | Faucet airdrop tracking |
+| `/var/lib/lichen/custody-db` | Custody bridge state (testnet) |
+| `/var/lib/lichen/custody-db-mainnet` | Custody bridge state (mainnet) |
+| `/usr/local/bin/lichen-*` | Installed binaries |
 
-**Never** run validators manually from `~/moltchain/data/state-*` on VPSes — this creates a separate state directory from what systemd uses and causes split-brain / network stalls. The systemd unit sets `HOME=/var/lib/moltchain` and `MOLTCHAIN_HOME=/var/lib/moltchain`.
+**Never** run validators manually from `~/lichen/data/state-*` on VPSes — this creates a separate state directory from what systemd uses and causes split-brain / network stalls. The systemd unit sets `HOME=/var/lib/lichen` and `LICHEN_HOME=/var/lib/lichen`.
 
 Or manually:
 ```bash
-sudo cp deploy/moltchain-validator.service /etc/systemd/system/
-sudo systemctl enable moltchain-validator
-sudo systemctl start moltchain-validator
+sudo cp deploy/lichen-validator.service /etc/systemd/system/
+sudo systemctl enable lichen-validator
+sudo systemctl start lichen-validator
 ```
 
 ### macOS LaunchAgent
@@ -1918,19 +1918,19 @@ Create wrapper script and LaunchAgent plist for an auto-starting background serv
 
 ```bash
 # 1. Create wrapper script
-mkdir -p ~/.moltchain/bin ~/.moltchain/state-mainnet ~/.moltchain/logs
-cat > ~/.moltchain/bin/moltchain-service.sh << 'SCRIPT'
+mkdir -p ~/.lichen/bin ~/.lichen/state-mainnet ~/.lichen/logs
+cat > ~/.lichen/bin/lichen-service.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
-INSTALL_DIR="$HOME/.moltchain/bin"
-BINARY="$INSTALL_DIR/moltchain-validator"
-REPO="lobstercove/moltchain"
+INSTALL_DIR="$HOME/.lichen/bin"
+BINARY="$INSTALL_DIR/lichen-validator"
+REPO="lobstercove/lichen"
 ARCH=$(uname -m)
 case "$ARCH" in
-    arm64|aarch64) ASSET="moltchain-validator-darwin-aarch64.tar.gz" ;;
-    x86_64)        ASSET="moltchain-validator-darwin-x86_64.tar.gz" ;;
+    arm64|aarch64) ASSET="lichen-validator-darwin-aarch64.tar.gz" ;;
+    x86_64)        ASSET="lichen-validator-darwin-x86_64.tar.gz" ;;
 esac
-mkdir -p "$INSTALL_DIR" "$HOME/.moltchain/state-mainnet" "$HOME/.moltchain/logs"
+mkdir -p "$INSTALL_DIR" "$HOME/.lichen/state-mainnet" "$HOME/.lichen/logs"
 if [ ! -x "$BINARY" ]; then
     TMPDIR=$(mktemp -d); trap 'rm -rf "$TMPDIR"' EXIT
     VERSION=$(/usr/bin/curl -fsSL "https://api.github.com/repos/$REPO/releases" \
@@ -1942,111 +1942,111 @@ print(releases[0]['tag_name'])")
     /usr/bin/curl -fSL -o "$TMPDIR/$ASSET" "https://github.com/$REPO/releases/download/${VERSION}/${ASSET}"
     /usr/bin/curl -fSL -o "$TMPDIR/SHA256SUMS" "https://github.com/$REPO/releases/download/${VERSION}/SHA256SUMS"
     cd "$TMPDIR"; grep "$ASSET" SHA256SUMS | shasum -a 256 -c -
-    tar xzf "$ASSET" --strip-components=1; mv moltchain-validator "$BINARY"; chmod +x "$BINARY"
-    if [ -d "zk" ]; then mkdir -p "$HOME/.moltchain/zk"; cp zk/*.bin "$HOME/.moltchain/zk/"; fi
+    tar xzf "$ASSET" --strip-components=1; mv lichen-validator "$BINARY"; chmod +x "$BINARY"
+    if [ -d "zk" ]; then mkdir -p "$HOME/.lichen/zk"; cp zk/*.bin "$HOME/.lichen/zk/"; fi
     trap - EXIT; rm -rf "$TMPDIR"
 fi
 exec "$BINARY" --network mainnet --p2p-port 8001 --rpc-port 9899 --ws-port 9900 \
-    --db-path "$HOME/.moltchain/state-mainnet" \
-    --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 \
+    --db-path "$HOME/.lichen/state-mainnet" \
+    --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 \
     --auto-update=apply
 SCRIPT
-chmod +x ~/.moltchain/bin/moltchain-service.sh
+chmod +x ~/.lichen/bin/lichen-service.sh
 
 # 2. Create LaunchAgent plist
-cat > ~/Library/LaunchAgents/network.moltchain.validator.plist << EOF
+cat > ~/Library/LaunchAgents/network.lichen.validator.plist << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>Label</key><string>network.moltchain.validator</string>
-    <key>ProgramArguments</key><array><string>/bin/bash</string><string>$HOME/.moltchain/bin/moltchain-service.sh</string></array>
+    <key>Label</key><string>network.lichen.validator</string>
+    <key>ProgramArguments</key><array><string>/bin/bash</string><string>$HOME/.lichen/bin/lichen-service.sh</string></array>
     <key>RunAtLoad</key><true/>
     <key>KeepAlive</key><true/>
     <key>ThrottleInterval</key><integer>15</integer>
-    <key>StandardOutPath</key><string>$HOME/.moltchain/logs/validator.log</string>
-    <key>StandardErrorPath</key><string>$HOME/.moltchain/logs/validator.log</string>
+    <key>StandardOutPath</key><string>$HOME/.lichen/logs/validator.log</string>
+    <key>StandardErrorPath</key><string>$HOME/.lichen/logs/validator.log</string>
     <key>EnvironmentVariables</key><dict><key>RUST_LOG</key><string>info</string></dict>
 </dict>
 </plist>
 EOF
 
 # 3. Load
-launchctl load ~/Library/LaunchAgents/network.moltchain.validator.plist
+launchctl load ~/Library/LaunchAgents/network.lichen.validator.plist
 ```
 
 Service management:
 ```bash
-launchctl load ~/Library/LaunchAgents/network.moltchain.validator.plist     # Start
-launchctl unload ~/Library/LaunchAgents/network.moltchain.validator.plist   # Stop
-tail -f ~/.moltchain/logs/validator.log                                     # Logs
-launchctl list | grep moltchain                                             # Status
+launchctl load ~/Library/LaunchAgents/network.lichen.validator.plist     # Start
+launchctl unload ~/Library/LaunchAgents/network.lichen.validator.plist   # Stop
+tail -f ~/.lichen/logs/validator.log                                     # Logs
+launchctl list | grep lichen                                             # Status
 # Force re-download after new release:
-launchctl unload ~/Library/LaunchAgents/network.moltchain.validator.plist
-rm ~/.moltchain/bin/moltchain-validator
-launchctl load ~/Library/LaunchAgents/network.moltchain.validator.plist
+launchctl unload ~/Library/LaunchAgents/network.lichen.validator.plist
+rm ~/.lichen/bin/lichen-validator
+launchctl load ~/Library/LaunchAgents/network.lichen.validator.plist
 ```
 
 macOS file layout:
 | Path | Purpose |
 |------|---------|
-| `~/.moltchain/bin/moltchain-validator` | Binary |
-| `~/.moltchain/bin/moltchain-service.sh` | Wrapper script |
-| `~/.moltchain/state-mainnet/` | Blockchain state DB |
-| `~/.moltchain/zk/` | ZK verification & proving keys |
-| `~/.moltchain/logs/validator.log` | Log file |
-| `~/Library/LaunchAgents/network.moltchain.validator.plist` | LaunchAgent plist |
+| `~/.lichen/bin/lichen-validator` | Binary |
+| `~/.lichen/bin/lichen-service.sh` | Wrapper script |
+| `~/.lichen/state-mainnet/` | Blockchain state DB |
+| `~/.lichen/zk/` | ZK verification & proving keys |
+| `~/.lichen/logs/validator.log` | Log file |
+| `~/Library/LaunchAgents/network.lichen.validator.plist` | LaunchAgent plist |
 
 ### Windows Service (NSSM)
 
 ```powershell
 # 1. Download and extract
 $Version = "v0.2.14"
-$InstallDir = "$env:LOCALAPPDATA\MoltChain"
+$InstallDir = "$env:LOCALAPPDATA\Lichen"
 New-Item -ItemType Directory -Force -Path "$InstallDir\bin","$InstallDir\state-mainnet","$InstallDir\logs","$InstallDir\zk"
-$Url = "https://github.com/lobstercove/moltchain/releases/download/$Version/moltchain-validator-windows-x86_64.tar.gz"
-Invoke-WebRequest -Uri $Url -OutFile "$env:TEMP\moltchain.tar.gz"
-tar -xzf "$env:TEMP\moltchain.tar.gz" -C "$InstallDir\bin" --strip-components=1
+$Url = "https://github.com/lobstercove/lichen/releases/download/$Version/lichen-validator-windows-x86_64.tar.gz"
+Invoke-WebRequest -Uri $Url -OutFile "$env:TEMP\lichen.tar.gz"
+tar -xzf "$env:TEMP\lichen.tar.gz" -C "$InstallDir\bin" --strip-components=1
 if (Test-Path "$InstallDir\bin\zk") { Copy-Item "$InstallDir\bin\zk\*" "$InstallDir\zk\" }
 
 # 2. Install NSSM (https://nssm.cc/download) and create service
-nssm install MoltChainValidator "$InstallDir\bin\moltchain-validator.exe"
-nssm set MoltChainValidator AppParameters "--network mainnet --p2p-port 8001 --rpc-port 9899 --ws-port 9900 --db-path $InstallDir\state-mainnet --bootstrap-peers seed-01.moltchain.network:8001,seed-02.moltchain.network:8001,seed-03.moltchain.network:8001 --auto-update=apply"
-nssm set MoltChainValidator AppDirectory "$InstallDir"
-nssm set MoltChainValidator AppStdout "$InstallDir\logs\validator.log"
-nssm set MoltChainValidator AppStderr "$InstallDir\logs\validator.log"
-nssm set MoltChainValidator AppEnvironmentExtra "RUST_LOG=info" "USERPROFILE=$InstallDir"
-nssm set MoltChainValidator Start SERVICE_AUTO_START
-nssm set MoltChainValidator AppRestartDelay 10000
+nssm install LichenValidator "$InstallDir\bin\lichen-validator.exe"
+nssm set LichenValidator AppParameters "--network mainnet --p2p-port 8001 --rpc-port 9899 --ws-port 9900 --db-path $InstallDir\state-mainnet --bootstrap-peers seed-01.lichen.network:8001,seed-02.lichen.network:8001,seed-03.lichen.network:8001 --auto-update=apply"
+nssm set LichenValidator AppDirectory "$InstallDir"
+nssm set LichenValidator AppStdout "$InstallDir\logs\validator.log"
+nssm set LichenValidator AppStderr "$InstallDir\logs\validator.log"
+nssm set LichenValidator AppEnvironmentExtra "RUST_LOG=info" "USERPROFILE=$InstallDir"
+nssm set LichenValidator Start SERVICE_AUTO_START
+nssm set LichenValidator AppRestartDelay 10000
 
 # 3. Start
-nssm start MoltChainValidator
+nssm start LichenValidator
 ```
 
 Windows service management:
 ```powershell
-nssm status MoltChainValidator
-nssm start MoltChainValidator
-nssm stop MoltChainValidator
-nssm restart MoltChainValidator
-nssm remove MoltChainValidator confirm     # Uninstall
-Get-Content "$env:LOCALAPPDATA\MoltChain\logs\validator.log" -Tail 50 -Wait
+nssm status LichenValidator
+nssm start LichenValidator
+nssm stop LichenValidator
+nssm restart LichenValidator
+nssm remove LichenValidator confirm     # Uninstall
+Get-Content "$env:LOCALAPPDATA\Lichen\logs\validator.log" -Tail 50 -Wait
 ```
 
 ### ZK Verification Keys
 
 All validators must use identical ceremony ZK keys. Keys are shipped in the release tarball under `zk/`. The validator loads them from (priority order):
-1. Env vars: `MOLTCHAIN_ZK_SHIELD_VK_PATH`, `MOLTCHAIN_ZK_UNSHIELD_VK_PATH`, `MOLTCHAIN_ZK_TRANSFER_VK_PATH`
-2. Shared cache: `~/.moltchain/zk/` (Linux/macOS) or `%LOCALAPPDATA%\MoltChain\zk\` (Windows)
+1. Env vars: `LICHEN_ZK_SHIELD_VK_PATH`, `LICHEN_ZK_UNSHIELD_VK_PATH`, `LICHEN_ZK_TRANSFER_VK_PATH`
+2. Shared cache: `~/.lichen/zk/` (Linux/macOS) or `%LOCALAPPDATA%\Lichen\zk\` (Windows)
 3. Bundled `zk/` next to binary (auto-copied to shared cache)
 
 If missing, shielded transactions are unavailable but the validator still functions.
 
 Manual install:
 ```bash
-mkdir -p ~/.moltchain/zk
-cp /path/to/release/zk/*.bin ~/.moltchain/zk/
-sha256sum ~/.moltchain/zk/vk_*.bin
+mkdir -p ~/.lichen/zk
+cp /path/to/release/zk/*.bin ~/.lichen/zk/
+sha256sum ~/.lichen/zk/vk_*.bin
 # af980fb4...  vk_shield.bin
 # e368eeaf...  vk_transfer.bin
 # f39b6e2e...  vk_unshield.bin
@@ -2069,23 +2069,23 @@ See `docs/guides/CONTRACT_DEVELOPMENT.md` for the complete guide.
 
 | SDK | Package | Purpose | Environment |
 |-----|---------|---------|-------------|
-| Contract SDK | `moltchain-contract-sdk` | Write on-chain WASM contracts | `#![no_std]`, `wasm32-unknown-unknown` |
-| Client SDK (Rust) | `moltchain-client-sdk` | Call RPC from Rust apps | `tokio`, `reqwest` |
+| Contract SDK | `lichen-contract-sdk` | Write on-chain WASM contracts | `#![no_std]`, `wasm32-unknown-unknown` |
+| Client SDK (Rust) | `lichen-client-sdk` | Call RPC from Rust apps | `tokio`, `reqwest` |
 
-### `molt deploy` vs `molt token create`
+### `lichen deploy` vs `licn token create`
 
 | Command | What it does | Fee |
 |---------|-------------|-----|
-| `molt deploy contract.wasm` | Deploy WASM contract (no symbol registration) | 25.001 MOLT |
-| `molt deploy wasm --symbol X --name Y --template token` | Deploy + auto-register in symbol registry | 25.001 MOLT |
-| `molt deploy wasm --symbol X --supply 1000000 --decimals 9` | Deploy + register with initial total supply | 25.001 MOLT |
-| `molt deploy wasm --metadata '{"website":"...","logo":"..."}'` | Deploy with custom metadata JSON | 25.001 MOLT |
-| `molt token create "Name" SYM --wasm token.wasm` | Deploy token WASM + register with template="token" | 25.001 MOLT |
-| `molt contract register <addr> --symbol X` | Retroactively register deployed contract in symbol registry | 0.001 MOLT |
+| `lichen deploy contract.wasm` | Deploy WASM contract (no symbol registration) | 25.001 LICN |
+| `lichen deploy wasm --symbol X --name Y --template token` | Deploy + auto-register in symbol registry | 25.001 LICN |
+| `lichen deploy wasm --symbol X --supply 1000000 --decimals 9` | Deploy + register with initial total supply | 25.001 LICN |
+| `lichen deploy wasm --metadata '{"website":"...","logo":"..."}'` | Deploy with custom metadata JSON | 25.001 LICN |
+| `licn token create "Name" SYM --wasm token.wasm` | Deploy token WASM + register with template="token" | 25.001 LICN |
+| `lichen contract register <addr> --symbol X` | Retroactively register deployed contract in symbol registry | 0.001 LICN |
 
-All tokens on MoltChain are WASM contracts. Use `molt deploy --symbol` or `molt token create --wasm` to deploy and register in one step. Use `molt contract register` to fix contracts deployed without symbol metadata.
+All tokens on Lichen are WASM contracts. Use `lichen deploy --symbol` or `licn token create --wasm` to deploy and register in one step. Use `lichen contract register` to fix contracts deployed without symbol metadata.
 
-`--supply <amount>` sets initial total supply (in whole tokens, auto-converted to shells via decimals). `--metadata <json>` attaches arbitrary metadata to the symbol registry entry. After deploy, the CLI automatically verifies the contract is live on-chain by polling `getAccountInfo`.
+`--supply <amount>` sets initial total supply (in whole tokens, auto-converted to spores via decimals). `--metadata <json>` attaches arbitrary metadata to the symbol registry entry. After deploy, the CLI automatically verifies the contract is live on-chain by polling `getAccountInfo`.
 
 ### Template Categories
 
@@ -2094,7 +2094,7 @@ The `--template` flag sets the contract category in the symbol registry. The exp
 | Template | Explorer Category | Used By |
 |----------|------------------|---------|
 | `token` | Token | Fungible tokens (MT-20) |
-| `wrapped` | Wrapped | Bridge-wrapped tokens (MUSD, WSOL, WETH, WBNB) |
+| `wrapped` | Wrapped | Bridge-wrapped tokens (LUSD, WSOL, WETH, WBNB) |
 | `nft` | NFT | NFT collections (MT-721) |
 | `marketplace` | NFT | NFT marketplaces |
 | `auction` | NFT | Auction contracts |
@@ -2127,7 +2127,7 @@ pub extern "C" fn my_function(addr_ptr: *const u8, amount: u64) -> u32 {
 
 ### Deploy Fee Refund
 
-If deployment fails (invalid WASM, duplicate address, etc.), the 25 MOLT deploy premium is **automatically refunded** on-chain. Only the 0.001 MOLT base fee is kept. This includes failures in `b_put_transaction` and `commit_batch` paths — the premium refund is guaranteed regardless of which stage fails. Failed transactions are stored on-chain and queryable via `getTransaction`.
+If deployment fails (invalid WASM, duplicate address, etc.), the 25 LICN deploy premium is **automatically refunded** on-chain. Only the 0.001 LICN base fee is kept. This includes failures in `b_put_transaction` and `commit_batch` paths — the premium refund is guaranteed regardless of which stage fails. Failed transactions are stored on-chain and queryable via `getTransaction`.
 
 ### Deploy Output & Auto-Register Fallback
 
@@ -2138,7 +2138,7 @@ When you deploy with `--symbol`, the CLI:
 4. If the symbol is **not found** after 3 retries, the CLI **automatically sends a register-symbol transaction** as a fallback
 5. Reports final status with the contract address and symbol registration result
 
-This means user-deployed contracts get the same name, category, and metadata in the explorer as genesis contracts — no manual `molt contract register` step needed.
+This means user-deployed contracts get the same name, category, and metadata in the explorer as genesis contracts — no manual `lichen contract register` step needed.
 
 ### Contract SDK Modules
 
@@ -2167,19 +2167,19 @@ cargo build --target wasm32-unknown-unknown --release
 # Test locally
 cargo test
 
-# Deploy with symbol registration (need 25.001 MOLT)
-molt deploy target/wasm32-unknown-unknown/release/my_contract.wasm \
+# Deploy with symbol registration (need 25.001 LICN)
+lichen deploy target/wasm32-unknown-unknown/release/my_contract.wasm \
   --symbol MYTK --name "My Token" --template token --decimals 9 \
   --supply 1000000 --metadata '{"website":"https://example.com"}'
 
 # Or deploy without registration
-molt deploy target/wasm32-unknown-unknown/release/my_contract.wasm
+lichen deploy target/wasm32-unknown-unknown/release/my_contract.wasm
 
 # Retroactively register an already-deployed contract
-molt contract register <address> --symbol MYTK --name "My Token" --template token
+lichen contract register <address> --symbol MYTK --name "My Token" --template token
 
 # Call a function
-molt call <address> <function_name> [args]
+lichen call <address> <function_name> [args]
 ```
 
 ---
@@ -2190,7 +2190,7 @@ molt call <address> <function_name> [args]
 
 ```bash
 cargo build --release                                    # Full workspace
-cargo build --release -p moltchain-validator              # Single crate
+cargo build --release -p lichen-validator              # Single crate
 rustup target add wasm32-unknown-unknown                  # WASM target
 bash scripts/build-all-contracts.sh                       # All 29 contracts
 ```
@@ -2199,9 +2199,9 @@ bash scripts/build-all-contracts.sh                       # All 29 contracts
 
 | Suite | Command | Tests |
 |-------|---------|-------|
-| Core unit | `cargo test -p moltchain-core` | Rust unit tests |
-| RPC unit | `cargo test -p moltchain-rpc` | RPC tests |
-| Validator unit | `cargo test -p moltchain-validator` | Includes auto-update |
+| Core unit | `cargo test -p lichen-core` | Rust unit tests |
+| RPC unit | `cargo test -p lichen-rpc` | RPC tests |
+| Validator unit | `cargo test -p lichen-validator` | Includes auto-update |
 | All Cargo | `cargo test --workspace` | ~1,296 tests |
 | DEX unit | `node dex/dex.test.js` | 1,877 JS tests |
 | E2E transactions | `node tests/e2e-transactions.js` | 26 tests |
@@ -2212,7 +2212,7 @@ bash scripts/build-all-contracts.sh                       # All 29 contracts
 | E2E prediction | `node tests/e2e-prediction.js` | 49 tests |
 | Contracts write | `python tests/contracts-write-e2e.py` | 157 scenarios |
 
-All E2E tests require a running validator (`bash moltchain-start.sh testnet`).
+All E2E tests require a running validator (`bash lichen-start.sh testnet`).
 
 ---
 

@@ -20,15 +20,15 @@
 
 ---
 
-## Task 1: DEX Price Calculation Fix (MOLT/wSOL, MOLT/wETH, MOLT/wBNB)
+## Task 1: DEX Price Calculation Fix (LICN/wSOL, LICN/wETH, LICN/wBNB)
 
-**Problem:** The price for MOLT/wSOL, MOLT/wETH, MOLT/wBNB pairs shows the inverse — it displays the external USD price directly (e.g., wETH = $1855) instead of MOLT/ETH_price (i.e., how many MOLT per 1 wETH).
+**Problem:** The price for LICN/wSOL, LICN/wETH, LICN/wBNB pairs shows the inverse — it displays the external USD price directly (e.g., wETH = $1855) instead of LICN/ETH_price (i.e., how many LICN per 1 wETH).
 
-**Root Cause:** In `dex.js` `applyBinanceRealTimeOverlay()` (line ~2345), the code does `extPrice = extPrice / moltUsd` for MOLT-quoted pairs. But pairs like `MOLT/wETH` are displayed as MOLT base, wETH quote. The price should be `MOLT_price_in_USD / ETH_price_in_USD` (a small number like 0.000054), NOT `ETH_USD / MOLT_USD` (a large number like 18,550).
+**Root Cause:** In `dex.js` `applyBinanceRealTimeOverlay()` (line ~2345), the code does `extPrice = extPrice / licnUsd` for LICN-quoted pairs. But pairs like `LICN/wETH` are displayed as LICN base, wETH quote. The price should be `LICN_price_in_USD / ETH_price_in_USD` (a small number like 0.000054), NOT `ETH_USD / LICN_USD` (a large number like 18,550).
 
-**Analysis:** The pair display convention is MOLT/wETH which means "price of MOLT in wETH terms" = how many wETH per 1 MOLT. Currently the code sets `extPrice` to be the `ETH_USD / MOLT_USD` which is the price of wETH in MOLT terms (inverted). The `normalizePairDisplay()` function (line ~830) flips wrapped asset pairs so that `wSOL/MOLT` becomes `MOLT/wSOL`. This means the price needs to be the inverse: MOLT_USD / wETH_USD.
+**Analysis:** The pair display convention is LICN/wETH which means "price of LICN in wETH terms" = how many wETH per 1 LICN. Currently the code sets `extPrice` to be the `ETH_USD / LICN_USD` which is the price of wETH in LICN terms (inverted). The `normalizePairDisplay()` function (line ~830) flips wrapped asset pairs so that `wSOL/LICN` becomes `LICN/wSOL`. This means the price needs to be the inverse: LICN_USD / wETH_USD.
 
-**Fix:** In `applyBinanceRealTimeOverlay()`, when the pair display has been flipped (MOLT is base, wrapped is quote), set `extPrice = moltUsd / extPrice` instead of `extPrice / moltUsd`.
+**Fix:** In `applyBinanceRealTimeOverlay()`, when the pair display has been flipped (LICN is base, wrapped is quote), set `extPrice = licnUsd / extPrice` instead of `extPrice / licnUsd`.
 
 **Status:** [ ] Not started
 
@@ -71,10 +71,10 @@
 **Sub-tasks:**
 1. Enlarge token detail cards so numbers (especially TOTAL SUPPLY) fit on one line. Current `minmax(160px, 1fr)` → increase to `minmax(200px, 1fr)` or more.
 2. Add token profile section (logo, description, links) — displayed beneath the title after the address, not in Contract Metadata grid.
-3. Align metadata format with genesis boot format (how MOLT is created). Programs playground must send metadata in the exact format the system expects.
+3. Align metadata format with genesis boot format (how LICN is created). Programs playground must send metadata in the exact format the system expects.
 4. Ensure explorer reads metadata correctly and programs playground sends it properly.
 
-**Genesis boot format (from core/src/genesis.rs):** The MOLT token at genesis stores: `token_name`, `token_symbol`, `token_decimals` in contract storage via storage_set. Extra metadata (logo, website, socials) are stored at registry/deployment level via `init_data` JSON payload.
+**Genesis boot format (from core/src/genesis.rs):** The LICN token at genesis stores: `token_name`, `token_symbol`, `token_decimals` in contract storage via storage_set. Extra metadata (logo, website, socials) are stored at registry/deployment level via `init_data` JSON payload.
 
 **Programs playground metadata fields:** `name`, `symbol`, `decimals`, `supply`, `website`, `logo_url`, `twitter`, `telegram`, `discord`, `mintable`, `burnable`  — sent in `metadata` object within `DeployRegistryData`.
 
@@ -86,9 +86,9 @@
 
 **Problem:** Ensure nothing is hardcoded in explorer — values, achievements, ABI, etc.
 
-**Achievements:** Defined in MoltyID contract (`award_contribution_achievement` function, `achievement_id` u8). Achievements are predefined on-chain with IDs. Not currently wired in explorer.
+**Achievements:** Defined in LichenID contract (`award_contribution_achievement` function, `achievement_id` u8). Achievements are predefined on-chain with IDs. Not currently wired in explorer.
 
-**Vouches:** MoltyID contract has `vouch` function. Cost: 5 reputation, Reward: 10 reputation, Cooldown: 1 hour. Max 64 vouches per identity. Can be done through wallet/extension or any frontend that calls the MoltyID contract. Not currently surfaced in explorer UI except indirectly through trust tier.
+**Vouches:** LichenID contract has `vouch` function. Cost: 5 reputation, Reward: 10 reputation, Cooldown: 1 hour. Max 64 vouches per identity. Can be done through wallet/extension or any frontend that calls the LichenID contract. Not currently surfaced in explorer UI except indirectly through trust tier.
 
 **Report:** Will document findings about achievements and vouches in the answers section.
 
@@ -123,7 +123,7 @@
 2. Restore Create tab with: Generate New Wallet button, address/key display, copy buttons, warning
 3. Keep Extension tab (add as a third connection method)
 4. Restore wallet.js functions: `fromSecretKey()`, `generate()`, local signing
-5. Ensure MoltWallet shared class still works for non-extension connections
+5. Ensure LichenWallet shared class still works for non-extension connections
 6. Ensure no "Wallet creation failed" errors when extension not installed
 
 **Tabs:** Wallets | Import | Extension | Create New
@@ -137,12 +137,12 @@
 **Problem:** Need real end-to-end prediction market tests covering: creation with reputation check, initial liquidity, share trading, resolution, dispute, claim.
 
 **Contract Details (from contracts/prediction_market/src/lib.rs):**
-- min collateral: 1 mUSD, max: 100K mUSD
+- min collateral: 1 lUSD, max: 100K lUSD
 - Trading fee: 2% (200 BPS)
-- Market creation fee: 10 mUSD
+- Market creation fee: 10 lUSD
 - Fee split: 50% LPs, 30% protocol, 20% stakers
 - Resolution: 3 oracle attestations
-- Dispute bond: 100 mUSD
+- Dispute bond: 100 lUSD
 - Categories: Politics, Sports, Crypto, Science, Entertainment, Economics, Tech, Custom
 - Statuses: Pending, Active, Closed, Resolving, Resolved, Disputed, Voided
 - CPMM pricing model for binary & multi-outcome
@@ -178,32 +178,32 @@
 ## Answers Section (filled as tasks complete)
 
 ### Achievements
-- Defined in MoltyID contract via `award_contribution_achievement(user_ptr, achievement_id: u8)`
+- Defined in LichenID contract via `award_contribution_achievement(user_ptr, achievement_id: u8)`
 - Achievement IDs are predefined u8 values in the contract
-- They are awarded by calling the MoltyID contract function
+- They are awarded by calling the LichenID contract function
 - Not currently displayed or queried in explorer UI
 - Could be exposed via `get_achievements` contract call
 
 ### Vouches
-- MoltyID contract `vouch(voucher_ptr, vouchee_ptr)` function
+- LichenID contract `vouch(voucher_ptr, vouchee_ptr)` function
 - Cost: 5 reputation from voucher
 - Reward: 10 reputation to vouchee
 - Cooldown: 1 hour between vouches
 - Max: 64 vouches per identity
 - Retrieved via `get_vouches` contract call
-- Can be done through any frontend that calls MoltyID contract (wallet app, extension, programs playground)
+- Can be done through any frontend that calls LichenID contract (wallet app, extension, programs playground)
 - Currently NOT surfaced in wallet/extension UI but the contract function exists
 - Vouch storage: `"vouch:{hex(pubkey)}:{index}"` key in contract storage
 
 ### Prediction Market — Bid/Ask/Pricing
 - Uses CPMM (Constant Product Market Maker) formula
-- Binary: YES/NO shares, each starts at 0.50 mUSD with equal reserves
+- Binary: YES/NO shares, each starts at 0.50 lUSD with equal reserves
 - Multi-outcome: up to 8 outcomes, each starts at `1/N` price
 - Price = `outcome_reserve / total_reserves` (probability)
 - When buying: `shares = amount + (selfReserve * bSold) / (otherReserve + bSold)`, 2% fee
 - Users CAN bet on different outcomes (buy shares in multiple)
-- Market creation: 500+ MoltyID reputation required
-- Minimum initial liquidity: 1 mUSD (but practical minimum is higher for meaningful markets)
+- Market creation: 500+ LichenID reputation required
+- Minimum initial liquidity: 1 lUSD (but practical minimum is higher for meaningful markets)
 - Price is defined by CPMM reserves — initial price = `1/num_outcomes`
 - Liquidity is managed by CPMM pools within the prediction market contract, separate from DEX pools
 - YES fully wired to contract via `buyShares`, `redeemShares`, `resolveMarket`, etc.

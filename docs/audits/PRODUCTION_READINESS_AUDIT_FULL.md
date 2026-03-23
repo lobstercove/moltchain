@@ -1,4 +1,4 @@
-# MoltChain Production Readiness Audit — Full Source Review
+# Lichen Production Readiness Audit — Full Source Review
 
 **Scope:** CLI, P2P, Validator, SDK (Rust/JS/Python), Compiler, Custody, Programs  
 **Date:** 2026-02-25  
@@ -87,7 +87,7 @@ The `send_tx` function in the marketplace demo uses a zero-value blockhash inste
 2. Any validator with replay protection will reject them.
 3. Without replay protection, they are infinitely replayable.
 
-This function is called by the `molt marketplace seed` command, making it a real user-facing path.
+This function is called by the `lichen marketplace seed` command, making it a real user-facing path.
 
 ---
 
@@ -102,7 +102,7 @@ This function is called by the `molt marketplace seed` command, making it a real
 program_id: Pubkey::new([0xFFu8; 32]), // Contract program
 ```
 
-The contract deploy, upgrade, and call operations use a hardcoded all-`0xFF` pubkey as the "contract program" ID. This is a magic constant that must exactly match the validator's internal routing. If the validator changes how contract instructions are dispatched, these CLI operations silently break. This should reference a named constant from `moltchain_core` (like `SYSTEM_PROGRAM_ID` is used elsewhere).
+The contract deploy, upgrade, and call operations use a hardcoded all-`0xFF` pubkey as the "contract program" ID. This is a magic constant that must exactly match the validator's internal routing. If the validator changes how contract instructions are dispatched, these CLI operations silently break. This should reference a named constant from `lichen_core` (like `SYSTEM_PROGRAM_ID` is used elsewhere).
 
 ---
 
@@ -114,7 +114,7 @@ The contract deploy, upgrade, and call operations use a hardcoded all-`0xFF` pub
 - **Severity:** HIGH
 
 ```rust
-let dao_addr = moltchain_core::Pubkey([0xDA; 32]); // DAO marker address
+let dao_addr = lichen_core::Pubkey([0xDA; 32]); // DAO marker address
 ```
 
 All six governance commands (propose, vote, list, info, execute, veto) reference a hardcoded `[0xDA; 32]` address as the DAO contract. If the actual deployed DAO contract has a different address (e.g., after redeployment), the entire governance subsystem silently fails. This should be a well-known constant or discoverable via on-chain lookup.
@@ -272,7 +272,7 @@ Six `panic!()` calls during configuration loading. While panicking early for mis
 ### 15. SDK (Python): Hardcoded Default URLs
 
 - **Component:** SDK Python
-- **File:** `sdk/python/moltchain/__init__.py` lines 29–30
+- **File:** `sdk/python/lichen/__init__.py` lines 29–30
 - **Category:** Hardcoded Data
 - **Severity:** MEDIUM
 
@@ -281,7 +281,7 @@ DEFAULT_RPC_URL = "http://localhost:8899"
 DEFAULT_WS_URL = "ws://localhost:8900"
 ```
 
-The Python SDK exports hardcoded localhost URLs as module-level defaults. Third-party developers who do `from moltchain import DEFAULT_RPC_URL` and forget to override will silently connect to localhost, which may be a different service or timeout.
+The Python SDK exports hardcoded localhost URLs as module-level defaults. Third-party developers who do `from lichen import DEFAULT_RPC_URL` and forget to override will silently connect to localhost, which may be a different service or timeout.
 
 ---
 
@@ -383,7 +383,7 @@ The marketplace demo builds a WASM module with empty no-op exported functions (`
 ### 23. Programs JS: Hardcoded Localhost URLs
 
 - **Component:** Programs
-- **File:** `programs/js/landing.js` lines 14, 17; `programs/js/moltchain-sdk.js` lines 35–37
+- **File:** `programs/js/landing.js` lines 14, 17; `programs/js/lichen-sdk.js` lines 35–37
 - **Category:** Hardcoded Data
 - **Severity:** LOW
 
@@ -477,7 +477,7 @@ The following components had no production readiness issues:
 - **P2P Peer Store** (`p2p/src/peer_store.rs`): Durable peer store with atomic fsync writes.
 - **Validator Keypair Loader** (`validator/src/keypair_loader.rs`): Secure permission checks on keypair files.
 - **Validator Threshold Signer** (`validator/src/threshold_signer.rs`): Bearer token auth for signing requests.
-- **SDK Python** (`sdk/python/moltchain/`): Clean implementation with proper validation (keypair encryption, transaction building, shielded instructions). The `keypair.py` uses PBKDF2-HMAC-SHA256 with 600K rounds and AES-256-GCM — well-implemented.
+- **SDK Python** (`sdk/python/lichen/`): Clean implementation with proper validation (keypair encryption, transaction building, shielded instructions). The `keypair.py` uses PBKDF2-HMAC-SHA256 with 600K rounds and AES-256-GCM — well-implemented.
 - **SDK JS** (`sdk/js/src/`): Private key protection in `Keypair` class, defensive `toBytes()` copy, bigint for large amounts, constant-time-safe JSON parse guards on WebSocket messages.
 
 ---
@@ -485,7 +485,7 @@ The following components had no production readiness issues:
 ## Recommendations
 
 1. **Fix Finding #3 immediately** — the zero blockhash in `marketplace_demo.rs::send_tx()` makes all marketplace seed transactions invalid or replayable.
-2. **Extract magic constants** (#4, #5) from CLI code into named constants in `moltchain_core` to prevent silent breakage.
+2. **Extract magic constants** (#4, #5) from CLI code into named constants in `lichen_core` to prevent silent breakage.
 3. **Make the explorer URL configurable** (#6) based on the active network config.
 4. **Remove the insecure default seed fallback** (#2) from production builds entirely, or compile it out behind a `#[cfg(feature = "dev")]` gate.
 5. **Complete FROST multi-signer integration** (#1) before any multi-party custody deployment.

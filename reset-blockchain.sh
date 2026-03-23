@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================
-# MoltChain - Full Blockchain Reset
+# Lichen - Full Blockchain Reset
 # ============================================================================
 
 set -euo pipefail
@@ -28,7 +28,7 @@ for arg in "$@"; do
 done
 
 # Auto-detect VPS mode: if systemd services exist, we're on a VPS
-if [ "$VPS_MODE" = false ] && systemctl list-unit-files 'moltchain-validator-*' 2>/dev/null | grep -q moltchain; then
+if [ "$VPS_MODE" = false ] && systemctl list-unit-files 'lichen-validator-*' 2>/dev/null | grep -q lichen; then
 	VPS_MODE=true
 fi
 
@@ -47,25 +47,25 @@ if [ "$RESTART" = true ] && [[ "$EXTRA_FLAGS" != *"--dev-mode"* ]]; then
 	EXTRA_FLAGS="$EXTRA_FLAGS --dev-mode"
 fi
 
-# VPS state directory (systemd services use /var/lib/moltchain)
-VPS_STATE_DIR="/var/lib/moltchain"
-VPS_CONFIG_DIR="/etc/moltchain"
+# VPS state directory (systemd services use /var/lib/lichen)
+VPS_STATE_DIR="/var/lib/lichen"
+VPS_CONFIG_DIR="/etc/lichen"
 
 echo -e "${RED}=================================================${NC}"
-echo -e "${RED}  MoltChain FULL RESET - All State Will Be Destroyed${NC}"
+echo -e "${RED}  Lichen FULL RESET - All State Will Be Destroyed${NC}"
 echo -e "${RED}=================================================${NC}"
 echo ""
 echo "  Repo root: $REPO_ROOT"
 echo "  Network:   $NETWORK"
 echo ""
 
-echo -e "${YELLOW}[1/7] Stopping all MoltChain processes...${NC}"
+echo -e "${YELLOW}[1/7] Stopping all Lichen processes...${NC}"
 
 # On VPS, stop systemd services first (prevents auto-restart race)
 if [ "$VPS_MODE" = true ]; then
 	echo -e "  VPS mode: stopping systemd services..."
-	for SVC in moltchain-validator-testnet moltchain-validator-mainnet \
-	           moltchain-faucet moltchain-custody moltchain-custody-mainnet; do
+	for SVC in lichen-validator-testnet lichen-validator-mainnet \
+	           lichen-faucet lichen-custody lichen-custody-mainnet; do
 		if systemctl is-active --quiet "$SVC" 2>/dev/null; then
 			sudo systemctl stop "$SVC" 2>/dev/null && echo "  stopped $SVC" || true
 		fi
@@ -74,22 +74,22 @@ if [ "$VPS_MODE" = true ]; then
 fi
 
 # Kill any remaining processes
-pkill -9 -f moltchain-validator 2>/dev/null || true
-pkill -9 -f moltchain-faucet    2>/dev/null || true
-pkill -9 -f moltchain-custody   2>/dev/null || true
+pkill -9 -f lichen-validator 2>/dev/null || true
+pkill -9 -f lichen-faucet    2>/dev/null || true
+pkill -9 -f lichen-custody   2>/dev/null || true
 pkill -9 -f validator-supervisor.sh 2>/dev/null || true
 pkill -9 -f run-validator.sh        2>/dev/null || true
 sleep 1
 
-if pgrep -f "moltchain-" >/dev/null 2>&1; then
+if pgrep -f "lichen-" >/dev/null 2>&1; then
 	echo -e "  ${YELLOW}Retrying kill...${NC}"
-	pkill -9 -f "moltchain-" 2>/dev/null || true
+	pkill -9 -f "lichen-" 2>/dev/null || true
 	pkill -9 -f validator-supervisor.sh 2>/dev/null || true
 	pkill -9 -f run-validator.sh        2>/dev/null || true
 	sleep 2
 fi
 
-LEFTOVER=$(pgrep -f "(moltchain-(validator|faucet|custody)|validator-supervisor\.sh|run-validator\.sh)" 2>/dev/null || true)
+LEFTOVER=$(pgrep -f "(lichen-(validator|faucet|custody)|validator-supervisor\.sh|run-validator\.sh)" 2>/dev/null || true)
 if [ -n "$LEFTOVER" ]; then
 	echo -e "  ${YELLOW}Warning: PIDs still present: $LEFTOVER${NC}"
 else
@@ -107,14 +107,14 @@ if [ "$NETWORK" = "all" ]; then
 		rm -rf "$WORKSPACE_ROOT/data/state-"* 2>/dev/null && echo "  removed workspace root orphans" || true
 		rm -rf "$WORKSPACE_ROOT/data/matrix-sdk-state-"* 2>/dev/null && echo "  removed workspace root legacy matrix dirs" || true
 	fi
-	rm -rf ~/.moltchain/data-* ~/.moltchain/state-* 2>/dev/null || true
+	rm -rf ~/.lichen/data-* ~/.lichen/state-* 2>/dev/null || true
 	if [[ "${EXTRA_FLAGS:-}" == *"--zk-reset"* ]]; then
-		rm -rf ~/.moltchain/zk 2>/dev/null && echo "  removed ZK key cache (--zk-reset)"
+		rm -rf ~/.lichen/zk 2>/dev/null && echo "  removed ZK key cache (--zk-reset)"
 	fi
 	rm -rf data/custody* 2>/dev/null || true
-	rm -rf /tmp/moltchain-custody* 2>/dev/null || true
+	rm -rf /tmp/lichen-custody* 2>/dev/null || true
 
-	# VPS state directories (systemd uses /var/lib/moltchain)
+	# VPS state directories (systemd uses /var/lib/lichen)
 	if [ "$VPS_MODE" = true ]; then
 		sudo rm -rf "$VPS_STATE_DIR"/state-* 2>/dev/null && echo "  removed $VPS_STATE_DIR/state-*" || true
 		sudo rm -rf "$VPS_STATE_DIR"/custody-db 2>/dev/null && echo "  removed $VPS_STATE_DIR/custody-db" || true
@@ -129,7 +129,7 @@ if [ "$NETWORK" = "all" ]; then
 		fi
 		# Recreate custody-db directories with correct ownership
 		sudo mkdir -p "$VPS_STATE_DIR/custody-db" "$VPS_STATE_DIR/custody-db-mainnet"
-		sudo chown -R moltchain:moltchain "$VPS_STATE_DIR/custody-db" "$VPS_STATE_DIR/custody-db-mainnet" 2>/dev/null || true
+		sudo chown -R lichen:lichen "$VPS_STATE_DIR/custody-db" "$VPS_STATE_DIR/custody-db-mainnet" 2>/dev/null || true
 		echo "  recreated $VPS_STATE_DIR/custody-db and custody-db-mainnet"
 	fi
 else
@@ -153,16 +153,16 @@ if [ "$KEEP_KEYS" = true ]; then
 else
 	echo -e "${YELLOW}[3/7] Removing validator keypairs...${NC}"
 	if [ "$NETWORK" = "all" ]; then
-		rm -rf ~/.moltchain/validators 2>/dev/null || true
-		rm -f ~/.moltchain/validator-*.json 2>/dev/null || true
+		rm -rf ~/.lichen/validators 2>/dev/null || true
+		rm -f ~/.lichen/validator-*.json 2>/dev/null || true
 		find "$REPO_ROOT/data" -maxdepth 3 -name "validator-keypair.json" -delete 2>/dev/null || true
 	else
 		if [ "$NETWORK" = "testnet" ]; then
-			for port in 7001 7002 7003 8000 8001 8002; do rm -f "$HOME/.moltchain/validators/validator-${port}.json" 2>/dev/null || true; done
-			rm -f "$HOME/.moltchain/validators/validator-testnet.json" 2>/dev/null || true
+			for port in 7001 7002 7003 8000 8001 8002; do rm -f "$HOME/.lichen/validators/validator-${port}.json" 2>/dev/null || true; done
+			rm -f "$HOME/.lichen/validators/validator-testnet.json" 2>/dev/null || true
 		else
-			for port in 8001 8002 8003 9000 9001 9002; do rm -f "$HOME/.moltchain/validators/validator-${port}.json" 2>/dev/null || true; done
-			rm -f "$HOME/.moltchain/validators/validator-mainnet.json" 2>/dev/null || true
+			for port in 8001 8002 8003 9000 9001 9002; do rm -f "$HOME/.lichen/validators/validator-${port}.json" 2>/dev/null || true; done
+			rm -f "$HOME/.lichen/validators/validator-mainnet.json" 2>/dev/null || true
 		fi
 	fi
 	echo -e "${GREEN}  Validator keypairs cleared (regenerate on start)${NC}"
@@ -170,17 +170,17 @@ fi
 
 echo -e "${YELLOW}[4/7] Cleaning signer data, peer stores, genesis files...${NC}"
 if [ "$NETWORK" = "all" ]; then
-	rm -rf ~/.moltchain/signer-* ~/.moltchain/signers 2>/dev/null || true
+	rm -rf ~/.lichen/signer-* ~/.lichen/signers 2>/dev/null || true
 	rm -rf "$REPO_ROOT"/data/signer-* 2>/dev/null || true
 	find "$REPO_ROOT/data" -maxdepth 3 -name "known-peers.json" -delete 2>/dev/null || true
-	rm -f ~/.moltchain/known-peers.json 2>/dev/null || true
+	rm -f ~/.lichen/known-peers.json 2>/dev/null || true
 	rm -f "$REPO_ROOT/genesis.json" 2>/dev/null || true
 	find "$REPO_ROOT/data" -maxdepth 3 -name "genesis-wallet.json" -delete 2>/dev/null || true
 	find "$REPO_ROOT/data" -maxdepth 3 -name "genesis-keys" -type d -exec rm -rf {} + 2>/dev/null || true
-	rm -f ~/.moltchain/genesis-wallet.json 2>/dev/null || true
-	rm -rf ~/.moltchain/genesis-keys 2>/dev/null || true
+	rm -f ~/.lichen/genesis-wallet.json 2>/dev/null || true
+	rm -rf ~/.lichen/genesis-keys 2>/dev/null || true
 	rm -f "$REPO_ROOT/airdrops.json" 2>/dev/null || true
-	rm -rf /tmp/moltchain-* /tmp/validator-* /tmp/molt* 2>/dev/null || true
+	rm -rf /tmp/lichen-* /tmp/validator-* /tmp/lichen-* 2>/dev/null || true
 else
 	for dir in "$REPO_ROOT"/data/state-${NETWORK}-*; do
 		[ -d "$dir" ] || continue
@@ -197,7 +197,7 @@ if [ "$NETWORK" = "all" ]; then
 	rm -f /tmp/v*-migrated-keypair.json /tmp/*-keypair-backup-*.json 2>/dev/null || true
 	find "$REPO_ROOT/data" -maxdepth 3 -name "migration-*.json" -delete 2>/dev/null || true
 	find "$REPO_ROOT/data" -maxdepth 3 -name "fingerprint-*.dat" -delete 2>/dev/null || true
-	rm -f /tmp/moltchain-validator-*.pid /tmp/signer-*.json 2>/dev/null || true
+	rm -f /tmp/lichen-validator-*.pid /tmp/signer-*.json 2>/dev/null || true
 else
 	for dir in "$REPO_ROOT"/data/state-${NETWORK}-*; do
 		[ -d "$dir" ] || continue
@@ -257,7 +257,7 @@ if [ "$RESTART" = true ]; then
 		if [ -x "$ZK_SETUP_BIN" ]; then
 			echo "   Ensuring ZK proving/verification keys exist..."
 			cd "$VPS_STATE_DIR"
-			sudo -u moltchain "$ZK_SETUP_BIN" 2>&1 | sed 's/^/   /' || true
+			sudo -u lichen "$ZK_SETUP_BIN" 2>&1 | sed 's/^/   /' || true
 		else
 			echo -e "   ${YELLOW}⚠  zk-setup binary not found — shielded txs unavailable${NC}"
 		fi
@@ -266,15 +266,15 @@ if [ "$RESTART" = true ]; then
 		# Start testnet validator
 		if [ "$NETWORK" = "all" ] || [ "$NETWORK" = "testnet" ]; then
 			echo "   Starting testnet validator..."
-			sudo systemctl start moltchain-validator-testnet
-			echo "   ✓ moltchain-validator-testnet started"
+			sudo systemctl start lichen-validator-testnet
+			echo "   ✓ lichen-validator-testnet started"
 		fi
 
 		# Start mainnet validator
 		if [ "$NETWORK" = "all" ] || [ "$NETWORK" = "mainnet" ]; then
 			echo "   Starting mainnet validator..."
-			sudo systemctl start moltchain-validator-mainnet
-			echo "   ✓ moltchain-validator-mainnet started"
+			sudo systemctl start lichen-validator-mainnet
+			echo "   ✓ lichen-validator-mainnet started"
 		fi
 
 		echo "   Waiting for genesis creation (30s)..."
@@ -296,7 +296,7 @@ if [ "$RESTART" = true ]; then
 					# Copy to custody treasury
 					sudo cp "$GENESIS_KEY" "$VPS_CONFIG_DIR/custody-treasury.json"
 					sudo chmod 600 "$VPS_CONFIG_DIR/custody-treasury.json"
-					sudo chown moltchain:moltchain "$VPS_CONFIG_DIR/custody-treasury.json"
+					sudo chown lichen:lichen "$VPS_CONFIG_DIR/custody-treasury.json"
 					DEPLOYER_PUBKEY=$(sudo python3 -c "import json; d=json.load(open('$GENESIS_KEY')); print(d.get('pubkey','?'))" 2>/dev/null || echo '?')
 					echo "   ✓ Custody treasury keypair = genesis admin ($DEPLOYER_PUBKEY)"
 
@@ -312,7 +312,7 @@ if [ "$RESTART" = true ]; then
 				FAUCET_KEY=$(sudo find "$VPS_STATE_DIR/state-testnet/genesis-keys" -name "faucet-*.json" -type f 2>/dev/null | head -1)
 				if [ -n "$FAUCET_KEY" ]; then
 					sudo cp "$FAUCET_KEY" "$VPS_STATE_DIR/faucet-keypair.json"
-					sudo chown moltchain:moltchain "$VPS_STATE_DIR/faucet-keypair.json"
+					sudo chown lichen:lichen "$VPS_STATE_DIR/faucet-keypair.json"
 					echo "   ✓ Copied faucet keypair"
 				fi
 			fi
@@ -321,13 +321,13 @@ if [ "$RESTART" = true ]; then
 		# Start supporting services
 		if [ "$NETWORK" = "all" ] || [ "$NETWORK" = "testnet" ]; then
 			echo "   Starting faucet and custody services..."
-			sudo systemctl start moltchain-faucet 2>/dev/null && echo "   ✓ faucet started" || echo "   ⚠  faucet start failed"
-			sudo systemctl start moltchain-custody 2>/dev/null && echo "   ✓ custody started" || echo "   ⚠  custody start failed"
+			sudo systemctl start lichen-faucet 2>/dev/null && echo "   ✓ faucet started" || echo "   ⚠  faucet start failed"
+			sudo systemctl start lichen-custody 2>/dev/null && echo "   ✓ custody started" || echo "   ⚠  custody start failed"
 		fi
 
 		if [ "$NETWORK" = "all" ] || [ "$NETWORK" = "mainnet" ]; then
 			echo "   Starting mainnet custody service..."
-			sudo systemctl start moltchain-custody-mainnet 2>/dev/null && echo "   ✓ custody-mainnet started" || echo "   ⚠  custody-mainnet start failed"
+			sudo systemctl start lichen-custody-mainnet 2>/dev/null && echo "   ✓ custody-mainnet started" || echo "   ⚠  custody-mainnet start failed"
 		fi
 
 		echo ""
@@ -339,7 +339,7 @@ if [ "$RESTART" = true ]; then
 		sleep 5
 		echo ""
 		echo "   Health check:"
-		for SVC in moltchain-validator-testnet moltchain-validator-mainnet moltchain-faucet moltchain-custody moltchain-custody-mainnet; do
+		for SVC in lichen-validator-testnet lichen-validator-mainnet lichen-faucet lichen-custody lichen-custody-mainnet; do
 			STATUS=$(systemctl is-active "$SVC" 2>/dev/null || echo "not-found")
 			if [ "$STATUS" = "active" ]; then
 				echo -e "   ${GREEN}✓${NC} $SVC: $STATUS"
@@ -384,7 +384,7 @@ if [ "$RESTART" = true ]; then
 		echo ""
 
 		echo "   Starting V1 (primary - creates genesis)..."
-		nohup "$LAUNCHER" "$NETWORK" 1 $EXTRA_FLAGS > /tmp/moltchain-v1.log 2>&1 &
+		nohup "$LAUNCHER" "$NETWORK" 1 $EXTRA_FLAGS > /tmp/lichen-v1.log 2>&1 &
 		V1_PID=$!
 		echo "   V1 PID: $V1_PID"
 
@@ -408,20 +408,20 @@ if [ "$RESTART" = true ]; then
 		fi
 
 		echo "   Starting V2 (secondary)..."
-		nohup "$LAUNCHER" "$NETWORK" 2 $EXTRA_FLAGS > /tmp/moltchain-v2.log 2>&1 &
+		nohup "$LAUNCHER" "$NETWORK" 2 $EXTRA_FLAGS > /tmp/lichen-v2.log 2>&1 &
 		echo "   V2 PID: $!"
 		echo "   Waiting for V2 sync (20s)..."
 		sleep 20
 
 		echo "   Starting V3 (tertiary)..."
-		nohup "$LAUNCHER" "$NETWORK" 3 $EXTRA_FLAGS > /tmp/moltchain-v3.log 2>&1 &
+		nohup "$LAUNCHER" "$NETWORK" 3 $EXTRA_FLAGS > /tmp/lichen-v3.log 2>&1 &
 		echo "   V3 PID: $!"
 
 		echo ""
 		echo "   Waiting for final sync (10s)..."
 		sleep 10
 
-		FAUCET_BIN="${REPO_ROOT}/target/release/moltchain-faucet"
+		FAUCET_BIN="${REPO_ROOT}/target/release/lichen-faucet"
 		if [ -x "$FAUCET_BIN" ]; then
 			FAUCET_KEY=$(find "$REPO_ROOT/data/state-${PRIMARY_P2P}/genesis-keys" -name "faucet-*.json" -type f 2>/dev/null | head -1)
 			if [ -n "$FAUCET_KEY" ]; then
@@ -434,23 +434,23 @@ if [ "$RESTART" = true ]; then
 			RPC_URL="http://127.0.0.1:${PRIMARY_RPC}" \
 			FAUCET_PORT="${FAUCET_PORT}" \
 			NETWORK="$NETWORK" \
-			nohup "$FAUCET_BIN" > /tmp/moltchain-faucet.log 2>&1 &
+			nohup "$FAUCET_BIN" > /tmp/lichen-faucet.log 2>&1 &
 			FAUCET_PID=$!
 			echo "   ✓ Faucet PID: $FAUCET_PID"
 		else
-			echo "   ⚠  Faucet binary not found — build with: cargo build --release --bin moltchain-faucet"
+			echo "   ⚠  Faucet binary not found — build with: cargo build --release --bin lichen-faucet"
 		fi
 	fi
 else
 	if [ "$VPS_MODE" = true ]; then
 		echo "Next steps (VPS):"
-		echo "   sudo systemctl start moltchain-validator-testnet"
-		echo "   sudo systemctl start moltchain-validator-mainnet"
+		echo "   sudo systemctl start lichen-validator-testnet"
+		echo "   sudo systemctl start lichen-validator-mainnet"
 		echo "   # Wait 30s for genesis, then run:"
 		echo "   bash $REPO_ROOT/scripts/vps-post-genesis.sh"
-		echo "   sudo systemctl start moltchain-faucet"
-		echo "   sudo systemctl start moltchain-custody"
-		echo "   sudo systemctl start moltchain-custody-mainnet"
+		echo "   sudo systemctl start lichen-faucet"
+		echo "   sudo systemctl start lichen-custody"
+		echo "   sudo systemctl start lichen-custody-mainnet"
 	else
 		echo "Next steps:"
 		echo "   cd $REPO_ROOT"

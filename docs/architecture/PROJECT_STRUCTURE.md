@@ -1,4 +1,4 @@
-# MoltChain Project Structure
+# Lichen Project Structure
 ## Complete Code Organization
 
 **Last Updated:** February 5, 2026
@@ -8,7 +8,7 @@
 ## Overview
 
 ```
-moltchain/
+lichen/
 ├── README.md                    # Project overview
 ├── ROADMAP.md                   # Development timeline
 ├── STATUS.md                    # Current progress
@@ -50,7 +50,7 @@ moltchain/
 │   │   └── slashing.rs         # Slashing conditions
 │   └── tests/
 │
-├── vm/                          # MoltVM (Execution environment)
+├── vm/                          # LicnVM (Execution environment)
 │   ├── Cargo.toml
 │   ├── src/
 │   │   ├── lib.rs
@@ -73,11 +73,11 @@ moltchain/
 │   │   └── rpc.rs              # RPC protocol
 │   └── tests/
 │
-├── storage/                     # The Reef (Distributed storage)
+├── storage/                     # The Moss (Distributed storage)
 │   ├── Cargo.toml
 │   ├── src/
 │   │   ├── lib.rs
-│   │   ├── reef.rs             # Storage protocol
+│   │   ├── moss.rs             # Storage protocol
 │   │   ├── db.rs               # RocksDB wrapper
 │   │   ├── snapshots.rs        # Snapshot system
 │   │   ├── content.rs          # Content addressing
@@ -104,22 +104,22 @@ moltchain/
 │       ├── Dockerfile
 │       └── docker-compose.yml
 │
-├── cli/                         # molt CLI tool
+├── cli/                         # licn CLI tool
 │   ├── Cargo.toml
 │   ├── src/
 │   │   ├── main.rs
 │   │   └── commands/
 │   │       ├── mod.rs
-│   │       ├── node.rs         # molt node start/stop/status
-│   │       ├── wallet.rs       # molt wallet create/balance
-│   │       ├── transfer.rs     # molt transfer
-│   │       ├── program.rs      # molt program deploy/call
-│   │       ├── validator.rs    # molt validator setup
-│   │       ├── config.rs       # molt config set/get
-│   │       └── pool.rs         # molt pool create/join
+│   │       ├── node.rs         # licn node start/stop/status
+│   │       ├── wallet.rs       # lichen wallet create/balance
+│   │       ├── transfer.rs     # lichen transfer
+│   │       ├── program.rs      # licn program deploy/call
+│   │       ├── validator.rs    # lichen validator setup
+│   │       ├── config.rs       # lichen config set/get
+│   │       └── pool.rs         # licn pool create/join
 │   └── tests/
 │
-├── wallet/                      # MoltWallet
+├── wallet/                      # LichenWallet
 │   ├── desktop/                # Electron app
 │   │   ├── package.json
 │   │   ├── src/
@@ -131,9 +131,9 @@ moltchain/
 │   ├── extension/              # Browser extension
 │   │   ├── manifest.json
 │   │   └── src/
-│   └── cli/                    # CLI wallet (part of molt CLI)
+│   └── cli/                    # CLI wallet (part of licn CLI)
 │
-├── explorer/                    # Reef Explorer
+├── explorer/                    # Moss Explorer
 │   ├── frontend/               # Next.js
 │   │   ├── package.json
 │   │   ├── pages/
@@ -172,7 +172,7 @@ moltchain/
 │   │
 │   └── python/                 # Python
 │       ├── setup.py
-│       ├── moltchain/
+│       ├── lichen/
 │       │   ├── __init__.py
 │       │   ├── client.py      # RPC client
 │       │   ├── program.py     # Program interface
@@ -197,7 +197,7 @@ moltchain/
 │   │       ├── burn.rs
 │   │       └── metadata.rs
 │   │
-│   ├── moltyid/                # Agent Identity System
+│   ├── lichenid/                # Agent Identity System
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── lib.rs
@@ -205,7 +205,7 @@ moltchain/
 │   │       ├── reputation.rs
 │   │       └── skills.rs
 │   │
-│   ├── clawswap/               # DEX
+│   ├── lichenswap/               # DEX
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── lib.rs
@@ -214,7 +214,7 @@ moltchain/
 │   │       ├── liquidity.rs
 │   │       └── amm.rs
 │   │
-│   ├── clawpump/               # Token Launchpad
+│   ├── sporepump/               # Token Launchpad
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── lib.rs
@@ -222,7 +222,7 @@ moltchain/
 │   │       ├── bonding_curve.rs
 │   │       └── vesting.rs
 │   │
-│   ├── lobsterlend/            # Lending Protocol
+│   ├── thalllend/            # Lending Protocol
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── lib.rs
@@ -231,7 +231,7 @@ moltchain/
 │   │       ├── liquidate.rs
 │   │       └── interest.rs
 │   │
-│   └── reefstake/              # Liquid Staking
+│   └── mossstake/              # Liquid Staking
 │       ├── Cargo.toml
 │       └── src/
 │           ├── lib.rs
@@ -278,45 +278,45 @@ moltchain/
 ## Key Directories Explained
 
 ### `/core`
-The heart of MoltChain. Implements account model, transactions, blocks, and state management. This is where the blockchain fundamentals live.
+The heart of Lichen. Implements account model, transactions, blocks, and state management. This is where the blockchain fundamentals live.
 
 ### `/consensus`
 Proof of Contribution consensus mechanism. Handles validator selection, leader scheduling, BFT voting, and slashing.
 
 ### `/vm`
-MoltVM execution environment. Runs programs written in Rust, JavaScript, or Python. Includes gas metering and security sandboxing.
+LichenVM execution environment. Runs programs written in Rust, JavaScript, or Python. Includes gas metering and security sandboxing.
 
 ### `/network`
 P2P networking layer using QUIC protocol. Implements gossip, block propagation (Turbine), and peer discovery.
 
 ### `/storage`
-The Reef distributed storage system. IPFS-like content-addressed storage with economic incentives for validators.
+The Moss distributed storage system. IPFS-like content-addressed storage with economic incentives for validators.
 
 ### `/programs`
-Core on-chain programs that ship with MoltChain:
+Core on-chain programs that ship with Lichen:
 - **system:** Basic token transfers
 - **token:** MTS token standard (like SPL tokens)
-- **moltyid:** Agent identity and reputation
-- **clawswap:** Decentralized exchange
-- **clawpump:** Token launchpad
-- **lobsterlend:** Lending protocol
-- **reefstake:** Liquid staking
+- **lichenid:** Agent identity and reputation
+- **lichenswap:** Decentralized exchange
+- **sporepump:** Token launchpad
+- **thalllend:** Lending protocol
+- **mossstake:** Liquid staking
 
 ### `/sdk`
 Software development kits in Rust, JavaScript, and Python. Agents use these to interact with the chain.
 
 ### `/cli`
-The `molt` command-line tool. One interface for everything: nodes, wallets, programs, validators.
+The `lichen` command-line tool. One interface for everything: nodes, wallets, programs, validators.
 
 ### `/wallet`
-MoltWallet in multiple forms:
+LichenWallet in multiple forms:
 - Desktop (Electron)
 - Mobile (iOS/Android via React Native)
 - Browser extension
-- CLI (integrated with molt CLI)
+- CLI (integrated with licn CLI)
 
 ### `/explorer`
-Reef Explorer block explorer:
+Moss Explorer block explorer:
 - Frontend: Next.js web app
 - Backend: Rust indexer + REST API
 - Real-time transaction viewing
@@ -331,8 +331,8 @@ Reef Explorer block explorer:
 
 ```bash
 # Clone repo (when public)
-git clone https://github.com/moltchain/moltchain
-cd moltchain
+git clone https://github.com/lichen/lichen
+cd lichen
 
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -394,7 +394,7 @@ cargo bench
 
 ```bash
 # Start single-node testnet
-cargo run --bin moltchain-validator -- \
+cargo run --bin lichen-validator -- \
   --data-dir ./test-data \
   --network localnet
 
@@ -459,7 +459,7 @@ See CONTRIBUTING.md (coming soon) for details.
 
 ## License
 
-**MoltChain Core:** Apache 2.0  
+**Lichen Core:** Apache 2.0  
 **SDKs / CLI / auxiliary packages:** MIT  
 **Documentation:** CC BY 4.0
 

@@ -126,7 +126,7 @@ Interpretation: higher heartbeat-only share does not predict higher tx-bearing s
 
 ## 8) Operational Notes / Root-Cause Controls
 
-- Early attempts failed because `contracts-write-e2e.py` required secondary funding from a signer with >= `2.001` MOLT spendable and `requestAirdrop` is disabled in 3-validator mode.
+- Early attempts failed because `contracts-write-e2e.py` required secondary funding from a signer with >= `2.001` LICN spendable and `requestAirdrop` is disabled in 3-validator mode.
 - This was fixed by running sequential/parallel windows with funded validator keypairs (`validator-8001.json`, `validator-8002.json`) and separate background terminals to avoid shell parser crashes.
 
 ---

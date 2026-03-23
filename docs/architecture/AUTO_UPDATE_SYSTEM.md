@@ -1,8 +1,8 @@
-# MoltChain Auto-Update System — Detailed Design
+# Lichen Auto-Update System — Detailed Design
 
 ## Overview
 
-Production-grade automatic update system for MoltChain validators. Validators
+Production-grade automatic update system for Lichen validators. Validators
 automatically check for new releases on GitHub, download the binary, verify its
 integrity (Ed25519 signature + SHA256 hash), perform a graceful binary swap, and
 restart through the existing supervisor. Designed for both testnet and mainnet.
@@ -14,8 +14,8 @@ restart through the existing supervisor. Designed for both testnet and mainnet.
 ```
 ┌─────────────────────┐
 │   GitHub Releases   │  ← Official release artifacts
-│  (lobstercove/molt- │    • moltchain-validator-{os}-{arch}.tar.gz
-│   chain)            │    • SHA256SUMS
+│  (lobstercove/      │    • lichen-validator-{os}-{arch}.tar.gz
+│   lichen)           │    • SHA256SUMS
 │                     │    • SHA256SUMS.sig  (Ed25519)
 └─────────┬───────────┘
           │ HTTPS (reqwest)
@@ -47,26 +47,26 @@ Each GitHub Release tag (e.g., `v0.2.0`) must contain:
 
 | File | Description |
 |------|-------------|
-| `moltchain-validator-linux-x86_64.tar.gz` | Linux amd64 binary |
-| `moltchain-validator-linux-aarch64.tar.gz` | Linux arm64 binary |
-| `moltchain-validator-darwin-x86_64.tar.gz` | macOS Intel binary |
-| `moltchain-validator-darwin-aarch64.tar.gz` | macOS Apple Silicon binary |
-| `moltchain-validator-windows-x86_64.tar.gz` | Windows x64 binary |
+| `lichen-validator-linux-x86_64.tar.gz` | Linux amd64 binary |
+| `lichen-validator-linux-aarch64.tar.gz` | Linux arm64 binary |
+| `lichen-validator-darwin-x86_64.tar.gz` | macOS Intel binary |
+| `lichen-validator-darwin-aarch64.tar.gz` | macOS Apple Silicon binary |
+| `lichen-validator-windows-x86_64.tar.gz` | Windows x64 binary |
 | `SHA256SUMS` | SHA256 hash file: `<hash>  <filename>` per line |
 | `SHA256SUMS.sig` | Ed25519 signature of SHA256SUMS (64 bytes, hex-encoded) |
 
 ### SHA256SUMS format
 ```
-a1b2c3...  moltchain-validator-linux-x86_64.tar.gz
-d4e5f6...  moltchain-validator-linux-aarch64.tar.gz
-g7h8i9...  moltchain-validator-windows-x86_64.tar.gz
+a1b2c3...  lichen-validator-linux-x86_64.tar.gz
+d4e5f6...  lichen-validator-linux-aarch64.tar.gz
+g7h8i9...  lichen-validator-windows-x86_64.tar.gz
 ...
 ```
 
 ### Archive structure
 ```
-moltchain-validator-{os}-{arch}.tar.gz
-  └── moltchain-validator          # single statically-linked binary
+lichen-validator-{os}-{arch}.tar.gz
+  └── lichen-validator          # single statically-linked binary
 ```
 
 ---
@@ -134,7 +134,7 @@ The `version` field is informational — it does NOT gate consensus behavior.
 
 ```
 1. Sleep(check_interval + random_jitter(0..60s))
-2. GET https://api.github.com/repos/lobstercove/moltchain/releases/latest
+2. GET https://api.github.com/repos/lobstercove/lichen/releases/latest
 3. Parse tag_name → semver, compare with CARGO_PKG_VERSION
 4. If newer:
    a. Download SHA256SUMS + SHA256SUMS.sig
@@ -195,7 +195,7 @@ tar = "0.4"
 rand = "0.8"
 ```
 
-Note: Ed25519 verification uses the existing `moltchain_core::Keypair`/`Pubkey`
+Note: Ed25519 verification uses the existing `lichen_core::Keypair`/`Pubkey`
 types — no need for `ed25519-dalek` as a direct dependency.
 
 ---
@@ -208,8 +208,8 @@ Triggered by pushing a tag matching `v*`:
 
 ```
 1. Build matrix: linux-x86_64, linux-aarch64, darwin-x86_64, darwin-aarch64
-2. cargo build --release --bin moltchain-validator
-3. Strip binary, compress: tar czf moltchain-validator-{os}-{arch}.tar.gz
+2. cargo build --release --bin lichen-validator
+3. Strip binary, compress: tar czf lichen-validator-{os}-{arch}.tar.gz
 4. Compute SHA256 → SHA256SUMS
 5. Upload artifacts to GitHub Release (draft)
 6. Maintainer signs SHA256SUMS offline → uploads SHA256SUMS.sig

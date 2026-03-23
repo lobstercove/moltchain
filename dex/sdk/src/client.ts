@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — MoltDEX Client
-// Main entry point for interacting with MoltyDEX
+// @lichen/dex-sdk — LichenDEX Client
+// Main entry point for interacting with LichenDEX
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import type {
-  MoltDEXConfig,
+  LichenDEXConfig,
   ApiResponse,
   TradingPair,
   Order,
@@ -42,43 +42,43 @@ const DEFAULT_TIMEOUT = 30_000;
 const PRICE_SCALE = 1_000_000_000;
 
 /**
- * MoltDEX SDK Client
+ * LichenDEX SDK Client
  *
  * @example
  * ```typescript
- * import { MoltDEX } from '@moltchain/dex-sdk';
+ * import { LichenDEX } from '@lichen/dex-sdk';
  *
- * const dex = new MoltDEX({
- *   endpoint: 'https://dex.moltchain.network',
+ * const dex = new LichenDEX({
+ *   endpoint: 'https://dex.lichen.network',
  *   wallet: myKeypair,
- *   moltyId: 'alice.molt',
+ *   lichenId: 'alice.lichen',
  * });
  *
  * // Place a limit order
  * const order = await dex.placeLimitOrder({
- *   pair: 'MOLT/mUSD', side: 'buy', price: 1.50, quantity: 1000, timeInForce: 'GTC'
+ *   pair: 'LICN/lUSD', side: 'buy', price: 1.50, quantity: 1000, timeInForce: 'GTC'
  * });
  *
  * // Smart-routed swap
  * const result = await dex.swap({
- *   tokenIn: 'MOLT', tokenOut: 'mUSD', amountIn: 1_000_000, slippage: 0.5
+ *   tokenIn: 'LICN', tokenOut: 'lUSD', amountIn: 1_000_000, slippage: 0.5
  * });
  * ```
  */
-export class MoltDEX {
+export class LichenDEX {
   private endpoint: string;
   private wsEndpoint: string;
   private wallet: any;
-  private moltyId?: string;
+  private lichenId?: string;
   private apiKey?: string;
   private timeout: number;
   private ws: DexWebSocket | null = null;
 
-  constructor(config: MoltDEXConfig = {}) {
+  constructor(config: LichenDEXConfig = {}) {
     this.endpoint = (config.endpoint || DEFAULT_ENDPOINT).replace(/\/$/, '');
     this.wsEndpoint = (config.wsEndpoint || DEFAULT_WS_ENDPOINT).replace(/\/$/, '');
     this.wallet = config.wallet;
-    this.moltyId = config.moltyId;
+    this.lichenId = config.lichenId;
     this.apiKey = config.apiKey;
     this.timeout = config.timeout || DEFAULT_TIMEOUT;
   }
@@ -91,7 +91,7 @@ export class MoltDEX {
     const url = `${this.endpoint}${path}`;
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (this.apiKey) headers['X-API-Key'] = this.apiKey;
-    if (this.moltyId) headers['X-MoltyID'] = this.moltyId;
+    if (this.lichenId) headers['X-LichenID'] = this.lichenId;
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeout);

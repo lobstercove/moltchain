@@ -1,15 +1,15 @@
-# MoltChain Custody Service — Deep Security Audit
+# Lichen Custody Service — Deep Security Audit
 
 **Audit Date**: February 2025  
 **Scope**: `custody/src/main.rs` (5,755 lines) — full line-by-line review  
-**Service**: `moltchain-custody` — Axum HTTP server on port 9105  
-**Dependencies**: axum 0.7, frost-ed25519 2, k256 0.13, ed25519-dalek 2.1, rocksdb 0.21, reqwest 0.11, moltchain-core  
+**Service**: `lichen-custody` — Axum HTTP server on port 9105  
+**Dependencies**: axum 0.7, frost-ed25519 2, k256 0.13, ed25519-dalek 2.1, rocksdb 0.21, reqwest 0.11, lichen-core  
 
 ---
 
 ## Executive Summary
 
-The custody service manages the most sensitive operation in MoltChain: holding real SOL and ETH deposits, generating private keys from a master seed, sweeping funds into treasury wallets, and minting/burning wrapped tokens. A bug here can permanently lose user funds.
+The custody service manages the most sensitive operation in Lichen: holding real SOL and ETH deposits, generating private keys from a master seed, sweeping funds into treasury wallets, and minting/burning wrapped tokens. A bug here can permanently lose user funds.
 
 This audit found **4 CRITICAL**, **4 HIGH**, **6 MEDIUM**, and **3 LOW** severity issues. All CRITICAL and HIGH issues have been fixed in this commit.
 
@@ -69,7 +69,7 @@ persisted deposit record
         └─ sweep signing reuses the original source for compatibility
 ```
 
-Derivation path format: `molt/{chain}/{asset}/{user_id}/{index}`
+Derivation path format: `lichen/{chain}/{asset}/{user_id}/{index}`
 
 ### Fund Flow
 
@@ -115,7 +115,7 @@ let transfer_amount = amount - solana_tx_fee;
 **Risk**: Wrapped tokens minted when sweep transaction reverts — fund mismatch  
 **Status**: ✅ FIXED
 
-**Problem**: The credit job (which mints wSOL/wETH/mUSD on MoltChain) was created at the `sweep_submitted` stage — immediately after broadcast, before on-chain confirmation. If the sweep transaction reverts (due to network congestion, nonce collision, insufficient fee, etc.), the user would receive wrapped tokens but the treasury would never actually receive the funds.
+**Problem**: The credit job (which mints wSOL/wETH/lUSD on Lichen) was created at the `sweep_submitted` stage — immediately after broadcast, before on-chain confirmation. If the sweep transaction reverts (due to network congestion, nonce collision, insufficient fee, etc.), the user would receive wrapped tokens but the treasury would never actually receive the funds.
 
 **Fix applied**: Moved credit job creation to the `sweep_confirmed` handler. Wrapped tokens are now only minted after the sweep is verified on-chain.
 
@@ -143,9 +143,9 @@ The rebalance system triggers when USDT/USDC reserves drift past 70%. If this ra
 
 **Problem**: The withdrawal lifecycle starts at `pending_burn`. Phase 1 checks `job.burn_tx_signature` — but this field is initialized as `None` in `create_withdrawal`, and there was **no API endpoint** to update it. Result: every withdrawal job sits in `pending_burn` indefinitely. The entire withdrawal flow was non-functional.
 
-The response message tells the user to "Burn X Y on MoltChain, then the outbound transfer will be processed automatically" — but there was no way for the client to submit proof of the burn.
+The response message tells the user to "Burn X Y on Lichen, then the outbound transfer will be processed automatically" — but there was no way for the client to submit proof of the burn.
 
-**Fix applied**: Added `PUT /withdrawals/:job_id/burn` endpoint that accepts `{ "burn_tx_signature": "..." }`. Once submitted, the withdrawal worker verifies the burn against MoltChain RPC and progresses the job.
+**Fix applied**: Added `PUT /withdrawals/:job_id/burn` endpoint that accepts `{ "burn_tx_signature": "..." }`. Once submitted, the withdrawal worker verifies the burn against Lichen RPC and progresses the job.
 
 ---
 

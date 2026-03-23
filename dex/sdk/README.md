@@ -1,29 +1,29 @@
-# @moltchain/dex-sdk
+# @lichen/dex-sdk
 
-TypeScript SDK for **MoltyDEX** — MoltChain's hybrid CLOB + concentrated liquidity AMM decentralized exchange.
+TypeScript SDK for **Lichen DEX** — Lichen's hybrid CLOB + concentrated liquidity AMM decentralized exchange.
 
 ## Installation
 
 ```bash
-npm install @moltchain/dex-sdk @moltchain/sdk
+npm install @lichen/dex-sdk @lichen/sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import { MoltDEX } from '@moltchain/dex-sdk';
-import { Keypair } from '@moltchain/sdk';
+import { LichenDEX } from '@lichen/dex-sdk';
+import { Keypair } from '@lichen/sdk';
 
 const wallet = Keypair.generate();
-const dex = new MoltDEX({
-  endpoint: 'https://dex.moltchain.network',
+const dex = new LichenDEX({
+  endpoint: 'https://dex.lichen.network',
   wallet,
-  moltyId: 'alice.molt',
+  lichenId: 'alice.lichen',
 });
 
 // Place a limit buy order
 const order = await dex.placeLimitOrder({
-  pair: 'MOLT/mUSD',
+  pair: 'LICN/lUSD',
   side: 'buy',
   price: 1.50,
   quantity: 1000,
@@ -31,8 +31,8 @@ const order = await dex.placeLimitOrder({
 
 // Smart-routed swap
 const result = await dex.swap({
-  tokenIn: 'MOLT',
-  tokenOut: 'mUSD',
+  tokenIn: 'LICN',
+  tokenOut: 'lUSD',
   amountIn: 1_000_000,
   slippage: 0.5,
 });
@@ -49,7 +49,7 @@ dex.disconnect();
 
 ## Modules
 
-### Client — `MoltDEX`
+### Client — `LichenDEX`
 
 Main SDK class with high-level methods for all DEX operations.
 
@@ -94,7 +94,7 @@ Real-time market data feeds with auto-reconnect.
 Low-level encoding/decoding for direct contract interaction.
 
 ```typescript
-import { encodePlaceOrder, decodeOrder, buildOrderBook } from '@moltchain/dex-sdk';
+import { encodePlaceOrder, decodeOrder, buildOrderBook } from '@lichen/dex-sdk';
 ```
 
 ### AMM Module
@@ -102,7 +102,7 @@ import { encodePlaceOrder, decodeOrder, buildOrderBook } from '@moltchain/dex-sd
 Pool math and liquidity calculations.
 
 ```typescript
-import { priceToSqrtPrice, priceToTick, estimateSwapOutput } from '@moltchain/dex-sdk';
+import { priceToSqrtPrice, priceToTick, estimateSwapOutput } from '@lichen/dex-sdk';
 ```
 
 ### Margin Module
@@ -110,7 +110,7 @@ import { priceToSqrtPrice, priceToTick, estimateSwapOutput } from '@moltchain/de
 PnL calculations and liquidation math.
 
 ```typescript
-import { unrealizedPnl, liquidationPrice, isLiquidatable } from '@moltchain/dex-sdk';
+import { unrealizedPnl, liquidationPrice, isLiquidatable } from '@lichen/dex-sdk';
 ```
 
 ### Router Module
@@ -118,17 +118,17 @@ import { unrealizedPnl, liquidationPrice, isLiquidatable } from '@moltchain/dex-
 Smart order routing utilities.
 
 ```typescript
-import { suggestRouteType, calculatePriceImpact, calculateMinOutput } from '@moltchain/dex-sdk';
+import { suggestRouteType, calculatePriceImpact, calculateMinOutput } from '@lichen/dex-sdk';
 ```
 
 ## Configuration
 
 ```typescript
-const dex = new MoltDEX({
-  endpoint: 'https://dex.moltchain.network',    // REST API
-  wsEndpoint: 'wss://dex.moltchain.network/ws', // WebSocket
+const dex = new LichenDEX({
+  endpoint: 'https://dex.lichen.network',    // REST API
+  wsEndpoint: 'wss://dex.lichen.network/ws', // WebSocket
   wallet: myKeypair,                        // For signing transactions
-  moltyId: 'alice.molt',                    // MoltyID identity
+  lichenId: 'alice.lichen',                    // LichenID identity
   apiKey: 'key_...',                        // Rate limit bypass
   timeout: 30000,                           // Request timeout (ms)
 });
@@ -139,8 +139,8 @@ const dex = new MoltDEX({
 All on-chain prices are scaled by `1e9`. Use the static helpers:
 
 ```typescript
-MoltDEX.priceToScaled(1.50);  // → 1_500_000_000n
-MoltDEX.scaledToPrice(1_500_000_000n); // → 1.50
+LichenDEX.priceToScaled(1.50);  // → 1_500_000_000n
+LichenDEX.scaledToPrice(1_500_000_000n); // → 1.50
 ```
 
 ## License

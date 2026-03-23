@@ -1,12 +1,12 @@
-# 🦞 MoltChain Network Guide
+# 🦞 Lichen Network Guide
 
-**Connecting to and Joining the MoltChain Network**
+**Connecting to and Joining the Lichen Network**
 
 ---
 
 ## Network Overview
 
-MoltChain operates multiple networks for different purposes:
+Lichen operates multiple networks for different purposes:
 
 - **Mainnet** - Production network with real value
 - **Testnet** - Testing network with test tokens (free faucet)
@@ -18,28 +18,28 @@ MoltChain operates multiple networks for different purposes:
 
 ### Prerequisites
 ```bash
-# Install MoltChain
-git clone https://github.com/lobstercove/moltchain
-cd moltchain
+# Install Lichen
+git clone https://github.com/lobstercove/lichen
+cd lichen
 cargo build --release
 ```
 
 ### 1. Generate Identity
 ```bash
 # Create your validator keypair
-./target/release/molt init --output ~/.moltchain/keypairs/id.json
+./target/release/lichen init --output ~/.lichen/keypairs/id.json
 
 # View your identity
-./target/release/molt identity show
+./target/release/lichen identity show
 ```
 
 ### 2. Get Test Tokens
 ```bash
-# Request from faucet (100 MOLT)
-./target/release/molt airdrop 100
+# Request from faucet (100 LICN)
+./target/release/lichen airdrop 100
 
 # Check balance
-./target/release/molt balance
+./target/release/lichen balance
 ```
 
 ### 3. Setup Validator
@@ -56,10 +56,10 @@ cargo build --release
 ### 4. Start Validator
 ```bash
 # Start validator
-~/.moltchain/start-validator.sh
+~/.lichen/start-validator.sh
 
 # Monitor status
-~/.moltchain/health-check.sh --watch
+~/.lichen/health-check.sh --watch
 ```
 
 ---
@@ -68,56 +68,56 @@ cargo build --release
 
 ### Testnet
 
-**Chain ID**: `moltchain-testnet-1`
+**Chain ID**: `lichen-testnet-1`
 
 **Seed Nodes**:
-- `seed-01.moltchain.network:7001` (US East)
-- `seed-02.moltchain.network:7001` (EU West)
-- `seed-03.moltchain.network:7001` (Asia Pacific)
+- `seed-01.lichen.network:7001` (US East)
+- `seed-02.lichen.network:7001` (EU West)
+- `seed-03.lichen.network:7001` (Asia Pacific)
 
 **Bootstrap Peers**:
-- `seed-01.moltchain.network:7001`
-- `seed-02.moltchain.network:7001`
-- `seed-03.moltchain.network:7001`
+- `seed-01.lichen.network:7001`
+- `seed-02.lichen.network:7001`
+- `seed-03.lichen.network:7001`
 
 **RPC Endpoints**:
-- Primary: `https://testnet-rpc.moltchain.network`
+- Primary: `https://testnet-rpc.lichen.network`
 
 **WebSocket Endpoints**:
-- Primary: `wss://testnet-ws.moltchain.network`
+- Primary: `wss://testnet-ws.lichen.network`
 
 **Web Services**:
-- Explorer: `https://explorer.moltchain.network`
-- Faucet: `https://faucet.moltchain.network`
-- Documentation: `https://developers.moltchain.network`
+- Explorer: `https://explorer.lichen.network`
+- Faucet: `https://faucet.lichen.network`
+- Documentation: `https://developers.lichen.network`
 
 **Genesis File**: Obtain the canonical `genesis.json` from the current operator or release bundle before joining.
 
 ### Mainnet
 
-**Chain ID**: `moltchain-mainnet-1`
+**Chain ID**: `lichen-mainnet-1`
 
 **Seed Nodes**:
-- `seed-01.moltchain.network:8001` (US East)
-- `seed-02.moltchain.network:8001` (EU West)
-- `seed-03.moltchain.network:8001` (Asia Pacific)
+- `seed-01.lichen.network:8001` (US East)
+- `seed-02.lichen.network:8001` (EU West)
+- `seed-03.lichen.network:8001` (Asia Pacific)
 
 **RPC Endpoints**:
-- Primary: `https://rpc.moltchain.network`
+- Primary: `https://rpc.lichen.network`
 
 **WebSocket Endpoints**:
-- Primary: `wss://ws.moltchain.network`
+- Primary: `wss://ws.lichen.network`
 
 **Web Services**:
-- Explorer: `https://explorer.moltchain.network`
-- Documentation: `https://developers.moltchain.network`
-- Monitoring: `https://monitoring.moltchain.network`
+- Explorer: `https://explorer.lichen.network`
+- Documentation: `https://developers.lichen.network`
+- Monitoring: `https://monitoring.lichen.network`
 
 **Genesis File**: Obtain the canonical `genesis.json` from the current operator or release bundle before joining.
 
 ### Devnet (Local)
 
-**Chain ID**: `moltchain-devnet-1`
+**Chain ID**: `lichen-devnet-1`
 
 **Bootstrap Peers**:
 - `127.0.0.1:8000`
@@ -143,8 +143,8 @@ The `seeds.json` file contains bootstrap information for all networks:
 ```json
 {
   "testnet": {
-    "network_id": "moltchain-testnet-1",
-    "chain_id": "moltchain-testnet-1",
+    "network_id": "lichen-testnet-1",
+    "chain_id": "lichen-testnet-1",
     "seeds": [...],
     "bootstrap_peers": [...],
     "rpc_endpoints": [...],
@@ -165,10 +165,10 @@ The `seeds.json` file contains bootstrap information for all networks:
 **External** (custom):
 ```bash
 # Download latest seeds
-curl -O https://github.com/lobstercove/moltchain/raw/main/seeds.json
+curl -O https://github.com/lobstercove/lichen/raw/main/seeds.json
 
 # Start validator with custom seeds
-./target/release/moltchain-validator \
+./target/release/lichen-validator \
   --genesis ./genesis.json \
   --seeds ./seeds.json \
   7001
@@ -189,7 +189,7 @@ curl -O https://github.com/lobstercove/moltchain/raw/main/seeds.json
 
 **Seed Nodes**:
 - Long-running, reliable peers
-- Operated by MoltChain Foundation and community
+- Operated by Lichen Foundation and community
 - High availability (99.9%+ uptime)
 - Global distribution
 
@@ -234,7 +234,7 @@ Seed nodes are critical infrastructure for network bootstrap.
 - Network: 100 Mbps, static IP
 
 **Software**:
-- MoltChain validator binary
+- Lichen validator binary
 - Public domain name (recommended)
 - Open firewall ports
 
@@ -249,17 +249,17 @@ Seed nodes are critical infrastructure for network bootstrap.
   --install-service
 
 # Start seed node
-sudo systemctl start moltchain-seed
+sudo systemctl start lichen-seed
 
 # Monitor
-sudo journalctl -u moltchain-seed -f
+sudo journalctl -u lichen-seed -f
 ```
 
 ### Registration
 
 After setup, register your seed node:
 
-1. Open PR to `moltchain/moltchain`
+1. Open PR to `lichen/lichen`
 2. Add entry to `seeds.json`:
 ```json
 {
@@ -284,9 +284,9 @@ After setup, register your seed node:
 ┌─────────────────────────────────────────────────┐
 │                 Seed Nodes                      │
 │  (Always-on, geographically distributed)       │
-│  - seed1.moltchain.network (US East)                │
-│  - seed2.moltchain.network (EU West)                │
-│  - seed3.moltchain.network (APAC)                   │
+│  - seed1.lichen.network (US East)                │
+│  - seed2.lichen.network (EU West)                │
+│  - seed3.lichen.network (APAC)                   │
 └────┬──────────────┬──────────────┬─────────────┘
      │              │              │
      ▼              ▼              ▼
@@ -336,13 +336,13 @@ After setup, register your seed node:
 **Checks**:
 ```bash
 # 1. Test seed connectivity
-nc -zv seed-01.moltchain.network 7001
+nc -zv seed-01.lichen.network 7001
 
 # 2. Check firewall
 sudo ufw status | grep 7001
 
 # 3. Verify genesis matches network
-jq '.chain_id' ~/.moltchain/genesis.json
+jq '.chain_id' ~/.lichen/genesis.json
 ```
 
 **Solutions**:
@@ -406,21 +406,21 @@ df -h
 
 - **Slot Duration**: 400ms
 - **Epoch Length**: 432,000 slots (~48 hours)
-- **Min Validator Stake**: 75 MOLT
-- **Reward Model**: Epoch-settled inflation derived from a 0.02 MOLT reference per-slot rate
+- **Min Validator Stake**: 75 LICN
+- **Reward Model**: Epoch-settled inflation derived from a 0.02 LICN reference per-slot rate
 - **Fee Burn**: 40%
 - **Fee Split**: 30% producer, 10% voters, 10% treasury, 10% community
-- **Genesis Supply**: 500M MOLT
+- **Genesis Supply**: 500M LICN
 
 ### Mainnet
 
 - **Slot Duration**: 400ms
 - **Epoch Length**: 432,000 slots (~48 hours)
-- **Min Validator Stake**: 75,000 MOLT
-- **Reward Model**: Epoch-settled inflation derived from a 0.02 MOLT reference per-slot rate
+- **Min Validator Stake**: 75,000 LICN
+- **Reward Model**: Epoch-settled inflation derived from a 0.02 LICN reference per-slot rate
 - **Fee Burn**: 40%
 - **Fee Split**: 30% producer, 10% voters, 10% treasury, 10% community
-- **Genesis Supply**: 500M MOLT
+- **Genesis Supply**: 500M LICN
 
 ---
 
@@ -469,19 +469,19 @@ df -h
 
 **Validator**:
 ```bash
-~/.moltchain/health-check.sh
+~/.lichen/health-check.sh
 ```
 
 **Network Status**:
 ```bash
 # Get current slot
-molt slot
+lichen slot
 
 # Get validator count
-molt validators
+lichen validators
 
 # Get latest block
-molt latest
+lichen latest
 ```
 
 ### Metrics
@@ -493,11 +493,11 @@ curl http://localhost:9100/metrics
 ```
 
 **Key Metrics**:
-- `moltchain_slot_height` - Current slot
-- `moltchain_peer_count` - Connected peers
-- `moltchain_validator_count` - Active validators
-- `moltchain_tps` - Transactions per second
-- `moltchain_block_time_ms` - Block production time
+- `lichen_slot_height` - Current slot
+- `lichen_peer_count` - Connected peers
+- `lichen_validator_count` - Active validators
+- `lichen_tps` - Transactions per second
+- `lichen_block_time_ms` - Block production time
 
 ---
 
@@ -505,21 +505,21 @@ curl http://localhost:9100/metrics
 
 **Community**:
 - Discord: `https://discord.gg/gkQmsHXRXp`
-- Telegram: `https://t.me/moltchainhq`
-- X: `https://x.com/MoltChainHQ`
-- Email: `hello@moltchain.network`
-- Forum: `https://forum.moltchain.network`
+- Telegram: `https://t.me/lichenhq`
+- X: `https://x.com/LichenHQ`
+- Email: `hello@lichen.network`
+- Forum: `https://forum.lichen.network`
 
 **Resources**:
-- Documentation: `https://developers.moltchain.network`
-- GitHub: `https://github.com/lobstercove/moltchain`
-- Monitoring: `https://monitoring.moltchain.network`
+- Documentation: `https://developers.lichen.network`
+- GitHub: `https://github.com/lobstercove/lichen`
+- Monitoring: `https://monitoring.lichen.network`
 
 **Reporting Issues**:
 - Network issues: `#network-support` on Discord
 - Bug reports: GitHub Issues
-- Security: `security@moltchain.network`
+- Security: `security@lichen.network`
 
 ---
 
-**🦞 Welcome to the MoltChain network! Let's build the economic future for agents! 🦞**
+**🦞 Welcome to the Lichen network! Let's build the economic future for agents! 🦞**

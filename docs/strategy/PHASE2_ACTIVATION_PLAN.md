@@ -3,12 +3,12 @@
 ## Current Status (February 8, 2026)
 
 **Phase 1** ✅ ACTIVE:
-- Validator bootstrap grants (100K MOLT)
+- Validator bootstrap grants (100K LICN)
 - Vesting system working
 - 3 validators currently operational
 
 **Phase 2** 📦 CODE EXISTS, NOT WIRED:
-- [core/src/reefstake.rs](../core/src/reefstake.rs) - Full protocol implemented
+- [core/src/mossstake.rs](../core/src/mossstake.rs) - Full protocol implemented
 - No RPC endpoints yet
 - No wallet UI integration
 - Delegation mechanics ready but unused
@@ -19,18 +19,18 @@
 
 ### 1. Core Integration (Backend)
 
-#### A. Add ReefStake to Validator State
+#### A. Add MossStake to Validator State
 **File**: `validator/src/main.rs`
 
 ```rust
-use moltchain_core::ReefStakePool;
+use lichen_core::MossStakePool;
 
 // Add after stake_pool initialization
-let reef_stake = Arc::new(Mutex::new(ReefStakePool::new()));
+let moss_stake = Arc::new(Mutex::new(MossStakePool::new()));
 
 // Clone for handlers
-let reef_stake_for_rpc = reef_stake.clone();
-let reef_stake_for_blocks = reef_stake.clone();
+let moss_stake_for_rpc = moss_stake.clone();
+let moss_stake_for_blocks = moss_stake.clone();
 ```
 
 #### B. Integrate with Block Processing
@@ -38,8 +38,8 @@ let reef_stake_for_blocks = reef_stake.clone();
 
 ```rust
 // After distributing validator rewards, distribute staking rewards
-let mut reef = reef_stake_for_blocks.lock().await;
-reef.distribute_rewards(block_reward * 0.9, current_slot); // 90% to stakers
+let mut moss = moss_stake_for_blocks.lock().await;
+moss.distribute_rewards(block_reward * 0.9, current_slot); // 90% to stakers
 ```
 
 ### 2. RPC Endpoints (API Layer)
@@ -50,11 +50,11 @@ reef.distribute_rewards(block_reward * 0.9, current_slot); // 90% to stakers
 ```rust
 // New RPC methods to add:
 
-/// Stake MOLT, receive stMOLT
-"stakeToReefStake" => handle_stake_to_reef_stake(&state, params).await,
+/// Stake LICN, receive stLICN
+"stakeToMossStake" => handle_stake_to_moss_stake(&state, params).await,
 
 /// Request unstake (7-day cooldown)
-"unstakeFromReefStake" => handle_unstake_from_reef_stake(&state, params).await,
+"unstakeFromMossStake" => handle_unstake_from_moss_stake(&state, params).await,
 
 /// Claim unstaked tokens after cooldown
 "claimUnstakedTokens" => handle_claim_unstaked(&state, params).await,
@@ -62,8 +62,8 @@ reef.distribute_rewards(block_reward * 0.9, current_slot); // 90% to stakers
 /// Get staking position for user
 "getStakingPosition" => handle_get_staking_position(&state, params).await,
 
-/// Get ReefStake pool stats (total staked, APY, etc.)
-"getReefStakePoolInfo" => handle_get_pool_info(&state, params).await,
+/// Get MossStake pool stats (total staked, APY, etc.)
+"getMossStakePoolInfo" => handle_get_pool_info(&state, params).await,
 
 /// Get unstaking queue for user
 "getUnstakingQueue" => handle_get_unstaking_queue(&state, params).await,
@@ -72,36 +72,36 @@ reef.distribute_rewards(block_reward * 0.9, current_slot); // 90% to stakers
 #### B. Implementation Skeleton
 
 ```rust
-/// Stake MOLT → stMOLT
-async fn handle_stake_to_reef_stake(
+/// Stake LICN → stLICN
+async fn handle_stake_to_moss_stake(
     state: &RpcState,
     params: Option<serde_json::Value>,
 ) -> Result<serde_json::Value, RpcError> {
-    // 1. Parse params: (from_pubkey, amount_molt)
-    // 2. Get ReefStake pool from state
-    // 3. Call reef_stake.stake(user, amount, current_slot)
-    // 4. Return stMOLT minted
+    // 1. Parse params: (from_pubkey, amount_licn)
+    // 2. Get MossStake pool from state
+    // 3. Call moss_stake.stake(user, amount, current_slot)
+    // 4. Return stLICN minted
     
     Ok(serde_json::json!({
-        "stMoltMinted": st_molt_amount,
+        "stLicnMinted": st_licn_amount,
         "exchangeRate": exchange_rate,
         "totalStaked": total_staked,
     }))
 }
 
 /// Request unstake (start 7-day cooldown)
-async fn handle_unstake_from_reef_stake(
+async fn handle_unstake_from_moss_stake(
     state: &RpcState,
     params: Option<serde_json::Value>,
 ) -> Result<serde_json::Value, RpcError> {
-    // 1. Parse params: (from_pubkey, st_molt_amount)
-    // 2. Call reef_stake.request_unstake(user, amount, current_slot)
+    // 1. Parse params: (from_pubkey, st_licn_amount)
+    // 2. Call moss_stake.request_unstake(user, amount, current_slot)
     // 3. Return unstake request info
     
     Ok(serde_json::json!({
         "requestId": request_id,
-        "stMoltBurned": st_molt_amount,
-        "moltToReceive": molt_amount,
+        "stLicnBurned": st_licn_amount,
+        "licnToReceive": licn_amount,
         "claimableAt": claimable_slot,
         "claimableTime": estimated_time,
     }))
@@ -113,13 +113,13 @@ async fn handle_get_staking_position(
     params: Option<serde_json::Value>,
 ) -> Result<serde_json::Value, RpcError> {
     // 1. Parse params: (pubkey)
-    // 2. Get position from reef_stake
+    // 2. Get position from moss_stake
     // 3. Return position details
     
     Ok(serde_json::json!({
-        "stMoltBalance": position.st_molt_amount,
-        "moltDeposited": position.molt_deposited,
-        "currentValue": current_molt_value,
+        "stLicnBalance": position.st_licn_amount,
+        "licnDeposited": position.licn_deposited,
+        "currentValue": current_licn_value,
         "rewardsEarned": position.rewards_earned,
         "depositedAt": position.deposited_at,
         "apy": calculated_apy,
@@ -131,11 +131,11 @@ async fn handle_get_pool_info(
     state: &RpcState,
     _params: Option<serde_json::Value>,
 ) -> Result<serde_json::Value, RpcError> {
-    // Get ReefStake pool stats
+    // Get MossStake pool stats
     
     Ok(serde_json::json!({
-        "totalStaked": pool.total_molt_staked,
-        "totalStMolt": pool.total_supply,
+        "totalStaked": pool.total_licn_staked,
+        "totalStLicn": pool.total_supply,
         "exchangeRate": pool.exchange_rate,
         "averageApy": pool.average_apy,
         "totalStakers": pool.positions.len(),
@@ -169,7 +169,7 @@ if (!myValidator) {
 
 async function loadCommunityStakingUI() {
     // 1. Get pool info
-    const poolInfo = await rpc.call('getReefStakePoolInfo');
+    const poolInfo = await rpc.call('getMossStakePoolInfo');
     
     // 2. Get user's staking position
     const position = await rpc.call('getStakingPosition', [walletPubkey]);
@@ -177,11 +177,11 @@ async function loadCommunityStakingUI() {
     // 3. Render staking form
     stakingSection.innerHTML = `
         <div class="staking-overview">
-            <h3>💎 Liquid Staking (ReefStake)</h3>
+            <h3>💎 Liquid Staking (MossStake)</h3>
             <div class="pool-stats">
-                <div>Total Staked: ${poolInfo.totalStaked.toLocaleString()} MOLT</div>
+                <div>Total Staked: ${poolInfo.totalStaked.toLocaleString()} LICN</div>
                 <div>Average APY: ${poolInfo.averageApy.toFixed(2)}%</div>
-                <div>Exchange Rate: 1 stMOLT = ${poolInfo.exchangeRate.toFixed(4)} MOLT</div>
+                <div>Exchange Rate: 1 stLICN = ${poolInfo.exchangeRate.toFixed(4)} LICN</div>
             </div>
         </div>
         
@@ -189,9 +189,9 @@ async function loadCommunityStakingUI() {
             <h4>Your Position</h4>
             ${position ? `
                 <div class="position-details">
-                    <div>stMOLT Balance: ${position.stMoltBalance}</div>
-                    <div>Current Value: ${position.currentValue} MOLT</div>
-                    <div>Rewards Earned: ${position.rewardsEarned} MOLT</div>
+                    <div>stLICN Balance: ${position.stLicnBalance}</div>
+                    <div>Current Value: ${position.currentValue} LICN</div>
+                    <div>Rewards Earned: ${position.rewardsEarned} LICN</div>
                     <div>APY: ${position.apy.toFixed(2)}%</div>
                 </div>
             ` : `
@@ -200,13 +200,13 @@ async function loadCommunityStakingUI() {
         </div>
         
         <div class="stake-actions">
-            <h4>Stake MOLT</h4>
+            <h4>Stake LICN</h4>
             <input type="number" id="stakeAmount" placeholder="Amount to stake">
-            <button onclick="stakeToReefStake()">Stake → Get stMOLT</button>
+            <button onclick="stakeToMossStake()">Stake → Get stLICN</button>
             
-            <h4>Unstake stMOLT (7-day cooldown)</h4>
-            <input type="number" id="unstakeAmount" placeholder="stMOLT to unstake">
-            <button onclick="unstakeFromReefStake()">Unstake</button>
+            <h4>Unstake stLICN (7-day cooldown)</h4>
+            <input type="number" id="unstakeAmount" placeholder="stLICN to unstake">
+            <button onclick="unstakeFromMossStake()">Unstake</button>
         </div>
         
         <div class="unstaking-queue">
@@ -219,7 +219,7 @@ async function loadCommunityStakingUI() {
     loadUnstakingQueue();
 }
 
-async function stakeToReefStake() {
+async function stakeToMossStake() {
     const amount = document.getElementById('stakeAmount').value;
     if (!amount || amount <= 0) {
         alert('Enter valid amount');
@@ -231,9 +231,9 @@ async function stakeToReefStake() {
         const tx = await createStakeTransaction(amount);
         
         // 2. Send to RPC
-        const result = await rpc.call('stakeToReefStake', [walletPubkey, Number(amount)]);
+        const result = await rpc.call('stakeToMossStake', [walletPubkey, Number(amount)]);
         
-        alert(`Staked ${amount} MOLT! Received ${result.stMoltMinted} stMOLT`);
+        alert(`Staked ${amount} LICN! Received ${result.stLicnMinted} stLICN`);
         
         // 3. Refresh UI
         loadCommunityStakingUI();
@@ -242,17 +242,17 @@ async function stakeToReefStake() {
     }
 }
 
-async function unstakeFromReefStake() {
+async function unstakeFromMossStake() {
     const amount = document.getElementById('unstakeAmount').value;
     if (!amount || amount <= 0) {
-        alert('Enter valid stMOLT amount');
+        alert('Enter valid stLICN amount');
         return;
     }
     
     try {
-        const result = await rpc.call('unstakeFromReefStake', [walletPubkey, Number(amount)]);
+        const result = await rpc.call('unstakeFromMossStake', [walletPubkey, Number(amount)]);
         
-        alert(`Unstake requested! You can claim ${result.moltToReceive} MOLT in 7 days`);
+        alert(`Unstake requested! You can claim ${result.licnToReceive} LICN in 7 days`);
         
         // Refresh UI
         loadCommunityStakingUI();
@@ -272,7 +272,7 @@ async function loadUnstakingQueue() {
     
     container.innerHTML = queue.map(req => `
         <div class="unstake-request">
-            <div>Amount: ${req.moltToReceive} MOLT</div>
+            <div>Amount: ${req.licnToReceive} LICN</div>
             <div>Claimable: ${new Date(req.claimableTime).toLocaleString()}</div>
             ${req.canClaim ? 
                 `<button onclick="claimUnstaked('${req.requestId}')">Claim Now</button>` :
@@ -315,11 +315,11 @@ async function claimUnstaked(requestId) {
 #### A. Unit Tests
 
 ```bash
-# Test ReefStake core
-cd core && cargo test reefstake
+# Test MossStake core
+cd core && cargo test mossstake
 
 # Specific tests:
-- test_stake_mint_stmolt
+- test_stake_mint_stlicn
 - test_unstake_request
 - test_exchange_rate_calculation
 - test_reward_distribution
@@ -338,7 +338,7 @@ curl -X POST http://localhost:8899 \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
-    "method": "getReefStakePoolInfo",
+    "method": "getMossStakePoolInfo",
     "params": []
   }'
 
@@ -348,7 +348,7 @@ curl -X POST http://localhost:8899 \
   "id": 1,
   "result": {
     "totalStaked": 0,
-    "totalStMolt": 0,
+    "totalStLicn": 0,
     "exchangeRate": 1.0,
     "averageApy": 0.0
   }
@@ -360,8 +360,8 @@ curl -X POST http://localhost:8899 \
 1. Open wallet: http://localhost:3000
 2. Check staking tab visible (even if not validator)
 3. View pool statistics
-4. Stake 100 MOLT
-5. Check stMOLT balance
+4. Stake 100 LICN
+5. Check stLICN balance
 6. Request unstake
 7. Check unstaking queue
 8. Wait 7 days (or simulate slot advance)
@@ -372,16 +372,16 @@ curl -X POST http://localhost:8899 \
 #### A. User Guide
 **File**: `docs/STAKING_USER_GUIDE.md` (new)
 
-- How to stake MOLT
-- What is stMOLT?
+- How to stake LICN
+- What is stLICN?
 - Understanding APY
 - Unstaking process (7 days)
-- Using stMOLT in DeFi
+- Using stLICN in DeFi
 
 #### B. Developer Guide
 **File**: `docs/STAKING_DEVELOPER_GUIDE.md` (new)
 
-- ReefStake protocol architecture
+- MossStake protocol architecture
 - RPC endpoint reference
 - Integration examples
 - Transaction formats
@@ -395,7 +395,7 @@ curl -X POST http://localhost:8899 \
 
 #### Step 1: Backend (Week 1)
 ```bash
-# 1. Add ReefStake integration to validator
+# 1. Add MossStake integration to validator
 # 2. Add RPC endpoints
 # 3. Test locally
 # 4. Deploy to testnet
@@ -421,7 +421,7 @@ curl -X POST http://localhost:8899 \
 ```bash
 # 1. Governance vote (if needed)
 # 2. Coordinate validator upgrades
-# 3. Activate ReefStake
+# 3. Activate MossStake
 # 4. Monitor closely for 48 hours
 ```
 
@@ -443,7 +443,7 @@ curl -X POST http://localhost:8899 \
 **Rollback Plan:**
 ```rust
 // Emergency disable flag
-pub struct ReefStakePool {
+pub struct MossStakePool {
     enabled: bool,  // Toggle via governance
     // ... rest of fields
 }
@@ -465,17 +465,17 @@ pub fn stake(&mut self, ...) -> Result<u64, String> {
 - [ ] RPC response time < 100ms
 
 **Week 2:**
-- [ ] 50+ MOLT staked by community
+- [ ] 50+ LICN staked by community
 - [ ] 5+ active stakers
 - [ ] APY calculation accurate
 
 **Month 1:**
-- [ ] 1,000+ MOLT staked
+- [ ] 1,000+ LICN staked
 - [ ] 25+ active stakers
 - [ ] Unstaking queue working smoothly
 
 **Month 3:**
-- [ ] 10,000+ MOLT staked
+- [ ] 10,000+ LICN staked
 - [ ] 100+ active stakers
 - [ ] Integration with first DeFi protocol
 
@@ -485,7 +485,7 @@ pub fn stake(&mut self, ...) -> Result<u64, String> {
 
 1. **No RPC endpoints** - Need to implement 6 new methods
 2. **Wallet UI outdated** - Currently hides staking for non-validators
-3. **No reward distribution** - Need to wire up block rewards to ReefStake
+3. **No reward distribution** - Need to wire up block rewards to MossStake
 4. **No testing** - Need comprehensive test suite
 
 ---
@@ -493,19 +493,19 @@ pub fn stake(&mut self, ...) -> Result<u64, String> {
 ## Immediate Next Steps (This Week)
 
 ### Priority 1 (Today): RPC Endpoints
-- [ ] Add `stakeToReefStake` method
+- [ ] Add `stakeToMossStake` method
 - [ ] Add `getStakingPosition` method
-- [ ] Add `getReefStakePoolInfo` method
+- [ ] Add `getMossStakePoolInfo` method
 - [ ] Test via curl
 
 ### Priority 2 (Tomorrow): Wallet UI
 - [ ] Remove staking tab hiding
 - [ ] Add community staking form
-- [ ] Add stMOLT balance display
+- [ ] Add stLICN balance display
 - [ ] Test in browser
 
 ### Priority 3 (This Week): Integration
-- [ ] Wire ReefStake to validator
+- [ ] Wire MossStake to validator
 - [ ] Add reward distribution
 - [ ] End-to-end test
 - [ ] Deploy to testnet

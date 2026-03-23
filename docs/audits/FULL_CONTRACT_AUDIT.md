@@ -1,4 +1,4 @@
-# MoltyChain Smart Contract Suite — Complete Production Readiness Audit
+# Lichen Smart Contract Suite — Complete Production Readiness Audit
 
 **Scope:** All 27 contracts (47,246 lines of Rust/WASM)  
 **Date:** 2025  
@@ -19,42 +19,42 @@
 
 ## Table of Contents
 
-1. [moltcoin (493 lines)](#1-moltcoin)
-2. [moltpunks (698 lines)](#2-moltpunks)
+1. [lichencoin (493 lines)](#1-lichencoin)
+2. [lichenpunks (698 lines)](#2-lichenpunks)
 3. [weth_token (853 lines)](#3-weth_token)
 4. [wsol_token (853 lines)](#4-wsol_token)
-5. [moltmarket (988 lines)](#5-moltmarket)
+5. [lichenmarket (988 lines)](#5-lichenmarket)
 6. [dex_rewards (1033 lines)](#6-dex_rewards)
-7. [musd_token (1178 lines)](#7-musd_token)
+7. [lusd_token (1178 lines)](#7-lusd_token)
 8. [dex_router (1183 lines)](#8-dex_router)
 9. [bountyboard (1254 lines)](#9-bountyboard)
 10. [dex_analytics (1279 lines)](#10-dex_analytics)
-11. [moltoracle (1372 lines)](#11-moltoracle)
-12. [moltauction (1375 lines)](#12-moltauction)
-13. [reef_storage (1434 lines)](#13-reef_storage)
-14. [clawvault (1446 lines)](#14-clawvault)
-15. [lobsterlend (1450 lines)](#15-lobsterlend)
-16. [moltswap (1454 lines)](#16-moltswap)
+11. [lichenoracle (1372 lines)](#11-lichenoracle)
+12. [lichenauction (1375 lines)](#12-lichenauction)
+13. [moss_storage (1434 lines)](#13-moss_storage)
+14. [sporevault (1446 lines)](#14-sporevault)
+15. [thalllend (1450 lines)](#15-thalllend)
+16. [lichenswap (1454 lines)](#16-lichenswap)
 17. [dex_governance (1503 lines)](#17-dex_governance)
 18. [dex_amm (1508 lines)](#18-dex_amm)
-19. [moltdao (1618 lines)](#19-moltdao)
-20. [clawpump (1687 lines)](#20-clawpump)
+19. [lichendao (1618 lines)](#19-lichendao)
+20. [sporepump (1687 lines)](#20-sporepump)
 21. [compute_market (2017 lines)](#21-compute_market)
-22. [clawpay (2043 lines)](#22-clawpay)
+22. [sporepay (2043 lines)](#22-sporepay)
 23. [dex_margin (2055 lines)](#23-dex_margin)
-24. [moltbridge (2247 lines)](#24-moltbridge)
+24. [lichenbridge (2247 lines)](#24-lichenbridge)
 25. [dex_core (3440 lines)](#25-dex_core)
 26. [prediction_market (4581 lines)](#26-prediction_market)
-27. [moltyid (6204 lines)](#27-moltyid)
+27. [lichenid (6204 lines)](#27-lichenid)
 28. [Cross-Cutting Findings](#28-cross-cutting-findings)
 29. [Summary Statistics](#29-summary-statistics)
 
 ---
 
-## 1. moltcoin
+## 1. lichencoin
 
-**File:** `contracts/moltcoin/src/lib.rs` (493 lines)  
-**Purpose:** MT-20 fungible token (MOLT). Supply cap 10B.
+**File:** `contracts/lichencoin/src/lib.rs` (493 lines)  
+**Purpose:** MT-20 fungible token (LICN). Supply cap 10B.
 
 ### Architecture
 - `#[no_mangle] pub extern "C"` direct exports: `initialize`, `mint`, `transfer`, `burn`, `approve`, `transfer_from`, `balance_of`, `total_supply`, `allowance`, `get_admin`.
@@ -72,9 +72,9 @@
 
 ---
 
-## 2. moltpunks
+## 2. lichenpunks
 
-**File:** `contracts/moltpunks/src/lib.rs` (698 lines)  
+**File:** `contracts/lichenpunks/src/lib.rs` (698 lines)  
 **Purpose:** MT-721 NFT collection. Max supply cap, pause mechanism.
 
 ### Findings
@@ -82,7 +82,7 @@
 | # | Severity | Lines | Finding |
 |---|----------|-------|---------|
 | 2.1 | **[MEDIUM]** | ~13-19 | `get_minter()` calls `storage_get(b"minter")` and panics via `unwrap()` if minter is not set. Any pre-initialization call to any function that invokes `get_minter()` will crash the WASM module. Should return a default or error code instead of panicking. |
-| 2.2 | **[MEDIUM]** | entire file | **No reentrancy guard.** Unlike moltcoin and most other contracts, moltpunks has no reentrancy protection. If `call_nft_transfer` or any cross-contract call re-enters, state could be corrupted. |
+| 2.2 | **[MEDIUM]** | entire file | **No reentrancy guard.** Unlike lichencoin and most other contracts, lichenpunks has no reentrancy protection. If `call_nft_transfer` or any cross-contract call re-enters, state could be corrupted. |
 | 2.3 | **[LOW]** | ~350-400 | Test-compatibility alias functions (`nft_owner`, `nft_metadata`) exist alongside the primary exports. Dead code in production. |
 | 2.4 | **[LOW]** | ~200-220 | `mint` checks pause but `transfer_nft` also checks pause — correct layering, but `list_for_sale` (if present) does not check pause. |
 
@@ -117,9 +117,9 @@
 
 ---
 
-## 5. moltmarket
+## 5. lichenmarket
 
-**File:** `contracts/moltmarket/src/lib.rs` (988 lines)  
+**File:** `contracts/lichenmarket/src/lib.rs` (988 lines)  
 **Purpose:** NFT Marketplace. Listings, offers, royalties, 2.5% platform fee.
 
 ### Findings
@@ -142,16 +142,16 @@
 
 | # | Severity | Lines | Finding |
 |---|----------|-------|---------|
-| 6.1 | **[HIGH]** | ~278-285 | **`claim_trading_rewards` / `claim_lp_rewards` silently clears balance without paying.** If the MOLT token address is not configured, the function zeroes out the user's pending rewards (marking them as claimed) but never actually transfers any tokens. The user's rewards are permanently lost with no error returned. |
-| 6.2 | **[MEDIUM]** | ~290-300 | `record_trade` at Diamond tier gives a 3x multiplier on the trading fee as the reward. For large trades, this means the protocol pays out 3x the fee amount in MOLT rewards — potentially exceeding the fee revenue. Economic sustainability concern. |
+| 6.1 | **[HIGH]** | ~278-285 | **`claim_trading_rewards` / `claim_lp_rewards` silently clears balance without paying.** If the LICN token address is not configured, the function zeroes out the user's pending rewards (marking them as claimed) but never actually transfers any tokens. The user's rewards are permanently lost with no error returned. |
+| 6.2 | **[MEDIUM]** | ~290-300 | `record_trade` at Diamond tier gives a 3x multiplier on the trading fee as the reward. For large trades, this means the protocol pays out 3x the fee amount in LICN rewards — potentially exceeding the fee revenue. Economic sustainability concern. |
 | 6.3 | **[MEDIUM]** | ~350-360 | `lp_pending_key` is keyed by `position_id` only, with no owner verification. Any caller who knows a valid `position_id` can claim LP rewards for that position, regardless of whether they own it. |
 | 6.4 | **[LOW]** | ~100-120 | WASM `call()` dispatcher pattern. All functions are `pub fn` routed through a single `call()` entry point. Consistent with other DEX contracts. |
 
 ---
 
-## 7. musd_token
+## 7. lusd_token
 
-**File:** `contracts/musd_token/src/lib.rs` (1178 lines)  
+**File:** `contracts/lusd_token/src/lib.rs` (1178 lines)  
 **Purpose:** Treasury-backed stablecoin. Same architecture as weth/wsol.
 
 ### Findings
@@ -159,7 +159,7 @@
 | # | Severity | Lines | Finding |
 |---|----------|-------|---------|
 | 7.1 | **[MEDIUM]** | ~157-163, ~230-236 | **Same double epoch reset** as weth_token and wsol_token. Triplicated bug across all three wrapped/stable tokens. |
-| 7.2 | **[LOW]** | entire file | **Triple DRY violation.** musd_token is the third near-identical copy of the weth/wsol pattern. All three share the same bugs and could be unified. |
+| 7.2 | **[LOW]** | entire file | **Triple DRY violation.** lusd_token is the third near-identical copy of the weth/wsol pattern. All three share the same bugs and could be unified. |
 
 ---
 
@@ -189,7 +189,7 @@
 | # | Severity | Lines | Finding |
 |---|----------|-------|---------|
 | 9.1 | **[MEDIUM]** | ~450-470 | `approve_submission` performs cross-contract token transfer to pay the bounty hunter. If the transfer fails, the function returns an error but the submission status may have already been updated to "approved" in storage. Non-atomic state change. |
-| 9.2 | **[MEDIUM]** | ~300-320 | MoltyID reputation gating reads from a local storage key `rep:{hex_pubkey}` — this only works if pred_market/bountyboard shares storage with MoltyID, which would not be the case for separate contract deployments. Cross-contract reputation checks need `call_contract`. |
+| 9.2 | **[MEDIUM]** | ~300-320 | LichenID reputation gating reads from a local storage key `rep:{hex_pubkey}` — this only works if pred_market/bountyboard shares storage with LichenID, which would not be the case for separate contract deployments. Cross-contract reputation checks need `call_contract`. |
 | 9.3 | **[LOW]** | ~100-120 | Bounty creation requires a minimum amount but does not enforce a maximum. Very large bounties could lock excessive tokens in the contract. |
 
 ---
@@ -209,9 +209,9 @@
 
 ---
 
-## 11. moltoracle
+## 11. lichenoracle
 
-**File:** `contracts/moltoracle/src/lib.rs` (1372 lines)  
+**File:** `contracts/lichenoracle/src/lib.rs` (1372 lines)  
 **Purpose:** Decentralized oracle. Price feeds, VRF commit-reveal, attestations, SHA-256 implementation.
 
 ### Findings
@@ -227,9 +227,9 @@
 
 ---
 
-## 12. moltauction
+## 12. lichenauction
 
-**File:** `contracts/moltauction/src/lib.rs` (1375 lines)  
+**File:** `contracts/lichenauction/src/lib.rs` (1375 lines)  
 **Purpose:** NFT auction system. English auctions, anti-sniping, reserve prices, royalties.
 
 ### Findings
@@ -244,9 +244,9 @@
 
 ---
 
-## 13. reef_storage
+## 13. moss_storage
 
-**File:** `contracts/reef_storage/src/lib.rs` (1434 lines)  
+**File:** `contracts/moss_storage/src/lib.rs` (1434 lines)  
 **Purpose:** Decentralized storage. Data hosting, challenge-response verification, staking.
 
 ### Findings
@@ -260,9 +260,9 @@
 
 ---
 
-## 14. clawvault
+## 14. sporevault
 
-**File:** `contracts/clawvault/src/lib.rs` (1446 lines)  
+**File:** `contracts/sporevault/src/lib.rs` (1446 lines)  
 **Purpose:** ERC-4626 yield aggregator. Deposit/withdraw, share accounting, yield strategies.
 
 ### Findings
@@ -275,9 +275,9 @@
 
 ---
 
-## 15. lobsterlend
+## 15. thalllend
 
-**File:** `contracts/lobsterlend/src/lib.rs` (1450 lines)  
+**File:** `contracts/thalllend/src/lib.rs` (1450 lines)  
 **Purpose:** Lending protocol. Collateral factor 75%, liquidation threshold 85%, kinked interest rate, flash loans.
 
 ### Findings
@@ -291,17 +291,17 @@
 
 ---
 
-## 16. moltswap
+## 16. lichenswap
 
-**File:** `contracts/moltswap/src/lib.rs` (1454 lines)  
+**File:** `contracts/lichenswap/src/lib.rs` (1454 lines)  
 **Purpose:** AMM DEX. Constant-product pools, reputation bonuses.
 
 ### Findings
 
 | # | Severity | Lines | Finding |
 |---|----------|-------|---------|
-| 16.1 | **[HIGH]** | ~720 | **`set_protocol_fee` uses wrong admin key.** The function checks `IDENTITY_ADMIN_KEY` (the identity/user admin) instead of `MS_ADMIN_KEY` (the moltswap admin). This means the moltswap admin cannot change fees, and the identity admin (a different role) can. Authorization boundary violation. |
-| 16.2 | **[HIGH]** | ~290-300 | **Reputation bonus drains LP reserves.** Users with high MoltyID reputation receive a bonus on swaps (e.g., better exchange rate). This bonus comes from the pool's reserves, not from a separate incentive fund. Over time, reputation bonuses drain LP value, causing losses for liquidity providers who did not consent to subsidizing high-reputation traders. |
+| 16.1 | **[HIGH]** | ~720 | **`set_protocol_fee` uses wrong admin key.** The function checks `IDENTITY_ADMIN_KEY` (the identity/user admin) instead of `MS_ADMIN_KEY` (the lichenswap admin). This means the lichenswap admin cannot change fees, and the identity admin (a different role) can. Authorization boundary violation. |
+| 16.2 | **[HIGH]** | ~290-300 | **Reputation bonus drains LP reserves.** Users with high LichenID reputation receive a bonus on swaps (e.g., better exchange rate). This bonus comes from the pool's reserves, not from a separate incentive fund. Over time, reputation bonuses drain LP value, causing losses for liquidity providers who did not consent to subsidizing high-reputation traders. |
 | 16.3 | **[MEDIUM]** | ~250-260 | `swap_a_for_b` loads pool data twice from storage — once to validate, once to execute. Between the two reads, pool state could change, causing the swap to execute against stale data. Should load once and reuse. |
 | 16.4 | **[LOW]** | ~400-420 | `add_liquidity` computes LP tokens using the standard `min(dx/X, dy/Y) * L` formula. No minimum liquidity check for the first deposit (could be front-run to manipulate initial price). |
 
@@ -338,9 +338,9 @@
 
 ---
 
-## 19. moltdao
+## 19. lichendao
 
-**File:** `contracts/moltdao/src/lib.rs` (1618 lines)  
+**File:** `contracts/lichendao/src/lib.rs` (1618 lines)  
 **Purpose:** DAO governance. Proposals, voting, timelocked execution, treasury.
 
 ### Findings
@@ -349,14 +349,14 @@
 |---|----------|-------|---------|
 | 19.1 | **[HIGH]** | ~469 | **`execute_proposal` marks proposal as executed BEFORE dispatching the action, and continues on dispatch failure.** If the governance action (e.g., treasury transfer) fails, the proposal is still marked "executed" and cannot be retried. Governance decisions can silently fail with no recourse. |
 | 19.2 | **[MEDIUM]** | ~296-303 | **`set_quorum` / `set_voting_period` / `set_timelock_delay` store new values in configuration storage, but `create_proposal_typed` reads hardcoded defaults instead.** Admin config changes have no effect. Governance parameters are immutable despite the admin functions suggesting otherwise. |
-| 19.3 | **[MEDIUM]** | ~357 | **`vote_with_reputation` trusts caller-provided reputation parameter.** The function accepts a `reputation` parameter from the caller without verifying it against MoltyID. Comment says `// TODO: cross-contract reputation query`. Any caller can claim arbitrary reputation to amplify their vote weight. |
+| 19.3 | **[MEDIUM]** | ~357 | **`vote_with_reputation` trusts caller-provided reputation parameter.** The function accepts a `reputation` parameter from the caller without verifying it against LichenID. Comment says `// TODO: cross-contract reputation query`. Any caller can claim arbitrary reputation to amplify their vote weight. |
 | 19.4 | **[LOW]** | ~600-610 | `get_treasury_balance` reads key `dao_treasury_balance` which is never written to by any function. Always returns 0. Dead code. |
 
 ---
 
-## 20. clawpump
+## 20. sporepump
 
-**File:** `contracts/clawpump/src/lib.rs` (1687 lines)  
+**File:** `contracts/sporepump/src/lib.rs` (1687 lines)  
 **Purpose:** Token launchpad. Bonding curve token sales, graduation to DEX.
 
 ### Findings
@@ -365,7 +365,7 @@
 |---|----------|-------|---------|
 | 20.1 | **[MEDIUM]** | ~382-395 | **Graduation revenue tracked before success check.** Revenue counters are incremented before verifying that the graduation cross-contract call succeeded. If graduation fails, revenue statistics are inflated with phantom graduation fees. |
 | 20.2 | **[MEDIUM]** | ~450-465 | **`withdraw_fees` only decrements the fee counter without performing a token transfer.** Admin "withdraws" fees by zeroing the counter, but no tokens are actually moved. Fees remain in the contract with no way to extract them. |
-| 20.3 | **[LOW]** | ~100-110 | Creation fee log message says "0.1 MOLT" but `CREATION_FEE` constant is `10_000_000_000` (10 MOLT at 9-decimal precision). Misleading log. |
+| 20.3 | **[LOW]** | ~100-110 | Creation fee log message says "0.1 LICN" but `CREATION_FEE` constant is `10_000_000_000` (10 LICN at 9-decimal precision). Misleading log. |
 | 20.4 | **[LOW]** | ~300-320 | Bonding curve uses a simple linear curve: `price = base_price + (supply * slope)`. No curve type selection or configurability. |
 
 ---
@@ -386,9 +386,9 @@
 
 ---
 
-## 22. clawpay
+## 22. sporepay
 
-**File:** `contracts/clawpay/src/lib.rs` (2043 lines)  
+**File:** `contracts/sporepay/src/lib.rs` (2043 lines)  
 **Purpose:** Streaming payments (Sablier-style). Linear vesting, cancellation, withdrawal.
 
 ### Findings
@@ -414,14 +414,14 @@ This is one of the best-implemented contracts in the suite. Proper checks-effect
 |---|----------|-------|---------|
 | 23.1 | **[HIGH]** | ~565 | **`withdraw_insurance` transfers from admin's account, not the contract.** The function calls `call_token_transfer(token, admin_address, recipient, amount)` — this sends tokens FROM the admin's personal balance, not from the contract's insurance fund. The insurance fund balance in storage is decremented, but the tokens come from the wrong source. If admin's personal balance is insufficient, the withdrawal silently fails. |
 | 23.2 | **[MEDIUM]** | ~430 | **`close_position` returns full margin when oracle is down.** If the mark price is unavailable (oracle failure), the function returns the trader's full margin regardless of PnL. During an oracle outage, traders with underwater positions can exit at par, socializing losses to the insurance fund. |
-| 23.3 | **[MEDIUM]** | ~200-210 | **`set_mark_price` is admin-only.** The mark price for all margin positions is set by a single admin address. This creates a centralization risk — the admin can manipulate mark prices to trigger (or prevent) liquidations. Should integrate with moltoracle for decentralized price feeds. |
+| 23.3 | **[MEDIUM]** | ~200-210 | **`set_mark_price` is admin-only.** The mark price for all margin positions is set by a single admin address. This creates a centralization risk — the admin can manipulate mark prices to trigger (or prevent) liquidations. Should integrate with lichenoracle for decentralized price feeds. |
 | 23.4 | **[LOW]** | ~300-310 | Maximum leverage is 20x (hardcoded). No per-asset leverage limits — a highly volatile token gets the same 20x max as a stablecoin pair. |
 
 ---
 
-## 24. moltbridge
+## 24. lichenbridge
 
-**File:** `contracts/moltbridge/src/lib.rs` (2247 lines)  
+**File:** `contracts/lichenbridge/src/lib.rs` (2247 lines)  
 **Purpose:** Cross-chain bridge. Lock/mint/unlock pattern, multi-validator confirmations.
 
 ### Findings
@@ -464,32 +464,32 @@ This is one of the best-implemented contracts in the suite. Proper checks-effect
 
 | # | Severity | Lines | Finding |
 |---|----------|-------|---------|
-| 26.1 | **[HIGH]** | ~183-193 | **`transfer_musd_out()` silently succeeds when addresses not configured.** The helper function returns `true` (success) when mUSD token address or self address is not set. This means `redeem_shares` and `reclaim_collateral` will clear the user's position state (zeroing their shares/LP) WITHOUT actually transferring any mUSD to them. Users believe they were paid, positions are deleted, but no tokens move. |
-| 26.2 | **[HIGH]** | ~2467-2472 | **`challenge_resolution` never escrows the dispute bond.** The function records the challenger's bond amount in storage and checks `bond >= DISPUTE_BOND` (100 mUSD), but never calls any transfer function to actually collect the bond. Disputes are free — anyone can challenge a resolution at no cost, defeating the economic disincentive for frivolous challenges. |
+| 26.1 | **[HIGH]** | ~183-193 | **`transfer_musd_out()` silently succeeds when addresses not configured.** The helper function returns `true` (success) when lUSD token address or self address is not set. This means `redeem_shares` and `reclaim_collateral` will clear the user's position state (zeroing their shares/LP) WITHOUT actually transferring any lUSD to them. Users believe they were paid, positions are deleted, but no tokens move. |
+| 26.2 | **[HIGH]** | ~2467-2472 | **`challenge_resolution` never escrows the dispute bond.** The function records the challenger's bond amount in storage and checks `bond >= DISPUTE_BOND` (100 lUSD), but never calls any transfer function to actually collect the bond. Disputes are free — anyone can challenge a resolution at no cost, defeating the economic disincentive for frivolous challenges. |
 | 26.3 | **[HIGH]** | ~2336 | **`submit_resolution` never escrows the resolver's bond.** Same as 26.2 — the resolution bond amount is validated and recorded in storage, but no tokens are transferred from the resolver. Resolution has no skin-in-the-game, allowing spam. |
-| 26.4 | **[MEDIUM]** | ~2122 | **`sell_shares` returns `musd_returned as u32` — truncated return value.** For amounts exceeding ~4,294 mUSD (u32::MAX micro-units), the return value wraps. Actual state changes use the full u64 value, so internal accounting is correct, but callers reading the return value see a truncated amount. |
+| 26.4 | **[MEDIUM]** | ~2122 | **`sell_shares` returns `musd_returned as u32` — truncated return value.** For amounts exceeding ~4,294 lUSD (u32::MAX micro-units), the return value wraps. Actual state changes use the full u64 value, so internal accounting is correct, but callers reading the return value see a truncated amount. |
 | 26.5 | **[MEDIUM]** | ~2014 | **`buy_shares` returns `shares_received as u32` — same u32 truncation.** |
 | 26.6 | **[MEDIUM]** | ~2642 | **`withdraw_liquidity` returns `musd_returned as u32` — same u32 truncation.** LP withdrawals > $4,294 truncate the return value. |
 | 26.7 | **[MEDIUM]** | ~1774 | **`add_liquidity` returns `new_lp as u32` — same u32 truncation.** |
 | 26.8 | **[MEDIUM]** | ~2588-2595 | **`reclaim_collateral` for voided markets: traders who are also LPs get only the larger of `cost_basis_refund` and `lp_share_refund`, not the sum.** Code: `if lp_share > refund { refund = lp_share }`. Users who are both traders and LPs lose the smaller of their two entitlements. |
-| 26.9 | **[MEDIUM]** | ~1067-1073 | **MoltyID reputation check reads local storage, not MoltyID contract storage.** `create_market` reads `rep:{hex_pubkey}` from its own contract storage. In a multi-contract deployment, each contract has its own storage namespace, so this key would never contain data written by MoltyID. Reputation gating is non-functional. |
-| 26.10 | **[LOW]** | ~2692 | `redeem_shares` transfers mUSD to user BEFORE clearing position state. Comment acknowledges this: "checks-effects-interactions is reversed here, but reentrancy guard protects us." The reentrancy guard does mitigate, but best practice is effects-before-interactions. |
+| 26.9 | **[MEDIUM]** | ~1067-1073 | **LichenID reputation check reads local storage, not LichenID contract storage.** `create_market` reads `rep:{hex_pubkey}` from its own contract storage. In a multi-contract deployment, each contract has its own storage namespace, so this key would never contain data written by LichenID. Reputation gating is non-functional. |
+| 26.10 | **[LOW]** | ~2692 | `redeem_shares` transfers lUSD to user BEFORE clearing position state. Comment acknowledges this: "checks-effects-interactions is reversed here, but reentrancy guard protects us." The reentrancy guard does mitigate, but best practice is effects-before-interactions. |
 | 26.11 | **[LOW]** | ~3600-3620 | `get_leaderboard` scans up to 500 traders and performs selection sort — O(500 * 50) = O(25,000) per query. Expensive but query-only (no state changes). |
 | 26.12 | **[LOW]** | ~1800-1810 | `calculate_sell` for multi-outcome markets uses a simplified equal-partition approach. Not optimal for large sells, but not incorrect — users receive slightly less than a perfect solver would compute. |
 
 ---
 
-## 27. moltyid
+## 27. lichenid
 
-**File:** `contracts/moltyid/src/lib.rs` (6204 lines)  
-**Purpose:** Agent identity and reputation system. Registration, skills, vouching, .molt naming, social recovery, delegation, achievements, attestations, agent discovery.
+**File:** `contracts/lichenid/src/lib.rs` (6204 lines)  
+**Purpose:** Agent identity and reputation system. Registration, skills, vouching, .lichen naming, social recovery, delegation, achievements, attestations, agent discovery.
 
 ### Architecture
 - Mixed export styles: core functions use `#[no_mangle] pub extern "C"` direct exports. Some functions (naming, delegation, discovery) also use direct exports. No WASM `call()` dispatcher.
 - 127-byte identity record layout. Skills, vouches, attestations stored separately.
 - FNV-1a 128-bit skill name hashing with legacy backward compatibility.
 - Social recovery: 3-of-5 guardian scheme.
-- .molt naming system: 3-32 char domains, premium (3-4 char) auction-only.
+- .lichen naming system: 3-32 char domains, premium (3-4 char) auction-only.
 - Delegation: 4 permission types, time-bounded.
 - Comprehensive test suite (~50 tests).
 
@@ -514,58 +514,58 @@ This is one of the best-implemented contracts in the suite. Proper checks-effect
 
 ### 28.1 [HIGH] — Escrow Without Actual Transfers (Pattern)
 
-**Affected contracts:** reef_storage, dex_rewards, compute_market, clawpump, moltbridge, prediction_market (bonds)
+**Affected contracts:** moss_storage, dex_rewards, compute_market, sporepump, lichenbridge, prediction_market (bonds)
 
 Multiple contracts implement "escrow" or "payment" by modifying storage counters without calling `call_token_transfer`. Users' balances are decremented on paper, but no tokens move. This is the single most pervasive critical pattern across the codebase.
 
 **Contracts with this pattern:**
-- **reef_storage**: `claim_storage_rewards` (line ~465), `stake_collateral` (line ~380)
+- **moss_storage**: `claim_storage_rewards` (line ~465), `stake_collateral` (line ~380)
 - **dex_rewards**: `claim_trading_rewards` / `claim_lp_rewards` (line ~280)
 - **compute_market**: `release_payment` (line ~747), `cancel_job` (line ~800)
-- **clawpump**: `withdraw_fees` (line ~450)
-- **moltbridge**: ALL bridge operations — `lock_tokens`, `submit_mint`, `confirm_mint`, `submit_unlock`, `confirm_unlock` (lines ~300-500)
+- **sporepump**: `withdraw_fees` (line ~450)
+- **lichenbridge**: ALL bridge operations — `lock_tokens`, `submit_mint`, `confirm_mint`, `submit_unlock`, `confirm_unlock` (lines ~300-500)
 - **prediction_market**: `challenge_resolution` bond (line ~2467), `submit_resolution` bond (line ~2336)
 
 ### 28.2 [HIGH] — Non-Atomic Multi-Step Operations (Pattern)
 
-**Affected contracts:** moltmarket, moltauction, moltdao
+**Affected contracts:** lichenmarket, lichenauction, lichendao
 
 Multiple contracts perform payment first, then asset transfer. If the second step fails, the first step has already committed, leaving the protocol in an inconsistent state.
 
 **Contracts with this pattern:**
-- **moltmarket**: `accept_offer` (line ~580), `buy_nft` (line ~480)
-- **moltauction**: `finalize_auction` (line ~355), `accept_offer` (line ~490)
-- **moltdao**: `execute_proposal` (line ~469, marks executed before dispatch)
+- **lichenmarket**: `accept_offer` (line ~580), `buy_nft` (line ~480)
+- **lichenauction**: `finalize_auction` (line ~355), `accept_offer` (line ~490)
+- **lichendao**: `execute_proposal` (line ~469, marks executed before dispatch)
 
 ### 28.3 [MEDIUM] — "Graceful Degradation" That Silently Fails (Pattern)
 
-**Affected contracts:** prediction_market, clawpay, dex_rewards
+**Affected contracts:** prediction_market, sporepay, dex_rewards
 
 Several contracts have a "graceful degradation" pattern where missing configuration (token address, self address) causes financial operations to silently succeed without moving tokens. This is worse than failing — users believe the operation completed.
 
 - **prediction_market**: `transfer_musd_out()` returns true when unconfigured (line ~183)
-- **clawpay**: `cancel_stream` legacy path (line ~800)
-- **dex_rewards**: `claim_*` functions zero balance when MOLT not configured (line ~280)
+- **sporepay**: `cancel_stream` legacy path (line ~800)
+- **dex_rewards**: `claim_*` functions zero balance when LICN not configured (line ~280)
 
-### 28.4 [MEDIUM] — MoltyID Reputation Cross-Contract Reads (Pattern)
+### 28.4 [MEDIUM] — LichenID Reputation Cross-Contract Reads (Pattern)
 
-**Affected contracts:** prediction_market, bountyboard, moltdao
+**Affected contracts:** prediction_market, bountyboard, lichendao
 
-Multiple contracts attempt to read MoltyID reputation from local storage (`rep:{hex_pubkey}`) instead of performing a cross-contract call to the MoltyID contract. In a multi-contract deployment where each contract has its own storage namespace, these reads always return None, making reputation gating non-functional.
+Multiple contracts attempt to read LichenID reputation from local storage (`rep:{hex_pubkey}`) instead of performing a cross-contract call to the LichenID contract. In a multi-contract deployment where each contract has its own storage namespace, these reads always return None, making reputation gating non-functional.
 
 - **prediction_market**: `create_market` (line ~1067)
 - **bountyboard**: submission approval (line ~300)
-- **moltdao**: `vote_with_reputation` accepts caller-provided value (line ~357)
+- **lichendao**: `vote_with_reputation` accepts caller-provided value (line ~357)
 
 ### 28.5 [LOW] — Triplicated Wrapped Token Code (DRY)
 
-**Affected contracts:** weth_token, wsol_token, musd_token
+**Affected contracts:** weth_token, wsol_token, lusd_token
 
 Three contracts share ~95% identical code with only constant changes. All three have the same double-epoch-reset bug. A shared wrapped-token library would eliminate triplicated maintenance.
 
 ### 28.6 [LOW] — Unbounded Storage Growth (Pattern)
 
-**Affected contracts:** dex_analytics (candle data), dex_core (cancelled orders), dex_router (swap records), clawpay (completed streams), prediction_market (resolved markets)
+**Affected contracts:** dex_analytics (candle data), dex_core (cancelled orders), dex_router (swap records), sporepay (completed streams), prediction_market (resolved markets)
 
 No contract implements storage cleanup or pruning for historical data. Over long enough operation, storage costs grow monotonically.
 
@@ -587,29 +587,29 @@ No contract implements storage cleanup or pruning for historical data. Over long
 
 | # | Contract | Finding |
 |---|----------|---------|
-| 13.1 | reef_storage | `respond_challenge` placeholder verification — any response accepted |
+| 13.1 | moss_storage | `respond_challenge` placeholder verification — any response accepted |
 
 ### HIGH Findings (Should Fix Before Production)
 
 | # | Contract | Finding |
 |---|----------|---------|
-| 5.1 | moltmarket | `accept_offer` non-atomic: pays seller, NFT transfer may fail |
-| 5.2 | moltmarket | `buy_nft` returns success on NFT transfer failure |
+| 5.1 | lichenmarket | `accept_offer` non-atomic: pays seller, NFT transfer may fail |
+| 5.2 | lichenmarket | `buy_nft` returns success on NFT transfer failure |
 | 6.1 | dex_rewards | `claim_*` silently zeroes balance without token transfer |
-| 12.1 | moltauction | `finalize_auction` non-atomic: payment before NFT transfer |
-| 12.2 | moltauction | `accept_offer` non-atomic |
-| 13.2 | reef_storage | `claim_storage_rewards` no token transfer |
-| 13.3 | reef_storage | `stake_collateral` no token transfer |
-| 14.1 | clawvault | `harvest()` simulated yield, not real DeFi |
-| 16.1 | moltswap | `set_protocol_fee` wrong admin key |
-| 16.2 | moltswap | Reputation bonus drains LP reserves |
+| 12.1 | lichenauction | `finalize_auction` non-atomic: payment before NFT transfer |
+| 12.2 | lichenauction | `accept_offer` non-atomic |
+| 13.2 | moss_storage | `claim_storage_rewards` no token transfer |
+| 13.3 | moss_storage | `stake_collateral` no token transfer |
+| 14.1 | sporevault | `harvest()` simulated yield, not real DeFi |
+| 16.1 | lichenswap | `set_protocol_fee` wrong admin key |
+| 16.2 | lichenswap | Reputation bonus drains LP reserves |
 | 18.1 | dex_amm | `tick_to_sqrt_price` linear approximation diverges |
 | 18.2 | dex_amm | `accrue_fees_to_positions` O(n) per swap |
-| 19.1 | moltdao | `execute_proposal` marks executed before dispatch, no retry |
+| 19.1 | lichendao | `execute_proposal` marks executed before dispatch, no retry |
 | 21.1 | compute_market | `release_payment` escrow cleared, no transfer |
 | 21.2 | compute_market | `cancel_job` escrow cleared, no refund |
 | 23.1 | dex_margin | `withdraw_insurance` transfers from admin, not contract |
-| 24.1 | moltbridge | Bridge operations never transfer tokens |
+| 24.1 | lichenbridge | Bridge operations never transfer tokens |
 | 25.1 | dex_core | `check_triggers` O(n) DoS risk |
 | 25.2 | dex_core | `user_order_count` never decrements — permanent lockout |
 | 26.1 | prediction_market | `transfer_musd_out` silently succeeds when unconfigured |
@@ -618,18 +618,18 @@ No contract implements storage cleanup or pruning for historical data. Over long
 
 ### Contracts with No Critical/High Findings
 
-- **moltcoin** — Clean token implementation
-- **clawpay** — Best-in-suite checks-effects-interactions with rollback
+- **lichencoin** — Clean token implementation
+- **sporepay** — Best-in-suite checks-effects-interactions with rollback
 - **dex_router** — Functional routing with minor issues
 - **dex_analytics** — Query-focused, low risk
 - **dex_governance** — Constrained governance (low quorum concern is MEDIUM)
-- **moltyid** — Comprehensive identity system (data migration concern is MEDIUM)
+- **lichenid** — Comprehensive identity system (data migration concern is MEDIUM)
 
 ### Top Priority Remediation
 
 1. **Fix escrow-without-transfer pattern** (13 affected operations across 6 contracts) — Add actual `call_token_transfer` calls where tokens are supposed to move.
-2. **Fix non-atomic operations** (5 affected operations across 3 contracts) — Implement checks-effects-interactions or rollback (see clawpay for reference implementation).
-3. **Implement reef_storage proof verification** — The single CRITICAL finding.
-4. **Add `call_token_transfer` to moltbridge** — The bridge is non-functional without actual transfers.
+2. **Fix non-atomic operations** (5 affected operations across 3 contracts) — Implement checks-effects-interactions or rollback (see sporepay for reference implementation).
+3. **Implement moss_storage proof verification** — The single CRITICAL finding.
+4. **Add `call_token_transfer` to lichenbridge** — The bridge is non-functional without actual transfers.
 5. **Fix dex_core order count decrement** — Users are permanently locked out after 100 orders.
 6. **Fix dex_amm tick pricing** — Linear approximation breaks concentrated liquidity math.

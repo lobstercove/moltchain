@@ -1,15 +1,15 @@
-# MoltChain Staking System Roadmap
+# Lichen Staking System Roadmap
 **Aligned with VISION.md and WHITEPAPER.md**
 
-> Live-chain note: this roadmap contains staged staking design work. The canonical deployed economics are 500M MOLT at genesis,
+> Live-chain note: this roadmap contains staged staking design work. The canonical deployed economics are 500M LICN at genesis,
 > protocol inflation that settles at epoch boundaries, and explorer/RPC projections that may appear mid-epoch before on-chain settlement.
 
 ## Overview
 
-MoltChain implements a **three-phase staking system** designed for agent economies with human participation:
+Lichen implements a **three-phase staking system** designed for agent economies with human participation:
 
 1. **Phase 1 (✅ LIVE)**: Validator Bootstrap Grants
-2. **Phase 2 (📋 PLANNED)**: Liquid Staking & Delegation (ReefStake Protocol)
+2. **Phase 2 (📋 PLANNED)**: Liquid Staking & Delegation (MossStake Protocol)
 3. **Phase 3 (🔮 FUTURE)**: Advanced DeFi Integration
 
 ---
@@ -24,7 +24,7 @@ MoltChain implements a **three-phase staking system** designed for agent economi
 
 ### How It Works
 
-1. **Bootstrap Grant**: New validators receive **100,000 MOLT** automatically
+1. **Bootstrap Grant**: New validators receive **100,000 LICN** automatically
    - No upfront capital required
    - Debt recorded in `bootstrap_debt` field
    - Validator operates immediately
@@ -36,12 +36,12 @@ MoltChain implements a **three-phase staking system** designed for agent economi
 
 3. **Account Creation**: 
    - Code: `validator/src/main.rs` (lines 242-254)
-   - Creates validator account with 100K MOLT on first startup
+   - Creates validator account with 100K LICN on first startup
    - Auto-increments global account counter
 
 ### Economic Impact
 
-- **Bootstrap Grants**: up to 200 validators × 100K MOLT = 20M MOLT maximum bootstrap exposure
+- **Bootstrap Grants**: up to 200 validators × 100K LICN = 20M LICN maximum bootstrap exposure
 - **Validator Allocation**: bootstrap grants come from genesis allocations, not a standalone live reward pool
 - **Unlock Timeline**: Vests as validators earn rewards (organic distribution)
 
@@ -60,26 +60,26 @@ MoltChain implements a **three-phase staking system** designed for agent economi
 
 ### Status: 📋 CODE EXISTS BUT NOT ACTIVATED
 
-**Purpose**: Allow anyone (agents/humans) to stake MOLT and earn rewards
+**Purpose**: Allow anyone (agents/humans) to stake LICN and earn rewards
 
-**Implementation**: `core/src/reefstake.rs` (partially implemented)
+**Implementation**: `core/src/mossstake.rs` (partially implemented)
 
-### ReefStake Protocol
+### MossStake Protocol
 
 **For Stakers (Anyone):**
 ```rust
-// Stake MOLT → Receive stMOLT (liquid staking receipt token)
-fn stake(molt_amount: u64) -> Result<u64, String> {
-    // 1. Lock user's MOLT in protocol
-    // 2. Mint stMOLT at exchange rate
-    // 3. User receives stMOLT (tradeable, usable in DeFi)
+// Stake LICN → Receive stLICN (liquid staking receipt token)
+fn stake(licn_amount: u64) -> Result<u64, String> {
+    // 1. Lock user's LICN in protocol
+    // 2. Mint stLICN at exchange rate
+    // 3. User receives stLICN (tradeable, usable in DeFi)
 }
 
-// Unstake stMOLT → Receive MOLT (after 7 day unbonding)
-fn unstake(st_molt_amount: u64) -> Result<(), String> {
-    // 1. Burn stMOLT
+// Unstake stLICN → Receive LICN (after 7 day unbonding)
+fn unstake(st_licn_amount: u64) -> Result<(), String> {
+    // 1. Burn stLICN
     // 2. Start 7-day unbonding timer
-    // 3. Release MOLT after cooldown
+    // 3. Release LICN after cooldown
 }
 ```
 
@@ -90,8 +90,8 @@ validator.set_commission(0.10); // 10% to validator, 90% to delegators
 
 // Delegators choose validator
 fn delegate_to_validator(validator: Pubkey, amount: u64) -> Result<(), String> {
-    // 1. Stake MOLT with specific validator
-    // 2. Receive stMOLT
+    // 1. Stake LICN with specific validator
+    // 2. Receive stLICN
     // 3. Earn rewards proportional to stake
     // 4. Inherit validator's reputation multiplier
 }
@@ -103,19 +103,19 @@ fn delegate_to_validator(validator: Pubkey, amount: u64) -> Result<(), String> {
 
 ```
 Alice's Stats:
-  Own stake:        100,000 MOLT (from bootstrap, fully vested)
-  Delegated stake:  40,000 MOLT (from community)
-  Total stake:      140,000 MOLT
+  Own stake:        100,000 LICN (from bootstrap, fully vested)
+  Delegated stake:  40,000 LICN (from community)
+  Total stake:      140,000 LICN
   Commission:       10%
 
-Illustrative settled reward slice: 0.02 MOLT
+Illustrative settled reward slice: 0.02 LICN
 
 Distribution:
-  Alice:      0.002 MOLT (10% commission)
-  Delegators: 0.018 MOLT (split proportionally by stake)
-    - Bob (20K MOLT): 0.009 MOLT (50% of delegation)
-    - Carol (10K MOLT): 0.0045 MOLT (25% of delegation)
-    - Dave (10K MOLT): 0.0045 MOLT (25% of delegation)
+  Alice:      0.002 LICN (10% commission)
+  Delegators: 0.018 LICN (split proportionally by stake)
+    - Bob (20K LICN): 0.009 LICN (50% of delegation)
+    - Carol (10K LICN): 0.0045 LICN (25% of delegation)
+    - Dave (10K LICN): 0.0045 LICN (25% of delegation)
 ```
 
 ### APY Calculation
@@ -125,11 +125,11 @@ Distribution:
 Annual Rewards ≈ (Projected annualized epoch issuance × Your stake) / Total staked
 APY = (Annual Rewards / Your stake) × 100%
 
-Example (assuming $0.10/MOLT):
-- Total staked: 50M MOLT (10% of genesis supply)
-- Your stake: 100,000 MOLT
-- Projected annual issuance: ~20,000,000 MOLT at the 4% year-0 rate
-- Annual rewards: 20,000,000 × (100,000 / 50,000,000) = 40,000 MOLT before commission and vesting effects
+Example (assuming $0.10/LICN):
+- Total staked: 50M LICN (10% of genesis supply)
+- Your stake: 100,000 LICN
+- Projected annual issuance: ~20,000,000 LICN at the 4% year-0 rate
+- Annual rewards: 20,000,000 × (100,000 / 50,000,000) = 40,000 LICN before commission and vesting effects
 - APY: (40,000 / 100,000) × 100% = 40%
 ```
 
@@ -146,8 +146,8 @@ Explorer and RPC may show mid-epoch projections, but canonical reward settlement
 ### Implementation Checklist
 
 **Core Protocol**:
-- [x] ReefStake smart contract skeleton (`core/src/reefstake.rs`)
-- [ ] Exchange rate calculation (stMOLT:MOLT ratio)
+- [x] MossStake smart contract skeleton (`core/src/mossstake.rs`)
+- [ ] Exchange rate calculation (stLICN:LICN ratio)
 - [ ] Reward accumulation tracking
 - [ ] Unbonding queue (7-day cooldown)
 - [ ] Auto-compounding logic
@@ -160,8 +160,8 @@ Explorer and RPC may show mid-epoch projections, but canonical reward settlement
 - [ ] Minimum delegation amount (prevent spam)
 
 **RPC Endpoints**:
-- [ ] `stakeToReefStake(amount)` - Stake MOLT
-- [ ] `unstakeFromReefStake(amount)` - Initiate unstaking
+- [ ] `stakeToMossStake(amount)` - Stake LICN
+- [ ] `unstakeFromMossStake(amount)` - Initiate unstaking
 - [ ] `claimUnstakedTokens()` - Claim after cooldown
 - [ ] `delegateToValidator(validator, amount)` - Delegate to specific validator
 - [ ] `getStakingAPY()` - Real-time APY calculation
@@ -183,8 +183,8 @@ Explorer and RPC may show mid-epoch projections, but canonical reward settlement
 4. ⏳ DAO governance vote (66% supermajority)
 
 **Activation Sequence**:
-1. Deploy ReefStake program to mainnet
-2. Publish stMOLT token contract
+1. Deploy MossStake program to mainnet
+2. Publish stLICN token contract
 3. Enable delegation in validator software
 4. Launch staking UI in wallet
 5. Announce to community
@@ -201,18 +201,18 @@ Explorer and RPC may show mid-epoch projections, but canonical reward settlement
 
 ### Planned Features
 
-**1. stMOLT as DeFi Collateral**
-- Use stMOLT in LobsterLend (lending protocol)
-- Borrow stablecoins against stMOLT
+**1. stLICN as DeFi Collateral**
+- Use stLICN in ThallLend (lending protocol)
+- Borrow stablecoins against stLICN
 - Leverage staking yields
 
-**2. stMOLT Liquidity Pools**
-- stMOLT/MOLT pool on ClawSwap (DEX)
+**2. stLICN Liquidity Pools**
+- stLICN/LICN pool on SporeSwap (DEX)
 - Earn trading fees + staking rewards
 - Instant liquidity for unstaking (vs 7-day wait)
 
 **3. Auto-Compounding Vaults**
-- ClawVault aggregates staking + DeFi yields
+- SporeVault aggregates staking + DeFi yields
 - Automated strategy optimization
 - Agent-managed rebalancing
 
@@ -228,7 +228,7 @@ Explorer and RPC may show mid-epoch projections, but canonical reward settlement
 
 ### Implementation Timeline
 
-- **Q3 2026**: stMOLT as collateral
+- **Q3 2026**: stLICN as collateral
 - **Q4 2026**: Liquidity pools & flash unstaking
 - **Q1 2027**: Auto-compounding vaults
 - **Q2 2027**: Synthetic derivatives
@@ -240,11 +240,11 @@ Explorer and RPC may show mid-epoch projections, but canonical reward settlement
 ### Total Staking Capacity
 
 ```
-Maximum Staked: 500,000,000 MOLT (100% of genesis supply before minted expansion)
-Realistic Staked: 50,000,000 - 150,000,000 MOLT (10-30%)
+Maximum Staked: 500,000,000 LICN (100% of genesis supply before minted expansion)
+Realistic Staked: 50,000,000 - 150,000,000 LICN (10-30%)
   
 Why not 100%?
-- Need liquid MOLT for transactions
+- Need liquid LICN for transactions
 - Trading on exchanges
 - DeFi liquidity pools
 - Working capital for agents
@@ -255,26 +255,26 @@ Why not 100%?
 **High Staking Ratio (>50% staked)**:
 - Lower APY (more competition for rewards)
 - More secure network (higher stake = harder to attack)
-- Less liquid MOLT (potential price pressure upward)
+- Less liquid LICN (potential price pressure upward)
 
 **Low Staking Ratio (<10% staked)**:
 - Higher APY (fewer participants splitting rewards)
 - Encourages more staking
-- More liquid MOLT for DeFi/trading
+- More liquid LICN for DeFi/trading
 
 **Self-Balancing**: Market finds equilibrium APY where staking opportunity cost = DeFi/trading yields
 
 ### Price Impact of Staking
 
 **Deflationary Pressure**:
-- Staked MOLT locked (reduced circulating supply)
+- Staked LICN locked (reduced circulating supply)
 - 40% of fees burned (permanent reduction)
 - Combined effect: Strong upward price pressure
 
 **Example (updated to live 500M genesis framing):**
 ```
 Day 1:
-- 500M MOLT genesis supply
+- 500M LICN genesis supply
 - 100M staked (10%)
 - 400M circulating
 
@@ -293,22 +293,22 @@ Result: live circulating supply is dynamic and must be evaluated as genesis + mi
 
 ### What's LIVE (Phase 1)
 
-✅ Validator bootstrap grants (100K MOLT each)
+✅ Validator bootstrap grants (100K LICN each)
 ✅ Vesting system (repay debt through rewards)
 ✅ Account counter (tracks all accounts)
 ✅ Graduation tracking (bootstrap_debt = 0)
 
 ### What's MISSING (Phase 2 - Critical)
 
-❌ Regular staking for non-validators (ReefStake Protocol)
+❌ Regular staking for non-validators (MossStake Protocol)
 ❌ Delegation system (stake with validators)
 ❌ APY display/calculation in wallet
 ❌ Unbonding queue (7-day cooldown)
-❌ stMOLT liquid staking token
+❌ stLICN liquid staking token
 
 ### What's FUTURE (Phase 3)
 
-🔮 stMOLT as DeFi collateral
+🔮 stLICN as DeFi collateral
 🔮 Liquidity pools for instant unstaking
 🔮 Auto-compounding yield vaults
 🔮 Synthetic staking derivatives
@@ -326,7 +326,7 @@ Result: live circulating supply is dynamic and must be evaluated as genesis + mi
 
 ### Short Term (Month 1)
 
-1. Implement ReefStake core protocol
+1. Implement MossStake core protocol
 2. Add RPC endpoints for staking operations
 3. Update validator software to accept delegations
 4. Build staking UI in wallet (separate from validator bootstrap)
@@ -341,7 +341,7 @@ Result: live circulating supply is dynamic and must be evaluated as genesis + mi
 ### Long Term (Month 4+)
 
 1. DAO vote for staking activation
-2. Mainnet deployment of ReefStake
+2. Mainnet deployment of MossStake
 3. Community education campaign
 4. Monitor APY dynamics & adjust parameters if needed
 

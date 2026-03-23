@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// MoltyDEX Load Test — Swap Throughput Scenario
+// LichenDEX Load Test — Swap Throughput Scenario
 // Tests: router swap rate, AMM pool swap rate, quote endpoint performance
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { MoltDEX } from '@moltchain/dex-sdk';
+import { LichenDEX } from '@lichen/dex-sdk';
 
 interface ScenarioResult {
   name: string;
@@ -34,7 +34,7 @@ async function measureLatency(fn: () => Promise<any>): Promise<{ ok: boolean; ms
  * Executes smart-routed swaps as fast as possible
  */
 export async function routerSwapThroughput(count: number = 200): Promise<ScenarioResult> {
-  const dex = new MoltDEX({ endpoint: ENDPOINT });
+  const dex = new LichenDEX({ endpoint: ENDPOINT });
   const latencies: number[] = [];
   const errors: string[] = [];
   let successCount = 0;
@@ -45,8 +45,8 @@ export async function routerSwapThroughput(count: number = 200): Promise<Scenari
     const amountIn = 1000 + (i % 100) * 100;
     const result = await measureLatency(() =>
       dex.swap({
-        tokenIn: 'MOLT',
-        tokenOut: 'mUSD',
+        tokenIn: 'LICN',
+        tokenOut: 'lUSD',
         amountIn,
         slippage: 0.5,
       })
@@ -78,7 +78,7 @@ export async function routerSwapThroughput(count: number = 200): Promise<Scenari
  * Rapid-fire swap quotes (read-only, no state change)
  */
 export async function quotePerformance(count: number = 500): Promise<ScenarioResult> {
-  const dex = new MoltDEX({ endpoint: ENDPOINT });
+  const dex = new LichenDEX({ endpoint: ENDPOINT });
   const latencies: number[] = [];
   const errors: string[] = [];
   let successCount = 0;
@@ -88,8 +88,8 @@ export async function quotePerformance(count: number = 500): Promise<ScenarioRes
   for (let i = 0; i < count; i++) {
     const result = await measureLatency(() =>
       dex.getSwapQuote({
-        tokenIn: 'MOLT',
-        tokenOut: 'mUSD',
+        tokenIn: 'LICN',
+        tokenOut: 'lUSD',
         amountIn: 10_000 + i * 100,
         slippage: 1.0,
       })
@@ -121,16 +121,16 @@ export async function quotePerformance(count: number = 500): Promise<ScenarioRes
  * Swaps across different token pairs in sequence
  */
 export async function multiPairSwapRotation(count: number = 300): Promise<ScenarioResult> {
-  const dex = new MoltDEX({ endpoint: ENDPOINT });
+  const dex = new LichenDEX({ endpoint: ENDPOINT });
   const latencies: number[] = [];
   const errors: string[] = [];
   let successCount = 0;
 
   const pairs = [
-    { in: 'MOLT', out: 'mUSD' },
-    { in: 'wSOL', out: 'mUSD' },
-    { in: 'wETH', out: 'mUSD' },
-    { in: 'mUSD', out: 'MOLT' },
+    { in: 'LICN', out: 'lUSD' },
+    { in: 'wSOL', out: 'lUSD' },
+    { in: 'wETH', out: 'lUSD' },
+    { in: 'lUSD', out: 'LICN' },
   ];
 
   const start = performance.now();
@@ -169,7 +169,7 @@ export async function multiPairSwapRotation(count: number = 300): Promise<Scenar
 
 if (require.main === module) {
   (async () => {
-    console.log('═══ MoltyDEX Load Test: Swap Scenarios ═══\n');
+    console.log('═══ LichenDEX Load Test: Swap Scenarios ═══\n');
     console.log(`Endpoint: ${ENDPOINT}\n`);
 
     const scenarios = [

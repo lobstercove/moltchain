@@ -1,6 +1,6 @@
-# MoltChain Blockchain Alignment Plan
+# Lichen Blockchain Alignment Plan
 
-> Comprehensive plan to align MoltChain with real L1 blockchains (Cosmos, Solana, Ethereum, Avalanche).
+> Comprehensive plan to align Lichen with real L1 blockchains (Cosmos, Solana, Ethereum, Avalanche).
 > Every finding rated by severity. Every fix has a concrete scope. Every phase has a tracker.
 
 **Created:** 2026-03-14
@@ -28,13 +28,13 @@
 
 ### The Problem
 
-MoltChain historically claimed **"1B MOLT, capped-supply, deflationary"** but shipped code that contradicted that narrative:
+Lichen historically claimed **"1B LICN, capped-supply, deflationary"** but shipped code that contradicted that narrative:
 
-- The MoltCoin ERC-20 wrapper contract has `mint()` with a **10B** ceiling
-- Block rewards come from a pre-funded 100M MOLT treasury pool that will deplete
+- The LichenCoin ERC-20 wrapper contract has `mint()` with a **10B** ceiling
+- Block rewards come from a pre-funded 100M LICN treasury pool that will deplete
 - 40% of all fees are **permanently burned** from a non-replenishable supply
 - When the treasury runs dry, block rewards silently stop — validators earn nothing
-- ReefStake generates yield from redistribution, contradicting "fixed" narrative
+- MossStake generates yield from redistribution, contradicting "fixed" narrative
 
 Every major PoS chain handles supply differently:
 
@@ -50,14 +50,14 @@ Every major PoS chain handles supply differently:
 
 #### Option A: Keep Capped-Supply Narrative (Avalanche Model)
 
-**How it works today:** 1B MOLT at genesis. 100M in reward pool. 20% annual decay on block rewards. 40% fee burn.
+**How it works today:** 1B LICN at genesis. 100M in reward pool. 20% annual decay on block rewards. 40% fee burn.
 
 **Core problem:** The burn is permanent destruction from a fixed pie. Long-term, this creates a deflationary death spiral — less circulating supply means less economic activity, which means less fees, which means validators earn less, which means fewer validators, which means less security.
 
 **How to fix it and keep a capped-supply model:**
 
 1. **Stop burning permanently.** Redirect the 40% "burn" into a **Reward Recycling Pool** instead of destroying it. Fees become the long-term source of validator income, replacing the depleting genesis pool.
-2. **Cap the MoltCoin contract at 1B** (match the marketing). Remove the 10B ceiling entirely.
+2. **Cap the LichenCoin contract at 1B** (match the marketing). Remove the 10B ceiling entirely.
 3. **New fee split:**
 
    | Destination | Current | Proposed |
@@ -79,20 +79,20 @@ Every major PoS chain handles supply differently:
 **Cons:**
 - Without permanent burn, there's no deflationary pressure — token price relies entirely on demand
 - If network usage drops, recycled fees can't cover reward obligations
-- Avalanche has the same problem and compensates with C-chain EVM gas fees at scale — MoltChain doesn't have that volume yet
+- Avalanche has the same problem and compensates with C-chain EVM gas fees at scale — Lichen doesn't have that volume yet
 - Bootstrap grant economics remain front-loaded (200 validators × 100K = 20M of 100M day one)
 
 #### Option B: Move to Inflationary Supply (Ethereum/Solana Model) — RECOMMENDED
 
-**How it works:** Keep 500M MOLT at genesis as the starting supply. Block rewards are **minted fresh** (not drawn from a pool). Fee burn acts as deflationary counter-pressure. Net supply can go up or down based on network activity.
+**How it works:** Keep 500M LICN at genesis as the starting supply. Block rewards are **minted fresh** (not drawn from a pool). Fee burn acts as deflationary counter-pressure. Net supply can go up or down based on network activity.
 
 **Detailed design:**
 
-1. **Genesis:** 500M MOLT distributed exactly as today (same 6 wallets, same allocation %)
+1. **Genesis:** 500M LICN distributed exactly as today (same 6 wallets, same allocation %)
 2. **Block rewards:** Minted on the fly — treasury pool is no longer needed as reward source
-3. **Target inflation:** Start at **4% annually** (~20M MOLT/year at genesis supply), decaying 15% per year:
+3. **Target inflation:** Start at **4% annually** (~20M LICN/year at genesis supply), decaying 15% per year:
 
-   | Year | Inflation Rate | New MOLT Minted | Cumulative Supply |
+   | Year | Inflation Rate | New LICN Minted | Cumulative Supply |
    |------|---------------|-----------------|-------------------|
    | 0 | 4.00% | 20.0M | 520M |
    | 1 | 3.40% | 17.7M | 538M |
@@ -112,15 +112,15 @@ Every major PoS chain handles supply differently:
    | Community treasury | 10% |
    | Protocol reserve | 10% |
 
-6. **MoltCoin contract:** Remove `mint()` entirely or gate it to governance-only. The WASM wrapper should only reflect native supply 1:1.
-7. **Treasury pool:** The existing 100M becomes a **strategic reserve**, not a reward source. It can fund ecosystem grants, bootstrap liquidity, or be governed by MoltDAO. It never depletes from block rewards.
-8. **ReefStake yield:** Now has a sustainable source — staking yield comes from freshly minted rewards, not redistribution from a finite pool. The narrative is clean: "stake to earn inflation rewards."
+6. **LichenCoin contract:** Remove `mint()` entirely or gate it to governance-only. The WASM wrapper should only reflect native supply 1:1.
+7. **Treasury pool:** The existing 100M becomes a **strategic reserve**, not a reward source. It can fund ecosystem grants, bootstrap liquidity, or be governed by LichenDAO. It never depletes from block rewards.
+8. **MossStake yield:** Now has a sustainable source — staking yield comes from freshly minted rewards, not redistribution from a finite pool. The narrative is clean: "stake to earn inflation rewards."
 
 **Implementation (what changes in code):**
 
 ```
 core/src/consensus.rs:
-  - Remove: REWARD_POOL_MOLT constant
+  - Remove: REWARD_POOL_LICN constant
   - Add: INITIAL_INFLATION_RATE_BPS = 400 (4%)
   - Add: INFLATION_DECAY_BPS = 1500 (15% annual decay)
   - Add: TERMINAL_INFLATION_RATE_BPS = 15 (0.15% floor)
@@ -129,25 +129,25 @@ core/src/consensus.rs:
 core/src/state.rs:
   - Add: total_minted counter (alongside total_burned)
   - Modify: get_metrics() → report total_supply = genesis + minted - burned
-  - Remove: INITIAL_SUPPLY_SHELLS constant (supply is dynamic now)
+  - Remove: INITIAL_SUPPLY_SPORES constant (supply is dynamic now)
 
 validator/src/main.rs:
   - Remove: treasury balance check before rewarding
-  - Add: mint_block_reward() that creates new shells (not transfers from treasury)
+  - Add: mint_block_reward() that creates new spores (not transfers from treasury)
   - Block production: mint reward directly to producer account + voter accounts
 
 core/src/processor.rs:
   - No change to fee charging/burning (stays the same)
   - Fee burn counter still tracks permanent destruction
 
-contracts/moltcoin/src/lib.rs:\n  - Remove MAX_SUPPLY ceiling entirely (supply managed at protocol layer)\n  - MoltCoin WASM wrapper reflects native supply 1:1
+contracts/lichencoin/src/lib.rs:\n  - Remove MAX_SUPPLY ceiling entirely (supply managed at protocol layer)\n  - LichenCoin WASM wrapper reflects native supply 1:1
 ```
 
 **Pros:**
 - Matches every successful PoS chain (Ethereum, Solana, Cosmos)
 - Validators always earn rewards — never silent failures
 - Burn creates natural equilibrium (high usage → deflationary, low usage → slight inflation)
-- ReefStake yield has an honest source
+- MossStake yield has an honest source
 - No depleting pool, no front-loading risk
 - Clean narrative: "inflationary rewards offset by burn, targeting net-zero at scale"
 
@@ -158,7 +158,7 @@ contracts/moltcoin/src/lib.rs:\n  - Remove MAX_SUPPLY ceiling entirely (supply m
 
 #### Option C: Hybrid — Fixed Genesis + Governance-Gated Mint
 
-Keep a 1B capped-supply narrative as default, but allow MoltDAO governance to vote on minting additional supply if the reward pool ever depletes. This is the "emergency valve" approach.
+Keep a 1B capped-supply narrative as default, but allow LichenDAO governance to vote on minting additional supply if the reward pool ever depletes. This is the "emergency valve" approach.
 
 **Pros:** Markets as capped supply, has an escape hatch.
 **Cons:** Creates uncertainty. "Is it really fixed if governance can mint?" — worst of both worlds for credibility.
@@ -169,13 +169,13 @@ Keep a 1B capped-supply narrative as default, but allow MoltDAO governance to vo
 
 Every mature PoS chain that succeeded long-term is inflationary with burn as counter-pressure. The fixed-supply model works for Bitcoin (PoW, no staking rewards needed) and has known sustainability concerns for PoS chains (Avalanche is the experiment, and it's too early to call it proven). Ethereum's EIP-1559 model is the most battle-tested.
 
-MoltChain as an **agent economy** needs predictable validator economics. Agents won't stake if rewards can silently stop. Option B gives:
+Lichen as an **agent economy** needs predictable validator economics. Agents won't stake if rewards can silently stop. Option B gives:
 - Predictable validator income (always minting)
 - Deflationary pressure when the network is busy (40% burn)
-- Clean ReefStake economics (yield from inflation, not redistribution sleight of hand)
+- Clean MossStake economics (yield from inflation, not redistribution sleight of hand)
 - No depleting pools, no silent failures, no 10B hidden mint cap
 
-The 100M MOLT currently allocated as "Validator Rewards Pool" becomes a strategic ecosystem reserve — available for grants, liquidity bootstrapping, or whatever MoltDAO decides. It doesn't need to fund block rewards anymore.
+The 100M LICN currently allocated as "Validator Rewards Pool" becomes a strategic ecosystem reserve — available for grants, liquidity bootstrapping, or whatever LichenDAO decides. It doesn't need to fund block rewards anymore.
 
 ---
 
@@ -188,7 +188,7 @@ The 100M MOLT currently allocated as "Validator Rewards Pool" becomes a strategi
 | C-1 | CRITICAL | Consensus | No light client verification proofs (no commit certificates) |
 | C-2 | CRITICAL | Consensus | No block commit signatures in block header (single validator sig only) |
 | C-3 | CRITICAL | Consensus | BFT timeouts use linear backoff (should be exponential) |
-| C-4 | CRITICAL | Economics | MoltCoin contract has 10B mint cap vs 1B marketing claim |
+| C-4 | CRITICAL | Economics | LichenCoin contract has 10B mint cap vs 1B marketing claim |
 | C-5 | CRITICAL | State | No general-purpose state proofs for accounts (no light client support) |
 | H-1 | HIGH | Consensus | Finality depth (32-slot) confuses Tendermint instant finality claim |
 | H-2 | HIGH | Economics | Block rewards silently fail when treasury is empty |
@@ -206,7 +206,7 @@ The 100M MOLT currently allocated as "Validator Rewards Pool" becomes a strategi
 | H-14 | HIGH | Features | No IBC / trustless cross-chain protocol |
 | H-15 | HIGH | Features | Core chain params are hardcoded, not governance-changeable |
 | M-1 | MEDIUM | Consensus | No explicit epoch boundary state transition |
-| M-2 | MEDIUM | Economics | ReefStake yield contradicts fixed-supply narrative |
+| M-2 | MEDIUM | Economics | MossStake yield contradicts fixed-supply narrative |
 | M-3 | MEDIUM | Economics | Fee burn ratio aggressive with no offsetting inflation |
 | M-4 | MEDIUM | State | Contract storage limits enforced in app code, not protocol |
 | M-5 | MEDIUM | Transactions | No gas metering for native instructions (flat fee for everything) |
@@ -239,10 +239,10 @@ These are credibility blockers. Any experienced L1 developer who inspects the co
 
 | File | Change |
 |------|--------|
-| `core/src/consensus.rs` | Add inflation constants: `INITIAL_INFLATION_RATE_BPS`, `INFLATION_DECAY_BPS`, `TERMINAL_INFLATION_RATE_BPS`. Replace `decayed_reward()` with `compute_block_reward(total_supply, current_slot)`. Remove `REWARD_POOL_MOLT` dependency. |
-| `core/src/state.rs` | Add `total_minted` counter in CF_STATS. Modify `get_metrics()` to compute total_supply = genesis_supply + total_minted - total_burned. Remove hardcoded `INITIAL_SUPPLY_SHELLS`. |
-| `validator/src/main.rs` | Replace treasury-fund-check-then-transfer flow with direct mint: create new shells in producer/voter accounts. Remove warning about empty treasury. Drop `REWARD_POOL_MOLT` constant. |
-| `contracts/moltcoin/src/lib.rs` | Remove MAX_SUPPLY ceiling entirely (supply is managed at protocol layer). Remove the misleading audit-fix comment about "marketing refers to native layer." |
+| `core/src/consensus.rs` | Add inflation constants: `INITIAL_INFLATION_RATE_BPS`, `INFLATION_DECAY_BPS`, `TERMINAL_INFLATION_RATE_BPS`. Replace `decayed_reward()` with `compute_block_reward(total_supply, current_slot)`. Remove `REWARD_POOL_LICN` dependency. |
+| `core/src/state.rs` | Add `total_minted` counter in CF_STATS. Modify `get_metrics()` to compute total_supply = genesis_supply + total_minted - total_burned. Remove hardcoded `INITIAL_SUPPLY_SPORES`. |
+| `validator/src/main.rs` | Replace treasury-fund-check-then-transfer flow with direct mint: create new spores in producer/voter accounts. Remove warning about empty treasury. Drop `REWARD_POOL_LICN` constant. |
+| `contracts/lichencoin/src/lib.rs` | Remove MAX_SUPPLY ceiling entirely (supply is managed at protocol layer). Remove the misleading audit-fix comment about "marketing refers to native layer." |
 | `core/src/processor.rs` | No fee logic changes. Burn stays at 40%. |
 | `rpc/src/lib.rs` | Update `getChainStatus` / `getMetrics` to report `total_minted`, `total_burned`, `circulating_supply`, `inflation_rate`. |
 | Genesis | The existing 100M "Validator Rewards Pool" wallet becomes "Protocol Reserve." No longer the reward source. |
@@ -252,7 +252,7 @@ These are credibility blockers. Any experienced L1 developer who inspects the co
 - `total_supply` reported via RPC = genesis + minted - burned
 - Inflation rate starts at 4%, decays 15% annually, floors at 0.15%
 - Fee burn still destroys 40% permanently
-- MoltCoin contract MAX_SUPPLY ceiling removed (supply managed at protocol layer)
+- LichenCoin contract MAX_SUPPLY ceiling removed (supply managed at protocol layer)
 - All existing tests pass with updated economics
 
 ---
@@ -324,7 +324,7 @@ Switch from linear to exponential timeout backoff.
 
 ---
 
-### 1.5 Fix MoltCoin Mint Cap (C-4)
+### 1.5 Fix LichenCoin Mint Cap (C-4)
 
 **Part of 1.1** — MAX_SUPPLY ceiling removed entirely. Supply is managed at the protocol layer via inflation constants.
 
@@ -332,7 +332,7 @@ Switch from linear to exponential timeout backoff.
 
 ## 4. Phase 2 — High-Priority Fixes
 
-These undermine professional trust when discovered by developers building on MoltChain.
+These undermine professional trust when discovered by developers building on Lichen.
 
 ### 2.1 Silent Reward Failure → Emit Event (H-2)
 
@@ -343,8 +343,8 @@ These undermine professional trust when discovered by developers building on Mol
 ### 2.2 Bootstrap Grant Economics (H-3)
 
 **RESOLVED** — The existing bootstrap debt repayment system already prevents dump-and-leave:
-1. 100K MOLT goes directly to `staked` balance (not `spendable`)
-2. `bootstrap_debt` of 100B shells must be repaid via reward splitting (50%/75%/90% to debt)
+1. 100K LICN goes directly to `staked` balance (not `spendable`)
+2. `bootstrap_debt` of 100B spores must be repaid via reward splitting (50%/75%/90% to debt)
 3. 18-month time cap (`MAX_BOOTSTRAP_SLOTS = 27,648,000`) for automatic graduation
 4. `BootstrapStatus::Bootstrapping` → `FullyVested` tracks graduation state
 5. First 200 validators only, with hardware fingerprint uniqueness check
@@ -415,7 +415,7 @@ Mirrors Solana's durable nonce mechanism exactly.
 | File | Change |
 |------|--------|
 | `rpc/src/lib.rs` | Rename `/solana` to `/solana-compat` or `/solana-format`. Update all documentation to say "Solana-format RPC" not "Solana-compatible." |
-| Documentation | Clearly state: "Accepts MoltChain transactions in Solana wire format. Does not accept native Solana transactions." |
+| Documentation | Clearly state: "Accepts Lichen transactions in Solana wire format. Does not accept native Solana transactions." |
 
 ---
 
@@ -456,7 +456,7 @@ Mirrors Solana's durable nonce mechanism exactly.
 
 | File | Change |
 |------|--------|
-| `core/src/processor.rs` | Add system instruction type 29: `GovernanceParamChange`. MoltDAO proposals can change: `base_fee`, `fee_split_percentages`, `min_validator_stake`, `epoch_length`. Changes take effect at next epoch boundary. |
+| `core/src/processor.rs` | Add system instruction type 29: `GovernanceParamChange`. LichenDAO proposals can change: `base_fee`, `fee_split_percentages`, `min_validator_stake`, `epoch_length`. Changes take effect at next epoch boundary. |
 | `core/src/genesis.rs` | Store consensus params in state (mutable) instead of only in genesis config. |
 
 ---
@@ -488,7 +488,7 @@ Use BFT-committed timestamps: median of prevote timestamps from validators in th
 
 ### 3.4 Contract Upgrade Governance (M-14)
 
-Add optional timelock to contract upgrades. Contracts can opt-in to N-epoch delay between upgrade submission and execution. During delay, any MoltDAO veto cancels the upgrade.
+Add optional timelock to contract upgrades. Contracts can opt-in to N-epoch delay between upgrade submission and execution. During delay, any LichenDAO veto cancels the upgrade.
 
 ### 3.5 Improved EVM Compatibility (M-12)
 
@@ -503,7 +503,7 @@ Add optional timelock to contract upgrades. Contracts can opt-in to N-epoch dela
 **Implementation**:
 - `MAX_WASM_MEMORY_PAGES`: 256 → 1024 (64MB max). Comparable to Solana (heap 32KB + stack, but Programs v2 plans larger), CosmWasm (512MB cap), and Near (1GB theoretical).
 - `DEFAULT_WASM_MEMORY_PAGES`: New constant = 16 (1MB). After contract instantiation, if declared memory < 16 pages, runtime grows to 16 pages automatically.
-- Both constants exported from `moltchain-core` for SDK/tooling use.
+- Both constants exported from `lichen-core` for SDK/tooling use.
 - Three validation points: deploy checks initial+max ≤ 1024, instantiation ensures ≥ 16 pages, post-execution validates ≤ 1024.
 - Memory growth is silent (`let _ = memory.grow()`) — contracts declaring a maximum below 16 pages keep their declared max.
 
@@ -514,7 +514,7 @@ Add optional timelock to contract upgrades. Contracts can opt-in to N-epoch dela
 
 Require N/M validator attestation for oracle prices instead of single block producer authority.
 
-**Problem**: Oracle prices were set by a single block producer per block. A malicious validator could manipulate price feeds unilaterally, affecting DeFi protocols (LobsterLend liquidations, DEX pricing, ClawPump bonding curves).
+**Problem**: Oracle prices were set by a single block producer per block. A malicious validator could manipulate price feeds unilaterally, affecting DeFi protocols (ThallLend liquidations, DEX pricing, SporePump bonding curves).
 
 **Solution**: Native system instruction (type 30) for oracle price attestation at the core protocol level. Active validators submit price readings for named assets. When >2/3 of active stake has attested (Tendermint-style strict supermajority), a stake-weighted median price is computed and stored as the consensus price.
 
@@ -525,7 +525,7 @@ Require N/M validator attestation for oracle prices instead of single block prod
 - **Quorum threshold**: Strict >2/3 of total active stake (same as BFT block finality)
 - **Price calculation**: Stake-weighted median — identical algorithm to BFT timestamp computation (sort by price, walk cumulative stake, return price where cumulative > half total)
 - **Staleness window**: 9,000 slots (~1 hour) — attestations older than this are excluded from quorum checks
-- **Asset naming**: 1–16 byte UTF-8 identifiers (e.g., "MOLT", "wETH", "wBTC")
+- **Asset naming**: 1–16 byte UTF-8 identifiers (e.g., "LICN", "wETH", "wBTC")
 - **Validator override**: A validator can update their attestation at any time; latest always wins
 - **Multi-asset independence**: Each asset has its own attestation pool and quorum tracking
 - **Compute cost**: 500 CU per attestation instruction
@@ -552,9 +552,9 @@ Remove reputation express lane from mempool. All transactions ordered by fee onl
 - **Simplified**: `effective_priority()` → returns `self.fee` directly. `Ord` impl compares fees directly.
 - **Simplified**: `get_top_transactions()`, `remove_transaction()`, `remove_transactions_bulk()`, `cleanup_expired()`, `prune_stale_blockhashes()`, `clear()` — all operate on single queue instead of two
 - **Validator**: Removed reputation lookups in P2P transaction handler and RPC transaction handler (was `state.get_reputation()` call). Removed unused `state_for_rpc_lookup` and `state_for_p2p_txs` clones.
-- **Developer portal**: Updated `moltyid.html` (removed Priority/Express lane references, updated tier table), `architecture.html` (updated mempool description), `changelog.html` (updated feature description)
+- **Developer portal**: Updated `lichenid.html` (removed Priority/Express lane references, updated tier table), `architecture.html` (updated mempool description), `changelog.html` (updated feature description)
 
-**Files**: `core/src/mempool.rs` (complete refactor), `validator/src/main.rs` (removed reputation lookup for P2P + RPC tx paths), `developers/moltyid.html`, `developers/architecture.html`, `developers/changelog.html`.
+**Files**: `core/src/mempool.rs` (complete refactor), `validator/src/main.rs` (removed reputation lookup for P2P + RPC tx paths), `developers/lichenid.html`, `developers/architecture.html`, `developers/changelog.html`.
 **Tests**: 8 mempool tests (3 replaced: fee_only_ordering, no_express_lane, strict_fee_ordering replace reputation_priority, express_lane, effective_priority). All verify reputation has zero effect on ordering.
 
 ### 3.9 WebSocket Keepalive (M-19) — DONE
@@ -683,13 +683,13 @@ Lightweight approximation of ASN diversity without requiring external GeoIP data
 
 ### 4.1 Transaction Hash Determinism (H-7)
 
-Document that MoltChain tx hash = SHA-256(message + signatures). Consider switching to message-only hash for pre-sign prediction.
+Document that Lichen tx hash = SHA-256(message + signatures). Consider switching to message-only hash for pre-sign prediction.
 
 **Problem:** Transaction hash includes Ed25519 signatures, making it unpredictable before signing. In multi-sig scenarios, not all parties have the txid until all signatures are collected.
 
 **Solution: Dual Hash Exposure**
 
-MoltChain keeps the current hash algorithm (matching Bitcoin wtxid and Cosmos `SHA-256(tx_bytes)` convention) but exposes both hashes:
+Lichen keeps the current hash algorithm (matching Bitcoin wtxid and Cosmos `SHA-256(tx_bytes)` convention) but exposes both hashes:
 
 - **`Transaction::hash()`** = `SHA-256(bincode(message) || sig_0 || sig_1 || ...)` — canonical txid, includes signatures for unique deduplication. Stored as `CF_TRANSACTIONS` key.
 - **`Transaction::message_hash()`** (NEW) = `SHA-256(bincode(message))` — signing hash, predictable before any signatures are added. Useful for multi-sig coordination and client-side txid tracking.
@@ -707,7 +707,7 @@ The RPC `getTransaction` response now includes both `signature` (txid) and `mess
 
 Audit reputation fee discounts for MEV vectors. Consider capping max discount or making it apply only after block inclusion.
 
-**Problem:** Reputation-based fee discounts (5–10% off for MoltyID reputation 500+) create an MEV vector — searchers with high reputation get a fee advantage over new users for the same operations.
+**Problem:** Reputation-based fee discounts (5–10% off for LichenID reputation 500+) create an MEV vector — searchers with high reputation get a fee advantage over new users for the same operations.
 
 **Audit findings:**
 1. No real blockchain (Ethereum, Solana, Bitcoin, Cosmos) uses identity-based fee discounts
@@ -715,7 +715,7 @@ Audit reputation fee discounts for MEV vectors. Consider capping max discount or
 3. Task 3.7 already removed the express lane (priority queue ordering based on reputation) — the fee discount was the remaining half of the same system
 4. Validators indirectly control reputation via block production (+10 rep per block)
 
-**Resolution: Fee discounts REMOVED.** `apply_reputation_fee_discount()` now returns base_fee unchanged (deprecated, kept for backward compat). The `process_transaction` and `simulate_transaction` paths no longer perform reputation lookups for fee calculation. All users pay flat fees. MoltyID reputation remains functional for display, trust scoring, and rate limiting — just not for fee advantage.
+**Resolution: Fee discounts REMOVED.** `apply_reputation_fee_discount()` now returns base_fee unchanged (deprecated, kept for backward compat). The `process_transaction` and `simulate_transaction` paths no longer perform reputation lookups for fee calculation. All users pay flat fees. LichenID reputation remains functional for display, trust scoring, and rate limiting — just not for fee advantage.
 
 **Files**: `core/src/processor.rs` (removed discount logic, updated docstrings).
 **Tests**: Updated test verifies flat fee behavior.
@@ -748,15 +748,15 @@ Already implemented in Task 2.14 (`estimateTransactionFee`). Finding resolved.
 
 ### 4.5 IBC Exploration (H-14)
 
-Research IBC-lite integration using commit certificates (Phase 1) + account state proofs (Phase 1). Full IBC would require implementing Tendermint light client verification in MoltChain and getting listed on Cosmos chain registry.
+Research IBC-lite integration using commit certificates (Phase 1) + account state proofs (Phase 1). Full IBC would require implementing Tendermint light client verification in Lichen and getting listed on Cosmos chain registry.
 
 **Research complete.** Full IBC exploration document at `docs/strategy/IBC_EXPLORATION.md`.
 
 **Summary:**
-- MoltChain has some of the necessary building blocks: commit certificates (Task 1.2), anchored account inclusion proofs (Task 1.3), BFT commit/finality tracking, deterministic timestamps (Task 3.2)
+- Lichen has some of the necessary building blocks: commit certificates (Task 1.2), anchored account inclusion proofs (Task 1.3), BFT commit/finality tracking, deterministic timestamps (Task 3.2)
 - Missing: on-chain light client module, ICS-3 connection handshake, ICS-4 channel state machine, ICS-20 token transfer contract, storage-level Merkle proofs
 - Recommended approach: IBC-Lite in 4 phases (LC contract → proof relay → ICS-20 → Hermes integration)
-- Current MoltBridge provides transitional cross-chain functionality for the current phase. Treasury withdrawals now have live threshold paths on supported Solana/EVM routes, while multi-signer deposit issuance fails closed by default because deposit sweeps still rely on locally derived keys unless an explicit operator override is enabled.
+- Current LichenBridge provides transitional cross-chain functionality for the current phase. Treasury withdrawals now have live threshold paths on supported Solana/EVM routes, while multi-signer deposit issuance fails closed by default because deposit sweeps still rely on locally derived keys unless an explicit operator override is enabled.
 - **Decision: Full IBC deferred.** Task 4.5 is closed as research and scoping; any implementation now belongs to post-alignment follow-on work when ecosystem demand materializes.
 
 ---
@@ -771,13 +771,13 @@ Research IBC-lite integration using commit certificates (Phase 1) + account stat
 |---|----------|---------|--------|
 | 1.1a | Add inflation constants + `compute_block_reward()` | `core/src/consensus.rs` | DONE |
 | 1.1b | Add `total_minted` counter + `get_total_minted()` | `core/src/state.rs` | DONE |
-| 1.1c | Add `atomic_mint_accounts()` for minting new shells | `core/src/state.rs` | DONE |
+| 1.1c | Add `atomic_mint_accounts()` for minting new spores | `core/src/state.rs` | DONE |
 | 1.1d | Update `Metrics` struct (add total_minted, inflation_rate) | `core/src/state.rs` | DONE |
 | 1.1e | Update `get_metrics()` supply calculation (genesis + minted - burned) | `core/src/state.rs` | DONE |
 | 1.1f | Replace treasury-debit reward pipeline with mint-based rewards | `validator/src/main.rs` | DONE |
-| 1.1g | Update ReefStake distribution to use minted (not treasury) | `validator/src/main.rs` | DONE |
-| 1.1h | Remove `REWARD_POOL_MOLT` constant + treasury reward check | `validator/src/main.rs` | DONE |
-| 1.1i | Fix MoltCoin `MAX_SUPPLY` docs (ERC-20 wrapper, 10B ceiling kept) | `contracts/moltcoin/src/lib.rs` | DONE |
+| 1.1g | Update MossStake distribution to use minted (not treasury) | `validator/src/main.rs` | DONE |
+| 1.1h | Remove `REWARD_POOL_LICN` constant + treasury reward check | `validator/src/main.rs` | DONE |
+| 1.1i | Fix LichenCoin `MAX_SUPPLY` docs (ERC-20 wrapper, 10B ceiling kept) | `contracts/lichencoin/src/lib.rs` | DONE |
 | 1.1j | Update `core/src/lib.rs` exports (new constants) | `core/src/lib.rs` | DONE |
 | 1.1k | Update RPC `getMetrics` + `getChainStatus` (total_minted, inflation_rate) | `rpc/src/lib.rs` | DONE |
 | 1.1l | Add supply cards to explorer (Total Supply, Minted, Inflation Rate) | `explorer/index.html`, `explorer/js/explorer.js` | DONE |
@@ -788,7 +788,7 @@ Research IBC-lite integration using commit certificates (Phase 1) + account stat
 | 1.1q | Epoch-based staker rewards (Solana model) | `core/src/consensus.rs`, `validator/src/main.rs` | DONE |
 | 1.1r | Update RPC inflation reporting for epoch model | `rpc/src/lib.rs` | DONE |
 | 1.1s | Fix production_readiness tests for epoch model | `core/tests/production_readiness.rs` | DONE |
-| 1.1t | Fix .molt domain expiry display (explorer, wallet, extension) | `explorer/js/address.js`, `wallet/js/identity.js`, `wallet/extension/src/popup/popup.js` | DONE |
+| 1.1t | Fix .lichen domain expiry display (explorer, wallet, extension) | `explorer/js/address.js`, `wallet/js/identity.js`, `wallet/extension/src/popup/popup.js` | DONE |
 | 1.1u | Fix developer portal SLOTS_PER_YEAR reference (63M→78.8M) | `developers/contracts.html` | DONE |
 
 #### Design Details (Task 1.1)
@@ -797,7 +797,7 @@ Research IBC-lite integration using commit certificates (Phase 1) + account stat
 - `INITIAL_INFLATION_RATE_BPS = 400` (4% annually)
 - `INFLATION_DECAY_RATE_BPS = 1500` (15% annual decay)
 - `TERMINAL_INFLATION_RATE_BPS = 15` (0.15% floor)
-- `GENESIS_SUPPLY_SHELLS = 500_000_000_000_000_000` (500M MOLT)
+- `GENESIS_SUPPLY_SPORES = 500_000_000_000_000_000` (500M LICN)
 
 **Epoch-based reward distribution (Solana model):**
 
@@ -810,16 +810,16 @@ SLOTS_PER_EPOCH = 432,000 (~2 days at 400ms/slot)
 epoch_mint = total_supply × inflation_rate_bps × SLOTS_PER_EPOCH / (10000 × SLOTS_PER_YEAR)
 ```
 
-Year 0: ~109,589 MOLT per epoch (~20M MOLT/yr ÷ ~182.5 epochs/yr)
-Year 1: ~93,101 MOLT/epoch
-Year 5: ~56,461 MOLT/epoch
-Year 10: ~28,427 MOLT/epoch
+Year 0: ~109,589 LICN per epoch (~20M LICN/yr ÷ ~182.5 epochs/yr)
+Year 1: ~93,101 LICN/epoch
+Year 5: ~56,461 LICN/epoch
+Year 10: ~28,427 LICN/epoch
 
 **At each epoch boundary:**
-1. `compute_epoch_mint(epoch_start, total_supply)` calculates total new shells
+1. `compute_epoch_mint(epoch_start, total_supply)` calculates total new spores
 2. `distribute_epoch_staker_rewards()` splits proportionally to active stake
 3. Each validator's share routes through `add_reward()` → `claim_rewards()` vesting pipeline
-4. ReefStake receives 10% of epoch mint (REEFSTAKE_BLOCK_SHARE_BPS = 1000)
+4. MossStake receives 10% of epoch mint (MOSSSTAKE_BLOCK_SHARE_BPS = 1000)
 5. Remaining 90% distributed to stakers by stake weight
 
 **Per-block:** `distribute_block_reward()` returns 0 (tracking only). Block producers earn
@@ -937,7 +937,7 @@ pub struct MerkleProof {
 
 **Rent tiers** (computed in `compute_graduated_rent`):
 - ≤2048 bytes (free threshold): 0 rent
-- 2048–10KB: 1× base rate (5000 shells/byte/epoch)
+- 2048–10KB: 1× base rate (5000 spores/byte/epoch)
 - 10KB–50KB: 2× base rate
 - >50KB: 4× base rate
 
@@ -976,7 +976,7 @@ pub struct NonceState {
 |-----|-----------|----------|-------------|
 | 0 | Initialize | `[funder, nonce_account]` | Create nonce account, store current blockhash |
 | 1 | Advance | `[authority, nonce_account]` | Update stored blockhash to latest (consumes nonce) |
-| 2 | Withdraw | `[authority, nonce_account, recipient]` | Withdraw shells from nonce account |
+| 2 | Withdraw | `[authority, nonce_account, recipient]` | Withdraw spores from nonce account |
 | 3 | Authorize | `[authority, nonce_account]` | Change authority (new authority in data[33..65]) |
 
 **Durable transaction flow:**
@@ -986,7 +986,7 @@ pub struct NonceState {
    a nonce account whose stored blockhash matches → valid (nonce consumed by advance instruction)
 4. Both `process_transaction_inner` and simulation path support durable nonce check
 
-**Constants:** `NONCE_ACCOUNT_SIZE = 104` bytes, `NONCE_ACCOUNT_RENT = 104 × 5000 = 520_000` shells
+**Constants:** `NONCE_ACCOUNT_SIZE = 104` bytes, `NONCE_ACCOUNT_RENT = 104 × 5000 = 520_000` spores
 
 **Files modified:** `core/src/processor.rs`, `core/src/lib.rs`
 
@@ -1007,7 +1007,7 @@ magic-value approach. No typed distinction between native, EVM, and Solana-compa
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum TransactionType {
     #[default]
-    Native,       // Standard MoltChain transaction (Ed25519)
+    Native,       // Standard Lichen transaction (Ed25519)
     Evm,          // EVM-wrapped transaction (ECDSA, EVM nonce replay protection)
     SolanaCompat, // Submitted via Solana-format RPC (tagged for metrics)
 }
@@ -1045,14 +1045,14 @@ After:  if tx.is_evm() { process_evm... }  // checks enum OR legacy sentinel
 **Status:** DONE
 
 **Problem:** The `/solana` endpoint label implied full Solana compatibility. In reality, it only
-accepts MoltChain transactions in Solana wire format — native Solana transactions are not supported.
+accepts Lichen transactions in Solana wire format — native Solana transactions are not supported.
 
 **Solution:**
 - Canonical endpoint renamed from `/solana` to `/solana-compat`
 - Legacy `/solana` alias kept for backward compatibility (same handler)
 - All tests updated to use `/solana-compat`; new test verifies `/solana` alias still works
 - Documentation updated across SKILL.md, copilot-instructions.md, developer portal, RPC guide, audit docs
-- Clear disclaimer: "Accepts MoltChain transactions in Solana wire format. Does not accept native Solana transactions."
+- Clear disclaimer: "Accepts Lichen transactions in Solana wire format. Does not accept native Solana transactions."
 
 **Files modified:** `rpc/src/lib.rs` (route), `rpc/tests/compat_routes.rs` (new alias test),
 `rpc/tests/rpc_full_coverage.rs`, `rpc/tests/rpc_handlers.rs`, `SKILL.md`,
@@ -1131,13 +1131,13 @@ re-entrancy is protected via depth tracking.
   (10 bytes). Requires the signer to be the stored governance authority.
 - **8 governable parameters** (param_ids 0–7): base_fee, fee_burn_percent, fee_producer_percent,
   fee_voters_percent, fee_treasury_percent, fee_community_percent, min_validator_stake, epoch_slots.
-- **Validation**: Each param has range checks (e.g., percentages 0–100, base_fee > 0, stake ≥ 1 MOLT).
+- **Validation**: Each param has range checks (e.g., percentages 0–100, base_fee > 0, stake ≥ 1 LICN).
 - **Queuing mechanism**: Changes are queued in RocksDB (`pending_gov_{id}`) and applied at the next
   epoch boundary. A newer submission for the same param_id overwrites the previous pending value.
 - **Epoch boundary application**: `state.apply_pending_governance_changes()` called by the validator
   at each epoch boundary. Updates FeeConfig for fee params, sets min_validator_stake and epoch_slots
   in state. Clears pending queue after application.
-- **Governance authority**: Stored in CF_STATS (`governance_authority`). Can be set to a MoltDAO
+- **Governance authority**: Stored in CF_STATS (`governance_authority`). Can be set to a LichenDAO
   contract address or designated multisig.
 
 **Files modified:** `core/src/processor.rs`, `core/src/state.rs`, `core/src/lib.rs`,
@@ -1205,14 +1205,14 @@ TxResult integration). 1,476 total workspace tests passing.
 had to hardcode the base fee.
 
 **Solution:** New `estimateTransactionFee` RPC method that accepts a base64-encoded transaction
-and returns the computed fee, MOLT equivalent, and compute units — without executing it.
+and returns the computed fee, LICN equivalent, and compute units — without executing it.
 
 **Request:** `estimateTransactionFee([base64_encoded_tx])` or `estimateTransactionFee([base64_tx, "json"])`
 **Response:**
 ```json
 {
-  "fee_shells": 1000000,
-  "fee_molt": 0.001,
+  "fee_spores": 1000000,
+  "fee_licn": 0.001,
   "compute_units": 150
 }
 ```
@@ -1416,7 +1416,7 @@ Additional validator infrastructure hardening not covered by the original 39 fin
 | 5.2 | DeregisterValidator (opcode 31) | Voluntary validator exit instruction. Sets validator inactive in stake pool, queues `PendingValidatorChange::Remove` for next epoch boundary. Idempotent for already-inactive validators. | DONE |
 | 5.3 | Commit certificate cross-reference | Block receiver verifies `validators_hash` in received blocks matches the local epoch-frozen validator set hash. Prevents blocks signed by a stale or forked validator set from being accepted. | DONE |
 | 5.4 | Clippy CI compliance | Fixed 4 warnings: `len_zero` (rpc), `needless_range_loop` (evm), `assertions_on_constants` (contract), manual `abs_diff` (consensus). Zero warnings on `cargo clippy --workspace -- -D warnings`. | DONE |
-| 5.5 | Start script cleanup | Renamed JOINING → BOOTSTRAP in moltchain-start.sh for consistency with `--bootstrap` flag. Updated contract count (26 → 29). | DONE |
+| 5.5 | Start script cleanup | Renamed JOINING → BOOTSTRAP in lichen-start.sh for consistency with `--bootstrap` flag. Updated contract count (26 → 29). | DONE |
 
 **New types (v0.4.5):**
 - `ValidatorChangeType` enum: `Add`, `Remove`, `StakeUpdate`
@@ -1440,7 +1440,7 @@ Additional validator infrastructure hardening not covered by the original 39 fin
 `core/src/processor.rs`, `core/src/block.rs`, `core/src/genesis.rs`, `core/src/evm.rs`,
 `core/src/contract.rs`, `core/tests/basic_test.rs`, `core/tests/production_readiness.rs`,
 `validator/src/consensus.rs`, `validator/src/main.rs`, `rpc/tests/rpc_full_coverage.rs`,
-`moltchain-start.sh`
+`lichen-start.sh`
 
 ---
 
@@ -1448,7 +1448,7 @@ Additional validator infrastructure hardening not covered by the original 39 fin
 
 ### Consensus
 
-| Feature | Cosmos/CometBFT | Solana | Ethereum | MoltChain (current) | MoltChain (target) |
+| Feature | Cosmos/CometBFT | Solana | Ethereum | Lichen (current) | Lichen (target) |
 |---------|-----------------|--------|----------|---------------------|-------------------|
 | Finality | Instant (1 block) | ~32 slots | ~15 min (PoS: 2 epochs) | Instant BFT commit + commit cert | Instant + commit cert |
 | Commit proof | Aggregated sigs in block | Vote accounts | Sync committees | CommitSignature array | CommitSignature array |
@@ -1458,7 +1458,7 @@ Additional validator infrastructure hardening not covered by the original 39 fin
 
 ### Economics
 
-| Feature | Cosmos | Solana | Ethereum | MoltChain (current) | MoltChain (target) |
+| Feature | Cosmos | Solana | Ethereum | Lichen (current) | Lichen (target) |
 |---------|--------|--------|----------|---------------------|-------------------|
 | Supply | Inflationary | Inflationary | Inflationary | Fixed 1B | 500M genesis + inflation |
 | Inflation | 7–20% dynamic | 8% → 1.5% | ~0.5% | 0% | 4% → 0.15% |
@@ -1468,7 +1468,7 @@ Additional validator infrastructure hardening not covered by the original 39 fin
 
 ### State
 
-| Feature | Cosmos | Solana | Ethereum | MoltChain (current) | MoltChain (target) |
+| Feature | Cosmos | Solana | Ethereum | Lichen (current) | Lichen (target) |
 |---------|--------|--------|----------|---------------------|-------------------|
 | State root | IAVL app hash | Bank hash | MPT root | Binary Merkle | Binary Merkle (with proofs) |
 | Proofs | IAVL proofs | Account proofs | Merkle proofs | O(log N) inclusion | O(log N) inclusion |
@@ -1487,38 +1487,38 @@ Additional validator infrastructure hardening not covered by the original 39 fin
 | 2026-03-15 | **Epoch-based staker rewards (Solana model)** | Per-slot block producer rewards replaced with epoch boundary distribution to ALL stakers. Prevents validator income asymmetry at low validator counts. |
 | 2026-03-15 | **Block commit certificates (Task 1.2)** | CommitSignature struct added to Block. Precommit signatures retained in consensus engine. verify_commit() checks 2/3+ stake supermajority via Ed25519 signatures. P2P propagates commit sigs. RPC exposes getBlockCommit endpoint. 10 new tests (7 block + 3 consensus), 1,416 total passing. |
 | 2026-03-15 | **Merkle proofs + state proofs (Task 1.3)** | MerkleProof and AccountProof types with O(log N) proof generation. build_merkle_tree retains all levels. get_account_proof generates proof from CF_MERKLE_LEAVES cache. getAccountProof RPC endpoint. 15 new tests, 1,431 total passing. Phase 1 critical fixes COMPLETE. |
-| 2026-03-15 | **.molt domain expiry display enhanced** | Explorer, wallet, and extension now show remaining days, expiry date, and status badges with color-coded warnings. Fixed 63M→78.8M SLOTS_PER_YEAR in developer docs. |
+| 2026-03-15 | **.lichen domain expiry display enhanced** | Explorer, wallet, and extension now show remaining days, expiry date, and status badges with color-coded warnings. Fixed 63M→78.8M SLOTS_PER_YEAR in developer docs. |
 | 2026-03-15 | **State growth management / dormancy rent (Task 2.4)** | Graduated epoch-based rent with 3 tiers (1×/2×/4× above 2KB free threshold). Dormancy after 2 missed epochs — accounts persist but excluded from state root. Reactivation via transfer. 11 new tests, 1,442 total passing. |
 | 2026-03-15 | **Durable nonce system (Task 2.5)** | System instruction type 28 with sub-opcodes: Initialize(0), Advance(1), Withdraw(2), Authorize(3). NonceState stored in account data (authority + blockhash + fee_calculator). Durable transaction validation: if blockhash not recent, checks nonce account in first instruction. 9 new tests, 1,453 total passing. |
 | 2026-03-15 | **EVM transaction envelope type (Task 2.6)** | TransactionType enum (Native/Evm/SolanaCompat) replaces sentinel blockhash detection. is_evm() backward-compat: checks enum OR legacy sentinel. new_evm() constructor. Wire format adds 4 bytes (u32 LE variant). Golden vectors and SDK wire format tests updated. 1,453 total passing. |
-| 2026-03-15 | **Rename Solana compat endpoint (Task 2.7)** | Canonical `/solana` → `/solana-compat`. Legacy alias preserved. Tests + docs updated. Clear disclaimer added: accepts MoltChain txs in Solana format only. 1,454 total passing. |
+| 2026-03-15 | **Rename Solana compat endpoint (Task 2.7)** | Canonical `/solana` → `/solana-compat`. Legacy alias preserved. Tests + docs updated. Clear disclaimer added: accepts Lichen txs in Solana format only. 1,454 total passing. |
 | 2026-03-15 | **Document contract dispatch (Task 2.8)** | Enhanced developer portal with named-export vs opcode-dispatch rationale, recommendation to use named exports for new contracts, migration plan noted. |
 | 2026-03-15 | **Cross-contract invocation RESOLVED (Task 2.9)** | Already fully implemented: host_cross_contract_call runtime (~300 lines), SDK crosscall module, 425 lines of tests. All acceptance criteria met. |
 | 2026-03-15 | **DHT peer discovery + PEX (Task 2.10)** | Kademlia DHT (pre-existing 301-line module) integrated into P2PNetwork. SHA-256 node IDs. DHT updated on PeerInfo and ValidatorAnnounce. PeerRequest responses merge PeerManager + DHT closest(). PEX already existed. 1,454 total passing. |
 | 2026-03-15 | **Governance parameter changes (Task 2.11)** | System instruction type 29 queues changes for epoch-boundary application. 8 governable params (base_fee, 5 fee percentages, min_validator_stake, epoch_slots). Governance authority stored in state. 11 new tests, 1,465 total passing. |
 | 2026-03-15 | **Compute gas metering (Task 2.12)** | Per-instruction CU costs for all 29 native instruction types. TxResult.compute_units_used field. compute_units_for_tx() sums native CU. ZK verify = 50K CU, deploy = 10K, transfer = 150. Simulation includes native + WASM CU. 11 new tests, 1,476 total passing. |
 | 2026-03-15 | **Wire gas display to explorer (Task 2.13)** | RPC tx_to_rpc_json() includes compute_units field. Explorer transaction.html has CU row in fee details. JS reads tx.compute_units and formats with CU suffix. |
-| 2026-03-15 | **Gas estimation RPC (Task 2.14)** | estimateTransactionFee accepts base64 tx, returns fee_shells + fee_molt + compute_units without execution. Rated as "Expensive" for rate limiting. 2 new tests, 1,478 total passing. Phase 2 COMPLETE. |
+| 2026-03-15 | **Gas estimation RPC (Task 2.14)** | estimateTransactionFee accepts base64 tx, returns fee_spores + fee_licn + compute_units without execution. Rated as "Expensive" for rate limiting. 2 new tests, 1,478 total passing. Phase 2 COMPLETE. |
 | 2026-03-16 | **Deterministic BFT timestamps (Task 3.2)** | CometBFT BFT Time model. Precommit votes include wall-clock timestamp in signed message. Block proposer computes stake-weighted median from parent's commit signatures. Monotonicity enforced (≥ parent_timestamp + 1). 30s future tolerance for timestamp validation. Backward-compatible via serde(default). RPC getBlockCommit includes per-vote timestamp + bft_timestamp. 5 new tests, 1,483 total passing. |
 | 2026-03-16 | **Contract upgrade timelock (Task 3.3)** | Optional N-epoch timelock for contract upgrades. SetUpgradeTimelock, ExecuteUpgrade, VetoUpgrade instructions. Governance authority can cancel pending upgrades. Cannot double-stage or remove timelock while upgrade pending. WASM validation at submission. Fixed pooled ContractRuntime metering reuse bug. 11 new tests, 1,494 total passing. |
 | 2026-03-16 | **EVM precompiles + eth_getLogs (Task 3.4)** | Documented 9 standard Ethereum precompiles (0x01–0x09) already supported via REVM PRAGUE. Added EvmLog/EvmLogEntry structs for structured log capture. New CF_EVM_LOGS_BY_SLOT per-slot index. Two-phase eth_getLogs: structured EVM logs first, native ContractEvent fallback. EIP-1474 topic filtering (wildcard, exact, OR-array). address filter (single + array). eth_getTransactionReceipt returns structured logs. 26 new tests, 1,531 total passing. |
 | 2026-03-16 | **WASM memory limit increase (Task 3.5)** | MAX_WASM_MEMORY_PAGES raised from 256 (16MB) to 1024 (64MB). New DEFAULT_WASM_MEMORY_PAGES = 16 (1MB) ensures contracts start with adequate memory. Auto-grow at instantiation if declared < 16 pages. Both constants pub-exported for SDK use. 7 new tests, 1,538 total passing. |
 | 2026-03-16 | **Oracle multi-source attestation (Task 3.6)** | Native system instruction type 30 for validator oracle price attestation. OracleAttestation and OracleConsensusPrice types stored in CF_STATS. Quorum: strict >2/3 active stake (Tendermint convention). Price algorithm: stake-weighted median (same as BFT timestamps). Staleness: 9,000 slots (~1hr). Asset names 1–16 bytes UTF-8. 4 new state.rs storage methods. 15 new tests (11 oracle + 4 median), 1,550 total passing. |
-| 2026-03-16 | **Express lane removal (Task 3.7)** | Removed express_queue and reputation-based effective_priority multiplier from mempool. All transactions now ordered strictly by fee then FIFO. Removed validator reputation lookups for P2P and RPC tx paths. Updated developer portal (moltyid, architecture, changelog). 3 tests replaced, 1,550 total passing. |
+| 2026-03-16 | **Express lane removal (Task 3.7)** | Removed express_queue and reputation-based effective_priority multiplier from mempool. All transactions now ordered strictly by fee then FIFO. Removed validator reputation lookups for P2P and RPC tx paths. Updated developer portal (lichenid, architecture, changelog). 3 tests replaced, 1,550 total passing. |
 | 2026-03-16 | **WebSocket keepalive standard (Task 3.8)** | RFC 6455 keepalive: WS_PING_INTERVAL_SECS=30 constant, Arc<AtomicBool> pong_pending flag for dead-connection detection, strict single-pong timeout. Updated ws-reference.html keepalive docs. 3 new tests, 1,553 total passing. |
 | 2026-03-16 | **Historical state queries / archive mode (Task 3.9)** | Write-through archive snapshots via CF_ACCOUNT_SNAPSHOTS (pubkey+slot key). Hooks in put_account_with_hint (direct) and StateBatch::put_account (batch). O(1) reverse-seek get_account_at_slot. Pruning + oldest_snapshot_slot. RPC getAccountAtSlot endpoint. Arc<AtomicBool> archive_mode toggle. 15 new tests (11 state + 4 RPC), 1,568 total passing. |
 | 2026-03-16 | **Payload type envelope (Task 3.10)** | Wire envelope format: [0x4D,0x54] magic + version byte + type byte + bincode payload. Transaction::to_wire() replaces bincode::serialize at 13 encode sites (CLI 10, SDK 1, validator 1, custody 1). Transaction::from_wire() three-format decoder (envelope → legacy bincode → JSON). decode_transaction_bytes() centralizes all 7+ RPC decode sites. 14 new tests (11 core wire_format + 3 RPC integration), 1,582 total passing. |
 | 2026-03-16 | **TOFU certificate rotation (Task 3.11)** | CertRotation P2P gossip message with old_fingerprint, new_fingerprint, new_cert_der, rotation_proof, timestamp. PeerFingerprintStore.apply_rotation() validates: old FP match → verify_self_signed_cert → FP/cert consistency → 1-hour rate limit. Successful rotations re-gossipped to all peers. PeerManager.rotate_local_certificate() for node-initiated rotation. 6 new tests, 1,595 total passing. |
 | 2026-03-16 | **Eclipse defense AS-level (Task 3.12)** | Lightweight /16 IPv4 and /32 IPv6 prefix bucketing as ASN approximation. MAX_PEERS_PER_ASN_BUCKET=4. asn_bucket() + same_asn_bucket() utilities. Hooked into connect_peer() after existing /24 subnet check. Zero external dependencies. 7 new tests, 1,595 total passing. Phase 3 COMPLETE. |
 | 2026-03-16 | **Transaction hash determinism (Task 4.1)** | Dual hash exposure: Transaction::hash() (txid, includes sigs) + Transaction::message_hash() (signing hash, sig-independent). RPC getTransaction includes both fields. 8 new wire_format tests + 1 RPC test. Matches Bitcoin wtxid and Cosmos SHA-256(tx_bytes) convention. 1,613 total passing. |
-| 2026-03-16 | **Fee discount MEV audit (Task 4.2)** | Reputation-based fee discounts (5–10%) REMOVED. No real chain uses identity-based fee discounts. All users now pay flat fees. apply_reputation_fee_discount() deprecated (returns base_fee unchanged). MoltyID reputation kept for display/rate-limiting only. |
+| 2026-03-16 | **Fee discount MEV audit (Task 4.2)** | Reputation-based fee discounts (5–10%) REMOVED. No real chain uses identity-based fee discounts. All users now pay flat fees. apply_reputation_fee_discount() deprecated (returns base_fee unchanged). LichenID reputation kept for display/rate-limiting only. |
 | 2026-03-16 | **Contract storage protocol enforcement (Task 4.3)** | Per-byte compute cost (COMPUTE_STORAGE_WRITE_PER_BYTE=1) + MAX_TOTAL_STORAGE_BYTES=10MB cap enforced at host function level. storage_bytes_used tracked in ContractContext, updated on writes and deletes. 5 new tests, 1,613 total passing. |
-| 2026-03-16 | **IBC exploration (Task 4.4)** | Full research doc at docs/strategy/IBC_EXPLORATION.md. MoltChain has IBC prerequisites (commit certs, state proofs, BFT finality). Missing: LC module, ICS-3/4 handshake, ICS-20. Decision: Full IBC deferred — MoltBridge provides adequate cross-chain for current phase. Phase 4 COMPLETE. |
+| 2026-03-16 | **IBC exploration (Task 4.4)** | Full research doc at docs/strategy/IBC_EXPLORATION.md. Lichen has IBC prerequisites (commit certs, state proofs, BFT finality). Missing: LC module, ICS-3/4 handshake, ICS-20. Decision: Full IBC deferred — LichenBridge provides adequate cross-chain for current phase. Phase 4 COMPLETE. |
 | 2026-03-18 | **Epoch-frozen validator sets (Task 5.1)** | Validator set changes deferred to epoch boundaries. New `consensus_set()` method filters pending validators. PendingValidatorChange queue in CF_PENDING_VALIDATOR_CHANGES. ValidatorAnnounce sets `pending_activation: true` for mid-epoch joins. Epoch boundary activates pending + processes removals. Phase 5 hardening. |
 | 2026-03-18 | **DeregisterValidator opcode 31 (Task 5.2)** | System instruction type 31 for voluntary validator deregistration. Sets validator inactive in stake pool, queues Remove change for next epoch. Idempotent — returns Ok if already inactive. 500 CU cost. |
 | 2026-03-18 | **Commit certificate cross-reference (Task 5.3)** | Block receiver validates `validators_hash` against local epoch-frozen set. Prevents stale/forked validator set blocks from being accepted. |
 | 2026-03-18 | **Clippy CI compliance (Task 5.4)** | Fixed 4 warnings across workspace. `cargo clippy --workspace -- -D warnings` clean. |
-| 2026-03-18 | **Start script cleanup (Task 5.5)** | JOINING → BOOTSTRAP rename in moltchain-start.sh. Contract count 26 → 29. Phase 5 COMPLETE. Plan CLOSED. |
+| 2026-03-18 | **Start script cleanup (Task 5.5)** | JOINING → BOOTSTRAP rename in lichen-start.sh. Contract count 26 → 29. Phase 5 COMPLETE. Plan CLOSED. |
 
 ---
 

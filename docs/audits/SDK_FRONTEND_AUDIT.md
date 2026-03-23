@@ -1,4 +1,4 @@
-# MoltChain SDK & Frontend — Comprehensive File-by-File Audit
+# Lichen SDK & Frontend — Comprehensive File-by-File Audit
 
 **Scope:** All SDK files (JS, Python, Rust, DEX, Core) and all frontend files (DEX, Wallet, Explorer, Faucet, Shared).  
 **Method:** Full source read of every file, line by line.  
@@ -9,7 +9,7 @@
 ## Table of Contents
 
 1. [JS SDK (sdk/js/src/)](#1-js-sdk)
-2. [Python SDK (sdk/python/moltchain/)](#2-python-sdk)
+2. [Python SDK (sdk/python/lichen/)](#2-python-sdk)
 3. [Rust SDK (sdk/rust/src/)](#3-rust-sdk)
 4. [DEX SDK (dex/sdk/src/)](#4-dex-sdk)
 5. [Core SDK (sdk/src/)](#5-core-sdk)
@@ -64,7 +64,7 @@
 
 | # | Severity | Line(s) | Finding |
 |---|----------|---------|---------|
-| JS-14 | `[CRITICAL]` | ~30-40 | `amount` field is typed as `number` (JavaScript IEEE 754 float). Values above `Number.MAX_SAFE_INTEGER` (2^53 ≈ 9 × 10^15) lose precision. Since 1 MOLT = 1e9 shells, amounts above ~9,007,199 MOLT will be corrupted. Must use `bigint` or string. |
+| JS-14 | `[CRITICAL]` | ~30-40 | `amount` field is typed as `number` (JavaScript IEEE 754 float). Values above `Number.MAX_SAFE_INTEGER` (2^53 ≈ 9 × 10^15) lose precision. Since 1 LICN = 1e9 spores, amounts above ~9,007,199 LICN will be corrupted. Must use `bigint` or string. |
 | JS-15 | `[HIGH]` | ~55-70 | `Transaction.sign(keypair)` signs the JSON-serialized message. The serialization order is not canonicalized — if `JSON.stringify` key ordering changes between environments (e.g., V8 vs. SpiderMonkey for integer keys), signatures will be non-portable. |
 | JS-16 | `[MEDIUM]` | ~80-90 | `serialize()` returns a JSON string of the entire transaction including signature. This is not bincode format — differs from what the validator expects if it uses Rust's `bincode::deserialize`. The connection layer re-wraps this in base64, adding an extra encoding layer. |
 
@@ -77,7 +77,7 @@
 
 ---
 
-## 2. Python SDK (`sdk/python/moltchain/`)
+## 2. Python SDK (`sdk/python/lichen/`)
 
 ### `__init__.py`
 
@@ -92,7 +92,7 @@
 | PY-2 | `[HIGH]` | — | Missing RPC methods vs JS SDK: `getProgramAccounts`, `simulateTransaction`, `getContractAbi`, `setContractAbi`, `getTokenSupply`, `getEpochInfo`. Python SDK is incomplete — consumers cannot perform program account scanning or simulation. |
 | PY-3 | `[HIGH]` | ~350-380 | `subscribe_account()` / `subscribe_signature()` use `asyncio.wait_for(timeout=10)` but have no reconnection or re-subscription logic. If the WebSocket drops, subscriptions silently fail. |
 | PY-4 | `[MEDIUM]` | ~60-80 | `send_transaction()` serialises via `json.dumps()` + base64. Same JSON vs bincode mismatch as JS SDK (JS-16). |
-| PY-5 | `[MEDIUM]` | ~100 | `get_balance()` returns raw integer (shells). JS SDK returns the same, but the Python SDK docstring says "Returns balance in MOLT" — misleading documentation. |
+| PY-5 | `[MEDIUM]` | ~100 | `get_balance()` returns raw integer (spores). JS SDK returns the same, but the Python SDK docstring says "Returns balance in LICN" — misleading documentation. |
 | PY-6 | `[LOW]` | ~420-440 | WebSocket `_ws_connect()` hardcodes `ws://` scheme. No TLS (`wss://`) support. Production deployments over the internet are unencrypted. |
 
 ### `keypair.py`
@@ -137,7 +137,7 @@
 |---|----------|---------|---------|
 | RS-2 | `[HIGH]` | — | **No WebSocket support at all.** The Rust SDK cannot subscribe to account changes, new blocks, or signature confirmations. Feature parity gap with JS and Python SDKs. |
 | RS-3 | `[HIGH]` | ~80-100 | `send_transaction()` uses `bincode::serialize()` for the transaction body and sends it as a hex string. This is a different wire format than JS/Python (which use JSON + base64). A transaction built with the Rust SDK cannot be sent through the JS SDK's connection and vice versa. |
-| RS-4 | `[MEDIUM]` | ~150-170 | `get_balance()` returns `u64`. Correct for shell amounts, but max value is 18.4 × 10^18 shells = 18.4 billion MOLT. This is sufficient for any realistic supply but should be documented. |
+| RS-4 | `[MEDIUM]` | ~150-170 | `get_balance()` returns `u64`. Correct for spore amounts, but max value is 18.4 × 10^18 spores = 18.4 billion LICN. This is sufficient for any realistic supply but should be documented. |
 | RS-5 | `[MEDIUM]` | ~200-220 | Error handling uses `reqwest::Error` wrapped in a custom `SdkError`. HTTP status codes are not differentiated — a 429 (rate limit) is treated the same as a 500 (server error). |
 | RS-6 | `[LOW]` | ~300-350 | Several methods clone strings unnecessarily (`address.to_string()` when `&str` would suffice). Minor efficiency issue. |
 
@@ -239,7 +239,7 @@
 | # | Severity | Line(s) | Finding |
 |---|----------|---------|---------|
 | CORE-1 | `[HIGH]` | ~30-50 | `host_call(ptr, len)` is declared `extern "C"` and is the sole FFI bridge to the runtime. The return value convention is `(ptr << 32) | len` packed into a `u64`. If the host returns a length > 2^32, this silently truncates. No length validation in `unpack_result()`. |
-| CORE-2 | `[HIGH]` | ~100-130 | `transfer(to, amount)` writes a JSON command `{"op":"transfer","to":"...","amount":N}` to the host. The amount is a `u64` serialized as a JSON number. JSON numbers in many parsers are limited to f64 precision (2^53), so amounts above ~9 quadrillion shells could be rounded by the host's JSON parser. Should use string representation. |
+| CORE-2 | `[HIGH]` | ~100-130 | `transfer(to, amount)` writes a JSON command `{"op":"transfer","to":"...","amount":N}` to the host. The amount is a `u64` serialized as a JSON number. JSON numbers in many parsers are limited to f64 precision (2^53), so amounts above ~9 quadrillion spores could be rounded by the host's JSON parser. Should use string representation. |
 | CORE-3 | `[MEDIUM]` | ~200-230 | `emit_event(event_type, data)` serializes `data` as JSON string. No maximum size check — a contract could emit a multi-megabyte event, potentially DoS-ing the event storage. |
 | CORE-4 | `[MEDIUM]` | ~250-270 | `get_account_info(address)` parses the host response as JSON. If the host returns malformed JSON, the contract panics with an opaque `unwrap()` error. Should return `Result`. |
 | CORE-5 | `[LOW]` | ~400-447 | `log(msg)` writes to host. No log level support (debug/info/warn/error). |
@@ -287,7 +287,7 @@
 | DEX-5 | `[HIGH]` | ~850-950 | `encodeTransactionMessage()` — The bincode serialization implementation must exactly match the Rust validator's `bincode::deserialize`. The code writes `recent_blockhash` as raw hex-decoded bytes (32 bytes), but if the RPC returns the blockhash as base58 instead of hex, the decoding will produce garbage. There is no format detection or validation. |
 | DEX-6 | `[HIGH]` | ~630-640 | `buildChallengeResolutionArgs()` — `evidence_hash` uses the same weak XOR fold as `question_hash` when a string is provided. If `evidence` is a Uint8Array, it's used directly (which could be correct), but string evidence loses uniqueness through the XOR collision. |
 | DEX-7 | `[HIGH]` | ~4500-4520 | `nextMarketId` for initial liquidity is guessed from `total_markets + 1`. This is a race condition — if two users create markets simultaneously, both compute the same `nextMarketId` and one's liquidity goes to the wrong market. The create+liquidity should be atomic or the market ID should come from the create receipt. |
-| DEX-8 | `[MEDIUM]` | ~750-810 | ClawPump (Launchpad) builders (`buildCPCreateTokenArgs`, `buildCPBuyArgs`, `buildCPSellArgs`) use a **different ABI convention** than all other contract builders. They use named function ABI (JSON fields like `{"buyer":"...","token_id":1}`) instead of opcode-byte-buffer serialization. This inconsistency means the contract dispatch must handle two different serialization formats. |
+| DEX-8 | `[MEDIUM]` | ~750-810 | SporePump (Launchpad) builders (`buildCPCreateTokenArgs`, `buildCPBuyArgs`, `buildCPSellArgs`) use a **different ABI convention** than all other contract builders. They use named function ABI (JSON fields like `{"buyer":"...","token_id":1}`) instead of opcode-byte-buffer serialization. This inconsistency means the contract dispatch must handle two different serialization formats. |
 | DEX-9 | `[MEDIUM]` | ~1350-1430 | TradingView `getBars()` custom datafeed — `onHistoryCallback` is called with bars, but if the API returns zero bars, `noData` is set to `true` and `onHistoryCallback([], {noData: true})` is called. If TradingView calls `getBars` again with the same range, it creates an infinite loop of no-data callbacks. |
 | DEX-10 | `[MEDIUM]` | ~1400-1420 | `streamBarUpdate()` updates the last candle in the TradingView series. If a new candle period starts between polls (e.g., a new 1-minute candle), the function extends the previous candle instead of creating a new one. The `time` field is not checked against the current candle period. |
 | DEX-11 | `[MEDIUM]` | ~2100-2150 | Binance WebSocket price feed (`connectBinancePriceFeed`) connects to `wss://stream.binance.com:9443/ws`. CORS and content security policies may block this in production. No CSP meta tag accommodation. |
@@ -297,7 +297,7 @@
 | DEX-15 | `[MEDIUM]` | ~3685-3700 | Parameter change proposal path — same issue as DEX-14. UI lets user fill in parameter name/value but submission blocked. |
 | DEX-16 | `[MEDIUM]` | ~4380-4400 | `updatePredictCalc()` CPMM formula uses `m.outcomes[outcomeIdx]?.pool_yes` for reserve values, but the API may not return `pool_yes` field. Fallback to linear pricing silently changes the trade estimate with no user indication that the shown price is approximate. |
 | DEX-17 | `[LOW]` | ~580, 640 | Multiple `catch {}` empty catch blocks throughout the file (at least 15 instances). Errors are completely swallowed with no logging. Makes debugging production issues very difficult. |
-| DEX-18 | `[LOW]` | ~960-970 | `MOLT_GENESIS_PRICE = $0.10` hardcoded. Used for USD conversion calculations. If the price changes, all USD values shown are incorrect until the hardcoded value is updated. |
+| DEX-18 | `[LOW]` | ~960-970 | `LICHEN_GENESIS_PRICE = $0.10` hardcoded. Used for USD conversion calculations. If the price changes, all USD values shown are incorrect until the hardcoded value is updated. |
 | DEX-19 | `[LOW]` | ~1500-1510 | Order modification via `buildModifyOrderArgs` — the inline edit UI allows modifying price and quantity but does not re-run the preflight validation checks (tick alignment, lot size, min notional, etc.) that the initial order form performs. |
 | DEX-20 | `[LOW]` | ~3060-3080 | Trade history CSV export — `toCSV()` does not escape commas or quotes in trade pair names. If a pair name contains a comma, the CSV will be malformed. |
 | DEX-21 | `[LOW]` | ~3900-3950 | Prediction market card rendering builds large HTML strings via template literals. Multiple `escapeHtml()` calls are correct for XSS prevention, but `m.pm_id` and `m.cat` are used in `data-*` attributes without escaping, potentially allowing attribute injection if the API returns crafted values. |
@@ -312,11 +312,11 @@
 |---|----------|---------|---------|
 | W-1 | `[HIGH]` | ~430-470 | `serializeMessageBincode()` — Critical bincode serializer for signing. This implementation must bit-for-bit match the Rust validator's `bincode::deserialize`. The function writes `recent_blockhash` by hex-decoding the string from RPC. If the blockhash is base58-encoded (as some RPCs return), the deserialization produces incorrect bytes, and the signature will be invalid. No format detection. |
 | W-2 | `[HIGH]` | ~2700-2730 | JSON keystore export (`exportKeystoreJSON`) includes the full 64-byte `secretKey` as a hex string in a downloaded `.json` file. This file is **not encrypted** — the private key is in plaintext. If the user's downloads folder is accessible, the key is exposed. The UI does warn about this, but the file itself provides no protection. |
-| W-3 | `[HIGH]` | ~950-1000 | Wallet state loading from `localStorage` — `loadSavedWallets()` reads `moltchain_wallets` and parses JSON. The `AUDIT-FIX W-9` check validates `address` is a non-empty string, but does not validate it's a valid base58 address. Malformed addresses in localStorage could cause downstream RPC errors. |
-| W-4 | `[MEDIUM]` | ~2500-2550 | `confirmSend()` — When sending MOLT (opcode 0), the amount is converted to shells via `Math.round(parseFloat(amount) * 1e9)`. `parseFloat` precision for large decimal numbers can lose significant digits. Same issue as JS-14. |
+| W-3 | `[HIGH]` | ~950-1000 | Wallet state loading from `localStorage` — `loadSavedWallets()` reads `lichen_wallets` and parses JSON. The `AUDIT-FIX W-9` check validates `address` is a non-empty string, but does not validate it's a valid base58 address. Malformed addresses in localStorage could cause downstream RPC errors. |
+| W-4 | `[MEDIUM]` | ~2500-2550 | `confirmSend()` — When sending LICN (opcode 0), the amount is converted to spores via `Math.round(parseFloat(amount) * 1e9)`. `parseFloat` precision for large decimal numbers can lose significant digits. Same issue as JS-14. |
 | W-5 | `[MEDIUM]` | ~2600-2620 | `confirmSend()` — Token transfer via contract Call instruction uses a JSON payload `{"op":"transfer","to":"...","amount":N}`. The `amount` is a number, not a string. If the token contract parses this with a JSON parser that uses f64, amounts > 2^53 are rounded. |
-| W-6 | `[MEDIUM]` | ~1200-1250 | `refreshBalance()` uses `MOCK_PRICES` object with hardcoded prices (MOLT=$0.10, mUSD=$1.00, wSOL=$100, wETH=$2000, REEF=$0.01). These are never updated from a price feed. All USD values shown on the dashboard are based on stale mock prices. |
-| W-7 | `[MEDIUM]` | ~1550-1600 | ReefStake modal — `stakeAmount` validation allows amounts down to `0.000000001 MOLT` (1 shell). On-chain minimum stake may be higher. No client-side minimum stake check. |
+| W-6 | `[MEDIUM]` | ~1200-1250 | `refreshBalance()` uses `MOCK_PRICES` object with hardcoded prices (LICN=$0.10, lUSD=$1.00, wSOL=$100, wETH=$2000, MOSS=$0.01). These are never updated from a price feed. All USD values shown on the dashboard are based on stale mock prices. |
+| W-7 | `[MEDIUM]` | ~1550-1600 | MossStake modal — `stakeAmount` validation allows amounts down to `0.000000001 LICN` (1 spore). On-chain minimum stake may be higher. No client-side minimum stake check. |
 | W-8 | `[MEDIUM]` | ~2300-2350 | Bridge deposit flow — deposit address is fetched from `${CUSTODY_URL}/api/v1/deposit/address`. The response is displayed with XSS protection (`AUDIT-FIX W-C2`), but the deposit address is not validated against expected format (e.g., Solana base58 or Ethereum 0x hex). A compromised custody server could return a malicious address. |
 | W-9 | `[MEDIUM]` | ~3100-3150 | Password modal system — `showPasswordModal()` returns a Promise that resolves on form submit. If the user dismisses via ESC or backdrop click, the Promise resolves with `null`. Some callers check for `null`, but others (e.g., `confirmSend` at ~2560) proceed without checking, which would crash on `decryptPrivateKey(null)`. |
 | W-10 | `[MEDIUM]` | ~3300-3350 | Export private key — The key is briefly displayed in a textarea. There is a `AUDIT-FIX W-2` note about using DOM event listeners instead of inline onclick, but the key remains visible in the DOM until the modal is manually closed. No auto-clear timeout. |
@@ -350,7 +350,7 @@
 |---|----------|---------|---------|
 | CR-1 | `[HIGH]` | ~100-140 | `encryptPrivateKey(key, password)` uses PBKDF2 with 100,000 iterations and SHA-256. This is below the OWASP 2023 recommendation of 600,000 iterations for PBKDF2-SHA256. With GPU acceleration, 100K iterations can be brute-forced at ~100K passwords/second. |
 | CR-2 | `[MEDIUM]` | ~200-230 | `generateMnemonic()` uses the built-in BIP39 word list (2048 words). The entropy is 128 bits (12 words). 24-word (256-bit) option is not provided. For high-value wallets, 12 words may be insufficient. |
-| CR-3 | `[MEDIUM]` | ~300-330 | `mnemonicToKeypair(mnemonic)` derives the keypair from the mnemonic using PBKDF2 with the mnemonic as password and `"moltchain"` as salt. This is **not** BIP39-standard (which uses `"mnemonic" + passphrase` as salt). Mnemonics are not compatible with standard BIP39 wallets (Phantom, MetaMask, etc.). |
+| CR-3 | `[MEDIUM]` | ~300-330 | `mnemonicToKeypair(mnemonic)` derives the keypair from the mnemonic using PBKDF2 with the mnemonic as password and `"lichen"` as salt. This is **not** BIP39-standard (which uses `"mnemonic" + passphrase` as salt). Mnemonics are not compatible with standard BIP39 wallets (Phantom, MetaMask, etc.). |
 | CR-4 | `[LOW]` | ~400-430 | AES-GCM encryption uses a 12-byte random IV. Correct. The IV is prepended to the ciphertext, which is standard. |
 | CR-5 | `[LOW]` | ~460-490 | `decryptPrivateKey(encryptedHex, password)` — If decryption fails (wrong password), it throws a generic error. No distinction between "wrong password" and "corrupted data". |
 
@@ -360,9 +360,9 @@
 
 | # | Severity | Line(s) | Finding |
 |---|----------|---------|---------|
-| EX-1 | `[MEDIUM]` | ~30-80 | `MoltChainRPC` class is **duplicated** here (also in wallet.js and dex.js). Three independent implementations of the same RPC client. Any bug fix must be applied in three places. Should be extracted to a shared module. |
+| EX-1 | `[MEDIUM]` | ~30-80 | `LichenRPC` class is **duplicated** here (also in wallet.js and dex.js). Three independent implementations of the same RPC client. Any bug fix must be applied in three places. Should be extracted to a shared module. |
 | EX-2 | `[MEDIUM]` | ~200-230 | Block explorer search — `search(query)` tries the query as a block number, transaction hash, and account address sequentially. If the query is a valid number that also happens to be a valid address prefix, it will match as a block number first. No disambiguation UI. |
-| EX-3 | `[MEDIUM]` | ~400-430 | MoltName resolution — `resolveName(name)` calls `getMoltNameOwner(name)`. If the name doesn't resolve, it falls through to trying the raw query as an address. No error feedback for "name not found". |
+| EX-3 | `[MEDIUM]` | ~400-430 | LichenName resolution — `resolveName(name)` calls `getLichenNameOwner(name)`. If the name doesn't resolve, it falls through to trying the raw query as an address. No error feedback for "name not found". |
 | EX-4 | `[LOW]` | ~600-650 | Dashboard stats auto-refresh every 10 seconds. No `clearInterval` on page navigation — continues polling in background. |
 | EX-5 | `[LOW]` | ~700-750 | Transaction detail page — `renderTransaction(tx)` displays instruction data as raw hex. No attempt to decode known opcodes into human-readable format. |
 
@@ -383,9 +383,9 @@
 | # | Severity | Line(s) | Finding |
 |---|----------|---------|---------|
 | WC-1 | `[CRITICAL]` | ~280-310 | **Fallback address generation** — When the wallet extension is not available, `generateFallbackAddress()` creates a "fake" address by generating 32 random bytes and encoding them with a custom base58 function (`randomBytes.map(b => BASE58_CHARS[b % 58])`). This is **not** a valid Ed25519 public key — there is no corresponding private key. Any funds sent to this address are permanently locked. The function should either refuse to generate a fallback or clearly mark it as "view-only". |
-| WC-2 | `[HIGH]` | ~150-180 | Cross-app wallet connection — `connectWallet()` attempts to read the keypair from `localStorage` in the wallet app's domain. Due to same-origin policy, this only works if the DEX and wallet are served from the same origin. If they're on different subdomains (e.g., `dex.moltchain.io` vs `wallet.moltchain.io`), the connection silently fails and falls back to WC-1's fake address. |
+| WC-2 | `[HIGH]` | ~150-180 | Cross-app wallet connection — `connectWallet()` attempts to read the keypair from `localStorage` in the wallet app's domain. Due to same-origin policy, this only works if the DEX and wallet are served from the same origin. If they're on different subdomains (e.g., `dex.lichen.network` vs `wallet.lichen.network`), the connection silently fails and falls back to WC-1's fake address. |
 | WC-3 | `[MEDIUM]` | ~50-80 | `WalletConnect.disconnect()` removes the wallet from localStorage but does not notify other tabs. If the user has the DEX open in another tab, it continues showing the old wallet as connected. Should use `BroadcastChannel` or `storage` event. |
-| WC-4 | `[LOW]` | ~200-230 | `isConnected()` checks `localStorage.getItem('moltchain_connected')`. This is a string `"true"` / `"false"` comparison. If the value is anything other than `"true"`, it returns false. Edge case: if another app writes a truthy non-`"true"` value, connection state is lost. |
+| WC-4 | `[LOW]` | ~200-230 | `isConnected()` checks `localStorage.getItem('lichen_connected')`. This is a string `"true"` / `"false"` comparison. If the value is anything other than `"true"`, it returns false. Edge case: if another app writes a truthy non-`"true"` value, connection state is lost. |
 
 ---
 
@@ -407,8 +407,8 @@
 | X-3 | `[HIGH]` | **Missing features across SDKs** — Rust SDK has no WebSocket support. Python SDK is missing 6+ RPC methods available in JS SDK. DEX SDK has no Rust or Python bindings. This creates a first-class/second-class SDK hierarchy where JS is the only fully-featured SDK. |
 | X-4 | `[HIGH]` | **Amount precision inconsistency** — JS SDK uses `number` (f64, loses precision at 2^53). Python SDK uses `int` (unlimited). Rust SDK uses `u64`. Core SDK uses `u64`. The same amount value can be represented differently across SDKs, leading to consensus failures. |
 | X-5 | `[MEDIUM]` | **System program ID representation** — JS SDK uses base58 string `'11111111111111111111111111111111'`. Python SDK uses `b'\x00' * 32`. Rust SDK uses `Pubkey([0u8; 32])`. While logically equivalent, the different representations mean cross-SDK code comparison is error-prone. |
-| X-6 | `[MEDIUM]` | **Duplicated code** — `MoltChainRPC` class is implemented independently in: `dex/dex.js`, `wallet/js/wallet.js`, `explorer/js/explorer.js`, `sdk/js/src/connection.ts`. Four implementations of the same client with slightly different features and bugs. |
-| X-7 | `[MEDIUM]` | **Hardcoded prices** — `MOLT_GENESIS_PRICE = $0.10` in dex.js, `MOCK_PRICES = {MOLT: 0.10, wSOL: 100, wETH: 2000}` in wallet.js. No price oracle integration in frontends. All USD values shown are wrong if market prices deviate. |
+| X-6 | `[MEDIUM]` | **Duplicated code** — `LichenRPC` class is implemented independently in: `dex/dex.js`, `wallet/js/wallet.js`, `explorer/js/explorer.js`, `sdk/js/src/connection.ts`. Four implementations of the same client with slightly different features and bugs. |
+| X-7 | `[MEDIUM]` | **Hardcoded prices** — `LICHEN_GENESIS_PRICE = $0.10` in dex.js, `MOCK_PRICES = {LICN: 0.10, wSOL: 100, wETH: 2000}` in wallet.js. No price oracle integration in frontends. All USD values shown are wrong if market prices deviate. |
 | X-8 | `[LOW]` | **No SDK versioning** — None of the SDKs include a version number or protocol version in their requests. If the RPC API introduces breaking changes, older SDK versions fail with opaque errors. Should include a `X-SDK-Version` header or similar. |
 | X-9 | `[LOW]` | **Inconsistent error handling** — JS SDK throws `Error(message)`, Python SDK raises custom exceptions, Rust SDK returns `Result<T, SdkError>`, DEX SDK throws `Error(message)`, Core SDK panics. No unified error taxonomy. |
 

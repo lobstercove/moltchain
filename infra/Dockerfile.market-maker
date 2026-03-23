@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Copy SDK dependency
 COPY dex/sdk /app/dex-sdk
-COPY sdk/js /app/moltchain-sdk
+COPY sdk/js /app/lichen-sdk
 
 # Copy market maker
 COPY dex/market-maker/package.json dex/market-maker/tsconfig.json ./

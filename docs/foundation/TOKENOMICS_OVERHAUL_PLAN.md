@@ -5,7 +5,7 @@
 **Scope:** Block rewards, genesis split, fee split, reward decay, vesting, wallet wiring, DEX rewards
 
 > Historical plan note: this document captures the February 2026 overhaul proposal.
-> The live chain now runs with a 500M MOLT genesis supply, protocol inflation that settles at epoch boundaries,
+> The live chain now runs with a 500M LICN genesis supply, protocol inflation that settles at epoch boundaries,
 > and updated genesis distribution values.
 
 ---
@@ -16,18 +16,18 @@ This plan replaces the current unsustainable tokenomics (treasury depletion in ~
 
 | Change | Old | New |
 |--------|-----|-----|
-| TX block reward | 0.9 MOLT | **0.1 MOLT** |
-| Heartbeat reward | 0.135 MOLT | **0.05 MOLT** |
+| TX block reward | 0.9 LICN | **0.1 LICN** |
+| Heartbeat reward | 0.135 LICN | **0.05 LICN** |
 | Reward decay | None | **20% annual** |
 | Fee split | 50/30/10/10 (burn/prod/voter/treas) | **40/30/10/10/10** (burn/prod/voter/validator_pool/community) |
 | Genesis split | 15/40/25/10/5/5 | **10/25/35/10/10/10** |
-| DEX rewards | 500K MOLT/month (unimplemented) | **100K MOLT/month from builder_grants** |
+| DEX rewards | 500K LICN/month (unimplemented) | **100K LICN/month from builder_grants** |
 | Vesting fee inclusion | Fees bypass vesting | **Fees go through vesting split** |
 | Wallet wiring | Only validator_rewards used | **All 6 wallets active and wired** |
-| Genesis auto-fund | Manual script | **Automatic 10K MOLT from treasury** |
+| Genesis auto-fund | Manual script | **Automatic 10K LICN from treasury** |
 
 **Constraints:**
-- Zero inflation — fixed 1B MOLT supply, mandatory
+- Zero inflation — fixed 1B LICN supply, mandatory
 - No stubs, no placeholders, no TODOs
 - Every change gets a test
 - Commit and push after each task
@@ -41,16 +41,16 @@ This plan replaces the current unsustainable tokenomics (treasury depletion in ~
 
 | Constant | Current Value | File:Line |
 |----------|--------------|-----------|
-| `TRANSACTION_BLOCK_REWARD` | 900,000,000 shells (0.9 MOLT) | `core/src/consensus.rs:24` |
-| `HEARTBEAT_BLOCK_REWARD` | 135,000,000 shells (0.135 MOLT) | `core/src/consensus.rs:27` |
+| `TRANSACTION_BLOCK_REWARD` | 900,000,000 spores (0.9 LICN) | `core/src/consensus.rs:24` |
+| `HEARTBEAT_BLOCK_REWARD` | 135,000,000 spores (0.135 LICN) | `core/src/consensus.rs:27` |
 | `BLOCK_REWARD` | = TRANSACTION_BLOCK_REWARD | `core/src/consensus.rs:30` |
 | `ANNUAL_REWARD_RATE_BPS` | 500 (5%) | `core/src/consensus.rs:34` |
 | `SLOTS_PER_YEAR` | 78,840,000 | `core/src/consensus.rs:37` |
-| `BOOTSTRAP_GRANT_AMOUNT` | 100,000 × 1e9 shells | `core/src/consensus.rs:21` |
-| `MIN_VALIDATOR_STAKE` | 75,000 × 1e9 shells | `core/src/consensus.rs:18` |
+| `BOOTSTRAP_GRANT_AMOUNT` | 100,000 × 1e9 spores | `core/src/consensus.rs:21` |
+| `MIN_VALIDATOR_STAKE` | 75,000 × 1e9 spores | `core/src/consensus.rs:18` |
 | `MAX_BOOTSTRAP_VALIDATORS` | 200 | `core/src/consensus.rs:44` |
-| `REWARD_POOL_MOLT` | 150,000,000 | `validator/src/main.rs:63` |
-| `REWARD_POOL_PER_MONTH` (DEX) | 500,000,000,000,000 (500K MOLT) | `contracts/dex_rewards/src/lib.rs:28` |
+| `REWARD_POOL_LICN` | 150,000,000 | `validator/src/main.rs:63` |
+| `REWARD_POOL_PER_MONTH` (DEX) | 500,000,000,000,000 (500K LICN) | `contracts/dex_rewards/src/lib.rs:28` |
 | Fee burn % | 50 | `core/src/processor.rs:122` |
 | Fee producer % | 30 | `core/src/processor.rs:123` |
 | Fee voters % | 10 | `core/src/processor.rs:124` |
@@ -63,7 +63,7 @@ This plan replaces the current unsustainable tokenomics (treasury depletion in ~
 | `validator_rewards` | 150,000,000 | 15% | YES — treasury, block rewards, bootstraps, fees |
 | `community_treasury` | 400,000,000 | 40% | NO — allocated, never spent |
 | `builder_grants` | 250,000,000 | 25% | NO — supposed to fund DEX rewards, never wired |
-| `founding_moltys` | 100,000,000 | 10% | NO — allocated, never touched |
+| `founding_symbionts` | 100,000,000 | 10% | NO — allocated, never touched |
 | `ecosystem_partnerships` | 50,000,000 | 5% | NO — allocated, never touched |
 | `reserve_pool` | 50,000,000 | 5% | NO — allocated, never touched |
 
@@ -108,7 +108,7 @@ Block produced → pool.distribute_block_reward(producer, slot, is_heartbeat)
 
 ### Task 1: Update Block Reward Constants
 
-**Goal:** Change TX block reward from 0.9 → 0.1 MOLT, heartbeat from 0.135 → 0.05 MOLT.
+**Goal:** Change TX block reward from 0.9 → 0.1 LICN, heartbeat from 0.135 → 0.05 LICN.
 
 **Files to modify:**
 
@@ -145,7 +145,7 @@ Block produced → pool.distribute_block_reward(producer, slot, is_heartbeat)
 | 2d | `core/src/consensus.rs` | Add `genesis_slot: u64` field to `StakePool` | Track genesis start for decay calculation |
 | 2e | `core/src/consensus.rs` | `StakePool::new()` | Accept `genesis_slot` parameter |
 | 2f | `validator/src/main.rs` | Where StakePool is created | Pass genesis slot 0 (or actual genesis slot from state) |
-| 2g | `core/src/reefstake.rs` | L583-595 `calculate_apy_bp()` | Factor in decay for APY display |
+| 2g | `core/src/mossstake.rs` | L583-595 `calculate_apy_bp()` | Factor in decay for APY display |
 
 **Decay function spec:**
 ```rust
@@ -162,7 +162,7 @@ pub fn decayed_reward(base_reward: u64, slots_since_genesis: u64) -> u64 {
 ```
 
 **Math verification:**
-- Year 0: 0.1 MOLT / 0.05 MOLT
+- Year 0: 0.1 LICN / 0.05 LICN
 - Year 1: 0.08 / 0.04
 - Year 5: 0.033 / 0.016
 - Year 10: 0.011 / 0.005
@@ -189,11 +189,11 @@ pub fn decayed_reward(base_reward: u64, slots_since_genesis: u64) -> u64 {
 | `validator_rewards` | 100,000,000 | 10% | Block rewards, bootstraps, fee recycling |
 | `community_treasury` | 250,000,000 | 25% | DAO governance spending |
 | `builder_grants` | 350,000,000 | 35% | DEX rewards, dev incentives, ecosystem growth |
-| `founding_moltys` | 100,000,000 | 10% | Team/founders, 2-year vest |
+| `founding_symbionts` | 100,000,000 | 10% | Team/founders, 2-year vest |
 | `ecosystem_partnerships` | 100,000,000 | 10% | Bridges, integrations, partnerships |
 | `reserve_pool` | 100,000,000 | 10% | Emergency reserve, protocol insurance |
 
-**Total: 500,000,000 MOLT (100% of genesis supply in the live aligned chain) ✓**
+**Total: 500,000,000 LICN (100% of genesis supply in the live aligned chain) ✓**
 
 **Files to modify:**
 
@@ -204,10 +204,10 @@ pub fn decayed_reward(base_reward: u64, slots_since_genesis: u64) -> u64 {
 | 3c | `core/src/genesis.rs` | L506-508 | Update test assertions |
 | 3d | `core/src/multisig.rs` | L306-308 | Update test assertions |
 | 3e | `core/tests/caller_verification.rs` | L351-356 | Update `a12_01_genesis_distribution_matches_multisig()` |
-| 3f | `validator/src/main.rs` | L63 | `REWARD_POOL_MOLT: 150_000_000` → `100_000_000` |
-| 3g | `validator/src/main.rs` | L5434 | Update `reward_pool_molt` usage |
-| 3h | `validator/src/main.rs` | L5545 | Update `reward_pool_molt` usage |
-| 3i | `validator/src/main.rs` | L5645 | Update `reward_shells` usage |
+| 3f | `validator/src/main.rs` | L63 | `REWARD_POOL_LICN: 150_000_000` → `100_000_000` |
+| 3g | `validator/src/main.rs` | L5434 | Update `reward_pool_licn` usage |
+| 3h | `validator/src/main.rs` | L5545 | Update `reward_pool_licn` usage |
+| 3i | `validator/src/main.rs` | L5645 | Update `reward_spores` usage |
 
 **New test:** `test_genesis_distribution_sums_to_1b` — assert all 6 wallets sum to exactly 1,000,000,000.
 
@@ -223,7 +223,7 @@ pub fn decayed_reward(base_reward: u64, slots_since_genesis: u64) -> u64 {
 |---|------|---------|--------|
 | 4a | `core/src/state.rs` | After `set_treasury_pubkey` | Add `set_community_treasury_pubkey()`, `get_community_treasury_pubkey()` |
 | 4b | `core/src/state.rs` | After above | Add `set_builder_grants_pubkey()`, `get_builder_grants_pubkey()` |
-| 4c | `core/src/state.rs` | After above | Add `set_founding_moltys_pubkey()`, `get_founding_moltys_pubkey()` |
+| 4c | `core/src/state.rs` | After above | Add `set_founding_symbionts_pubkey()`, `get_founding_symbionts_pubkey()` |
 | 4d | `core/src/state.rs` | After above | Add `set_ecosystem_partnerships_pubkey()`, `get_ecosystem_partnerships_pubkey()` |
 | 4e | `core/src/state.rs` | After above | Add `set_reserve_pool_pubkey()`, `get_reserve_pool_pubkey()` |
 | 4f | `validator/src/main.rs` | L5389-5391 (genesis distribution loop) | Store ALL wallet pubkeys during genesis, not just validator_rewards |
@@ -232,7 +232,7 @@ pub fn decayed_reward(base_reward: u64, slots_since_genesis: u64) -> u64 {
 - `b"treasury_pubkey"` → validator_rewards (already exists)
 - `b"community_treasury_pubkey"` → community_treasury (NEW)
 - `b"builder_grants_pubkey"` → builder_grants (NEW)
-- `b"founding_moltys_pubkey"` → founding_moltys (NEW)
+- `b"founding_symbionts_pubkey"` → founding_symbionts (NEW)
 - `b"ecosystem_partnerships_pubkey"` → ecosystem_partnerships (NEW)
 - `b"reserve_pool_pubkey"` → reserve_pool (NEW)
 
@@ -354,30 +354,30 @@ if producer_share > 0 {
 
 ### Task 7: Wire Community Treasury Spending
 
-**Goal:** The community_treasury wallet (250M MOLT) must be spendable via DAO governance. The `moltdao` contract has a `treasury_transfer` function — wire it to actually debit from the community_treasury wallet.
+**Goal:** The community_treasury wallet (250M LICN) must be spendable via DAO governance. The `lichendao` contract has a `treasury_transfer` function — wire it to actually debit from the community_treasury wallet.
 
 **Files to modify:**
 
 | # | File | Line(s) | Change |
 |---|------|---------|--------|
-| 7a | `contracts/moltdao/src/lib.rs` | L964 `treasury_transfer()` | Wire to use the community_treasury pubkey from state |
+| 7a | `contracts/lichendao/src/lib.rs` | L964 `treasury_transfer()` | Wire to use the community_treasury pubkey from state |
 | 7b | `validator/src/main.rs` | Contract execution context | Make community_treasury_pubkey available to contract runtime |
 | 7c | `rpc/src/lib.rs` | Tokenomics endpoint | Add community_treasury balance and pubkey to response |
 
-**New test:** `test_dao_treasury_transfer_debits_community_treasury` — DAO proposal execution actually moves MOLT from community_treasury.
+**New test:** `test_dao_treasury_transfer_debits_community_treasury` — DAO proposal execution actually moves LICN from community_treasury.
 
 ---
 
 ### Task 8: Wire Builder Grants as DEX Reward Source
 
-**Goal:** DEX reward claims must debit from the `builder_grants` wallet (350M MOLT). Currently reward claims track bookkeeping but never transfer MOLT.
+**Goal:** DEX reward claims must debit from the `builder_grants` wallet (350M LICN). Currently reward claims track bookkeeping but never transfer LICN.
 
 **Files to modify:**
 
 | # | File | Line(s) | Change |
 |---|------|---------|--------|
-| 8a | `contracts/dex_rewards/src/lib.rs` | L28 | `REWARD_POOL_PER_MONTH: 500K` → `100K` (100,000,000,000,000 shells) |
-| 8b | `contracts/dex_rewards/src/lib.rs` | Reward claim function | Wire actual MOLT transfer from builder_grants wallet |
+| 8a | `contracts/dex_rewards/src/lib.rs` | L28 | `REWARD_POOL_PER_MONTH: 500K` → `100K` (100,000,000,000,000 spores) |
+| 8b | `contracts/dex_rewards/src/lib.rs` | Reward claim function | Wire actual LICN transfer from builder_grants wallet |
 | 8c | `contracts/dex_rewards/src/lib.rs` | L1237-1239 | Update test assertion to 100K |
 | 8d | `validator/src/main.rs` | Contract execution context | Make builder_grants_pubkey available to contract runtime |
 
@@ -387,50 +387,50 @@ if producer_share > 0 {
 
 ### Task 9: Auto-Fund Genesis/Deployer from Treasury
 
-**Goal:** During genesis boot, automatically transfer 10K MOLT from `validator_rewards` to the genesis/deployer account. Eliminate the need for `scripts/fund-deployer.py`.
+**Goal:** During genesis boot, automatically transfer 10K LICN from `validator_rewards` to the genesis/deployer account. Eliminate the need for `scripts/fund-deployer.py`.
 
 **Files to modify:**
 
 | # | File | Line(s) | Change |
 |---|------|---------|--------|
-| 9a | `validator/src/main.rs` | After distribution loop (L5413) | Add auto-fund: debit 10K MOLT from treasury, credit to genesis account |
+| 9a | `validator/src/main.rs` | After distribution loop (L5413) | Add auto-fund: debit 10K LICN from treasury, credit to genesis account |
 | 9b | `scripts/fund-deployer.py` | Entire file | Add deprecation notice (keep for reference) |
 
 **Auto-fund code:**
 ```rust
-// Auto-fund genesis/deployer with 10K MOLT from treasury (operational fund)
-let ops_fund_molt: u64 = 10_000;
-let ops_fund_shells = Account::molt_to_shells(ops_fund_molt);
+// Auto-fund genesis/deployer with 10K LICN from treasury (operational fund)
+let ops_fund_licn: u64 = 10_000;
+let ops_fund_spores = Account::licn_to_spores(ops_fund_licn);
 if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
     if let Some(treasury_dw) = dist_wallets.iter().find(|dw| dw.role == "validator_rewards") {
         let mut treasury_acct = state.get_account(&treasury_dw.pubkey).ok().flatten()
             .unwrap_or_else(|| Account::new(0, SYSTEM_ACCOUNT_OWNER));
-        if treasury_acct.spendable >= ops_fund_shells {
-            treasury_acct.deduct_spendable(ops_fund_shells).ok();
+        if treasury_acct.spendable >= ops_fund_spores {
+            treasury_acct.deduct_spendable(ops_fund_spores).ok();
             state.put_account(&treasury_dw.pubkey, &treasury_acct).ok();
             
             let mut genesis_acct = state.get_account(&genesis_pubkey).ok().flatten()
                 .unwrap_or_else(|| Account::new(0, genesis_pubkey));
-            genesis_acct.add_spendable(ops_fund_shells).ok();
+            genesis_acct.add_spendable(ops_fund_spores).ok();
             state.put_account(&genesis_pubkey, &genesis_acct).ok();
             
-            info!("🔧 Auto-funded genesis/deployer with {} MOLT from treasury", ops_fund_molt);
+            info!("🔧 Auto-funded genesis/deployer with {} LICN from treasury", ops_fund_licn);
         }
     }
 }
 ```
 
-**New test:** `test_genesis_auto_fund_from_treasury` — genesis account has 10K MOLT after boot.
+**New test:** `test_genesis_auto_fund_from_treasury` — genesis account has 10K LICN after boot.
 
 ---
 
-### Task 10: Wire Founding Moltys Vesting
+### Task 10: Wire Founding Symbionts Vesting
 
-**Goal:** The `founding_moltys` allocation (100M MOLT) has a vesting schedule per the whitepaper: 6-month cliff, then 18-month linear vest. Implement as a time-locked account.
+**Goal:** The `founding_symbionts` allocation (100M LICN) has a vesting schedule per the whitepaper: 6-month cliff, then 18-month linear vest. Implement as a time-locked account.
 
 **Implementation:**
-- At genesis, set `founding_moltys` account with `locked = amount` and `spendable = 0`
-- Store vesting parameters in state: `founding_moltys_cliff_slot`, `founding_moltys_vest_end_slot`
+- At genesis, set `founding_symbionts` account with `locked = amount` and `spendable = 0`
+- Store vesting parameters in state: `founding_symbionts_cliff_slot`, `founding_symbionts_vest_end_slot`
 - Add a periodic unlock check: each block, check if cliff has passed and unlock proportionally
 
 **Files to modify:**
@@ -438,8 +438,8 @@ if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
 | # | File | Line(s) | Change |
 |---|------|---------|--------|
 | 10a | `core/src/state.rs` | New functions | `set_founding_vesting_params()`, `get_founding_vesting_params()` |
-| 10b | `validator/src/main.rs` | Genesis distribution loop | Set founding_moltys with locked=100M, spendable=0 |
-| 10c | `validator/src/main.rs` | Block production | Add periodic vesting unlock for founding_moltys |
+| 10b | `validator/src/main.rs` | Genesis distribution loop | Set founding_symbionts with locked=100M, spendable=0 |
+| 10c | `validator/src/main.rs` | Block production | Add periodic vesting unlock for founding_symbionts |
 | 10d | `core/src/consensus.rs` | New constants | `FOUNDING_CLIFF_SLOTS`, `FOUNDING_VEST_DURATION_SLOTS` |
 
 **Vesting schedule:**
@@ -448,16 +448,16 @@ if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
 - Better approach: store cliff/vest as Unix timestamps, check against block timestamp.
 
 **New tests:**
-- `test_founding_moltys_locked_at_genesis` — spendable = 0 initially
-- `test_founding_moltys_cliff_not_reached` — no unlock before 6 months
-- `test_founding_moltys_partial_vest` — proportional unlock after cliff
-- `test_founding_moltys_fully_vested` — 100% unlocked after 24 months
+- `test_founding_symbionts_locked_at_genesis` — spendable = 0 initially
+- `test_founding_symbionts_cliff_not_reached` — no unlock before 6 months
+- `test_founding_symbionts_partial_vest` — proportional unlock after cliff
+- `test_founding_symbionts_fully_vested` — 100% unlocked after 24 months
 
 ---
 
 ### Task 11: Wire Ecosystem Partnerships Spending
 
-**Goal:** The `ecosystem_partnerships` wallet (100M MOLT) needs a spending mechanism — multi-sig controlled disbursement for bridges, integrations, and partnerships.
+**Goal:** The `ecosystem_partnerships` wallet (100M LICN) needs a spending mechanism — multi-sig controlled disbursement for bridges, integrations, and partnerships.
 
 **Implementation:**
 - Spending requires a multi-sig transaction (uses existing MultiSigConfig)
@@ -477,7 +477,7 @@ if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
 
 ### Task 12: Wire Reserve Pool Access
 
-**Goal:** The `reserve_pool` wallet (100M MOLT) is an emergency reserve. Access requires governance vote with high threshold (75%+ supermajority).
+**Goal:** The `reserve_pool` wallet (100M LICN) is an emergency reserve. Access requires governance vote with high threshold (75%+ supermajority).
 
 **Implementation:**
 - Add a governance-gated transfer mechanism
@@ -488,7 +488,7 @@ if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
 
 | # | File | Line(s) | Change |
 |---|------|---------|--------|
-| 12a | `contracts/moltdao/src/lib.rs` | New function | `emergency_reserve_transfer` — requires 75% vote |
+| 12a | `contracts/lichendao/src/lib.rs` | New function | `emergency_reserve_transfer` — requires 75% vote |
 | 12b | `validator/src/main.rs` | Contract execution context | Make reserve_pool_pubkey available |
 
 **New test:** `test_reserve_pool_requires_supermajority` — transfer requires 75%+ vote.
@@ -557,21 +557,21 @@ if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
 **Goal:** Full clean build, reset blockchain, verify all changes work.
 
 **Steps:**
-1. `cargo build --release --bin moltchain-validator` — clean build, zero errors
-2. `cargo test -p moltchain-core` — all core tests pass
-3. `cargo test -p moltchain-core --test production_readiness` — production readiness tests pass
-4. `cargo test -p moltchain-core --test caller_verification` — genesis distribution test passes
+1. `cargo build --release --bin lichen-validator` — clean build, zero errors
+2. `cargo test -p lichen-core` — all core tests pass
+3. `cargo test -p lichen-core --test production_readiness` — production readiness tests pass
+4. `cargo test -p lichen-core --test caller_verification` — genesis distribution test passes
 5. Reset blockchain: kill validators, `./reset-blockchain.sh`
 6. Start 3 validators
 7. Verify:
-   - Block rewards are 0.1 / 0.05 MOLT (not 0.9 / 0.135)
+   - Block rewards are 0.1 / 0.05 LICN (not 0.9 / 0.135)
    - Fee split is 40/30/10/10/10
    - All 6 wallet pubkeys stored and queryable
    - Community treasury receives 10% of fees
    - Producer fee share goes through vesting (50% debt repay if bootstrapping)
    - DEX reward pool is 100K/month
-   - Genesis/deployer has 10K MOLT auto-funded
-   - All validators at 100K MOLT, zero slashing
+   - Genesis/deployer has 10K LICN auto-funded
+   - All validators at 100K LICN, zero slashing
    - 5s block spacing maintained
 
 ---
@@ -579,7 +579,7 @@ if let Some(ref dist_wallets) = genesis_wallet.distribution_wallets {
 ## Commit Strategy
 
 Each task gets its own commit:
-1. `feat: reduce block rewards 0.1/0.05 MOLT — sustainable emission rate`
+1. `feat: reduce block rewards 0.1/0.05 LICN — sustainable emission rate`
 2. `feat: implement 20% annual reward decay — treasury never depletes`
 3. `feat: update genesis split to 10/25/35/10/10/10 — all wallets get purpose`
 4. `feat: store all 6 wallet pubkeys in state — enable wallet identification`
@@ -588,7 +588,7 @@ Each task gets its own commit:
 7. `feat: wire community treasury DAO spending — governance can spend`
 8. `feat: wire builder grants as DEX reward source — 100K/month`
 9. `feat: auto-fund genesis/deployer 10K from treasury — no manual script`
-10. `feat: wire founding moltys 6-mo cliff + 18-mo vest — per whitepaper`
+10. `feat: wire founding symbionts 6-mo cliff + 18-mo vest — per whitepaper`
 11. `feat: wire ecosystem partnerships multi-sig spending`
 12. `feat: wire reserve pool governance-gated access`
 13. `docs: update all documentation with new tokenomics`
@@ -601,15 +601,15 @@ Each task gets its own commit:
 ## Sustainability Projection (New Numbers)
 
 **Year 1 (10 validators, 100K tx/day):**
-- Block rewards: 17,280 blocks/day × 0.075 avg = 1,296 MOLT/day → 473K/year
-- Fee income: 100K × 0.001 = 100 MOLT/day → 36.5K/year
-- Fee recycling (10%): 10 MOLT/day → 3.65K/year
+- Block rewards: 17,280 blocks/day × 0.075 avg = 1,296 LICN/day → 473K/year
+- Fee income: 100K × 0.001 = 100 LICN/day → 36.5K/year
+- Fee recycling (10%): 10 LICN/day → 3.65K/year
 - Treasury net: -473K + 3.65K = **-469K** (100M pool barely touched)
 
 **Year 5 (500 validators, 100M tx/day):**
-- Block rewards (decayed 4×): 1,296 × 0.41 = 531 MOLT/day → 194K/year
-- Fee income: 100M × 0.001 = 100K MOLT/day → 36.5M/year
-- Fee recycling (10%): 10K MOLT/day → 3.65M/year
+- Block rewards (decayed 4×): 1,296 × 0.41 = 531 LICN/day → 194K/year
+- Fee income: 100M × 0.001 = 100K LICN/day → 36.5M/year
+- Fee recycling (10%): 10K LICN/day → 3.65M/year
 - Treasury net: -194K + 3.65M = **+3.46M** ← POSITIVE, treasury growing
 
 **Crossover point: ~Year 3** — fee recycling exceeds block reward drain.
@@ -622,9 +622,9 @@ Each task gets its own commit:
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Reward too low for early validators | Low validator participation | 100K MOLT bootstrap grant + 50% liquid from day 1 covers costs |
+| Reward too low for early validators | Low validator participation | 100K LICN bootstrap grant + 50% liquid from day 1 covers costs |
 | Fee recycling insufficient | Treasury depletion | Decay ensures drain approaches 0; fee recycling only needs modest volume |
-| Community treasury DAO exploited | Loss of 250M MOLT | Multi-sig + governance thresholds + time-lock on large proposals |
+| Community treasury DAO exploited | Loss of 250M LICN | Multi-sig + governance thresholds + time-lock on large proposals |
 | Breaking change in genesis | Incompatible with existing state | Full blockchain reset required (acceptable for pre-mainnet) |
 | Regression in vesting | Validators lose rewards | Comprehensive test suite for all vesting paths |
 
@@ -634,7 +634,7 @@ Each task gets its own commit:
 
 - This plan requires a **full blockchain reset** since genesis distribution changes
 - All validators will be re-bootstrapped with the new distribution
-- The new system is designed for **zero inflation** — no new MOLT is ever minted
+- The new system is designed for **zero inflation** — no new LICN is ever minted
 - All 6 wallets will have active spending mechanisms, no idle capital
 - Fee recycling creates a self-sustaining loop at scale
 - Reward decay ensures the treasury lasts 200+ years even without fee recycling

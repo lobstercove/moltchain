@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-# Alertmanager Configuration — MoltChain
+# Alertmanager Configuration — Lichen
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # Configure notification channels below before deploying to production.
@@ -49,7 +49,7 @@ inhibit_rules:
 #   - name: 'critical'
 #     slack_configs:
 #       - api_url: 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL'
-#         channel: '#moltchain-alerts-critical'
+#         channel: '#lichen-alerts-critical'
 #         title: '{{ .GroupLabels.alertname }}'
 #         text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}'
 #
@@ -61,11 +61,11 @@ inhibit_rules:
 # Example email config:
 #   global:
 #     smtp_smarthost: 'smtp.example.com:587'
-#     smtp_from: 'alerts@moltchain.network'
+#     smtp_from: 'alerts@lichen.network'
 #   receivers:
 #     - name: 'critical'
 #       email_configs:
-#         - to: 'oncall@moltchain.network'
+#         - to: 'oncall@lichen.network'
 
 receivers:
   - name: 'default'

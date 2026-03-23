@@ -1,18 +1,18 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-# Prometheus Alert Rules — MoltyDEX
+# Prometheus Alert Rules — Lichen DEX
 # ═══════════════════════════════════════════════════════════════════════════════
 
 groups:
-  - name: moltydex_critical
+  - name: lichendex_critical
     rules:
       - alert: NodeDown
-        expr: up{job="moltchain"} == 0
+        expr: up{job="lichen"} == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          summary: "MoltChain node is down"
-          description: "The MoltChain RPC node has been unreachable for >1 minute."
+          summary: "Lichen node is down"
+          description: "The Lichen RPC node has been unreachable for >1 minute."
 
       - alert: SlotStale
         expr: time() - chain_last_slot_timestamp > 30
@@ -30,9 +30,9 @@ groups:
           severity: critical
         annotations:
           summary: "Insurance fund critically low"
-          description: "DEX margin insurance fund is below 10,000 MOLT."
+          description: "DEX margin insurance fund is below 10,000 LICN."
 
-  - name: moltydex_warning
+  - name: lichendex_warning
     rules:
       - alert: HighRPCLatency
         expr: histogram_quantile(0.99, rate(rpc_request_duration_seconds_bucket[5m])) > 0.5
@@ -57,7 +57,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Insurance fund below 50K MOLT"
+          summary: "Insurance fund below 50K LICN"
 
       - alert: WebSocketConnectionsHigh
         expr: ws_active_connections > 5000

@@ -1,4 +1,4 @@
-# MoltChain Frontend Production-Readiness Audit
+# Lichen Frontend Production-Readiness Audit
 
 **Date:** 2025-01-20  
 **Scope:** All frontend applications — Explorer, Wallet (web + extension), DEX, Faucet, Website, Monitoring, Marketplace, Programs IDE, Developers Portal  
@@ -28,7 +28,7 @@
 
 ## 1. Executive Summary
 
-The MoltChain frontend is a collection of **10+ vanilla HTML/CSS/JS applications** with no build tools, bundlers, or frameworks. The codebase is substantial (~75K+ total lines) and demonstrates impressive breadth — covering a block explorer, wallet, DEX with margin/prediction markets/governance/launchpad, NFT marketplace, smart contract IDE with Monaco Editor, monitoring dashboard, and developer documentation.
+The Lichen frontend is a collection of **10+ vanilla HTML/CSS/JS applications** with no build tools, bundlers, or frameworks. The codebase is substantial (~75K+ total lines) and demonstrates impressive breadth — covering a block explorer, wallet, DEX with margin/prediction markets/governance/launchpad, NFT marketplace, smart contract IDE with Monaco Editor, monitoring dashboard, and developer documentation.
 
 ### Critical Verdict
 
@@ -37,7 +37,7 @@ The MoltChain frontend is a collection of **10+ vanilla HTML/CSS/JS applications
 - **12 CRITICAL security issues** (key storage, non-standard BIP39, missing CSP, client-side captcha, unencrypted secret export)
 - **15 HIGH severity issues** (massive code duplication, hardcoded mock prices, N+1 RPC storms, network inconsistencies)
 - **20+ MEDIUM issues** (stub implementations, inconsistent constants, race conditions)
-- **Pervasive code duplication** — `escapeHtml` defined 14+ times, `Base58` 6+ times, `MoltChainRPC` 5+ independent implementations
+- **Pervasive code duplication** — `escapeHtml` defined 14+ times, `Base58` 6+ times, `LichenRPC` 5+ independent implementations
 
 ### Severity Definitions
 
@@ -60,12 +60,12 @@ These issues affect multiple or all applications.
 |-----------------|------------------------|-------|
 | `escapeHtml()` | **14+** | Every JS file redefines it with slight variations |
 | `Base58` encode/decode | **6+** | wallet/crypto.js, explorer/utils.js, dex.js, SDK, extension/crypto-service.js, shared-config.js |
-| `MoltChainRPC` class | **5** | explorer, wallet, website, monitoring, SDK — each with different feature sets (retry, cache, timeout) |
+| `LichenRPC` class | **5** | explorer, wallet, website, monitoring, SDK — each with different feature sets (retry, cache, timeout) |
 | `timeAgo()` | **8+** | explorer (5 files), marketplace (5 files), wallet, DEX |
 | `hashString()` / `gradientFromHash()` | **7+** | explorer, marketplace (browse, create, item, profile, marketplace-data) |
 | `formatHash()` / `truncateAddress()` | **10+** | Nearly every application |
 | `rpcCall()` helper | **6+** | Each marketplace page, faucet, monitoring, website |
-| `priceToMolt()` | **5+** | marketplace files, explorer |
+| `priceToLicn()` | **5+** | marketplace files, explorer |
 | Trust tier definitions | **4** | wallet/identity.js, wallet.js, explorer/address.js, explorer/agents.js |
 | `serializeMessageBincode()` | **2** | explorer/utils.js, wallet/wallet.js (different parameter handling) |
 
@@ -89,15 +89,15 @@ Without CSP, any XSS vulnerability can exfiltrate wallet keys. The combination o
 
 | App | Mainnet RPC | Testnet RPC | Local Port |
 |-----|-------------|-------------|------------|
-| Explorer | rpc.moltchain.network | testnet-rpc.moltchain.network | **9899** |
-| Wallet (web) | rpc.moltchain.network | testnet-rpc.moltchain.network | **8899** |
-| Wallet (ext) | rpc.moltchain.network | testnet-rpc.moltchain.network | **8899** |
-| DEX | rpc.moltchain.**io** | testnet-rpc.moltchain.**io** | **8899** |
-| Website | rpc.moltchain.network | testnet-rpc.moltchain.network | **8899** |
-| Monitoring | rpc.moltchain.network | testnet-rpc.moltchain.network | **9899** |
-| Marketplace | rpc.moltchain.network | testnet-rpc.moltchain.network | **9899** |
-| Developers | rpc.moltchain.**io** | testnet-rpc.moltchain.**io** | **8899** |
-| Programs SDK | rpc.moltchain.network | testnet-rpc.moltchain.network | **8899** |
+| Explorer | rpc.lichen.network | testnet-rpc.lichen.network | **9899** |
+| Wallet (web) | rpc.lichen.network | testnet-rpc.lichen.network | **8899** |
+| Wallet (ext) | rpc.lichen.network | testnet-rpc.lichen.network | **8899** |
+| DEX | rpc.lichen.**io** | testnet-rpc.lichen.**io** | **8899** |
+| Website | rpc.lichen.network | testnet-rpc.lichen.network | **8899** |
+| Monitoring | rpc.lichen.network | testnet-rpc.lichen.network | **9899** |
+| Marketplace | rpc.lichen.network | testnet-rpc.lichen.network | **9899** |
+| Developers | rpc.lichen.**io** | testnet-rpc.lichen.**io** | **8899** |
+| Programs SDK | rpc.lichen.network | testnet-rpc.lichen.network | **8899** |
 
 Three distinct problems:
 1. **Domain inconsistency:** DEX and Developers use `.io`, everything else uses `.network`
@@ -138,7 +138,7 @@ Across all apps:
 
 | Item | Details |
 |------|---------|
-| MoltyID `.molt` name resolution | Calls `getMoltName` RPC — genuinely on-chain, not stubbed |
+| LichenID `.lichen` name resolution | Calls `getLichenName` RPC — genuinely on-chain, not stubbed |
 | Trust tier display | Computed from reputation ranges — functional |
 | Transaction graph | Canvas-based rendering works for demo but lacks zoom/pan |
 
@@ -148,7 +148,7 @@ Across all apps:
 
 | ID | Severity | Issue |
 |----|----------|-------|
-| E-1 | HIGH | `moltNameCache` in address.js is unbounded `Map` — memory leak under sustained use |
+| E-1 | HIGH | `lichenNameCache` in address.js is unbounded `Map` — memory leak under sustained use |
 | E-2 | MEDIUM | `serializeMessageBincode()` in utils.js builds a bincode message for simulation but doesn't validate instruction accounts array length |
 | E-3 | LOW | Footer links point to raw `.md` files (`CONTRIBUTING.md`, `SECURITY_AUDIT_REPORT.md`) |
 
@@ -187,7 +187,7 @@ Across all apps:
 | Issue | Severity | Details |
 |-------|----------|---------|
 | N+1 block loading | HIGH | `blocks.js` fetches 250 blocks by calling `getBlock` individually in a loop — should use batch RPC |
-| Unbounded name cache | MEDIUM | `moltNameCache` Map grows forever |
+| Unbounded name cache | MEDIUM | `lichenNameCache` Map grows forever |
 | Transaction graph redraws on every tab switch | LOW | No caching of canvas state |
 
 ### 3.8 Testing Gaps
@@ -206,12 +206,12 @@ Across all apps:
 
 | Item | Status | Details |
 |------|--------|---------|
-| USD prices | **MOCK** | `MOCK_PRICES` hardcodes MOLT=$0.10, wSOL=$95, wETH=$3200 — no live price feed |
-| Token portfolio | **MOCK** | `loadTokens()` returns hardcoded stMOLT, wSOL, wETH with fake balances on first load |
+| USD prices | **MOCK** | `MOCK_PRICES` hardcodes LICN=$0.10, wSOL=$95, wETH=$3200 — no live price feed |
+| Token portfolio | **MOCK** | `loadTokens()` returns hardcoded stLICN, wSOL, wETH with fake balances on first load |
 | Bridge deposits | **PARTIAL** | Generates custody deposit addresses but confirmation polling may never complete |
 | NFT metadata display | FUNCTIONAL | Loaded from RPC `getNFTsByOwner` |
-| Staking (ReefStake) | FUNCTIONAL | Full lifecycle: stake, unstake, claim, tier display |
-| MoltyID identity | FUNCTIONAL | Registration, naming, skills, vouches — all RPC-backed |
+| Staking (MossStake) | FUNCTIONAL | Full lifecycle: stake, unstake, claim, tier display |
+| LichenID identity | FUNCTIONAL | Registration, naming, skills, vouches — all RPC-backed |
 | Agent services | FUNCTIONAL | Discover/hire agents via RPC |
 
 ### 4.2 Security Issues
@@ -324,11 +324,11 @@ Manifest V3 Chrome extension with:
 Single 5,200-line JS file implementing:
 - **CLOB + AMM trading** (limit/market orders, liquidity pools)
 - **Margin trading** (7 tiers: 2x-100x leverage, SL/TP)
-- **Prediction markets** (PredictionReef — CPMM pricing, binary/multi-outcome, dispute lifecycle)
+- **Prediction markets** (PredictionMoss — CPMM pricing, binary/multi-outcome, dispute lifecycle)
 - **Governance** (create/vote/finalize/execute proposals)
-- **Launchpad** (ClawPump — bonding curve token creation)
+- **Launchpad** (SporePump — bonding curve token creation)
 - **Rewards** (4-tier system: Bronze/Silver/Gold/Diamond)
-- **TradingView charting** with MoltOracle price overlay
+- **TradingView charting** with LichenOracle price overlay
 
 ### 6.2 Simplified/Stub Implementations
 
@@ -355,9 +355,9 @@ Single 5,200-line JS file implementing:
 
 - All trading operations via `sendTransaction` with proper binary instruction encoding
 - Contract calls use `contractIx()` helper for proper instruction building
-- ClawPump uses `namedCallIx()` — different encoding pattern
+- SporePump uses `namedCallIx()` — different encoding pattern
 - TradingView `datafeed` adapter connects to custom `getKlineData` RPC
-- MoltOracle price overlay via `getMoltOraclePrice` RPC
+- LichenOracle price overlay via `getLichenOraclePrice` RPC
 - Binance WebSocket feed for wSOL/wETH real-time prices (`solusdt@miniTicker`, `ethusdt@miniTicker`)
 - Prediction market CPMM pricing formula matches on-chain `calculate_buy`
 
@@ -384,13 +384,13 @@ Single 5,200-line JS file implementing:
 |-------|----------|---------|
 | Pairs refresh polls ticker per pair (N+1) | HIGH | Each of N pairs triggers individual `getTickerData` RPC call every 10s |
 | 4-tier polling architecture | MEDIUM | Fast=5s, Slow=30s, Predict=15s, Pairs=10s — 4 concurrent `setInterval` chains |
-| ClawPump debounce on quote | LOW | 300ms debounce is reasonable |
+| SporePump debounce on quote | LOW | 300ms debounce is reasonable |
 | Close slot calculation inconsistency | LOW | Uses 400ms/slot in one place, 500ms in another |
 
 ### 6.8 Consistency Issues
 
-- Uses `moltchain.io` domain while all other apps use `moltchain.network`
-- MOLT decimals: uses 1e9 for MOLT but 1e6 for mUSD (PredictionReef) — correct per design but undocumented
+- Uses `lichen.network` domain while all other apps use `lichen.network`
+- LICN decimals: uses 1e9 for LICN but 1e6 for lUSD (PredictionMoss) — correct per design but undocumented
 - `formatPrice` defined at bottom of file (before hoisting makes it available) — works due to function declaration hoisting but fragile
 
 ### 6.9 Testing Gaps
@@ -423,7 +423,7 @@ Single 5,200-line JS file implementing:
 ### 7.3 UX/Functionality Gaps
 
 - No balance check after faucet drip (user must navigate to explorer)
-- Amount fixed at "10 MOLT" — no selection
+- Amount fixed at "10 LICN" — no selection
 - No cooldown timer shown to user
 - Footer links to raw `.md` files
 
@@ -533,7 +533,7 @@ Every marketplace page JS file independently redefines:
 - `gradientFromHash()`
 - `formatHash()`
 - `timeAgo()`
-- `priceToMolt()`
+- `priceToLicn()`
 
 This is **7 utility functions × 5 files = 35 redundant function definitions**.
 
@@ -557,7 +557,7 @@ This is **7 utility functions × 5 files = 35 redundant function definitions**.
 
 ## 11. Programs IDE (Playground)
 
-**Files reviewed:** playground-complete.js (8817 — ~60% line-by-line, all functional sections), moltchain-sdk.js (1386 — COMPLETE), landing.js (311 — COMPLETE)
+**Files reviewed:** playground-complete.js (8817 — ~60% line-by-line, all functional sections), lichen-sdk.js (1386 — COMPLETE), landing.js (311 — COMPLETE)
 
 ### 11.1 Architecture
 
@@ -579,7 +579,7 @@ Impressive single-page Rust smart contract IDE featuring:
 | P-3 | HIGH | `createWallet()` shows seed in `alert()` dialog — cannot be copied securely, visible to screen readers |
 | P-4 | HIGH | `importWallet()` uses `prompt()` for secret key input — visible in browser history, not masked |
 | P-5 | MEDIUM | `programKeypair` stored in localStorage — if used for mainnet, program authority keys exposed |
-| P-6 | MEDIUM | Legacy wallet migration reads from `molt_wallet` localStorage — may import keys from other sessions unintentionally |
+| P-6 | MEDIUM | Legacy wallet migration reads from `licn_wallet` localStorage — may import keys from other sessions unintentionally |
 
 ### 11.3 Positive Security Findings
 
@@ -591,9 +591,9 @@ Impressive single-page Rust smart contract IDE featuring:
 | Storage viewer | Keys/values escaped — AUDIT-FIX F14.5 |
 | Deployed programs list | Uses `data-program-id` attribute instead of inline onclick — AUDIT-FIX F14.2 |
 | URL sanitization | `sanitizeUrl()` validates URL scheme before rendering links |
-| Transfer validation | Amount bounds checked (0 to 1B MOLT) — AUDIT-FIX F14.8 |
+| Transfer validation | Amount bounds checked (0 to 1B LICN) — AUDIT-FIX F14.8 |
 
-### 11.4 SDK Assessment (moltchain-sdk.js)
+### 11.4 SDK Assessment (lichen-sdk.js)
 
 **Best RPC implementation in the project:**
 - Retry logic (3 attempts default)
@@ -609,11 +609,11 @@ Impressive single-page Rust smart contract IDE featuring:
 **Issues:**
 | ID | Severity | Issue |
 |----|----------|-------|
-| SDK-1 | HIGH | `MoltChainWallet.export(password)` ignores the password parameter — returns plaintext seed |
-| SDK-2 | HIGH | `MoltChainWallet.import(json, password)` ignores the password parameter — reads plaintext seed |
-| SDK-3 | MEDIUM | `MoltChainWallet.generateMnemonic()` throws "not supported in browser SDK" — artificial limitation |
-| SDK-4 | MEDIUM | `MoltChainWallet.fromMnemonic()` throws — wallet can only be created from random seed or imported from base58 |
-| SDK-5 | LOW | `WEI_PER_MOLT` constant uses BigInt(1e18) — but MOLT uses 1e9 decimals per all other code |
+| SDK-1 | HIGH | `LichenWallet.export(password)` ignores the password parameter — returns plaintext seed |
+| SDK-2 | HIGH | `LichenWallet.import(json, password)` ignores the password parameter — reads plaintext seed |
+| SDK-3 | MEDIUM | `LichenWallet.generateMnemonic()` throws "not supported in browser SDK" — artificial limitation |
+| SDK-4 | MEDIUM | `LichenWallet.fromMnemonic()` throws — wallet can only be created from random seed or imported from base58 |
+| SDK-5 | LOW | `WEI_PER_LICN` constant uses BigInt(1e18) — but LICN uses 1e9 decimals per all other code |
 
 ### 11.5 UX/Functionality Gaps
 
@@ -676,7 +676,7 @@ The developers portal is a **static documentation site** with:
 
 ### 13.1 shared-config.js
 
-Contains `MoltWallet` class — a shared wallet connector used by Explorer, Marketplace, and other apps. Features:
+Contains `LichenWallet` class — a shared wallet connector used by Explorer, Marketplace, and other apps. Features:
 - Network selector UI injection
 - `savedWallet` auto-connection from localStorage  
 - `rpcCall` helper function
@@ -740,7 +740,7 @@ Contains `MoltWallet` class — a shared wallet connector used by Explorer, Mark
 ### Architecture Recommendations
 
 1. **Adopt a build system** (Vite recommended) — enables module imports, dead code elimination, minification, and source maps
-2. **Create `@moltchain/utils` package** — single source of truth for Base58, escapeHtml, RPC client, timeAgo, formatNumber, etc.
+2. **Create `@lichen/utils` package** — single source of truth for Base58, escapeHtml, RPC client, timeAgo, formatNumber, etc.
 3. **Implement a shared wallet SDK** — one wallet connection library used by all apps instead of 5 independent implementations
 4. **Add E2E tests** — Playwright or Cypress for critical flows (send transaction, deploy contract, place trade, mint NFT)
 5. **Security audit of crypto code** — particularly the BIP39 deviation, by a specialized auditor

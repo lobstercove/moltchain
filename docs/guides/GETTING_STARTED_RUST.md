@@ -1,7 +1,7 @@
-# Getting Started with MoltChain Development (Rust)
+# Getting Started with Lichen Development (Rust)
 ## Building the Core Blockchain from Scratch
 
-**For:** Founding moltys who want to build the actual blockchain  
+**For:** Founding symbionts who want to build the actual blockchain  
 **Skills Needed:** Rust, async programming, basic blockchain concepts  
 **Time to First Working Testnet:** 2-4 weeks
 
@@ -40,12 +40,12 @@ protoc --version
 ### Clone the Repository (When Ready)
 
 ```bash
-mkdir -p ~/moltchain
-cd ~/moltchain
+mkdir -p ~/lichen
+cd ~/lichen
 
 # For now, initialize locally
-cargo new --lib moltchain-core
-cd moltchain-core
+cargo new --lib lichen-core
+cd lichen-core
 ```
 
 ---
@@ -53,7 +53,7 @@ cd moltchain-core
 ## Project Structure
 
 ```
-moltchain/
+lichen/
 ├── core/                    # Blockchain core
 │   ├── src/
 │   │   ├── lib.rs          # Main library
@@ -73,7 +73,7 @@ moltchain/
 │   │   └── leader.rs       # Leader selection
 │   └── Cargo.toml
 │
-├── vm/                      # MoltVM execution
+├── vm/                      # LicnVM execution
 │   ├── src/
 │   │   ├── lib.rs
 │   │   ├── executor.rs     # Program execution
@@ -89,10 +89,10 @@ moltchain/
 │   │   └── quic.rs         # QUIC transport
 │   └── Cargo.toml
 │
-├── storage/                 # The Reef storage
+├── storage/                 # The Moss storage
 │   ├── src/
 │   │   ├── lib.rs
-│   │   ├── reef.rs         # Distributed storage
+│   │   ├── moss.rs         # Distributed storage
 │   │   └── db.rs           # RocksDB wrapper
 │   └── Cargo.toml
 │
@@ -118,11 +118,11 @@ moltchain/
 
 ## Step 1: Core Data Structures (Week 1)
 
-### Create `moltchain-core/Cargo.toml`
+### Create `lichen-core/Cargo.toml`
 
 ```toml
 [package]
-name = "moltchain-core"
+name = "lichen-core"
 version = "0.1.0"
 edition = "2021"
 
@@ -184,8 +184,8 @@ impl fmt::Debug for Pubkey {
 /// On-chain account
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Account {
-    /// Balance in shells (1 MOLT = 1_000_000_000 shells)
-    pub shells: u64,
+    /// Balance in spores (1 LICN = 1_000_000_000 spores)
+    pub spores: u64,
     
     /// Arbitrary data owned by this account
     pub data: Vec<u8>,
@@ -201,9 +201,9 @@ pub struct Account {
 }
 
 impl Account {
-    pub fn new(shells: u64, owner: Pubkey) -> Self {
+    pub fn new(spores: u64, owner: Pubkey) -> Self {
         Self {
-            shells,
+            spores,
             data: Vec::new(),
             owner,
             executable: false,
@@ -211,14 +211,14 @@ impl Account {
         }
     }
 
-    /// Convert MOLT to shells
-    pub const fn molt_to_shells(molt: u64) -> u64 {
-        molt.saturating_mul(1_000_000_000)
+    /// Convert LICN to spores
+    pub const fn licn_to_spores(licn: u64) -> u64 {
+        licn.saturating_mul(1_000_000_000)
     }
 
-    /// Convert shells to MOLT
-    pub const fn shells_to_molt(shells: u64) -> u64 {
-        shells / 1_000_000_000
+    /// Convert spores to LICN
+    pub const fn spores_to_licn(spores: u64) -> u64 {
+        spores / 1_000_000_000
     }
 }
 
@@ -227,10 +227,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_molt_conversion() {
-        assert_eq!(Account::molt_to_shells(1), 1_000_000_000);
-        assert_eq!(Account::molt_to_shells(10), 10_000_000_000);
-        assert_eq!(Account::shells_to_molt(1_000_000_000), 1);
+    fn test_licn_conversion() {
+        assert_eq!(Account::licn_to_spores(1), 1_000_000_000);
+        assert_eq!(Account::licn_to_spores(10), 10_000_000_000);
+        assert_eq!(Account::spores_to_licn(1_000_000_000), 1);
     }
 }
 ```
@@ -499,16 +499,16 @@ impl StateStore {
 
 ```toml
 [package]
-name = "moltchain-validator"
+name = "lichen-validator"
 version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "moltchain-validator"
+name = "lichen-validator"
 path = "src/main.rs"
 
 [dependencies]
-moltchain-core = { path = "../core" }
+lichen-core = { path = "../core" }
 tokio = { version = "1", features = ["full"] }
 log = "0.4"
 env_logger = "0.11"
@@ -520,14 +520,14 @@ clap = { version = "4", features = ["derive"] }
 ```rust
 use clap::Parser;
 use log::info;
-use moltchain_core::*;
+use lichen_core::*;
 use std::path::PathBuf;
 use std::time::Duration;
 use tokio::time;
 
 #[derive(Parser)]
-#[command(name = "moltchain-validator")]
-#[command(about = "MoltChain validator node", long_about = None)]
+#[command(name = "lichen-validator")]
+#[command(about = "Lichen validator node", long_about = None)]
 struct Cli {
     /// Data directory
     #[arg(short, long, default_value = "./data")]
@@ -543,7 +543,7 @@ async fn main() {
     env_logger::init();
     let cli = Cli::parse();
     
-    info!("🦞 Starting MoltChain Validator");
+    info!("🦞 Starting Lichen Validator");
     info!("Data directory: {:?}", cli.data_dir);
     info!("Block time: {}ms", cli.block_time_ms);
     
@@ -556,13 +556,13 @@ async fn main() {
     let genesis_pubkey = Pubkey::new(genesis_keypair);
     
     let mut genesis_account = Account::new(0, genesis_pubkey);
-    genesis_account.shells = Account::molt_to_shells(1_000_000_000); // 1B MOLT
+    genesis_account.spores = Account::licn_to_spores(1_000_000_000); // 1B LICN
     
     state.put_account(&genesis_pubkey, &genesis_account)
         .expect("Failed to create genesis account");
     
     info!("✅ Genesis account created: {}", genesis_pubkey);
-    info!("   Balance: {} MOLT", Account::shells_to_molt(genesis_account.shells));
+    info!("   Balance: {} LICN", Account::spores_to_licn(genesis_account.spores));
     
     // Main validator loop
     let mut slot = 0u64;
@@ -588,11 +588,11 @@ cd validator
 cargo run
 
 # Output:
-# 🦞 Starting MoltChain Validator
+# 🦞 Starting Lichen Validator
 # Data directory: "./data"
 # Block time: 400ms
 # ✅ Genesis account created: ...
-#    Balance: 1000000000 MOLT
+#    Balance: 1000000000 LICN
 # 📦 Block 1: state_root=...
 # 📦 Block 2: state_root=...
 ```
@@ -696,4 +696,4 @@ cargo flamegraph
 
 ---
 
-**The reef is active. Time to start building.** 🦞⚡
+**The network is active. Time to start building.** 🦞⚡

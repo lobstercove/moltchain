@@ -1,9 +1,9 @@
-# PredictionReef — Prediction Markets on MoltChain
+# PredictionMoss — Prediction Markets on Lichen
 
 **Date:** February 14, 2026
 **Status:** Planning
 **Branch:** `main`
-**Depends on:** DEX Completion Milestone (complete), MoltOracle (deployed)
+**Depends on:** DEX Completion Milestone (complete), LichenOracle (deployed)
 
 ---
 
@@ -11,11 +11,11 @@
 
 1. [Executive Summary](#1-executive-summary)
 2. [How Polymarket Works (Reference Architecture)](#2-how-polymarket-works-reference-architecture)
-3. [PredictionReef Architecture](#3-predictionreef-architecture)
+3. [PredictionMoss Architecture](#3-predictionmoss-architecture)
 4. [Contract Design — prediction_market](#4-contract-design--prediction_market)
 5. [AMM Design — Binary CPMM](#5-amm-design--binary-cpmm)
 6. [Multi-Outcome Markets](#6-multi-outcome-markets)
-7. [Resolution via MoltOracle](#7-resolution-via-moltoracle)
+7. [Resolution via LichenOracle](#7-resolution-via-lichenoracle)
 8. [Settlement & Payout](#8-settlement--payout)
 9. [Market Lifecycle](#9-market-lifecycle)
 10. [Integration with Existing DEX](#10-integration-with-existing-dex)
@@ -34,24 +34,24 @@
 
 ## 1. Executive Summary
 
-PredictionReef brings Polymarket-class prediction markets to MoltChain as a first-party DEX feature — not a separate platform. Users trade outcome shares (YES/NO or multi-outcome) on real-world events, with prices reflecting live probabilities. Settlement in mUSD (the DEX quote currency), liquidity via an integrated AMM, and resolution through MoltOracle's attestation + VRF systems.
+PredictionMoss brings Polymarket-class prediction markets to Lichen as a first-party DEX feature — not a separate platform. Users trade outcome shares (YES/NO or multi-outcome) on real-world events, with prices reflecting live probabilities. Settlement in lUSD (the DEX quote currency), liquidity via an integrated AMM, and resolution through LichenOracle's attestation + VRF systems.
 
 ### Why This Matters
 
 - **Prediction markets are the highest-engagement DeFi product** — Polymarket hit $1B+ monthly volume in 2024
 - **Agent-first vision** — AI agents can programmatically trade on real-world events using data models, creating deep liquidity
-- **Completes the DEX** — MoltChain DEX gets a "Predict" tab alongside Trade, Swap, Pool, and Earn
-- **Leverages existing infrastructure** — MoltOracle for resolution, dex_analytics for charting, mUSD for settlement, MoltyID for reputation-gated market creation
+- **Completes the DEX** — Lichen DEX gets a "Predict" tab alongside Trade, Swap, Pool, and Earn
+- **Leverages existing infrastructure** — LichenOracle for resolution, dex_analytics for charting, lUSD for settlement, LichenID for reputation-gated market creation
 
 ### Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Settlement currency | **mUSD** | Consistent with DEX, stablecoin-denominated, $1.00 = 1 full share |
+| Settlement currency | **lUSD** | Consistent with DEX, stablecoin-denominated, $1.00 = 1 full share |
 | AMM type | **Binary CPMM** (x·y=k) for 2-outcome; **Scalar CPMM** for multi | Simple, proven, gas-efficient |
-| Resolution | **MoltOracle attestation** (multi-sig threshold) | Decentralized, already deployed, supports VRF |
-| Share representation | **Contract storage balances** (not separate tokens) | No need for ERC-1155; MoltChain uses account-level balances |
-| Market creation | **Reputation-gated** (500+ MoltyID rep) | Anti-spam, quality control, no separate governance vote needed |
+| Resolution | **LichenOracle attestation** (multi-sig threshold) | Decentralized, already deployed, supports VRF |
+| Share representation | **Contract storage balances** (not separate tokens) | No need for ERC-1155; Lichen uses account-level balances |
+| Market creation | **Reputation-gated** (500+ LichenID rep) | Anti-spam, quality control, no separate governance vote needed |
 | Dispute resolution | **Challenge period + bond + DAO escalation** | Prevents bad resolutions without blocking fast settlement |
 | CLOB integration | **Optional** — AMM primary, CLOB for deep markets | Most markets use AMM; high-volume markets can also list on dex_core |
 
@@ -77,27 +77,27 @@ Understanding Polymarket's design to match and exceed it:
 
 ### What We Keep
 
-- Full collateralization (YES + NO backed by mUSD)
-- Shares priced 0.00–1.00 mUSD
+- Full collateralization (YES + NO backed by lUSD)
+- Shares priced 0.00–1.00 lUSD
 - Minting/redeeming share sets
 - Resolution with dispute period
 - Limit order trading for deep markets
 
 ### What We Improve
 
-| Polymarket Limitation | PredictionReef Solution |
+| Polymarket Limitation | PredictionMoss Solution |
 |-----------------------|------------------------|
 | Off-chain orderbook (centralized matching) | Fully on-chain CPMM + optional CLOB |
-| UMA oracle (single provider, slow disputes) | MoltOracle multi-sig attestation (threshold-based, faster) |
+| UMA oracle (single provider, slow disputes) | LichenOracle multi-sig attestation (threshold-based, faster) |
 | No built-in AMM (relies on market makers) | Integrated CPMM ensures always-on liquidity |
 | Separate platform from DEX | Integrated as a DEX tab — same wallet, same UI |
-| No agent API | First-class agent support with MoltyID integration |
+| No agent API | First-class agent support with LichenID integration |
 | ERC-1155 tokens (complex) | Simple balance storage (cheaper, faster) |
-| External dispute resolution | On-chain DAO escalation via MoltDAO |
+| External dispute resolution | On-chain DAO escalation via LichenDAO |
 
 ---
 
-## 3. PredictionReef Architecture
+## 3. PredictionMoss Architecture
 
 ### Single Contract Design
 
@@ -108,7 +108,7 @@ One contract — `prediction_market` — handles everything:
 - Resolution and settlement
 - Dispute handling
 
-**Why single contract?** Cross-contract calls are stubs on MoltChain (return 0). Multi-contract designs would require multi-step transactions. A single contract keeps all state atomic and consistent.
+**Why single contract?** Cross-contract calls are stubs on Lichen (return 0). Multi-contract designs would require multi-step transactions. A single contract keeps all state atomic and consistent.
 
 ### Component Map
 
@@ -127,9 +127,9 @@ One contract — `prediction_market` — handles everything:
 │  └──────────┘  └──────────┘  └───────────────────┘  │
 │                                                      │
 │  External reads:                                     │
-│  ├─ MoltOracle: attestation verification             │
-│  ├─ MoltyID: reputation check for market creation    │
-│  └─ mUSD: balance reads for collateral verification  │
+│  ├─ LichenOracle: attestation verification             │
+│  ├─ LichenID: reputation check for market creation    │
+│  └─ lUSD: balance reads for collateral verification  │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -144,8 +144,8 @@ One contract — `prediction_market` — handles everything:
 const MAX_OUTCOMES: u8 = 8;           // Max outcomes per market (2 for binary, up to 8 for multi)
 const MAX_MARKETS: u64 = 100_000;     // Global market cap
 const MAX_OPEN_MARKETS: u64 = 10_000; // Concurrently active markets
-const MIN_COLLATERAL: u64 = 1_000_000; // 1 mUSD minimum (6 decimals)
-const MAX_COLLATERAL: u64 = 100_000_000_000; // 100K mUSD max per market
+const MIN_COLLATERAL: u64 = 1_000_000; // 1 lUSD minimum (6 decimals)
+const MAX_COLLATERAL: u64 = 100_000_000_000; // 100K lUSD max per market
 
 // Timing (in slots; 1 slot ≈ 0.5s)
 const MIN_DURATION: u64 = 7_200;       // 1 hour minimum market duration
@@ -155,20 +155,20 @@ const DISPUTE_PERIOD: u64 = 172_800;    // 48 hours to challenge resolution
 const EMERGENCY_TIMEOUT: u64 = 2_592_000; // 30 days — auto-void if unresolved
 
 // Fees (basis points)
-const MARKET_CREATION_FEE: u64 = 10_000_000; // 10 mUSD (anti-spam)
+const MARKET_CREATION_FEE: u64 = 10_000_000; // 10 lUSD (anti-spam)
 const TRADING_FEE_BPS: u64 = 200;   // 2% on AMM swaps
 const RESOLUTION_REWARD_BPS: u64 = 50; // 0.5% of pool to resolver
 const LP_FEE_BPS: u64 = 100;          // 1% to liquidity providers
 
 // AMM
 const INITIAL_LIQUIDITY: u64 = 1_000; // Minimum initial liquidity per outcome (in shares)
-const MIN_SHARE_PRICE: u64 = 10_000;  // $0.01 minimum (6 decimal mUSD)
+const MIN_SHARE_PRICE: u64 = 10_000;  // $0.01 minimum (6 decimal lUSD)
 const MAX_SHARE_PRICE: u64 = 990_000; // $0.99 maximum (prevents riskless trades at edges)
 
 // Reputation
-const MIN_REPUTATION_CREATE: u64 = 500;  // MoltyID rep to create markets
-const MIN_REPUTATION_RESOLVE: u64 = 1000; // MoltyID rep to submit resolution
-const DISPUTE_BOND: u64 = 100_000_000;    // 100 mUSD bond to dispute (refunded if upheld)
+const MIN_REPUTATION_CREATE: u64 = 500;  // LichenID rep to create markets
+const MIN_REPUTATION_RESOLVE: u64 = 1000; // LichenID rep to submit resolution
+const DISPUTE_BOND: u64 = 100_000_000;    // 100 lUSD bond to dispute (refunded if upheld)
 ```
 
 ### Market States
@@ -211,7 +211,7 @@ Byte  64       : status (u8) — enum MarketStatus
 Byte  65       : outcome_count (u8) — 2 for binary, up to 8
 Byte  66       : winning_outcome (u8) — 0xFF = unresolved
 Byte  67       : category (u8) — 0=politics, 1=sports, 2=crypto, 3=science, 4=entertainment, 5=economics, 6=tech, 7=custom
-Bytes 68..76   : total_collateral (u64) — total mUSD locked
+Bytes 68..76   : total_collateral (u64) — total lUSD locked
 Bytes 76..84   : total_volume (u64) — cumulative trading volume
 Bytes 84..92   : resolution_bond (u64) — resolver's bond
 Bytes 92..124  : resolver (Pubkey) — who submitted resolution
@@ -219,7 +219,7 @@ Bytes 124..156 : question_hash (32 bytes) — SHA-256 of question text
 Bytes 156..164 : dispute_end_slot (u64) — when dispute period ends
 Bytes 164..172 : fees_collected (u64) — total fees earned
 Bytes 172..180 : lp_total_shares (u64) — total LP shares for AMM
-Bytes 180..188 : oracle_attestation_hash (32 bytes, first 8) — link to MoltOracle
+Bytes 180..188 : oracle_attestation_hash (32 bytes, first 8) — link to LichenOracle
 Bytes 188..192 : pad (4 bytes)
 ```
 
@@ -228,7 +228,7 @@ Bytes 188..192 : pad (4 bytes)
 Bytes 0..8     : reserve (u64) — AMM virtual reserve for this outcome
 Bytes 8..16    : total_shares (u64) — total shares minted for this outcome
 Bytes 16..24   : total_redeemed (u64) — shares redeemed after resolution
-Bytes 24..32   : price_last (u64) — last traded price (6 decimal mUSD basis)
+Bytes 24..32   : price_last (u64) — last traded price (6 decimal lUSD basis)
 Bytes 32..40   : volume (u64) — outcome-specific volume
 Bytes 40..48   : open_interest (u64) — outstanding unredeemed shares
 Bytes 48..56   : pad (8 bytes)
@@ -238,7 +238,7 @@ Bytes 56..64   : pad (8 bytes)
 **User Position (16 bytes per user per outcome per market)**
 ```
 Bytes 0..8     : shares (u64) — shares held
-Bytes 8..16    : cost_basis (u64) — total mUSD spent acquiring
+Bytes 8..16    : cost_basis (u64) — total lUSD spent acquiring
 ```
 
 ---
@@ -263,7 +263,7 @@ price_YES + price_NO = 1.00  (always, by construction)
 - price_YES = 1000 / 2000 = $0.50 (50% probability)
 - price_NO  = 1000 / 2000 = $0.50
 
-After someone buys 100 YES shares for mUSD:
+After someone buys 100 YES shares for lUSD:
 ```
 New x (YES reserve) decreases, y (NO reserve) stays or increases
 Buying YES → price_YES increases (more likely)
@@ -279,7 +279,7 @@ Input: market_id, outcome, amount_musd
 4. Pool absorbs opposite outcome shares, adjusting prices
 
 Detailed math:
-  shares_per_set = amount_musd / 1_000_000  (1 mUSD = 1 complete set)
+  shares_per_set = amount_musd / 1_000_000  (1 lUSD = 1 complete set)
   
   // User wants outcome A. We sell outcome B shares into pool.
   b_shares_to_sell = shares_per_set
@@ -305,8 +305,8 @@ Detailed math:
 ```
 Input: market_id, outcome, shares_amount
 1. Sell outcome shares into pool for opposite outcome shares
-2. Burn complete sets (1 YES + 1 NO) → 1 mUSD
-3. Return mUSD to user
+2. Burn complete sets (1 YES + 1 NO) → 1 lUSD
+3. Return lUSD to user
 
 Math:
   // Selling A shares into pool for B shares
@@ -334,7 +334,7 @@ Input: market_id, amount_musd
 ```
 Input: market_id, amount
 1. Burn `amount` shares of EVERY outcome
-2. Return `amount * 1_000_000` mUSD (collateral release)
+2. Return `amount * 1_000_000` lUSD (collateral release)
 3. Zero-fee operation (no price impact, pure collateral unlock)
 ```
 
@@ -374,7 +374,7 @@ All prices sum to 1.00 by construction.
 
 Buying outcome i:
 ```
-1. Mint 1 complete set per mUSD deposited (all N outcome shares)
+1. Mint 1 complete set per lUSD deposited (all N outcome shares)
 2. Sell all non-desired outcome shares into pool
 3. For each non-desired outcome j:
    shares_received_i += reserve_i * shares_j_sold / (reserve_j + shares_j_sold)
@@ -384,7 +384,7 @@ This is more gas-intensive but capped at 8 outcomes max.
 
 ---
 
-## 7. Resolution via MoltOracle
+## 7. Resolution via LichenOracle
 
 ### Resolution Flow
 
@@ -394,17 +394,17 @@ This is more gas-intensive but capped at 8 outcomes max.
 
 2. RESOLUTION SUBMISSION (anyone with 1000+ reputation)
    - Resolver calls submit_resolution(market_id, winning_outcome, attestation_hash)
-   - Posts a bond (100 mUSD) — slashed if resolution is successfully challenged
-   - Resolution references a MoltOracle attestation (multi-sig evidence hash)
+   - Posts a bond (100 lUSD) — slashed if resolution is successfully challenged
+   - Resolution references a LichenOracle attestation (multi-sig evidence hash)
    
 3. ORACLE VERIFICATION
-   - Contract reads MoltOracle attestation via storage key
+   - Contract reads LichenOracle attestation via storage key
    - Verifies attestation has >= 3 signatories (RESOLUTION_THRESHOLD)
    - Verifies attestation data_hash matches the market's question + outcome
    
 4. DISPUTE PERIOD (48 hours)
    - Anyone can call challenge_resolution(market_id, evidence_hash, bond)
-   - Challenger posts 100 mUSD bond
+   - Challenger posts 100 lUSD bond
    - Market enters DISPUTED state
    
 5a. NO DISPUTE → RESOLVED
@@ -413,14 +413,14 @@ This is more gas-intensive but capped at 8 outcomes max.
    - Winning shares redeemable at $1.00 each
    
 5b. DISPUTE → DAO ESCALATION
-   - MoltDAO governance vote (72h voting period)
+   - LichenDAO governance vote (72h voting period)
    - Options: CONFIRM original resolution | OVERRIDE with different outcome | VOID market
    - Losing party's bond is distributed: 50% to winner, 50% to DAO treasury
 ```
 
 ### Oracle Attestation Format
 
-MoltOracle's existing `submit_attestation()` and `verify_attestation()` are reused:
+LichenOracle's existing `submit_attestation()` and `verify_attestation()` are reused:
 
 ```
 Attestation data layout for prediction market resolution:
@@ -438,9 +438,9 @@ Multiple independent oracles (3+ required) submit attestations with the same dat
 |------|------------------|---------|
 | Binary (YES/NO) | Oracle attestation | "Will BTC hit $100K by March?" |
 | Multi-outcome | Oracle attestation | "Which AI model wins benchmark X?" |
-| Price-based | MoltOracle price feed | "ETH price > $5000 on March 1?" |
-| VRF-based | MoltOracle commit-reveal | "What color is drawn in lottery round 42?" |
-| Time-based | Automatic at close_slot | "Total MOLT burned by end of epoch?" (on-chain data) |
+| Price-based | LichenOracle price feed | "ETH price > $5000 on March 1?" |
+| VRF-based | LichenOracle commit-reveal | "What color is drawn in lottery round 42?" |
+| Time-based | Automatic at close_slot | "Total LICN burned by end of epoch?" (on-chain data) |
 
 ---
 
@@ -452,8 +452,8 @@ Multiple independent oracles (3+ required) submit attestations with the same dat
 redeem_shares(market_id, outcome)
 1. Verify market status == RESOLVED
 2. If outcome == winning_outcome:
-     payout = user_shares * 1_000_000  (each share = 1 mUSD)
-     credit mUSD to user balance
+     payout = user_shares * 1_000_000  (each share = 1 lUSD)
+     credit lUSD to user balance
 3. If outcome != winning_outcome:
      payout = 0 (shares worthless)
 4. Clear user's position for this market/outcome
@@ -475,7 +475,7 @@ reclaim_collateral(market_id)
 withdraw_liquidity(market_id, lp_shares)
 1. Can only withdraw from ACTIVE markets (not CLOSED/RESOLVED)
 2. Calculate proportional share of pool reserves
-3. Return mUSD collateral minus pool imbalance
+3. Return lUSD collateral minus pool imbalance
 4. Burn LP shares
 ```
 
@@ -490,8 +490,8 @@ Day 0: Creator with 500+ reputation creates market
         "Will SOL reach $250 by March 31, 2026?"
         Duration: 45 days
         Category: Crypto
-        Initial liquidity: 500 mUSD (50/50 odds)
-        Creation fee: 10 mUSD
+        Initial liquidity: 500 lUSD (50/50 odds)
+        Creation fee: 10 lUSD
         
         Market state: PENDING → ACTIVE (once liquidity added)
 
@@ -511,7 +511,7 @@ Day 45: Market closes at end of March 31
 Day 45-52: Resolution window (7 days)
         3+ oracle nodes attest: "SOL did NOT reach $250"
         Resolver (1000+ rep) submits resolution: winning_outcome = NO
-        Posts 100 mUSD bond
+        Posts 100 lUSD bond
         
         State: RESOLVING
 
@@ -522,7 +522,7 @@ Day 52-54: Dispute period (48 hours)
 
 Day 54+: Settlement
         YES holders: shares worth $0.00
-        NO holders: redeem each share for $1.00 mUSD
+        NO holders: redeem each share for $1.00 lUSD
         Resolver gets bond back + 0.5% of total collateral
         
         State: RESOLVED (permanent)
@@ -534,11 +534,11 @@ Day 54+: Settlement
 
 ### Single Platform Architecture
 
-PredictionReef is NOT a separate app — it's a new tab in the DEX interface:
+PredictionMoss is NOT a separate app — it's a new tab in the DEX interface:
 
 ```
 ┌─────────────────────────────────────────┐
-│           MoltChain DEX                 │
+│           Lichen DEX                 │
 │                                         │
 │  [Trade] [Swap] [Pool] [Earn] [Predict] │
 │                                         │
@@ -551,7 +551,7 @@ PredictionReef is NOT a separate app — it's a new tab in the DEX interface:
 │  │  ┌───────────────────────┐      │    │
 │  │  │ "Will BTC hit $100K?" │      │    │
 │  │  │  YES: $0.72  NO: $0.28│      │    │
-│  │  │  Vol: 45K mUSD        │      │    │
+│  │  │  Vol: 45K lUSD        │      │    │
 │  │  │  [Buy YES] [Buy NO]   │      │    │
 │  │  └───────────────────────┘      │    │
 │  └─────────────────────────────────┘    │
@@ -565,19 +565,19 @@ PredictionReef is NOT a separate app — it's a new tab in the DEX interface:
 | **dex_analytics** | Track prediction market volume, price candles per market (reuse candle system for outcome share prices) |
 | **dex_governance** | DAO dispute resolution votes (new proposal type: RESOLVE_PREDICTION = 4) |
 | **dex_rewards** | Trading rewards for prediction market volume (fee mining applies same as DEX trades) |
-| **MoltOracle** | Resolution attestations + price feed markets + VRF for lottery-type markets |
-| **MoltyID** | Reputation gates for market creation (500+) and resolution submission (1000+) |
-| **mUSD** | Settlement currency — all collateral, payouts, and fees in mUSD |
+| **LichenOracle** | Resolution attestations + price feed markets + VRF for lottery-type markets |
+| **LichenID** | Reputation gates for market creation (500+) and resolution submission (1000+) |
+| **lUSD** | Settlement currency — all collateral, payouts, and fees in lUSD |
 | **dex_core** | Optional CLOB listing for high-volume prediction markets (outcome shares as tradeable "tokens") |
 | **dex_amm** | NOT used directly — prediction markets have their own AMM (CPMM, simpler than concentrated liquidity) |
 
 ### Optional CLOB Integration for Deep Markets
 
-When a prediction market reaches high volume (>10K mUSD), it may benefit from a CLOB:
+When a prediction market reaches high volume (>10K lUSD), it may benefit from a CLOB:
 
 ```
 1. Admin/governance calls create_clob_market(prediction_market_id)
-2. Creates virtual token pair on dex_core: YES_TOKEN/mUSD
+2. Creates virtual token pair on dex_core: YES_TOKEN/lUSD
 3. Traders can place limit orders for outcome shares
 4. AMM continues to operate in parallel (provides baseline liquidity)
 5. On resolution, all open CLOB orders are cancelled and settled
@@ -593,7 +593,7 @@ This is optional and can be added in a later phase.
 
 | Guard | Mechanism |
 |-------|-----------|
-| Anti-spam | 10 mUSD creation fee + 500 reputation minimum |
+| Anti-spam | 10 lUSD creation fee + 500 reputation minimum |
 | Content moderation | Category system + admin/DAO can flag/delist markets |
 | Duplicate prevention | Question hash prevents identical markets |
 | Market cap | MAX_OPEN_MARKETS = 10,000 prevents storage bloat |
@@ -604,17 +604,17 @@ This is optional and can be added in a later phase.
 | Guard | Mechanism |
 |-------|-----------|
 | Oracle threshold | 3+ independent attestations required |
-| Resolver bond | 100 mUSD at risk — slashed for incorrect resolution |
+| Resolver bond | 100 lUSD at risk — slashed for incorrect resolution |
 | Challenge mechanism | 48-hour dispute window with bond |
-| DAO backstop | MoltDAO can override any resolution |
+| DAO backstop | LichenDAO can override any resolution |
 | Timeout void | Market auto-voids after 30 days if unresolved |
 | Emergency halt | Admin pause for critical issues |
 
 ### Circuit Breakers
 
 ```
-- If any single market exceeds 50K mUSD collateral → require admin approval for additional deposits
-- If total platform collateral exceeds 1M mUSD → governance review triggered
+- If any single market exceeds 50K lUSD collateral → require admin approval for additional deposits
+- If total platform collateral exceeds 1M lUSD → governance review triggered
 - If AMM price moves >50% in a single slot → 60-second trading pause per market
 - If resolution is challenged 3+ times → auto-escalate to DAO
 ```
@@ -690,14 +690,14 @@ Sort by: [Volume ▼] [Newest] [Ending Soon] [Most Popular]
 ┌───────────────────────────────────────────────────────┐
 │ "Will ETH reach $5,000 by June 2026?"                │
 │ Category: Crypto          Expires: Jun 30, 2026      │
-│ YES: $0.45  NO: $0.55    Volume: 12,340 mUSD        │
-│ Open Interest: 8,500 mUSD   Created by: agent.molt   │
+│ YES: $0.45  NO: $0.55    Volume: 12,340 lUSD        │
+│ Open Interest: 8,500 lUSD   Created by: agent.lichen   │
 │ [Buy YES] [Buy NO] [Details →]                       │
 ├───────────────────────────────────────────────────────┤
 │ "Next US Fed Rate Decision: Cut, Hold, or Hike?"     │
 │ Category: Economics       Expires: Mar 19, 2026      │
 │ Cut: $0.82  Hold: $0.15  Hike: $0.03 (3 outcomes)  │
-│ Volume: 67,800 mUSD         Created by: macro_bot    │
+│ Volume: 67,800 lUSD         Created by: macro_bot    │
 │ [Trade →] [Details →]                                │
 └───────────────────────────────────────────────────────┘
 ```
@@ -716,14 +716,14 @@ Sort by: [Volume ▼] [Newest] [Ending Soon] [Most Popular]
 ├──────────────────┬─────────────────────────────────┤
 │   BUY PANEL      │    MARKET STATS                 │
 │                  │                                 │
-│  ○ YES ($0.72)   │  Volume (24h): 4,500 mUSD      │
-│  ○ NO  ($0.28)   │  Total Volume: 89,200 mUSD     │
-│                  │  Open Interest: 34,500 mUSD     │
-│  Amount: [___]   │  Liquidity: 12,000 mUSD        │
+│  ○ YES ($0.72)   │  Volume (24h): 4,500 lUSD      │
+│  ○ NO  ($0.28)   │  Total Volume: 89,200 lUSD     │
+│                  │  Open Interest: 34,500 lUSD     │
+│  Amount: [___]   │  Liquidity: 12,000 lUSD        │
 │  Est. Return:    │  Traders: 234                   │
-│   $1.39 per $1   │  Created by: oracle_agent.molt  │
+│   $1.39 per $1   │  Created by: oracle_agent.lichen  │
 │                  │                                 │
-│  [Buy Shares]    │  Resolution: MoltOracle         │
+│  [Buy Shares]    │  Resolution: LichenOracle         │
 │  [Sell Shares]   │  Oracle Attestations: 0/3       │
 └──────────────────┴─────────────────────────────────┘
 │                                                    │
@@ -756,23 +756,23 @@ Active Positions  │  Resolved  │  History
 
 | Fee Type | Amount | Distribution |
 |----------|--------|-------------|
-| Market creation | 10 mUSD flat | 100% to protocol treasury |
+| Market creation | 10 lUSD flat | 100% to protocol treasury |
 | AMM trading | 2% of trade value | 50% LPs / 30% protocol / 20% stakers |
 | Resolution reward | 0.5% of total collateral | 100% to resolver |
-| Dispute bond (loser) | 100 mUSD | 50% to winner / 50% to DAO treasury |
+| Dispute bond (loser) | 100 lUSD | 50% to winner / 50% to DAO treasury |
 | Mint/redeem complete sets | 0% | No fee (pure collateral lock/unlock) |
 
 ### Revenue Projections
 
 At 10% of Polymarket's volume (~$100M/month in peak):
 ```
-Monthly volume: $10M mUSD
-Trading fees (2%): $200K mUSD
-  → Protocol share (30%): $60K mUSD
-  → LP share (50%): $100K mUSD
-  → Staker share (20%): $40K mUSD
-Creation fees: ~50 markets × 10 mUSD = $500 mUSD
-Resolution rewards: ~$50K × 0.5% = $250 mUSD
+Monthly volume: $10M lUSD
+Trading fees (2%): $200K lUSD
+  → Protocol share (30%): $60K lUSD
+  → LP share (50%): $100K lUSD
+  → Staker share (20%): $40K lUSD
+Creation fees: ~50 markets × 10 lUSD = $500 lUSD
+Resolution rewards: ~$50K × 0.5% = $250 lUSD
 ```
 
 ### LP Incentives
@@ -800,9 +800,9 @@ LP risk: impermanent loss if the market resolves to an extreme outcome (all YES 
 | `pm_paused` | `u8` | Emergency pause flag |
 | `pm_reentrancy` | `u8` | Reentrancy guard |
 | `pm_fees_collected` | `u64` | Platform fees accumulated |
-| `pm_moltyid_addr` | `[u8; 32]` | MoltyID contract address |
-| `pm_oracle_addr` | `[u8; 32]` | MoltOracle contract address |
-| `pm_musd_addr` | `[u8; 32]` | mUSD token contract address |
+| `pm_lichenid_addr` | `[u8; 32]` | LichenID contract address |
+| `pm_oracle_addr` | `[u8; 32]` | LichenOracle contract address |
+| `pm_musd_addr` | `[u8; 32]` | lUSD token contract address |
 | `pm_dex_gov_addr` | `[u8; 32]` | DEX governance address (for disputes) |
 
 ### Per-Market State
@@ -857,7 +857,7 @@ Single `call()` entry point, opcode in `args[0]`:
 | 0x0F | `withdraw_liquidity` | `[provider 32B][market_id 8B][lp_shares 8B]` | u32 (musd_returned) |
 | 0x10 | `emergency_pause` | `[caller 32B]` | u32 |
 | 0x11 | `emergency_unpause` | `[caller 32B]` | u32 |
-| 0x12 | `set_moltyid_address` | `[caller 32B][address 32B]` | u32 |
+| 0x12 | `set_lichenid_address` | `[caller 32B][address 32B]` | u32 |
 | 0x13 | `set_oracle_address` | `[caller 32B][address 32B]` | u32 |
 | **Queries** | | | |
 | 0x20 | `get_market` | `[market_id 8B]` | return_data: 192B market record |
@@ -877,7 +877,7 @@ Single `call()` entry point, opcode in `args[0]`:
 ### GENESIS_CONTRACT_CATALOG Entry
 
 ```rust
-("prediction_market", "PREDICT", "PredictionReef", "prediction"),
+("prediction_market", "PREDICT", "PredictionMoss", "prediction"),
 ```
 
 ### Initialization
@@ -890,16 +890,16 @@ args: [0x00][admin 32B]  (opcode dispatch init)
 ### Post-Init Configuration
 
 ```
-set_moltyid_address → MoltyID contract address
-set_oracle_address → MoltOracle contract address
+set_lichenid_address → LichenID contract address
+set_oracle_address → LichenOracle contract address
 ```
 
 ### Genesis Markets (Optional)
 
 Could auto-create 1-2 featured markets at genesis for demo:
 ```
-"Will MoltChain reach 1000 validators in 2026?" (YES/NO, closes Dec 31 2026)
-"MOLT price prediction Q2 2026: >$0.50?" (YES/NO, closes Jun 30 2026)
+"Will Lichen reach 1000 validators in 2026?" (YES/NO, closes Dec 31 2026)
+"LICN price prediction Q2 2026: >$0.50?" (YES/NO, closes Jun 30 2026)
 ```
 
 ---
@@ -920,7 +920,7 @@ A.5  Unit tests: AMM math, market creation, state transitions
 
 ```
 B.1  Resolution submission + bond posting
-B.2  Oracle attestation verification (read MoltOracle storage)
+B.2  Oracle attestation verification (read LichenOracle storage)
 B.3  Dispute mechanism + challenge bonds
 B.4  Finalization + winning share redemption
 B.5  Voided market refunds
@@ -933,7 +933,7 @@ B.6  Unit tests: resolution flows, edge cases, dispute scenarios
 C.1  Extend CPMM for 3-8 outcome markets
 C.2  Liquidity provision and withdrawal
 C.3  Fee collection and distribution
-C.4  MoltyID reputation gating
+C.4  LichenID reputation gating
 C.5  User position tracking and history
 C.6  Unit tests: multi-outcome math, LP mechanics
 ```
@@ -1076,7 +1076,7 @@ test_concurrent_markets
 | Should markets be permissionless or curated? | Permissionless (reputation-gated), Curated (admin-approved), Both | **Reputation-gated** — 500 rep creates, admin can delist |
 | CLOB for prediction markets? | Phase 1 (integrated), Phase 2 (later), Never | **Phase 2** — AMM-only first, CLOB for deep markets later |
 | Multi-outcome limit? | 2-only, Up to 8, Up to 16 | **Up to 8** — covers most use cases, keeps math tractable |
-| Resolution oracle model? | Pure MoltOracle, Specialized oracle set, UMA-style optimistic | **MoltOracle attestation** — already deployed, multi-sig threshold |
+| Resolution oracle model? | Pure LichenOracle, Specialized oracle set, UMA-style optimistic | **LichenOracle attestation** — already deployed, multi-sig threshold |
 | Share representation? | Storage balances, Separate tokens (MT-20), NFTs | **Storage balances** — simplest, cheapest, no cross-contract needed |
 | Initial liquidity requirement? | Creator pays all, Platform subsidizes, Community pools | **Creator pays** — skin in the game, deducted from creation fee |
 
@@ -1093,4 +1093,4 @@ test_concurrent_markets
 
 ---
 
-*End of PredictionReef Plan*
+*End of PredictionMoss Plan*

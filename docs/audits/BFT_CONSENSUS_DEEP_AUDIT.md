@@ -1,8 +1,8 @@
-# MoltChain BFT Consensus Deep Audit
+# Lichen BFT Consensus Deep Audit
 
 > **Date**: 2026-03-17  
-> **Scope**: Complete audit of MoltChain's BFT consensus engine, P2P layer, sync mechanism, validator set management, and crash recovery — compared line-by-line against CometBFT (Tendermint), Ethereum 2.0, and Solana.  
-> **Verdict**: MoltChain has a solid foundation but has **11 critical gaps** vs production blockchain standards that MUST be addressed before the chain can safely run with dynamic validator sets.
+> **Scope**: Complete audit of Lichen's BFT consensus engine, P2P layer, sync mechanism, validator set management, and crash recovery — compared line-by-line against CometBFT (Tendermint), Ethereum 2.0, and Solana.  
+> **Verdict**: Lichen has a solid foundation but has **11 critical gaps** vs production blockchain standards that MUST be addressed before the chain can safely run with dynamic validator sets.
 
 ---
 
@@ -43,7 +43,7 @@ The plan did not cover the **runtime behavior** of the BFT consensus engine — 
 
 ### The 11 Critical Gaps
 
-| # | Gap | CometBFT | Ethereum | Solana | MoltChain |
+| # | Gap | CometBFT | Ethereum | Solana | Lichen |
 |---|-----|----------|----------|--------|-----------|
 | G-1 | **No WAL (Write-Ahead Log)** | ✓ WAL before every state change | ✓ Database journaling | ✓ Tower BFT persistence | ✗ In-memory only |
 | G-2 | **No lock persistence** | ✓ Locked round persisted to WAL | N/A (Casper) | ✓ Last vote persisted | ✗ Lost on crash |
@@ -84,7 +84,7 @@ The core consensus state machine is **well-designed** and matches CometBFT's fun
 
 This fix is **correct and matches CometBFT**:
 - CometBFT: Validator set changes take effect at H+1, never mid-height
-- MoltChain: `height_vs` and `height_pool` cloned at start of each height, passed immutably to all BFT methods
+- Lichen: `height_vs` and `height_pool` cloned at start of each height, passed immutably to all BFT methods
 - Prevents quorum denominator shifts mid-round
 
 ### Commit Certificates (BLOCKCHAIN_ALIGNMENT_PLAN Task 1.2)
@@ -166,7 +166,7 @@ CometBFT's WAL records:
 
 On restart, CometBFT replays the WAL and arrives at the exact same state as before the crash. A validator cannot "forget" that it already voted.
 
-**What MoltChain does**:
+**What Lichen does**:
 - All consensus state is in-memory (the `ConsensusEngine` struct)
 - On crash: `start_height()` resets everything — locked_round, locked_value, votes, step
 - No record of previous votes or locks
@@ -185,7 +185,7 @@ On restart, CometBFT replays the WAL and arrives at the exact same state as befo
 
 Closely related to G-1. CometBFT persists `locked_round` and `locked_value` as part of the WAL. Solana persists its vote tower. Ethereum persists the slashing protection DB.
 
-MoltChain's `locked_round` and `locked_value` are fields on the `ConsensusEngine` struct — gone on restart.
+Lichen's `locked_round` and `locked_value` are fields on the `ConsensusEngine` struct — gone on restart.
 
 **Fix**: Must be part of the WAL implementation (G-1).
 
@@ -203,7 +203,7 @@ For EVERY block received during sync:
 
 **What Ethereum does**: Sync committee signatures verified during checkpoint sync.
 
-**What MoltChain does**:
+**What Lichen does**:
 - During catch-up sync, blocks are applied WITHOUT verifying commit signatures
 - The comment in block receiver says "trust PoS finality" during InitialSync
 - Only the producer's signature is checked, not the commit certificate
@@ -229,7 +229,7 @@ On receiving votes for height > current:
   → Enter block sync mode immediately
 ```
 
-**What MoltChain does**:
+**What Lichen does**:
 - BFT engine runs in one goroutine, block receiver in another
 - When the block receiver gets a committed block (via CompactBlock), it applies it to state
 - But the BFT engine doesn't know about it until the next iteration of the select! loop checks `get_last_slot()`
@@ -256,7 +256,7 @@ Consensus commits a block:
   All three steps are ATOMIC — either all succeed or all fail
 ```
 
-**What MoltChain does**:
+**What Lichen does**:
 - BFT engine returns `ConsensusAction::CommitBlock`
 - `execute_consensus_actions()` applies the block:
   - Replays transactions via TxProcessor
@@ -271,7 +271,7 @@ Consensus commits a block:
   - On restart, block appears committed but state is incomplete
 - No transaction-level atomicity for the commit step
 
-**What should happen**: Use RocksDB WriteBatch for the entire commit (block + effects + state updates) as a single atomic operation. MoltChain already has `StateBatch` — it should be used for the commit path.
+**What should happen**: Use RocksDB WriteBatch for the entire commit (block + effects + state updates) as a single atomic operation. Lichen already has `StateBatch` — it should be used for the commit path.
 
 ---
 
@@ -287,7 +287,7 @@ This allows any node to verify that a block was produced under the correct valid
 
 **What Ethereum does**: Stores sync committee root in beacon block header.
 
-**What MoltChain does**: Block header contains `slot | parent_hash | state_root | tx_root | timestamp | validator | signature`. No validator set hash.
+**What Lichen does**: Block header contains `slot | parent_hash | state_root | tx_root | timestamp | validator | signature`. No validator set hash.
 
 **Risk**:
 - Light clients cannot verify which validator set was active at a given height without replaying all blocks
@@ -313,7 +313,7 @@ func (cs *State) handleMsg(mi msgInfo) {
 
 Every transition has explicit guards: "must be in step X to process message of type Y". State transitions are logged and traceable.
 
-**What MoltChain does**: The consensus engine methods (`on_proposal`, `on_prevote`, `on_precommit`) have inline checks but no formal state transition table. For example:
+**What Lichen does**: The consensus engine methods (`on_proposal`, `on_prevote`, `on_precommit`) have inline checks but no formal state transition table. For example:
 - `on_proposal()` checks `self.step == Propose` but embeds the logic
 - `on_prevote()` has 4 different code paths based on vote tallies
 - There's no single place that documents "from state X, receiving message Y → transition to state Z"
@@ -329,7 +329,7 @@ Every transition has explicit guards: "must be in step X to process message of t
 
 **What CometBFT does**: There is NO fork choice. BFT finality means exactly one block per height. If you have a commit certificate, that block is final. Period.
 
-**What MoltChain does**: Has BOTH:
+**What Lichen does**: Has BOTH:
 1. BFT consensus (Tendermint-style instant finality)
 2. Fork choice oracle (Nakamoto-style longest chain + vote weight)
 
@@ -360,7 +360,7 @@ Dedicated evidence module:
 
 All evidence is gossiped proactively and included in blocks automatically.
 
-**What MoltChain does**:
+**What Lichen does**:
 - `SlashingTracker` in core detects double-blocks locally
 - Evidence is logged but NOT automatically included in blocks
 - No gossip protocol for evidence
@@ -385,7 +385,7 @@ if vote.Height > cs.Height {
 
 CometBFT maintains a "peer round state" and buffers messages from heights it hasn't reached yet. When it advances to that height, it replays them.
 
-**What MoltChain does**: The BFT engine only processes messages for its current height:
+**What Lichen does**: The BFT engine only processes messages for its current height:
 - `on_proposal()`: Checks `proposal.height == self.height`
 - `on_prevote()`: Checks `prevote.height == self.height`
 - `on_precommit()`: Checks `precommit.height == self.height`
@@ -413,7 +413,7 @@ Key: The validator set change is **deterministic** — all nodes compute the sam
 
 **What Solana does**: Leader schedule is computed at the start of each epoch from the stake distribution at the epoch snapshot. New validators in the current epoch become eligible for the NEXT epoch's leader schedule.
 
-**What MoltChain does**:
+**What Lichen does**:
 1. `RegisterValidator` TX is included in a block
 2. `process_transaction()` adds validator to stake pool immediately
 3. `apply_block_effects()` reloads stake pool from state, updates ValidatorSet
@@ -651,7 +651,7 @@ The fundamental fix is NOT more patches to the sync timer. It is:
 
 ### Consensus Engine
 
-| Feature | CometBFT | Ethereum 2.0 | Solana | MoltChain Now | MoltChain Target |
+| Feature | CometBFT | Ethereum 2.0 | Solana | Lichen Now | Lichen Target |
 |---------|----------|-------------|--------|--------------|-----------------|
 | Core algorithm | Tendermint BFT | Casper FFG + LMD-GHOST | Tower BFT | Tendermint BFT ✅ | Same |
 | Finality | Instant (1 block) | 2 epochs (~13 min) | ~32 slots | Instant ✅ | Same |
@@ -669,7 +669,7 @@ The fundamental fix is NOT more patches to the sync timer. It is:
 
 ### P2P & Sync
 
-| Feature | CometBFT | Ethereum 2.0 | Solana | MoltChain Now | MoltChain Target |
+| Feature | CometBFT | Ethereum 2.0 | Solana | Lichen Now | Lichen Target |
 |---------|----------|-------------|--------|--------------|-----------------|
 | Block sync | ✅ Block Sync reactor | ✅ Range sync | ✅ Repair protocol | ⚠️ Timer-based | ✅ Event-driven (F-1) |
 | Commit verification | ✅ Every block | ✅ Sync committee | ✅ Vote account | ❌ Trust during sync | ✅ Verify always (F-4) |
@@ -681,7 +681,7 @@ The fundamental fix is NOT more patches to the sync timer. It is:
 
 ### Validator Set Management
 
-| Feature | CometBFT | Ethereum 2.0 | Solana | MoltChain Now | MoltChain Target |
+| Feature | CometBFT | Ethereum 2.0 | Solana | Lichen Now | Lichen Target |
 |---------|----------|-------------|--------|--------------|-----------------|
 | Val set in header | ✅ ValidatorsHash | ✅ Sync committee root | ✅ Vote accounts | ❌ | ✅ (F-6) |
 | Change activation | EndBlock (H+1) | Epoch boundary | Epoch boundary | Next height ✅ | Same |
@@ -692,7 +692,7 @@ The fundamental fix is NOT more patches to the sync timer. It is:
 
 ### Crash Recovery
 
-| Feature | CometBFT | Ethereum 2.0 | Solana | MoltChain Now | MoltChain Target |
+| Feature | CometBFT | Ethereum 2.0 | Solana | Lichen Now | Lichen Target |
 |---------|----------|-------------|--------|--------------|-----------------|
 | WAL | ✅ | ✅ DB | ✅ Tower file | ❌ | ✅ (F-3) |
 | Replay on restart | ✅ | ✅ | ✅ | ❌ Start fresh | ✅ (F-3) |
@@ -703,7 +703,7 @@ The fundamental fix is NOT more patches to the sync timer. It is:
 
 ## Summary
 
-**MoltChain's BFT consensus algorithm is correctly implementing Tendermint BFT.** The core state machine — propose/prevote/precommit/commit with locked rounds, POL unlocks, exponential timeouts, and stake-weighted supermajority — matches the published Tendermint paper and CometBFT's implementation.
+**Lichen's BFT consensus algorithm is correctly implementing Tendermint BFT.** The core state machine — propose/prevote/precommit/commit with locked rounds, POL unlocks, exponential timeouts, and stake-weighted supermajority — matches the published Tendermint paper and CometBFT's implementation.
 
 **The gaps are in the integration layer:**
 1. No crash recovery (WAL + lock persistence)

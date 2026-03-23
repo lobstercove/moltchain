@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "MoltyDEX Operations Dashboard",
+  "description": "Lichen DEX Operations Dashboard",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -77,7 +77,7 @@
       "title": "Insurance Fund Balance",
       "type": "stat",
       "datasource": "Prometheus",
-      "targets": [{ "expr": "dex_insurance_fund_balance", "legendFormat": "MOLT" }],
+      "targets": [{ "expr": "dex_insurance_fund_balance", "legendFormat": "LICN" }],
       "gridPos": { "h": 4, "w": 4, "x": 16, "y": 11 },
       "fieldConfig": { "defaults": { "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "yellow", "value": 10000 }, { "color": "green", "value": 50000 }] }, "unit": "short" } }
     },
@@ -105,10 +105,10 @@
     }
   ],
   "schemaVersion": 38,
-  "tags": ["moltchain", "dex"],
+  "tags": ["lichen", "dex"],
   "templating": { "list": [] },
   "time": { "from": "now-1h", "to": "now" },
-  "title": "MoltyDEX Operations",
-  "uid": "moltydex-ops",
+  "title": "Lichen DEX Operations",
+  "uid": "lichendex-ops",
   "version": 1
 }

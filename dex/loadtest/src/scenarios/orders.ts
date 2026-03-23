@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// MoltyDEX Load Test — Order Throughput Scenario
+// LichenDEX Load Test — Order Throughput Scenario
 // Tests: order placement rate, cancellation rate, matching throughput
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { MoltDEX } from '@moltchain/dex-sdk';
+import { LichenDEX } from '@lichen/dex-sdk';
 
 interface ScenarioResult {
   name: string;
@@ -18,7 +18,7 @@ interface ScenarioResult {
 }
 
 const ENDPOINT = process.env.DEX_ENDPOINT || 'http://localhost:8899';
-const PAIR_ID = 0; // MOLT/mUSD
+const PAIR_ID = 0; // LICN/lUSD
 
 async function measureLatency(fn: () => Promise<any>): Promise<{ ok: boolean; ms: number; error?: string }> {
   const start = performance.now();
@@ -35,7 +35,7 @@ async function measureLatency(fn: () => Promise<any>): Promise<{ ok: boolean; ms
  * Places N orders sequentially, measures throughput and latency
  */
 export async function orderPlacementSequential(count: number = 100): Promise<ScenarioResult> {
-  const dex = new MoltDEX({ endpoint: ENDPOINT });
+  const dex = new LichenDEX({ endpoint: ENDPOINT });
   const latencies: number[] = [];
   const errors: string[] = [];
   let successCount = 0;
@@ -79,7 +79,7 @@ export async function orderPlacementSequential(count: number = 100): Promise<Sce
  * Places orders then cancels them all as fast as possible
  */
 export async function orderCancelStorm(count: number = 100): Promise<ScenarioResult> {
-  const dex = new MoltDEX({ endpoint: ENDPOINT });
+  const dex = new LichenDEX({ endpoint: ENDPOINT });
   const latencies: number[] = [];
   const errors: string[] = [];
   let successCount = 0;
@@ -134,7 +134,7 @@ export async function orderbookQueryUnderLoad(
   queryCount: number = 200,
   orderCount: number = 50,
 ): Promise<ScenarioResult> {
-  const dex = new MoltDEX({ endpoint: ENDPOINT });
+  const dex = new LichenDEX({ endpoint: ENDPOINT });
   const latencies: number[] = [];
   const errors: string[] = [];
   let successCount = 0;
@@ -181,7 +181,7 @@ export async function orderbookQueryUnderLoad(
 // Run if executed directly
 if (require.main === module) {
   (async () => {
-    console.log('═══ MoltyDEX Load Test: Order Scenarios ═══\n');
+    console.log('═══ LichenDEX Load Test: Order Scenarios ═══\n');
     console.log(`Endpoint: ${ENDPOINT}\n`);
 
     const scenarios = [

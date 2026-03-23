@@ -21,8 +21,8 @@ These are the exact shapes the live data adapter must output.
 ```js
 {
   id: "collection-0",
-  name: "MoltPunks",
-  banner: "#FF6B35" | "linear-gradient(...)" | "#RRGGBB",
+  name: "LichenPunks",
+  banner: "#00C9DB" | "linear-gradient(...)" | "#RRGGBB",
   avatar: "🦞",
   items: 1234,
   owners: 456,
@@ -36,7 +36,7 @@ These are the exact shapes the live data adapter must output.
 {
   id: "nft-0",
   name: "#1234",
-  collection: "MoltPunks",
+  collection: "LichenPunks",
   image: "linear-gradient(...)" | image URL,
   price: "12.34", // string
   lastSale: "22.10", // string
@@ -48,8 +48,8 @@ These are the exact shapes the live data adapter must output.
 ```js
 {
   id: "creator-0",
-  name: "MoltMaster",
-  address: "MOLTabcd...",
+  name: "LicnMaster",
+  address: "LICNabcd...",
   avatar: "🎨",
   sales: 1234,
   volume: 56789
@@ -61,10 +61,10 @@ These are the exact shapes the live data adapter must output.
 {
   id: "sale-0",
   nft: "#1234",
-  collection: "MoltPunks",
+  collection: "LichenPunks",
   price: "12.34", // string
-  from: "MOLTabcd...",
-  to: "MOLTefgh...",
+  from: "LICNabcd...",
+  to: "LICNefgh...",
   timestamp: 1700000000000, // ms
   image: "linear-gradient(...)" | image URL
 }
@@ -152,7 +152,7 @@ These map directly to elements in `marketplace/*.html` so wiring does not alter 
 
 ### Create (create.html)
 - Collections dropdown: user collections + public collections
-- Mint fee display (static): keep as 0.001 MOLT
+- Mint fee display (static): keep as 0.001 LICN
 - Preview card: uses same NFT card shape as landing
 
 ### Item (item.html)

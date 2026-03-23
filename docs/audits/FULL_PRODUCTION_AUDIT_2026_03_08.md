@@ -1,4 +1,4 @@
-# MoltChain Full Production Audit — March 8, 2026
+# Lichen Full Production Audit — March 8, 2026
 
 **Scope:** Complete codebase audit (~92K lines across validator, core, custody, faucet, P2P, RPC, contract VM)  
 **Auditor:** Automated deep analysis  
@@ -79,7 +79,7 @@
 
 ### C8. RPC Launchpad Equity Calculation Overflow
 **File:** [rpc/src/launchpad.rs](../rpc/src/launchpad.rs) ~L490-530  
-**Issue:** `compute_buy_tokens` uses u128 math but silently caps result at `u64::MAX` instead of returning an error. A user requesting an enormous `after_fee_shells` value gets capped to u64::MAX tokens, potentially worth far more than paid.  
+**Issue:** `compute_buy_tokens` uses u128 math but silently caps result at `u64::MAX` instead of returning an error. A user requesting an enormous `after_fee_spores` value gets capped to u64::MAX tokens, potentially worth far more than paid.  
 **Impact:** Free token generation exploit on launchpad  
 **Fix:** Return error when tokens exceed u64::MAX instead of silent cap.
 
@@ -194,7 +194,7 @@
 
 ### M3. EVM Balance Overflow Silently Dropped
 **File:** [core/src/evm.rs](../core/src/evm.rs) ~L622-633  
-**Issue:** When EVM contract balance > u64::MAX shells, conversion fails and `native_balance_update` is set to `None`, silently dropping the balance update. EVM state modified without native balance sync.  
+**Issue:** When EVM contract balance > u64::MAX spores, conversion fails and `native_balance_update` is set to `None`, silently dropping the balance update. EVM state modified without native balance sync.  
 **Fix:** Return error from `execute_evm_transaction()`, reject the TX entirely.
 
 ### M4. JSON Arg Encoding Heuristic Unsafe

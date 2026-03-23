@@ -1,4 +1,4 @@
-# MoltChain Core Production Readiness Audit — Complete File-by-File Report
+# Lichen Core Production Readiness Audit — Complete File-by-File Report
 
 **Scope:** All 20 files in `core/src/` (~17,500 lines of Rust)  
 **Date:** February 2025  
@@ -24,7 +24,7 @@
 12. [network.rs](#12-networkrs)
 13. [privacy.rs](#13-privacyrs)
 14. [genesis.rs](#14-genesisrs)
-15. [reefstake.rs](#15-reefstakers)
+15. [mossstake.rs](#15-mossstakers)
 16. [evm.rs](#16-evmrs)
 17. [contract.rs](#17-contractrs)
 18. [consensus.rs](#18-consensusrs)
@@ -63,13 +63,13 @@
 ## 3. `account.rs`
 
 **Lines:** 1–280  
-**Purpose:** `Account` struct — balance model, MOLT/shell conversion, serialization.
+**Purpose:** `Account` struct — balance model, LICN/spore conversion, serialization.
 
 | # | Line(s) | Severity | Category | Finding |
 |---|---------|----------|----------|---------|
-| 1 | 25–30 | `[LOW]` | Naming/Style | Legacy field `shells` is retained alongside `spendable`. The `legacy_fixup()` method migrates `shells → spendable`, but the `shells` field remains serialized in every account, wasting ~8 bytes per account on disk. |
-| 2 | 55 | `[LOW]` | Naming/Style | `SHELLS_PER_MOLT` is `1_000_000_000`. This is the same denomination as Ethereum `gwei`. Consider documenting the analogy for clarity. |
-| 3 | 100–115 | `[MEDIUM]` | Blockchain Principles | `Account::new(molt, pubkey)` sets `spendable = molt * SHELLS_PER_MOLT` and also `shells = spendable`. This double-write to `shells` is harmless but misleading — readers may think `shells` is a separate balance. |
+| 1 | 25–30 | `[LOW]` | Naming/Style | Legacy field `spores` is retained alongside `spendable`. The `legacy_fixup()` method migrates `spores → spendable`, but the `spores` field remains serialized in every account, wasting ~8 bytes per account on disk. |
+| 2 | 55 | `[LOW]` | Naming/Style | `SPORES_PER_LICN` is `1_000_000_000`. This is the same denomination as Ethereum `gwei`. Consider documenting the analogy for clarity. |
+| 3 | 100–115 | `[MEDIUM]` | Blockchain Principles | `Account::new(licn, pubkey)` sets `spendable = licn * SPORES_PER_LICN` and also `spores = spendable`. This double-write to `spores` is harmless but misleading — readers may think `spores` is a separate balance. |
 | 4 | 140–160 | `[LOW]` | Error Handling | `debit_spendable()` and `credit_spendable()` use `checked_sub` / `checked_add` and return `Err(String)`. The error messages are descriptive but not machine-parseable. Consider typed errors. |
 | 5 | 200–220 | `[LOW]` | Dead Code | `reputation` and `last_active_slot` fields exist on every account but are only used for validators/stakers. Ordinary transfer-only accounts carry these fields unnecessarily. |
 
@@ -129,7 +129,7 @@
 
 | # | Line(s) | Severity | Category | Finding |
 |---|---------|----------|----------|---------|
-| 1 | 48 | `[MEDIUM]` | Naming/Style | `Deploy` variant has a field named `lamports` for initial_balance. This is Solana terminology and will confuse MoltChain users/developers who expect "shells" or "MOLT". |
+| 1 | 48 | `[MEDIUM]` | Naming/Style | `Deploy` variant has a field named `lamports` for initial_balance. This is Solana terminology and will confuse Lichen users/developers who expect "spores" or "LICN". |
 | 2 | 95–100 | `[MEDIUM]` | Performance | `ContractInstruction::from_bytes()` deserializes from `serde_json`, meaning every contract call instruction is JSON-encoded inside the binary `data` field of `Instruction`. This double-encoding (JSON inside a binary-capable field) wastes space and parsing time. |
 | 3 | 70 | `[LOW]` | Missing Features | `Close` variant only has `program_id`. There is no indication of where remaining funds should be sent (a "close authority" / "lamports recipient" pattern). The processor handles this but the instruction type doesn't declare it. |
 
@@ -212,7 +212,7 @@
 
 | # | Line(s) | Severity | Category | Finding |
 |---|---------|----------|----------|---------|
-| 1 | 40–60 | `[CRITICAL]` | Stubs/Placeholders | `generate_proof()` creates a **fake ZK proof** using HMAC-SHA256 of the input data with a hardcoded key `b"moltchain-zk-placeholder"`. This provides **zero** zero-knowledge properties. The "proof" is just a MAC that anyone with the key can forge. Correctly disabled via `PRIVACY_ENABLED = false` but the code exists and could be accidentally enabled. |
+| 1 | 40–60 | `[CRITICAL]` | Stubs/Placeholders | `generate_proof()` creates a **fake ZK proof** using HMAC-SHA256 of the input data with a hardcoded key `b"lichen-zk-placeholder"`. This provides **zero** zero-knowledge properties. The "proof" is just a MAC that anyone with the key can forge. Correctly disabled via `PRIVACY_ENABLED = false` but the code exists and could be accidentally enabled. |
 | 2 | 70–80 | `[CRITICAL]` | Security | `verify_proof()` "verifies" by recomputing the HMAC and comparing. Since the key is hardcoded in source code, any party can generate "valid" proofs for any data. If enabled, this would allow arbitrary shielded transfers with no cryptographic guarantee. |
 | 3 | 90–100 | `[HIGH]` | Performance | `NullifierSet` stores nullifiers in a `Vec<[u8; 32]>` and checks via `.contains()` — O(n) linear scan. For a production nullifier set with millions of entries, this would be catastrophically slow. A `HashSet` or Bloom filter + DB backend is needed. |
 | 4 | 120 | `[MEDIUM]` | Missing Features | `ShieldedTransaction` has `encrypted_data: Vec<u8>` but there is no actual encryption implementation — the "encrypted" data is just the plaintext serialized and labeled as encrypted. |
@@ -231,24 +231,24 @@
 | 2 | 130–140 | `[MEDIUM]` | Security | `genesis_accounts` is a `Vec<(String, u64)>` where the string is a base58 pubkey. There is no deduplication check — the same pubkey could appear multiple times, receiving multiple airdrops. The processor may handle this but genesis validation should catch it. |
 | 3 | 200–210 | `[LOW]` | Error Handling | `validate()` returns `Result<(), Vec<String>>` — all errors are collected and returned together. This is good UX but the error strings are not structured (no error codes). |
 | 4 | 260 | `[LOW]` | Missing Features | No genesis block hash or genesis timestamp in the config. The genesis block is created at runtime with `SystemTime::now()`, meaning different validators starting at different times will have different genesis blocks. |
-| 5 | 300–320 | `[LOW]` | Naming/Style | `total_supply` is in MOLT but `genesis_accounts` amounts are also MOLT. A comment or type alias distinguishing MOLT from shells would prevent confusion. |
+| 5 | 300–320 | `[LOW]` | Naming/Style | `total_supply` is in LICN but `genesis_accounts` amounts are also LICN. A comment or type alias distinguishing LICN from spores would prevent confusion. |
 
 ---
 
-## 15. `reefstake.rs`
+## 15. `mossstake.rs`
 
 **Lines:** 1–623  
-**Purpose:** Liquid staking pool — stMOLT token, lock tiers, rewards.
+**Purpose:** Liquid staking pool — stLICN token, lock tiers, rewards.
 
 | # | Line(s) | Severity | Category | Finding |
 |---|---------|----------|----------|---------|
-| 1 | 45–50 | `[MEDIUM]` | Blockchain Principles | `RATE_PRECISION = 1_000_000_000` (10^9). The exchange rate `molt_to_stmolt_rate` is integer-only with this precision. For very large pools (>10^9 MOLT), the rate numerator could approach `u64::MAX`, risking overflow in multiplication before division. The code uses `checked_mul` in some places but not all. |
-| 2 | 110–130 | `[MEDIUM]` | Security | `deposit()` computes `stmolt_amount = deposit_amount * rate / RATE_PRECISION`. If `deposit_amount * rate` overflows `u64`, the result is silently wrong (wrapping). The `checked_mul` → `ok_or` pattern is used here which is correct. However, `withdraw()` at ~line 160 does `stmolt_amount * RATE_PRECISION / rate` which could also overflow for large stMOLT balances. |
+| 1 | 45–50 | `[MEDIUM]` | Blockchain Principles | `RATE_PRECISION = 1_000_000_000` (10^9). The exchange rate `licn_to_stlicn_rate` is integer-only with this precision. For very large pools (>10^9 LICN), the rate numerator could approach `u64::MAX`, risking overflow in multiplication before division. The code uses `checked_mul` in some places but not all. |
+| 2 | 110–130 | `[MEDIUM]` | Security | `deposit()` computes `stlicn_amount = deposit_amount * rate / RATE_PRECISION`. If `deposit_amount * rate` overflows `u64`, the result is silently wrong (wrapping). The `checked_mul` → `ok_or` pattern is used here which is correct. However, `withdraw()` at ~line 160 does `stlicn_amount * RATE_PRECISION / rate` which could also overflow for large stLICN balances. |
 | 3 | 200–210 | `[LOW]` | Missing Features | Lock tier bonuses are 0%, 5%, 10%, 20% for tiers 0–3. These are hardcoded. A governance mechanism to adjust tier bonuses is missing. |
 | 4 | 280–300 | `[LOW]` | Naming/Style | `calculate_apy()` returns `(u64, f64)` — the `u64` is the integer APY basis points, the `f64` is a display-only percentage. The f64 is explicitly marked `// display only, not used in consensus` which is good, but returning f64 from a consensus-adjacent function is a code smell. |
-| 5 | 380–400 | `[MEDIUM]` | Atomicity/Consistency | `distribute_rewards()` modifies `self.total_molt_staked` and per-staker `molt_deposited` in a loop. If the function panics mid-loop (e.g., arithmetic error on one staker), the pool state is partially updated. The function should compute all changes first, then apply atomically. The dust fix (CP-5) at line ~410 correctly handles remainder but doesn't address partial-update risk. |
+| 5 | 380–400 | `[MEDIUM]` | Atomicity/Consistency | `distribute_rewards()` modifies `self.total_licn_staked` and per-staker `licn_deposited` in a loop. If the function panics mid-loop (e.g., arithmetic error on one staker), the pool state is partially updated. The function should compute all changes first, then apply atomically. The dust fix (CP-5) at line ~410 correctly handles remainder but doesn't address partial-update risk. |
 | 6 | 450–470 | `[LOW]` | Performance | `distribute_rewards()` iterates all stakers to distribute rewards proportionally. For pools with thousands of stakers, this is O(n) per reward distribution. A lazy reward accumulator pattern (rewards-per-share) would be O(1). |
-| 7 | 500–520 | `[MEDIUM]` | Security | `transfer_stmolt()` adjusts `molt_deposited` proportionally: `transferred_molt = sender.molt_deposited * amount / sender.stmolt_balance`. Integer division truncation means the sender retains slightly more `molt_deposited` than they should. Over many small transfers, this can accumulate as a rounding gain for the sender. |
+| 7 | 500–520 | `[MEDIUM]` | Security | `transfer_stlicn()` adjusts `licn_deposited` proportionally: `transferred_licn = sender.licn_deposited * amount / sender.stlicn_balance`. Integer division truncation means the sender retains slightly more `licn_deposited` than they should. Over many small transfers, this can accumulate as a rounding gain for the sender. |
 
 ---
 
@@ -259,8 +259,8 @@
 
 | # | Line(s) | Severity | Category | Finding |
 |---|---------|----------|----------|---------|
-| 1 | 130–145 | `[HIGH]` | Blockchain Principles | `u256_to_shells()` converts EVM wei-denominated balances to native shells via integer division (`value / 10^9`). Any sub-shell remainder is **silently dropped** with only an `eprintln!` warning. In production, `eprintln!` output goes to stderr and may not be logged. This means EVM operations can lose up to 999,999,999 wei (~0.999 shells) per conversion, and the loss is not tracked. |
-| 2 | 100–110 | `[MEDIUM]` | Blockchain Principles | `shells_to_u256()` converts shells to wei by multiplying by 10^9. The asymmetry (multiply up, divide down) means a round-trip `shells → wei → shells` is lossless, but `wei → shells → wei` loses the sub-shell portion. Documented but not enforced by the type system. |
+| 1 | 130–145 | `[HIGH]` | Blockchain Principles | `u256_to_spores()` converts EVM wei-denominated balances to native spores via integer division (`value / 10^9`). Any sub-spore remainder is **silently dropped** with only an `eprintln!` warning. In production, `eprintln!` output goes to stderr and may not be logged. This means EVM operations can lose up to 999,999,999 wei (~0.999 spores) per conversion, and the loss is not tracked. |
+| 2 | 100–110 | `[MEDIUM]` | Blockchain Principles | `spores_to_u256()` converts spores to wei by multiplying by 10^9. The asymmetry (multiply up, divide down) means a round-trip `spores → wei → spores` is lossless, but `wei → spores → wei` loses the sub-spore portion. Documented but not enforced by the type system. |
 | 3 | 200–240 | `[MEDIUM]` | Security | `StateEvmDb` implements `Database` for `revm`. The `basic()` method loads an account from the native state store and converts its balance to EVM format. If the native account doesn't exist, it returns a default (zero balance, zero nonce). This means any EVM address can be queried without error — correct EVM semantics but typos in addresses silently succeed with zero balance. |
 | 4 | 300–350 | `[HIGH]` | Security | `execute_evm_transaction()` uses `transact()` (not `transact_commit()`) to avoid immediate state mutation. However, the gas-to-fee conversion at ~line 320 uses `gas_used * gas_price` in u64 arithmetic. For very high gas prices or large gas usage, this multiplication could overflow u64, resulting in an incorrect (wrapped) fee. |
 | 5 | 400–420 | `[MEDIUM]` | Atomicity/Consistency | `convert_revm_state_to_deferred()` iterates over revm's `BundleState` and builds `EvmStateChange` entries. If the native account for a changed EVM address does not exist in the state store, the native_balance_update is skipped. This means EVM contract creation that sends value will not create a corresponding native account — the value is lost. |
@@ -301,7 +301,7 @@
 | # | Line(s) | Severity | Category | Finding |
 |---|---------|----------|----------|---------|
 | 1 | 80–100 | `[HIGH]` | Blockchain Principles | `StakePool::register()` accepts `machine_fingerprint: Option<String>` as a Sybil resistance measure. The fingerprint is just a string with no hardware attestation — an attacker can fabricate arbitrary fingerprint strings and register multiple validators. |
-| 2 | 150–170 | `[MEDIUM]` | Security | Bootstrap grants give free MOLT to the first 200 validators (50/50 or 75/25 debt/liquid split). The amount depends on registration order — early registrants get more. First-mover advantage could be exploited if the registration window is known. |
+| 2 | 150–170 | `[MEDIUM]` | Security | Bootstrap grants give free LICN to the first 200 validators (50/50 or 75/25 debt/liquid split). The amount depends on registration order — early registrants get more. First-mover advantage could be exploited if the registration window is known. |
 | 3 | 250–270 | `[MEDIUM]` | Blockchain Principles | `ValidatorSet::select_leader()` uses `sqrt(stake) * sqrt(reputation)` for weighted selection. For very large stakes, the intermediate multiplication `sqrt_stake * sqrt_rep` could theoretically overflow u64, though unlikely in practice (sqrt(u64::MAX) ≈ 4.3×10^9). |
 | 4 | 300–310 | `[LOW]` | Performance | `select_leader()` iterates all validators for cumulative weights — O(n) per slot. For >10,000 validators, a pre-computed weight index would be O(log n). |
 | 5 | 400–430 | `[MEDIUM]` | Security | `VoteAggregator::add_vote()` tracks equivocation via `HashMap<Pubkey, Hash>`. Only the first vote's hash is stored — if three conflicting votes arrive, only first vs. second are compared. Adequate for binary equivocation but could miss complex multi-vote attacks. |
@@ -312,8 +312,8 @@
 | 10 | 850 | `[LOW]` | Missing Features | No slashing appeals or dispute resolution. Once slashed, a validator cannot contest. No recourse for false positives (e.g., network partition mistaken for equivocation). |
 | 11 | 900–920 | `[LOW]` | Naming/Style | `Severity` is an integer 1–6 mapped via `match`. A named enum would be more readable. |
 | 12 | 1000–1050 | `[MEDIUM]` | Missing Features | `governance_voting_power()` computes power as `sqrt(tokens) * reputation_multiplier`. The function exists but no governance system (proposals, quorum, execution) is implemented. Unused computation. |
-| 13 | 1100–1120 | `[LOW]` | Performance | `epoch_rewards()` iterates all active validators. Combined with ReefStake's `distribute_rewards()` (all stakers), reward distribution is O(validators × stakers_per_pool). Could be slow for large networks. |
-| 14 | 200–220 | `[MEDIUM]` | Security | `graduation_check()` performance bonus (75/25 split at 95% uptime) is generous — a validator running just long enough could graduate and keep 75% of a free grant as real MOLT. `MAX_BOOTSTRAP_SLOTS` cap value is not clearly documented. |
+| 13 | 1100–1120 | `[LOW]` | Performance | `epoch_rewards()` iterates all active validators. Combined with MossStake's `distribute_rewards()` (all stakers), reward distribution is O(validators × stakers_per_pool). Could be slow for large networks. |
+| 14 | 200–220 | `[MEDIUM]` | Security | `graduation_check()` performance bonus (75/25 split at 95% uptime) is generous — a validator running just long enough could graduate and keep 75% of a free grant as real LICN. `MAX_BOOTSTRAP_SLOTS` cap value is not clearly documented. |
 | 15 | 1300–1350 | `[LOW]` | Blockchain Principles | `calculate_apy_display()` uses `f64` for display. Correctly noted "display only, not consensus" but sharing a file with consensus-critical code increases audit surface. |
 
 ---
@@ -332,9 +332,9 @@
 | 5 | 420–470 | `[MEDIUM]` | Blockchain Principles | Types 10 (`DeployContract`) and 13 (`ContractDeploy`) are **redundant** — both deploy contracts through different code paths with different validation. This is confusing and could lead to inconsistent deploy behavior. |
 | 6 | 500–520 | `[MEDIUM]` | Security | Transfer + fee are not in the same atomic batch. `system_transfer()` uses `state.transfer()` (WriteBatch) but fee uses `charge_fee_direct()` (separate write). A crash between them creates inconsistent state. |
 | 7 | 600–620 | `[LOW]` | Missing Features | `system_register_symbol()` has no cost beyond base fee and no rate-limiting. Namespace squatting is possible. |
-| 8 | 700–720 | `[MEDIUM]` | Security | `system_faucet_airdrop()` has per-account 100 MOLT cap but no global rate limit or total supply cap. Unlimited accounts can each drain 100 MOLT. Should be disabled on mainnet. |
+| 8 | 700–720 | `[MEDIUM]` | Security | `system_faucet_airdrop()` has per-account 100 LICN cap but no global rate limit or total supply cap. Unlimited accounts can each drain 100 LICN. Should be disabled on mainnet. |
 | 9 | 800–830 | `[LOW]` | Error Handling | Instruction handlers return `Result<(), String>` but error strings are not propagated to transaction receipts. Callers see success/failure but not the reason. |
-| 10 | 900–920 | `[MEDIUM]` | Security | `contract_call()` injects MoltyID reputation from caller's account. If the caller modifies reputation in the same block (via stake operation), the reputation seen by the contract may be stale. |
+| 10 | 900–920 | `[MEDIUM]` | Security | `contract_call()` injects LichenID reputation from caller's account. If the caller modifies reputation in the same block (via stake operation), the reputation seen by the contract may be stale. |
 | 11 | 1000–1050 | `[MEDIUM]` | Atomicity/Consistency | `apply_rent()` rent collection and treasury credit happen in separate DB writes (not atomic). |
 | 12 | 1100–1120 | `[LOW]` | Performance | `execute_instruction()` 21-arm match. Most common instructions (Transfer, ContractCall) should be first. Transfer is type 0 (first), which is good. |
 | 13 | 1200–1250 | `[LOW]` | Dead Code | `process_evm_transaction()` has early return for `is_evm: false`. Only called when true — redundant defense check. |
@@ -364,7 +364,7 @@
 | 10 | 700–730 | `[MEDIUM]` | Atomicity/Consistency | `transfer()` uses `WriteBatch` (correct) but reads both accounts before writing. No optimistic locking — concurrent modifications between read and write can cause lost updates. |
 | 11 | 800–830 | `[LOW]` | Performance | `get_account_transactions()` does N separate point reads. `multi_get` or prefix-scan would be faster. |
 | 12 | 900–930 | `[LOW]` | Missing Features | NFT indexing lacks "by creator" and "by metadata attribute" indexes — common marketplace query patterns. |
-| 13 | 1000–1030 | `[LOW]` | Naming/Style | Symbol registry lacks homoglyph protection (`m0lt` vs `molt`). |
+| 13 | 1000–1030 | `[LOW]` | Naming/Style | Symbol registry lacks homoglyph protection (`m0lt` vs `lichen`). |
 | 14 | 1200–1250 | `[MEDIUM]` | Atomicity/Consistency | `commit_batch()` applies batch to RocksDB but does **not** update `BLOCKHASH_CACHE` or `MetricsStore`. Metrics can drift from reality. |
 | 15 | 1350–1380 | `[LOW]` | Performance | `StateBatch::get_or_load_account()` overlay miss causes RocksDB point read. Pre-loading expected accounts would reduce random I/O. |
 | 16 | 1500–1530 | `[MEDIUM]` | Atomicity/Consistency | `save_validators()` "delete all then insert all" in single WriteBatch. Atomic, but very large batches could stress RocksDB WAL. |

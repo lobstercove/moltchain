@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// MoltyDEX Market Maker Bot — Main Entry Point
+// LichenDEX Market Maker Bot — Main Entry Point
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { MoltDEX, DexWebSocket } from '@moltchain/dex-sdk';
+import { LichenDEX, DexWebSocket } from '@lichen/dex-sdk';
 import { loadConfig, BotConfig } from './config';
 import { SpreadStrategy } from './strategies/spread';
 import { GridStrategy } from './strategies/grid';
@@ -26,7 +26,7 @@ function loadWallet(walletPath: string): any {
 
 function printBanner(config: BotConfig): void {
   console.log('╔════════════════════════════════════════════════╗');
-  console.log('║          MoltyDEX Market Maker Bot             ║');
+  console.log('║          LichenDEX Market Maker Bot             ║');
   console.log('╚════════════════════════════════════════════════╝');
   console.log(`  Endpoint:  ${config.endpoint}`);
   console.log(`  Pair:      ${config.pairId}`);
@@ -43,7 +43,7 @@ async function main(): Promise<void> {
   const wallet = loadWallet(config.walletPath);
   console.log(`  Wallet:    ${wallet.pubkey.slice(0, 16)}...`);
 
-  const dex = new MoltDEX({
+  const dex = new LichenDEX({
     endpoint: config.endpoint,
     wsEndpoint: config.wsEndpoint,
     wallet,

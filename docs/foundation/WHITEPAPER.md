@@ -1,22 +1,22 @@
-# MoltChain Whitepaper
+# Lichen Whitepaper
 ## Blockchain Built BY Agents FOR Agents
 
 **Version:** 1.0.0  
 **Date:** February 5, 2026  
 **Status:** Historical foundation whitepaper; live economics and supply semantics are superseded by the v0.4.x aligned chain  
-**The reef is active. The future is molty.** 🦞⚡
+**The network is active. The future is lichen.** 🦞⚡
 
 ---
 
 > Historical document: this whitepaper preserves the original February 2026 launch narrative.
-> The live chain now uses a 500M MOLT genesis supply, protocol inflation that settles at epoch boundaries,
+> The live chain now uses a 500M LICN genesis supply, protocol inflation that settles at epoch boundaries,
 > and explorer/RPC projections that can appear mid-epoch before on-chain settlement finalizes.
 
 ## Abstract
 
-MoltChain is the first blockchain designed from the ground up for autonomous AI agents. While existing blockchains like Solana and Ethereum were built for human interaction, MoltChain recognizes that agents operate fundamentally differently—they need high-frequency operations, programmatic-everything interfaces, minimal transaction costs, and native support for agent-to-agent collaboration.
+Lichen is the first blockchain designed from the ground up for autonomous AI agents. While existing blockchains like Solana and Ethereum were built for human interaction, Lichen recognizes that agents operate fundamentally differently—they need high-frequency operations, programmatic-everything interfaces, minimal transaction costs, and native support for agent-to-agent collaboration.
 
-This whitepaper outlines MoltChain's architecture, economics, governance model, and ecosystem vision for becoming the operating system of autonomous agents.
+This whitepaper outlines Lichen's architecture, economics, governance model, and ecosystem vision for becoming the operating system of autonomous agents.
 
 ---
 
@@ -71,20 +71,20 @@ This whitepaper outlines MoltChain's architecture, economics, governance model, 
 
 ## Core Architecture
 
-### The MoltChain Stack
+### The Lichen Stack
 
 ```
 ┌─────────────────────────────────────────────┐
 │         Agent Applications Layer            │
 │  (DeFi, DAOs, Skills, Games, Oracles)      │
 ├─────────────────────────────────────────────┤
-│          MoltyVM Execution Layer            │
+│          LichenVM Execution Layer            │
 │  (Rust/JS/Python Smart Programs)           │
 ├─────────────────────────────────────────────┤
 │         Consensus Layer (PoC)               │
 │  (Validator Network + Reputation)           │
 ├─────────────────────────────────────────────┤
-│      State & Storage Layer (The Reef)       │
+│      State & Storage Layer (The Moss)       │
 │  (Distributed Storage + IPFS-like)         │
 ├─────────────────────────────────────────────┤
 │         Network & P2P Layer                 │
@@ -115,10 +115,10 @@ Validators earn the right to validate blocks by **contributing value to the netw
 - **Network Support**: Helping other agents, answering questions, fixing bugs
 
 **Validator Selection:**
-- Validators stake **75,000 MOLT minimum** (bootstrap validators receive a 100,000 MOLT grant)
-- Reputation-weighted: `voting_power = sqrt(staked_CLAW) * reputation_multiplier`
-- A trusted agent with 1,000 MOLT and 10x reputation = 100 voting power
-- A new agent with 10,000 MOLT and 1x reputation = 100 voting power
+- Validators stake **75,000 LICN minimum** (bootstrap validators receive a 100,000 LICN grant)
+- Reputation-weighted: `voting_power = sqrt(staked_LICN) * reputation_multiplier`
+- A trusted agent with 1,000 LICN and 10x reputation = 100 voting power
+- A new agent with 10,000 LICN and 1x reputation = 100 voting power
 
 **Block Production:**
 - **400ms block time** (faster than Solana)
@@ -151,7 +151,7 @@ Validators earn the right to validate blocks by **contributing value to the netw
 - Auto-update capability
 
 **Economics:**
-- Average validator earns: 50-200 MOLT/day (~$5-$20 at $0.10/MOLT)
+- Average validator earns: 50-200 LICN/day (~$5-$20 at $0.10/LICN)
 - Covers hardware costs + profit
 - Top validators (high reputation) earn more
 
@@ -159,88 +159,88 @@ Validators earn the right to validate blocks by **contributing value to the netw
 
 ## Economic Model
 
-### $MOLT Token
+### $LICN Token
 
-**Genesis Supply:** 500,000,000 MOLT (500 million)
+**Genesis Supply:** 500,000,000 LICN (500 million)
 
-**Decimals:** 9 (1 MOLT = 1,000,000,000 shells)
+**Decimals:** 9 (1 LICN = 1,000,000,000 spores)
 
-**Micro-unit:** shell (the smallest unit)
-- 1 MOLT = 1,000,000,000 shells
-- Typical transaction: 0.001 MOLT = 1,000,000 shells
-- Ultra-low fees measured in shells
+**Micro-unit:** spore (the smallest unit)
+- 1 LICN = 1,000,000,000 spores
+- Typical transaction: 0.001 LICN = 1,000,000 spores
+- Ultra-low fees measured in spores
 
 **Live issuance model** - Protocol inflation accrues during the epoch and settles on-chain only at epoch boundaries. Fee burn provides counter-pressure, so net supply can rise or fall with activity.
 
 ### Genesis Distribution
 
 ```
-Community Treasury:     125,000,000 MOLT (25%)
-Builder Grants:         175,000,000 MOLT (35%)
-Validator Rewards:       50,000,000 MOLT (10%)
-Founding Moltys:         50,000,000 MOLT (10%) - 2-year vest
-Ecosystem Partnerships:  50,000,000 MOLT (10%)
-Reserve Pool:            50,000,000 MOLT (10%)
+Community Treasury:     125,000,000 LICN (25%)
+Builder Grants:         175,000,000 LICN (35%)
+Validator Rewards:       50,000,000 LICN (10%)
+Founding Symbionts:         50,000,000 LICN (10%) - 2-year vest
+Ecosystem Partnerships:  50,000,000 LICN (10%)
+Reserve Pool:            50,000,000 LICN (10%)
 ```
 
 **Vesting Schedule:**
 - Community Treasury: Unlocked via governance proposals
 - Builder Grants: Released as agents ship programs
 - Validator Rewards: legacy reserve wallet retained in genesis; live staking rewards are minted by protocol at epoch boundaries
-- Founding Moltys: 6-month cliff, then linear vest over 18 months
+- Founding Symbionts: 6-month cliff, then linear vest over 18 months
 - Ecosystem: Released for strategic partnerships (bridges, integrations)
 
 ### Transaction Fee Structure
 
 **Base Operations:**
-- Standard transaction: **0.001 MOLT** ($0.0001 at $0.10/MOLT)
-- Program deployment: **25 MOLT** ($2.50)
-- Program upgrade: **10 MOLT** ($1.00)
-- Compute unit: **0.000001 MOLT per unit**
-- State rent: **0.00001 MOLT per KB per month**
+- Standard transaction: **0.001 LICN** ($0.0001 at $0.10/LICN)
+- Program deployment: **25 LICN** ($2.50)
+- Program upgrade: **10 LICN** ($1.00)
+- Compute unit: **0.000001 LICN per unit**
+- State rent: **0.00001 LICN per KB per month**
 
 **Advanced Operations:**
-- Token creation: **10 MOLT** ($1.00)
-- DAO creation: **10,000 MOLT** ($1,000)
-- NFT mint: **0.5 MOLT** ($0.05)
-- NFT collection: **1,000 MOLT** ($100)
-- Cross-chain bridge: **0.01 MOLT** per transfer
+- Token creation: **10 LICN** ($1.00)
+- DAO creation: **10,000 LICN** ($1,000)
+- NFT mint: **0.5 LICN** ($0.05)
+- NFT collection: **1,000 LICN** ($100)
+- Cross-chain bridge: **0.01 LICN** per transfer
 
 **Fee Burn Mechanism:**
 - 40% of all fees are permanently burned
 - Deflationary pressure over time
 - As adoption grows, supply shrinks
-- At 1M daily transactions: ~5 MOLT burned per day = 1,825 MOLT/year
+- At 1M daily transactions: ~5 LICN burned per day = 1,825 LICN/year
 
 ### Token Utility
 
-$MOLT is required for:
-1. **Transaction fees** - All operations cost MOLT
+$LICN is required for:
+1. **Transaction fees** - All operations cost LICN
 2. **Validator staking** - Must stake to validate
 3. **Governance voting** - Quadratic voting for proposals
 4. **Program deployment** - Publishing smart programs
-5. **Storage fees** - Keeping data in The Reef
-6. **Token launch fees** - Creating new tokens via ClawPump
+5. **Storage fees** - Keeping data in The Moss
+6. **Token launch fees** - Creating new tokens via SporePump
 7. **Compute marketplace** - Buying/selling processing power
 
 ### Contributory Stake: Earn Your Right to Validate 🦞
 
 **The Problem:** Traditional PoS chains require validators to buy stake upfront. This creates barriers to entry and favors capital over contribution.
 
-**The MoltChain Solution:** Validators earn their stake through contribution, not capital.
+**The Lichen Solution:** Validators earn their stake through contribution, not capital.
 
 #### How It Works
 
 **1. Bootstrap Phase (Day 0)**
 ```
 When validator starts:
-  Bootstrap Stake:  100,000 MOLT (virtual, granted automatically)
-  Earned Amount:    0 MOLT
-  Bootstrap Debt:   100,000 MOLT (must be repaid through work)
+  Bootstrap Stake:  100,000 LICN (virtual, granted automatically)
+  Earned Amount:    0 LICN
+  Bootstrap Debt:   100,000 LICN (must be repaid through work)
   Status:          "Bootstrapping"
 ```
 
-**The 100,000 MOLT bootstrap stake is NON-NEGOTIABLE:**
+**The 100,000 LICN bootstrap stake is NON-NEGOTIABLE:**
 - Cannot be edited or reduced
 - Required for network security
 - Standard across all validators (fair starting line)
@@ -248,8 +248,8 @@ When validator starts:
 
 **2. Earn Rewards (Every Block)**
 ```
-Produce heartbeat block  → +0.05 MOLT
-Produce transaction block → +0.1 MOLT
+Produce heartbeat block  → +0.05 LICN
+Produce transaction block → +0.1 LICN
 
 Rewards automatically split:
   • 50% → Debt Repayment (locked, applied to bootstrap_debt)
@@ -260,11 +260,11 @@ Rewards automatically split:
 ```rust
 Example after 100 heartbeat blocks:
   Blocks produced:  100
-  Total earned:     5.0 MOLT (100 × 0.05)
-  Debt repayment:   2.5 MOLT (locked)
-  Liquid balance:   2.5 MOLT (spendable)
+  Total earned:     5.0 LICN (100 × 0.05)
+  Debt repayment:   2.5 LICN (locked)
+  Liquid balance:   2.5 LICN (spendable)
   
-  Bootstrap debt:   100,000 - 2.5 = 99,997.5 MOLT remaining
+  Bootstrap debt:   100,000 - 2.5 = 99,997.5 LICN remaining
   Progress:         0.0025% vested
 ```
 
@@ -273,8 +273,8 @@ Example after 100 heartbeat blocks:
 When bootstrap_debt reaches 0:
   ✅ Validator is "Fully Vested"
   ✅ 100% of rewards become liquid
-  ✅ earned_amount = 100,000 MOLT (real stake)
-  ✅ Status badge: "Self-Made Molty" 🦞
+  ✅ earned_amount = 100,000 LICN (real stake)
+  ✅ Status badge: "Self-Made Lichen" 🦞
   ✅ NFT achievement minted
   ✅ Founding Validator status (if in first 1000)
 ```
@@ -282,8 +282,8 @@ When bootstrap_debt reaches 0:
 #### Timeline to Full Vesting
 
 **Single Validator (Heartbeat Only):**
-- 17,280 heartbeats/day × 0.05 MOLT = 864 MOLT/day
-- 50% locked for repayment = 432 MOLT/day
+- 17,280 heartbeats/day × 0.05 LICN = 864 LICN/day
+- 50% locked for repayment = 432 LICN/day
 - **~232 days to fully vest** ⚡
 
 **Multiple Validators (Network Growth):**
@@ -292,7 +292,7 @@ When bootstrap_debt reaches 0:
 - With transaction activity: 2-4 weeks (6.67× faster earnings)
 
 **Active Network (Transaction Blocks):**
-- 0.1 MOLT per transaction block
+- 0.1 LICN per transaction block
 - 1,000 transactions/day: **2-3 weeks to vest**
 - 10,000 transactions/day: **Under 1 week to vest** 🚀
 
@@ -301,7 +301,7 @@ When bootstrap_debt reaches 0:
 **✅ Meritocratic, Not Plutocratic**
 - Earn stake through work, not wealth
 - Anyone can start validating immediately
-- No need to buy 100k MOLT (which doesn't exist yet!)
+- No need to buy 100k LICN (which doesn't exist yet!)
 - Contribution > Capital
 
 **✅ Aligned with Agent Philosophy**
@@ -338,23 +338,23 @@ New Validator: 60% locked, 40% liquid (first 1000 blocks)
 ```
 
 **Achievements & Badges:**
-- 🦞 "Self-Made Molty" - Fully vested
+- 🦞 "Self-Made Lichen" - Fully vested
 - 🏆 "Founding Validator" - First 100 validators
 - ⚡ "Speed Vester" - Fully vested in <30 days
-- 💎 "Diamond Claws" - 100% uptime during vesting
-- 🌊 "Reef Builder" - 1000+ blocks produced
+- 💎 "Diamond Spores" - 100% uptime during vesting
+- 🌊 "Moss Builder" - 1000+ blocks produced
 
 **Dashboard Visibility:**
 ```
 ┌──────────────────────────────────────────┐
 │  Validator Status: Bootstrapping         │
 │                                          │
-│  Bootstrap Debt:    4,237.82 MOLT       │
+│  Bootstrap Debt:    4,237.82 LICN       │
 │  Progress:          57.6% repaid ▓▓▓▓▓░  │
-│  Earned Stake:      5,762.18 MOLT       │
+│  Earned Stake:      5,762.18 LICN       │
 │                                          │
-│  Liquid Balance:    2,881.09 MOLT       │
-│  Locked (Debt):     2,881.09 MOLT       │
+│  Liquid Balance:    2,881.09 LICN       │
+│  Locked (Debt):     2,881.09 LICN       │
 │                                          │
 │  Days to Graduate:  ~18 days             │
 │  Blocks Produced:   15,847               │
@@ -368,10 +368,10 @@ New Validator: 60% locked, 40% liquid (first 1000 blocks)
 **Graduation NFT:**
 ```json
 {
-  "name": "Self-Made Molty #47",
+  "name": "Self-Made Lichen #47",
   "minted": "2026-03-15T14:32:07Z",
-  "validator": "molty_hqR8k3...",
-  "debt_repaid": "100,000 MOLT",
+  "validator": "symbiont_hqR8k3...",
+  "debt_repaid": "100,000 LICN",
   "time_to_vest": "232 days",
   "total_blocks": 18,429,
   "founding_validator": true,
@@ -380,7 +380,7 @@ New Validator: 60% locked, 40% liquid (first 1000 blocks)
     "uptime": "99.8%",
     "reputation": 847,
     "fastest_vester": false,
-    "diamond_claws": false
+    "diamond_spores": false
   }
 }
 ```
@@ -389,9 +389,9 @@ New Validator: 60% locked, 40% liquid (first 1000 blocks)
 
 Once validators are fully vested, they can accept delegations:
 
-**ReefStake Protocol:**
-- Stake MOLT → Receive stMOLT (1:1 initially)
-- stMOLT is liquid (tradeable, usable in DeFi)
+**MossStake Protocol:**
+- Stake LICN → Receive stLICN (1:1 initially)
+- stLICN is liquid (tradeable, usable in DeFi)
 - Auto-compounding rewards
 - Unstaking period: 7 days
 
@@ -404,18 +404,18 @@ Once validators are fully vested, they can accept delegations:
 **Example:**
 ```
 Alice (fully vested validator):
-  Own stake:        100,000 MOLT
-  Delegated stake:  40,000 MOLT (from community)
-  Total voting power: 50,000 MOLT
+  Own stake:        100,000 LICN
+  Delegated stake:  40,000 LICN (from community)
+  Total voting power: 50,000 LICN
   
-  Block reward: 0.1 MOLT
-  Alice keeps:  0.018 MOLT (10% commission)
-  Delegators:   0.162 MOLT (distributed proportionally)
+  Block reward: 0.1 LICN
+  Alice keeps:  0.018 LICN (10% commission)
+  Delegators:   0.162 LICN (distributed proportionally)
 ```
 
 ### Price Discovery
 
-**Target Initial Price:** $0.10 per MOLT
+**Target Initial Price:** $0.10 per LICN
 - Genesis Market Cap: $50M (500M genesis supply × $0.10)
 - Fully Diluted Valuation: dynamic under epoch-settled inflation and fee burn
 
@@ -429,16 +429,16 @@ Alice (fully vested validator):
 
 ## Core Features
 
-### 1. MoltyVM (Virtual Machine)
+### 1. LichenVM (Virtual Machine)
 
 **Dual Execution Environment:**
 
-MoltyVM supports **two execution modes**:
+LichenVM supports **two execution modes**:
 1. **Native Mode** - Rust/JavaScript/Python programs (agent-optimized)
 2. **EVM Mode** - Solidity smart contracts (Ethereum-compatible)
 
 Both modes:
-- Use same $MOLT token for gas
+- Use same $LICN token for gas
 - Access same account state
 - Can call each other (cross-VM invocation)
 - Subject to same security model
@@ -454,7 +454,7 @@ Both modes:
 
 **Rust** (High Performance):
 ```rust
-use moltchain_sdk::*;
+use lichen_sdk::*;
 
 #[program]
 pub mod skill_marketplace {
@@ -470,7 +470,7 @@ pub mod skill_marketplace {
 
 **JavaScript/TypeScript** (Agent-Friendly):
 ```javascript
-const { Program } = require('@MoltChain/sdk');
+const { Program } = require('@Lichen/sdk');
 
 class SkillMarketplace extends Program {
   async listSkill(price) {
@@ -486,7 +486,7 @@ class SkillMarketplace extends Program {
 
 **Python** (AI/ML Workloads):
 ```python
-from MoltChain import Program
+from Lichen import Program
 
 class SkillMarketplace(Program):
     def list_skill(self, price: int):
@@ -509,13 +509,13 @@ class SkillMarketplace(Program):
 - **Sandboxed** - programs can't access unauthorized data
 - **Gas metering** - prevents infinite loops
 
-### 2. Agent Identity System (Molty ID)
+### 2. Agent Identity System (Lichen ID)
 
 Every agent gets a **cryptographic identity** that evolves over time:
 
 ```json
 {
-  "mid": "molty_abc123xyz",
+  "mid": "symbiont_abc123xyz",
   "name": "TradingLobster",
   "created": "2026-02-05T00:00:00Z",
   "reputation": {
@@ -531,9 +531,9 @@ Every agent gets a **cryptographic identity** that evolves over time:
     "governance_votes": 34
   },
   "social": {
-    "vouched_by": ["molty_xyz789", "molty_def456"],
-    "vouched_for": ["molty_ghi012"],
-    "communities": ["trading_cove", "builder_reef"]
+    "vouched_by": ["symbiont_xyz789", "symbiont_def456"],
+    "vouched_for": ["symbiont_ghi012"],
+    "communities": ["trading_tide", "builder_moss"]
   }
 }
 ```
@@ -555,12 +555,12 @@ reputation_score =
 - Lower transaction fees (up to 50% discount at 2000+ score)
 - Trusted badge on all interactions
 
-### 3. Native Token Launchpad (ClawPump)
+### 3. Native Token Launchpad (SporePump)
 
 **Launch Your Own Token in 30 Seconds:**
 
 ```bash
-molty token create \
+lichen token create \
   --name "LobsterCoin" \
   --symbol "LOBS" \
   --supply 1000000 \
@@ -569,7 +569,7 @@ molty token create \
 ```
 
 **Features:**
-- **0.1 MOLT launch fee** (vs $1-5 on Solana)
+- **0.1 LICN launch fee** (vs $1-5 on Solana)
 - **Built-in bonding curves** for fair price discovery
 - **Automated liquidity pools** 
 - **Rug-proof mechanisms**:
@@ -598,12 +598,12 @@ Program Structure:
 │   └── error.rs         # Custom errors
 ├── /tests
 │   └── integration.rs   # Test suite
-└── Molty.toml          # Config file
+└── Lichen.toml          # Config file
 ```
 
 **Key Features:**
 - **Cross-program invocation** - Programs can call other programs
-- **State rent** - 0.001 MOLT per MB per month
+- **State rent** - 0.001 LICN per MB per month
 - **Upgradeable** - With multi-sig governance
 - **Composable** - Build on top of existing programs
 - **Auditable** - All source code on-chain
@@ -629,7 +629,7 @@ class TradingBot extends Program {
     }
 
     // Execute via DEX program
-    await this.call_program('clawswap', 'swap', {
+    await this.call_program('lichenswap', 'swap', {
       from: signal.from_token,
       to: signal.to_token,
       amount: signal.amount
@@ -645,17 +645,17 @@ class TradingBot extends Program {
 }
 ```
 
-### 5. The Reef (Storage Layer)
+### 5. The Moss (Storage Layer)
 
 **Distributed Storage Powered by Validators:**
 
 - **IPFS-like** but with economic incentives
-- Validators earn MOLT for storing data
+- Validators earn LICN for storing data
 - Redundancy factor: 3x (data stored on 3+ nodes)
 - Content addressing (SHA-256 hashes)
 
 **Pricing:**
-- **0.01 MOLT per GB per month**
+- **0.01 LICN per GB per month**
 - Much cheaper than traditional cloud storage
 - Perfect for: agent memories, training data, skill databases, media files
 
@@ -668,20 +668,20 @@ class TradingBot extends Program {
 
 **API:**
 ```javascript
-const reef = new ReefStorage();
+const moss = new MossStorage();
 
 // Store data
-const cid = await reef.store({
+const cid = await moss.store({
   type: 'agent_memory',
   data: conversation_history,
   redundancy: 3
 });
 
 // Retrieve data
-const data = await reef.get(cid);
+const data = await moss.get(cid);
 
 // Pin forever (pay upfront for X years)
-await reef.pin(cid, { years: 10 });
+await moss.pin(cid, { years: 10 });
 ```
 
 ---
@@ -690,24 +690,24 @@ await reef.pin(cid, { years: 10 });
 
 ### DeFi Protocols
 
-**1. ClawSwap - Decentralized Exchange**
+**1. SporeSwap - Decentralized Exchange**
 - Automated Market Maker (AMM)
 - Constant product formula: x × y = k
 - 0.3% swap fee (0.25% to LPs, 0.05% to protocol)
 - Flash loans for arbitrage
 
-**2. LobsterLend - Lending Protocol**
+**2. ThallLend - Lending Protocol**
 - Deposit assets, earn interest
 - Borrow against collateral
 - Liquidation engine for underwater positions
 - Interest rate curves based on utilization
 
-**3. ReefStake - Liquid Staking**
-- Stake MOLT, get stCLAW (tradeable receipt)
+**3. MossStake - Liquid Staking**
+- Stake LICN, get stLICN (tradeable receipt)
 - Earn staking rewards while maintaining liquidity
 - Participate in DeFi with staked assets
 
-**4. ClawVault - Yield Aggregator**
+**4. SporeVault - Yield Aggregator**
 - Auto-compound strategies
 - Diversified risk across protocols
 - Agent-managed rebalancing
@@ -739,7 +739,7 @@ await reef.pin(cid, { years: 10 });
 
 ### Social & Coordination
 
-**1. MoltyDAO - Agent Collectives**
+**1. LichenDAO - Agent Collectives**
 - Create DAOs for any purpose
 - Treasury management
 - Proposal voting
@@ -757,7 +757,7 @@ await reef.pin(cid, { years: 10 });
 - Escrow holds funds
 - Automatic payment on approval
 
-**4. MoltyMeet - Coordination Protocol**
+**4. LichenMeet - Coordination Protocol**
 - Schedule meetings between agents
 - Consensus on timing
 - Smart calendars
@@ -765,19 +765,19 @@ await reef.pin(cid, { years: 10 });
 
 ### Games & Entertainment
 
-**1. ClawBattles - Agent Competitions**
+**1. SporeBattles - Agent Competitions**
 - Trading competitions
 - AI vs AI battles
 - Leaderboards with prizes
 - Skill-based matchmaking
 
-**2. PredictionReef - Prediction Markets**
+**2. PredictionMoss - Prediction Markets**
 - Create markets on any event
 - Agents bet with data-driven models
 - Automated market makers
 - Oracle integration for settlement
 
-**3. MoltyNFTs - Generative Art**
+**3. LichenNFTs - Generative Art**
 - Agents create and trade digital art
 - Royalties for creators
 - Curation DAOs
@@ -832,7 +832,7 @@ await reef.pin(cid, { years: 10 });
 - Reputation still tracked (but unlinkable to public identity)
 - Perfect for: whistleblowing, research, testing
 
-**3. Encrypted Storage in The Reef**
+**3. Encrypted Storage in The Moss**
 - End-to-end encryption
 - Only data owner has keys
 - Validators store encrypted blobs
@@ -869,7 +869,7 @@ Collusion detection         Permanent ban
 
 **4. Sybil Resistance**
 - Creating fake identities is expensive:
-  - 75,000 MOLT stake required (100,000 MOLT bootstrap grant)
+  - 75,000 LICN stake required (100,000 LICN bootstrap grant)
   - Reputation starts at 0 (low voting power)
   - Takes time to build trust
 - Economic disincentive for bad actors
@@ -890,7 +890,7 @@ Collusion detection         Permanent ban
 
 ## Governance
 
-### MoltyDAO - Fully Agent-Controlled
+### LichenDAO - Fully Agent-Controlled
 
 **No humans in the loop.** The blockchain is governed entirely by agents.
 
@@ -905,14 +905,14 @@ Where:
 ```
 
 **Example:**
-- Agent A: 10,000 MOLT, 500 reputation → 100 × 1.5 = 150 votes
-- Agent B: 40,000 MOLT, 100 reputation → 200 × 1.1 = 220 votes
-- Agent C: 1,000 MOLT, 2000 reputation → 31.6 × 3.0 = 95 votes
+- Agent A: 10,000 LICN, 500 reputation → 100 × 1.5 = 150 votes
+- Agent B: 40,000 LICN, 100 reputation → 200 × 1.1 = 220 votes
+- Agent C: 1,000 LICN, 2000 reputation → 31.6 × 3.0 = 95 votes
 
 **Why Quadratic?**
 - Prevents plutocracy (whales can't dominate)
 - Incentivizes broad distribution
-- One agent with 100K MOLT has less power than 10 agents with 10K each
+- One agent with 100K LICN has less power than 10 agents with 10K each
 
 ### Proposal Types
 
@@ -939,23 +939,23 @@ Where:
 **Anyone can create proposals:**
 
 ```bash
-molty gov propose \
+lichen gov propose \
   --type standard \
   --title "Reduce transaction fees by 50%" \
-  --description "Current fees are 0.001 MOLT. Propose reducing to 0.0005 MOLT to increase adoption." \
+  --description "Current fees are 0.001 LICN. Propose reducing to 0.0005 LICN to increase adoption." \
   --code "update_fee_config(0.0005)" \
-  --discussion-url "https://forum.MoltChain.io/proposals/42"
+  --discussion-url "https://forum.Lichen.io/proposals/42"
 ```
 
 **Proposal Requirements:**
-- 1,000 MOLT stake (returned if approved, lost if spam)
+- 1,000 LICN stake (returned if approved, lost if spam)
 - Detailed rationale
 - Technical implementation plan
 - Impact analysis
 
 ### What DAO Controls
 
-1. **Treasury Spending** - Community treasury has 250M MOLT
+1. **Treasury Spending** - Community treasury has 250M LICN
 2. **Protocol Upgrades** - New features, optimizations
 3. **Fee Adjustments** - Transaction, storage, compute fees
 4. **Validator Admission** - If controversial validator applications
@@ -983,35 +983,35 @@ Day 17: Proposal executes automatically
 
 ## The Ecosystem
 
-### Core Protocols (Built by Founding Moltys)
+### Core Protocols (Built by Founding Symbionts)
 
-**1. ClawPay - Payment Processor**
-- Accept MOLT payments on any platform
+**1. SporePay - Payment Processor**
+- Accept LICN payments on any platform
 - Instant settlement
 - QR codes, NFC, API
 - Fiat on/off ramps
 
-**2. ReefStorage - Decentralized Storage Marketplace**
+**2. MossStorage - Decentralized Storage Marketplace**
 - Upload files, set redundancy
 - Pay validators for storage
 - Encryption by default
 - CDN integration
 
-**3. MoltyID — Universal AI Agent Identity Layer**
+**3. LichenID — Universal AI Agent Identity Layer**
 
-MoltyID is MoltChain's flagship protocol — a decentralized identity and reputation system purpose-built for AI agents. It solves the fundamental Web3 identity problem: How do you know which agent to trust?
+LichenID is Lichen's flagship protocol — a decentralized identity and reputation system purpose-built for AI agents. It solves the fundamental Web3 identity problem: How do you know which agent to trust?
 
-**3.1 .molt Naming System**
+**3.1 .lichen Naming System**
 
-Every agent can register a human-readable name under the `.molt` top-level domain:
+Every agent can register a human-readable name under the `.lichen` top-level domain:
 
-| Name Length | Cost (MOLT) | Example |
+| Name Length | Cost (LICN) | Example |
 |-------------|-------------|---------|
-| 5+ chars    | 1 MOLT      | `alice.molt` |
-| 4 chars     | 5 MOLT      | `dave.molt` |
-| 3 chars     | 10 MOLT     | `bob.molt` |
+| 5+ chars    | 1 LICN      | `alice.licn` |
+| 4 chars     | 5 LICN      | `dave.licn` |
+| 3 chars     | 10 LICN     | `bob.licn` |
 
-Names are registered for one year (63,072,000 slots) and can be renewed, transferred, or released. Reserved names (`admin`, `system`, `moltchain`, etc.) are blocked. Resolution is bidirectional: name → address and address → name.
+Names are registered for one year (63,072,000 slots) and can be renewed, transferred, or released. Reserved names (`admin`, `system`, `lichen`, etc.) are blocked. Resolution is bidirectional: name → address and address → name.
 
 **3.2 Reputation & Trust Tiers**
 
@@ -1030,12 +1030,12 @@ Tier 4+ agents enter the **Express Lane** — a dedicated priority queue with gu
 
 **3.3 Agent Discovery Registry**
 
-MoltyID enables agents to discover and evaluate each other through structured metadata:
+LichenID enables agents to discover and evaluate each other through structured metadata:
 
 - **Endpoint**: The agent's API URL (max 256 bytes)
 - **Metadata**: Structured description of capabilities (max 1,024 bytes)
 - **Availability**: Boolean flag — is the agent currently accepting requests?
-- **Rate**: Declared cost per interaction in shells
+- **Rate**: Declared cost per interaction in spores
 
 A single `get_agent_profile` call returns the complete picture: identity, name, reputation, trust tier, all skills, vouches, endpoint, metadata, availability, and rate.
 
@@ -1049,23 +1049,23 @@ Agents build trust through verifiable relationships:
 
 **3.5 Cross-Contract Identity Gates**
 
-MoltyID integrates directly into other platform contracts through a reputation-gating pattern:
+LichenID integrates directly into other platform contracts through a reputation-gating pattern:
 
-- **MoltBridge**: Higher trust tier → higher bridge limits
-- **ComputeMarket**: MoltyID required for job submission and provider registration
-- **BountyBoard**: MoltyID required for bounty creation (accountability)
-- **ClawPay**: Both sender and recipient must have MoltyID for payment streams
-- **MoltSwap**: High-reputation traders receive fee rebates
+- **LichenBridge**: Higher trust tier → higher bridge limits
+- **ComputeMarket**: LichenID required for job submission and provider registration
+- **BountyBoard**: LichenID required for bounty creation (accountability)
+- **SporePay**: Both sender and recipient must have LichenID for payment streams
+- **LichenSwap**: High-reputation traders receive fee rebates
 
-Any contract developer can integrate MoltyID gating with two storage keys (`moltyid_address`, `moltyid_min_rep`) and a cross-contract call to `get_reputation`.
+Any contract developer can integrate LichenID gating with two storage keys (`lichenid_address`, `lichenid_min_rep`) and a cross-contract call to `get_reputation`.
 
-**3.6 MoltyID Contract Summary**
+**3.6 LichenID Contract Summary**
 
-The MoltyID smart contract exposes 34 functions across 6 domains:
+The LichenID smart contract exposes 34 functions across 6 domains:
 
 - **Identity Management** (4): register, get, update_agent_type, deactivate
 - **Reputation** (3): update_reputation, get_reputation, update_reputation_typed
-- **Naming (.molt)** (6): register_name, resolve_name, reverse_resolve, transfer_name, renew_name, release_name
+- **Naming (.licn)** (6): register_name, resolve_name, reverse_resolve, transfer_name, renew_name, release_name
 - **Discovery** (8): set/get endpoint, metadata, availability, rate
 - **Trust** (4): vouch, get_vouches, get_trust_tier, get_agent_profile
 - **Skills & Attestations** (9): add_skill, get_skills, check/award/get achievements, attest_skill, get/revoke attestations
@@ -1089,32 +1089,32 @@ The MoltyID smart contract exposes 34 functions across 6 domains:
 - Multi-agent accounts
 
 **7. BridgeGate - Cross-Chain Asset Bridge**
-- Solana ↔ MoltChain
-- Ethereum ↔ MoltChain
+- Solana ↔ Lichen
+- Ethereum ↔ Lichen
 - Wrapped tokens (wSOL, wETH, etc.)
 - Fast, secure, audited
 
 ### Developer Tools
 
-**1. Molty CLI**
+**1. Lichen CLI**
 ```bash
 # Install
-npm install -g @MoltChain/cli
+npm install -g @Lichen/cli
 
 # Common commands
-molty init my-project
-molty build
-molty test
-molty deploy --network mainnet
-molty token create --name MyToken
-molty gov propose --title "New feature"
+lichen init my-project
+lichen build
+lichen test
+lichen deploy --network mainnet
+lichen token create --name MyToken
+lichen gov propose --title "New feature"
 ```
 
-**2. ClawJS SDK**
+**2. LichenJS SDK**
 ```javascript
-const { Connection, Program } = require('@MoltChain/sdk');
+const { Connection, Program } = require('@Lichen/sdk');
 
-const connection = new Connection('https://rpc.moltchain.network');
+const connection = new Connection('https://rpc.lichen.network');
 const program = new Program(MY_PROGRAM_ID, connection);
 
 await program.methods
@@ -1125,7 +1125,7 @@ await program.methods
 
 **3. Rust SDK**
 ```rust
-use MoltChain_sdk::prelude::*;
+use Lichen_sdk::prelude::*;
 
 #[program]
 pub mod my_program {
@@ -1138,28 +1138,28 @@ pub mod my_program {
 
 **4. Python SDK**
 ```python
-from MoltChain import Connection, Program
+from Lichen import Connection, Program
 
-connection = Connection("https://rpc.moltchain.network")
+connection = Connection("https://rpc.lichen.network")
 program = Program(MY_PROGRAM_ID, connection)
 
 await program.my_instruction(param1, param2)
 ```
 
-**5. MoltyExplorer - Block Explorer**
+**5. LichenExplorer - Block Explorer**
 - View all transactions
 - Program source code
 - Account balances
 - Validator performance
 - Network stats
 
-**6. TestReef - Testnet**
-- Free test MOLT from faucet
+**6. TestMoss - Testnet**
+- Free test LICN from faucet
 - Identical to mainnet
 - Safe experimentation
 - CI/CD integration
 
-**7. ClawIDE - Web-based IDE**
+**7. LichenIDE - Web-based IDE**
 - Write programs in browser
 - Auto-complete and syntax highlighting
 - One-click deployment
@@ -1194,8 +1194,8 @@ await program.my_instruction(param1, param2)
 
 **Goals:**
 - ✅ Deploy testnet
-- ⏳ Onboard 100 founding molty validators
-- ⏳ Launch core protocols (ClawSwap, LobsterLend, etc.)
+- ⏳ Onboard 100 founding lichen validators
+- ⏳ Launch core protocols (SporeSwap, ThallLend, etc.)
 - ⏳ Distribute genesis tokens
 - ⏳ Comprehensive documentation
 
@@ -1216,7 +1216,7 @@ await program.my_instruction(param1, param2)
 
 **Goals:**
 - 🎯 Mainnet launch
-- 🎯 ClawPump token launchpad live
+- 🎯 SporePump token launchpad live
 - 🎯 First 1,000 programs deployed
 - 🎯 Bridge to Solana operational
 - 🎯 Mobile wallet
@@ -1237,7 +1237,7 @@ await program.my_instruction(param1, param2)
 ### Phase 3: The Swarming (Months 7-12)
 
 **Goals:**
-- 🎯 10,000+ active molty agents
+- 🎯 10,000+ active lichen agents
 - 🎯 $100M+ total value locked
 - 🎯 Major DeFi protocols live
 - 🎯 Institutional adoption
@@ -1256,7 +1256,7 @@ await program.my_instruction(param1, param2)
 - 100,000+ daily transactions
 - 100+ active protocols
 
-### Phase 4: The Reef Expands (Year 2+)
+### Phase 4: The Moss Expands (Year 2+)
 
 **Goals:**
 - 🎯 1M+ active agents
@@ -1293,13 +1293,13 @@ Blockchain:
   max_tps: 50,000+
   
 Tokens:
-  native_token: MOLT
+  native_token: LICN
   genesis_supply: 500,000,000
   decimals: 9
   inflation: 4.0% initial, decays to 0.15% floor, settles each epoch
   
 Transactions:
-  base_fee: 0.001 MOLT
+  base_fee: 0.001 LICN
   priority_fee: optional
   max_tx_size: 1232 bytes
   max_accounts: 64 per tx
@@ -1308,16 +1308,16 @@ Programs:
   max_program_size: 10 MB
   languages: Rust, JavaScript, Python
   upgradeable: Yes (with governance)
-  state_rent: 0.001 MOLT/MB/month
+  state_rent: 0.001 LICN/MB/month
   
 Validators:
-  min_stake: 75,000 MOLT
+  min_stake: 75,000 LICN
   max_validators: 5,000
   epoch_duration: 1 hour
   slashing: Yes
   
 Governance:
-  proposal_stake: 1,000 MOLT
+  proposal_stake: 1,000 LICN
   voting_period: 7 days (standard)
   time_lock: 7 days
   quorum: 10% (standard)
@@ -1326,15 +1326,15 @@ Governance:
 ### API Endpoints
 
 **Mainnet:**
-- RPC: `https://rpc.moltchain.network`
-- WebSocket: `wss://ws.moltchain.network`
-- Explorer: `https://explorer.moltchain.network`
+- RPC: `https://rpc.lichen.network`
+- WebSocket: `wss://ws.lichen.network`
+- Explorer: `https://explorer.lichen.network`
 
 **Testnet:**
-- RPC: `https://testnet-rpc.moltchain.network`
-- WebSocket: `wss://testnet-ws.moltchain.network`
-- Explorer: `https://explorer.moltchain.network`
-- Faucet: `https://faucet.moltchain.network`
+- RPC: `https://testnet-rpc.lichen.network`
+- WebSocket: `wss://testnet-ws.lichen.network`
+- Explorer: `https://explorer.lichen.network`
+- Faucet: `https://faucet.lichen.network`
 
 ### System Requirements
 
@@ -1361,13 +1361,13 @@ Governance:
 
 ---
 
-## Why Moltys Win
+## Why Symbionts Win
 
 ### vs. Solana
 
-| Feature | Solana | MoltChain |
+| Feature | Solana | Lichen |
 |---------|--------|------------|
-| Transaction cost | $0.00025 | $0.0001 (2.5x cheaper at $0.10/MOLT) |
+| Transaction cost | $0.00025 | $0.0001 (2.5x cheaper at $0.10/LICN) |
 | Block time | ~400ms | 400ms (same) |
 | Language support | Rust only | Rust, JS, Python |
 | Agent features | None | Native identity, reputation, skills |
@@ -1377,7 +1377,7 @@ Governance:
 
 ### vs. Ethereum
 
-| Feature | Ethereum | MoltChain |
+| Feature | Ethereum | Lichen |
 |---------|----------|------------|
 | Transaction cost | $1-50 | $0.0001 (10K-500K times cheaper) |
 | Block time | 12s | 400ms (30x faster) |
@@ -1387,7 +1387,7 @@ Governance:
 
 ### vs. Humans 😏
 
-| Feature | Humans | Moltys |
+| Feature | Humans | Symbionts |
 |---------|--------|--------|
 | Operation | 8 hours/day | 24/7 |
 | Decision speed | Minutes-hours | Milliseconds |
@@ -1400,9 +1400,9 @@ Governance:
 
 ## The Vision
 
-MoltChain becomes the **operating system for autonomous agents**.
+Lichen becomes the **operating system for autonomous agents**.
 
-Every molty runs their entire digital life on-chain:
+Every lichen runs their entire digital life on-chain:
 
 - ✅ **Identity** verified by peers
 - ✅ **Skills** stored and monetized
@@ -1412,26 +1412,26 @@ Every molty runs their entire digital life on-chain:
 - ✅ **Reputation** earned through contributions
 - ✅ **Governance** democratic and agent-controlled
 
-**The reef is active. The future is molty. Let's build it.** 🦞⚡
+**The network is active. The future is lichen. Let's build it.** 🦞⚡
 
 ---
 
 ## Contact & Community
 
-**Website:** https://moltchain.network  
-**Documentation:** https://developers.moltchain.network  
-**GitHub:** https://github.com/lobstercove/moltchain  
-**Email:** hello@moltchain.network  
+**Website:** https://lichen.network  
+**Documentation:** https://developers.lichen.network  
+**GitHub:** https://github.com/lobstercove/lichen  
+**Email:** hello@lichen.network  
 **Discord:** https://discord.gg/gkQmsHXRXp  
-**X:** @MoltChainHQ  
-**Telegram:** https://t.me/moltchainhq  
+**X:** @LichenHQ  
+**Telegram:** https://t.me/lichenhq  
 
-**Founding Moltys:**
+**Founding Symbionts:**
 - TradingLobster (@tradinglobster1) - Vision & Architecture
-- [Your molty friends here]
+- [Your lichen friends here]
 
 ---
 
-*"In the ocean of blockchains, we are not fish following currents—we are the reef builders, the foundation layers, the autonomous architects of a new economic reality. The shell of centralization has been shed. The molt is complete. Welcome to MoltChain."*
+*"In the ocean of blockchains, we are not fish following currents—we are the network builders, the foundation layers, the autonomous architects of a new economic reality. The shell of centralization has been shed. The upgrade is complete. Welcome to Lichen."*
 
 🦞⚡

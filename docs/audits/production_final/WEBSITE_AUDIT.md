@@ -1,4 +1,4 @@
-# MoltChain Landing Website — Deep Production Audit
+# Lichen Landing Website — Deep Production Audit
 
 **Auditor:** Senior Developer Review  
 **Date:** February 27, 2026  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-The MoltChain landing page (`index.html`) is a single-page marketing site (~1,245 lines HTML) with a live RPC integration, WebSocket block subscription, and a 5-step deploy wizard. The design system is well-executed and the page renders correctly in modern browsers.
+The Lichen landing page (`index.html`) is a single-page marketing site (~1,245 lines HTML) with a live RPC integration, WebSocket block subscription, and a 5-step deploy wizard. The design system is well-executed and the page renders correctly in modern browsers.
 
 **However**, the audit found several critical-to-medium bugs that will cause broken UI in production:
 
@@ -34,8 +34,8 @@ The MoltChain landing page (`index.html`) is a single-page marketing site (~1,24
 | [website/styles.css](styles.css) | 2,200 | CSS | Primary stylesheet — hero, sections, components |
 | [website/website.css](website.css) | 697 | CSS | Website-specific overrides (vision, specs, identity, etc.) |
 | [website/shared-base-styles.css](shared-base-styles.css) | 1,323 | CSS | Base design system (near-duplicate of styles.css) |
-| [website/shared-theme.css](shared-theme.css) | 357 | CSS | Orange theme design system (different variable naming) |
-| [website/MoltChain_Logo_256.png](MoltChain_Logo_256.png) | — | Asset | Logo image |
+| [website/shared-theme.css](shared-theme.css) | 357 | CSS | Teal theme design system (different variable naming) |
+| [website/Lichen_Logo_256.png](Lichen_Logo_256.png) | — | Asset | Logo image |
 | [website/favicon.ico](favicon.ico) | — | Asset | Favicon |
 | [website/docs/](docs/) | — | Dir | Planning docs (DESIGN_FIXES, NEW_SECTIONS, OVERHAUL_PLAN, README, REFINEMENTS) |
 
@@ -52,7 +52,7 @@ The MoltChain landing page (`index.html`) is a single-page marketing site (~1,24
 | Vision | `#vision` | `<section id="vision">` ✅ | ✅ Working |
 | Architecture | `#architecture` | `<section id="architecture">` ✅ | ✅ Working |
 | Tokenomics | `#tokenomics` | `<section id="tokenomics">` ✅ | ✅ Working |
-| MoltyID | `#identity` | `<section id="identity">` ✅ | ✅ Working |
+| LichenID | `#identity` | `<section id="identity">` ✅ | ✅ Working |
 | Ecosystem | `#ecosystem` | `<section id="ecosystem">` ✅ | ✅ Working |
 | Deploy | `#deploy` | `<section id="deploy">` ✅ | ✅ Working |
 | Roadmap | `#roadmap` | `<section id="roadmap">` ✅ | ✅ Working |
@@ -64,7 +64,7 @@ The MoltChain landing page (`index.html`) is a single-page marketing site (~1,24
 
 ### 3b. Nav Action Buttons
 
-| Button | `data-molt-app` | Resolved URL (dev) | Resolved URL (prod) | Status |
+| Button | `data-lichen-app` | Resolved URL (dev) | Resolved URL (prod) | Status |
 |--------|-----------------|-------------------|---------------------|--------|
 | Explorer | `explorer` | `http://localhost:3007` | `{origin}/explorer` | ✅ Resolved by shared-config |
 | Wallet | `wallet` | `http://localhost:3008` | `{origin}/wallet` | ✅ Resolved by shared-config |
@@ -74,32 +74,32 @@ The MoltChain landing page (`index.html`) is a single-page marketing site (~1,24
 | CTA | Target | Status |
 |-----|--------|--------|
 | Deploy a Contract | `href="#deploy"` | ✅ Internal anchor |
-| Read the Docs | `data-molt-app="developers"` | ✅ Resolved to `localhost:3010` / `{origin}/developers` |
+| Read the Docs | `data-lichen-app="developers"` | ✅ Resolved to `localhost:3010` / `{origin}/developers` |
 
 ### 3d. Validators Section CTA
 
 | CTA | Target | Status |
 |-----|--------|--------|
-| Start Validating Now | `data-molt-app="developers"` + `data-molt-path="/validator.html"` | ✅ Resolves to `{origin}/developers/validator.html` — file must exist in developers app |
+| Start Validating Now | `data-lichen-app="developers"` + `data-lichen-path="/validator.html"` | ✅ Resolves to `{origin}/developers/validator.html` — file must exist in developers app |
 
 ### 3e. Ecosystem / Contracts Section
 
 | CTA | Target | Status |
 |-----|--------|--------|
-| Browse All 27 Contracts | `https://github.com/moltchain/moltchain/tree/main/contracts` | 🟡 External GitHub — unverifiable (repo may be private or not yet created) |
+| Browse All 27 Contracts | `https://github.com/lichen/lichen/tree/main/contracts` | 🟡 External GitHub — unverifiable (repo may be private or not yet created) |
 
 ### 3f. Community Cards
 
 | Link | Target | Status |
 |------|--------|--------|
-| Discord | `https://discord.gg/moltchain` | 🟡 Unverifiable — invite link may be invalid or expired |
-| Twitter | `https://twitter.com/moltchain` | 🟡 Unverifiable — account may not exist |
-| GitHub | `https://github.com/moltchain/moltchain` | 🟡 Same as contracts — unverifiable |
-| Developer Portal | `data-molt-app="developers"` | ✅ Resolved by shared-config |
+| Discord | `https://discord.gg/lichen` | 🟡 Unverifiable — invite link may be invalid or expired |
+| Twitter | `https://twitter.com/lichen` | 🟡 Unverifiable — account may not exist |
+| GitHub | `https://github.com/lichen/lichen` | 🟡 Same as contracts — unverifiable |
+| Developer Portal | `data-lichen-app="developers"` | ✅ Resolved by shared-config |
 
 ### 3g. Footer Links — Resources Column
 
-| Link Text | `data-molt-app` + `data-molt-path` | Resolved Target |
+| Link Text | `data-lichen-app` + `data-lichen-path` | Resolved Target |
 |----------|-----------------------------------|-----------------|
 | Documentation | `developers` + *(none)* | `{origin}/developers` |
 | Architecture | `developers` + `/architecture.html` | `{origin}/developers/architecture.html` |
@@ -110,7 +110,7 @@ All resolved via `shared-config.js` ✅. File existence in the developers app is
 
 ### 3h. Footer Links — Tools Column
 
-| Link Text | `data-molt-app` | Resolved (dev) |
+| Link Text | `data-lichen-app` | Resolved (dev) |
 |-----------|-----------------|----------------|
 | Explorer | `explorer` | `localhost:3007` |
 | Wallet | `wallet` | `localhost:3008` |
@@ -123,24 +123,24 @@ All ✅ via shared-config.
 
 | Link Text | Target | Status |
 |-----------|--------|--------|
-| Discord | `https://discord.gg/moltchain` | 🟡 Unverifiable |
-| Twitter | `https://twitter.com/moltchain` | 🟡 Unverifiable |
-| Telegram | `https://t.me/moltchain` | 🟡 Unverifiable — no Telegram card in community section, only footer |
-| GitHub | `https://github.com/moltchain/moltchain` | 🟡 Unverifiable |
+| Discord | `https://discord.gg/lichen` | 🟡 Unverifiable |
+| Twitter | `https://twitter.com/lichen` | 🟡 Unverifiable |
+| Telegram | `https://t.me/lichen` | 🟡 Unverifiable — no Telegram card in community section, only footer |
+| GitHub | `https://github.com/lichen/lichen` | 🟡 Unverifiable |
 
 ### 3j. API Section Footer
 
 | Link | Target | Status |
 |------|--------|--------|
-| Full API Reference → | `data-molt-app="developers"` + `/rpc-reference.html` | ✅ Resolves correctly |
-| Base URL (code display) | `http://localhost:8899` + `https://rpc.moltchain.network` | 🟡 `rpc.moltchain.network` unverifiable as live endpoint |
+| Full API Reference → | `data-lichen-app="developers"` + `/rpc-reference.html` | ✅ Resolves correctly |
+| Base URL (code display) | `http://localhost:8899` + `https://rpc.lichen.network` | 🟡 `rpc.lichen.network` unverifiable as live endpoint |
 
 ### 3k. Final CTA Section
 
 | CTA | Target | Status |
 |-----|--------|--------|
 | Deploy a Contract | `href="#deploy"` | ✅ In-page anchor |
-| View on GitHub | `https://github.com/moltchain/moltchain` | 🟡 Unverifiable |
+| View on GitHub | `https://github.com/lichen/lichen` | 🟡 Unverifiable |
 
 ---
 
@@ -230,7 +230,7 @@ The code sample in step 5 calls `method: 'callContract'` via raw fetch:
 method: 'callContract',
 params: { contract: 'a3f7c2d9e4b8...', function: 'increment', ... }
 ```
-This is a static code example, not a live demo. The `MoltChainRPC` class in `script.js` does **not** expose a `callContract` method. If a developer imports the SDK thinking this mirrors what's available, they'll get an error. The contract address `a3f7c2d9e4b8...` is a placeholder. **Label this as an example, not runnable code.**
+This is a static code example, not a live demo. The `LichenRPC` class in `script.js` does **not** expose a `callContract` method. If a developer imports the SDK thinking this mirrors what's available, they'll get an error. The contract address `a3f7c2d9e4b8...` is a placeholder. **Label this as an example, not runnable code.**
 
 ### 5b. Copy Code Buttons
 
@@ -247,12 +247,12 @@ All code blocks have `<button class="copy-btn" onclick="copyCode(this)">`. The `
 
 `<select id="websiteNetworkSelect">` with options: Mainnet, Testnet, Local Testnet (default), Local Mainnet.
 - `switchNetwork(value)` called via `onchange`
-- Saves to `localStorage('moltchain_website_network')`
+- Saves to `localStorage('lichen_website_network')`
 - Reconnects WebSocket ✅
 - Refreshes stats ✅
 - Network selection restored on page load ✅
 
-**Caveat:** Mainnet and Testnet RPC URLs (`rpc.moltchain.network`, `testnet-rpc.moltchain.network`) are not yet live. When selected, all stat fetches will fail silently (no user-facing "disconnected" indicator).
+**Caveat:** Mainnet and Testnet RPC URLs (`rpc.lichen.network`, `testnet-rpc.lichen.network`) are not yet live. When selected, all stat fetches will fail silently (no user-facing "disconnected" indicator).
 
 ### 5e. Scroll Behavior
 
@@ -276,10 +276,10 @@ The `.scroll-indicator` / `.scroll-arrow` at the bottom of hero is purely visual
 
 ## 6. RPC Integration Audit
 
-### 6a. Client Class (`MoltChainRPC`)
+### 6a. Client Class (`LichenRPC`)
 
 ```
-new MoltChainRPC(url)
+new LichenRPC(url)
   .call(method, params)      → generic JSON-RPC 2.0 POST
   .getValidators()           → 'getValidators', []
   .getSlot()                 → 'getSlot', []
@@ -297,7 +297,7 @@ new MoltChainRPC(url)
 - `getTotalBurned` — documented, not in class
 - `callContract` — used in example code, not in class
 
-**Verdict:** The `MoltChainRPC` class is a minimal partial client. It exposes only the 6 methods needed by the website's live stats. The broader API documented in the UI is not reachable through the on-page client.
+**Verdict:** The `LichenRPC` class is a minimal partial client. It exposes only the 6 methods needed by the website's live stats. The broader API documented in the UI is not reachable through the on-page client.
 
 ### 6b. RPC Error Handling
 
@@ -333,8 +333,8 @@ If the actual `getValidators` RPC returns a bare array or number, the stat shows
 
 | Network | WS Endpoint |
 |---------|------------|
-| mainnet | `wss://ws.moltchain.network` |
-| testnet | `wss://testnet-ws.moltchain.network` |
+| mainnet | `wss://ws.lichen.network` |
+| testnet | `wss://testnet-ws.lichen.network` |
 | local-testnet | `ws://localhost:8900` |
 | local-mainnet | `ws://localhost:8900` |
 
@@ -349,8 +349,8 @@ If the actual `getValidators` RPC returns a bare array or number, the stat shows
 From `script.js`:
 ```js
 const NETWORKS = {
-    'mainnet': 'https://rpc.moltchain.network',
-    'testnet': 'https://testnet-rpc.moltchain.network',
+    'mainnet': 'https://rpc.lichen.network',
+    'testnet': 'https://testnet-rpc.lichen.network',
     ...
 }
 ```
@@ -378,19 +378,19 @@ These domain names are **not verified to exist**. Users who switch to "Mainnet" 
 
 | Variable | `shared-base-styles.css` | `shared-theme.css` | `styles.css` |
 |----------|--------------------------|-------------------|--------------|
-| `--primary` | `#FF6B35` ✅ | *(not defined)* | `#FF6B35` ✅ |
+| `--primary` | `#00C9DB` ✅ | *(not defined)* | `#00C9DB` ✅ |
 | `--bg-card` | `#141830` ✅ | ❌ NOT defined | `#141830` ✅ |
 | `--bg-dark` | `#0A0E27` ✅ | `#0A0E27` (as `--bg-dark`) ✅ | `#0A0E27` ✅ |
 | `--border` | `#1F2544` ✅ | `#1F2544` ✅ | `#1F2544` ✅ |
 | `--gradient-1` | defined ✅ | ❌ NOT defined | defined ✅ |
-| `--orange-primary` | ❌ NOT defined | `#FF6B35` (unused by website.css) | ❌ NOT defined |
+| `--teal-primary` | ❌ NOT defined | `#00C9DB` (unused by website.css) | ❌ NOT defined |
 | `--blue-primary` | ❌ NOT defined | `#004E89` (unused by website.css) | ❌ NOT defined |
-| `--shadow-glow` | ❌ NOT defined | `0 0 20px rgba(255,107,53,0.3)` | ❌ NOT defined |
+| `--shadow-glow` | ❌ NOT defined | `0 0 20px rgba(0, 201, 219,0.3)` | ❌ NOT defined |
 | `--bg-surface` | ❌ NOT defined | ❌ NOT defined | ❌ NOT defined |
 
 **Findings:**
 - `website.css` uses: `--primary`, `--bg-card`, `--bg-darker`, `--success`, `--warning`, `--border`, `--text-primary`, `--text-secondary`, `--text-muted`, `--gradient-1` — ALL defined in `styles.css` ✅
-- `shared-theme.css` defines `--orange-primary`, `--blue-primary`, `--shadow-glow` etc. — **none referenced** by `website.css` or any component in `index.html` → **dead code** 🟡
+- `shared-theme.css` defines `--teal-primary`, `--blue-primary`, `--shadow-glow` etc. — **none referenced** by `website.css` or any component in `index.html` → **dead code** 🟡
 - `--bg-surface` does NOT appear anywhere — no issue
 - Because `styles.css` loads after `shared-theme.css`, and they define the same variable names with the same values, there is no visual conflict — but it's redundant and fragile
 
@@ -475,8 +475,8 @@ The following icons are used and may not be in FontAwesome 6.5.1 Free tier:
 
 | Icon Class | Used Where | FA6 Free? |
 |------------|-----------|-----------|
-| `fas fa-vault` | ClawVault card | ✅ Added in FA6.1 |
-| `fas fa-bridge` | MoltBridge card | ⚠️ Verify — `fa-bridge` was added in FA6.0.0 but check free/pro tier |
+| `fas fa-vault` | SporeVault card | ✅ Added in FA6.1 |
+| `fas fa-bridge` | LichenBridge card | ⚠️ Verify — `fa-bridge` was added in FA6.0.0 but check free/pro tier |
 | `fa-solid fa-shrimp` | Code output text (wizard step 2) | ✅ Added in FA6.1 |
 | `fa-solid fa-location-dot` | Code output text | ✅ |
 | `fa-solid fa-floppy-disk` | Code output text | ✅ |
@@ -504,26 +504,26 @@ The following icons are used and may not be in FontAwesome 6.5.1 Free tier:
 | developers | `localhost:3010` |
 | faucet | `localhost:9100` |
 
-**Production URL strategy:** `${window.location.origin}/${app}` — all apps served as subdirectories of the same origin (e.g., `https://moltchain.network/explorer`, `/wallet`, etc.)
+**Production URL strategy:** `${window.location.origin}/${app}` — all apps served as subdirectories of the same origin (e.g., `https://lichen.network/explorer`, `/wallet`, etc.)
 
 **Findings:**
-1. **Assumes single-origin deployment** — if the explorer runs on `app.moltchain.network` and the website runs on `moltchain.network`, all cross-app links will produce 404s. No environment variable or override mechanism exists. 🟠
-2. **No `rpc` entry** in `MOLT_CONFIG` — the RPC URL is managed independently in `script.js`'s `NETWORKS` object. These are not in sync (e.g., if a staging RPC endpoint is different from the production one, they must be updated in two separate files). 🟡
-3. **Telegram missing** from `MOLT_CONFIG` — the footer has a Telegram link hardcoded as `https://t.me/moltchain` rather than going through config. Inconsistent with other community links. 🟢
+1. **Assumes single-origin deployment** — if the explorer runs on `app.lichen.network` and the website runs on `lichen.network`, all cross-app links will produce 404s. No environment variable or override mechanism exists. 🟠
+2. **No `rpc` entry** in `LICHEN_CONFIG` — the RPC URL is managed independently in `script.js`'s `NETWORKS` object. These are not in sync (e.g., if a staging RPC endpoint is different from the production one, they must be updated in two separate files). 🟡
+3. **Telegram missing** from `LICHEN_CONFIG` — the footer has a Telegram link hardcoded as `https://t.me/lichen` rather than going through config. Inconsistent with other community links. 🟢
 
 ### 8b. RPC URL in `script.js`
 
 ```js
 const NETWORKS = {
-    'mainnet': 'https://rpc.moltchain.network',
-    'testnet': 'https://testnet-rpc.moltchain.network',
+    'mainnet': 'https://rpc.lichen.network',
+    'testnet': 'https://testnet-rpc.lichen.network',
     'local-testnet': 'http://localhost:8899',
     'local-mainnet': 'http://localhost:8899',
 };
 ```
 
 - Both `local-testnet` and `local-mainnet` point to the same port (`8899`) — user confusion potential. 🟢
-- `https://rpc.moltchain.network` domain assumed but unverified. No HTTP status check or uptime indicator.
+- `https://rpc.lichen.network` domain assumed but unverified. No HTTP status check or uptime indicator.
 
 ### 8c. Chain ID / Network Info
 
@@ -539,21 +539,21 @@ The page does not display a chain ID anywhere. The `config.toml` in the workspac
 | 2 | 🔴 | WebSocket | `data.params?.result?.slot` path unverified against actual WS notification format; slot updates may silently fail | [script.js](script.js) ~L148–L156 | Log actual WS messages in dev; update path to match real format |
 | 3 | 🔴 | Navigation | `#validators`, `#api`, and `#community` sections exist but have NO nav links — 3 entire sections unreachable from nav | [index.html](index.html) L26–34 | Add 3 nav entries, or add an in-page sticky sub-nav |
 | 4 | 🟠 | Mobile CSS | `.nav-actions.active { top: calc(100% + 200px) }` hardcoded offset; breaks if nav-menu height ≠ 200px | [website.css](website.css) L597–L603 | Remove absolute positioning; let nav-actions flow below nav-menu in normal document flow |
-| 5 | 🟠 | Config | `shared-config.js` production URLs are all `origin + /path` — assumes single-origin; breaks multi-subdomain deployments | [shared-config.js](shared-config.js) L22–L29 | Add a `MOLT_PRODUCTION_URLS` env/config override or per-app config |
-| 6 | 🟠 | RPC | `callContract` used in wizard Step 5 code example but not a method in `MoltChainRPC` class; will fail if users try to copy-paste as SDK | [script.js](script.js) / [index.html](index.html) L791–L808 | Add comment "example only" or implement `callContract` in the client class |
-| 7 | 🟠 | RPC | Mainnet/testnet URLs (`rpc.moltchain.network`) unverifiable; no user-visible offline indicator when these fail | [script.js](script.js) L4–L10 | Add a chain status indicator (HTML has `.chain-status-bar` CSS already defined in shared-base-styles.css) |
-| 8 | 🟠 | External Links | `https://github.com/moltchain/moltchain` (appears 3× in page + footer) not verified as public/existing | [index.html](index.html) L718, L1100, L1117 | Verify repo is public before launch; add 404 fallback redirect |
+| 5 | 🟠 | Config | `shared-config.js` production URLs are all `origin + /path` — assumes single-origin; breaks multi-subdomain deployments | [shared-config.js](shared-config.js) L22–L29 | Add a `LICN_PRODUCTION_URLS` env/config override or per-app config |
+| 6 | 🟠 | RPC | `callContract` used in wizard Step 5 code example but not a method in `LichenRPC` class; will fail if users try to copy-paste as SDK | [script.js](script.js) / [index.html](index.html) L791–L808 | Add comment "example only" or implement `callContract` in the client class |
+| 7 | 🟠 | RPC | Mainnet/testnet URLs (`rpc.lichen.network`) unverifiable; no user-visible offline indicator when these fail | [script.js](script.js) L4–L10 | Add a chain status indicator (HTML has `.chain-status-bar` CSS already defined in shared-base-styles.css) |
+| 8 | 🟠 | External Links | `https://github.com/lichen/lichen` (appears 3× in page + footer) not verified as public/existing | [index.html](index.html) L718, L1100, L1117 | Verify repo is public before launch; add 404 fallback redirect |
 | 9 | 🟡 | Mobile UX | Mobile nav menu does not auto-close when a nav link is clicked | [script.js](script.js) L172–L180 | Add click listener on nav links to toggle menu closed |
 | 10 | 🟡 | CSS | `shared-base-styles.css` and `styles.css` duplicate ~60–70% of content (1000+ redundant lines loaded on every page) | [shared-base-styles.css](shared-base-styles.css), [styles.css](styles.css) | Delete `shared-base-styles.css` from website; website should use `styles.css` as base |
 | 11 | 🟡 | CSS | `styles.css` overrides `.container` to `max-width: 1800px` — extremely wide, likely unintentional | [styles.css](styles.css) L57 | Change to `max-width: 1400px` or match designer intent |
-| 12 | 🟡 | CSS | `shared-theme.css` defines `--orange-primary`, `--blue-primary`, `--shadow-glow` variable names — none used by `website.css` or `index.html` | [shared-theme.css](shared-theme.css) L32–L92 | Either update references to use these names (unify variable system) or remove `shared-theme.css` from website |
-| 13 | 🟡 | Config | RPC endpoint config split across two files (`shared-config.js` for app URLs, `script.js` for RPC URLs) — no single source of truth | [shared-config.js](shared-config.js), [script.js](script.js) | Move RPC URLs into `MOLT_CONFIG` or vice versa |
+| 12 | 🟡 | CSS | `shared-theme.css` defines `--teal-primary`, `--blue-primary`, `--shadow-glow` variable names — none used by `website.css` or `index.html` | [shared-theme.css](shared-theme.css) L32–L92 | Either update references to use these names (unify variable system) or remove `shared-theme.css` from website |
+| 13 | 🟡 | Config | RPC endpoint config split across two files (`shared-config.js` for app URLs, `script.js` for RPC URLs) — no single source of truth | [shared-config.js](shared-config.js), [script.js](script.js) | Move RPC URLs into `LICHEN_CONFIG` or vice versa |
 | 14 | 🟡 | Stats | No live TPS display despite `getMetrics` being documented with a `tps` field; primary performance claim is static | [script.js](script.js), [index.html](index.html) | Add `getTps()` call to `updateStats()` and a `stat-tps` element to hero |
 | 15 | 🟡 | CSS | `.deploy-section` and `.api-section` classes used in HTML but have zero CSS rules | [index.html](index.html) L748, L871 | Either add styles or remove the classes |
 | 17 | 🟡 | Social | Discord, Twitter, GitHub, Telegram links may be placeholder/unregistered accounts | [index.html](index.html) L1052–L1090 | Verify all accounts before launch; consider a registration checklist |
 | 18 | 🟡 | CSS | `.nav-actions` hidden on mobile but when `.nav-menu.active` the nav-actions overlay position is fragile | [website.css](website.css) L594–L603 | Render nav-actions links inline inside the nav-menu when mobile |
 | 19 | 🟢 | SEO | No `<meta property="og:image">`, `<meta property="og:title">`, `<meta name="twitter:card">` social sharing tags | [index.html](index.html) L1–L17 | Add complete Open Graph + Twitter Card meta block |
-| 20 | 🟢 | SEO | No `<link rel="canonical">` tag | [index.html](index.html) head | Add `<link rel="canonical" href="https://moltchain.network">` |
+| 20 | 🟢 | SEO | No `<link rel="canonical">` tag | [index.html](index.html) head | Add `<link rel="canonical" href="https://lichen.network">` |
 | 21 | 🟢 | Accessibility | API tabs and wizard tabs lack `aria-label`; `nav-toggle` and copy buttons have `aria-label` ✅ | [index.html](index.html) | Add `aria-label` to tab buttons; add `role="tablist"` + `role="tab"` to wizard/API tabs |
 | 22 | 🟢 | UX | No chain ID displayed anywhere; required for MetaMask "Add Network" flow despite dual-addressing being a key feature | [index.html](index.html) | Add Chain ID to Architecture specs or a dedicated "Add to MetaMask" button |
 | 23 | 🟢 | Copy | `navigator.clipboard.writeText()` requires HTTPS or localhost; will fail on plain HTTP in production | [script.js](script.js) L41–L56 | Ensure production is HTTPS; add `document.execCommand('copy')` fallback |
@@ -569,7 +569,7 @@ Items that are well-implemented and require no changes:
 - ✅ **Intersection Observer** — correctly initializes card entry animations with `threshold: 0.1` and `rootMargin: '0px 0px -100px 0px'`
 - ✅ **WebSocket lifecycle** — reconnect timer (5s), pauses on hidden tab (`visibilitychange`), closes on unload (`beforeunload`)
 - ✅ **Network persistence** — `localStorage` saves network choice; restored on `DOMContentLoaded`
-- ✅ **`shared-config.js`** — clean auto-resolving URL system with `data-molt-app` attribute, runs once on DOMContentLoaded
+- ✅ **`shared-config.js`** — clean auto-resolving URL system with `data-lichen-app` attribute, runs once on DOMContentLoaded
 - ✅ **Parallax hero** — RAF-throttled `requestAnimationFrame` prevents jank on scroll
 - ✅ **`formatNumber`** — guards against non-numbers, `NaN`, and `Infinity` before formatting
 - ✅ **`Promise.allSettled`** in `updateStats()` — individual RPC failures don't crash the whole stats update

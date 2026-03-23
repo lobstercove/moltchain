@@ -2,20 +2,20 @@
 
 ## Problem
 
-Similar to transaction fees, validator rewards need to adjust based on $MOLT price to maintain consistent USD-equivalent rewards:
+Similar to transaction fees, validator rewards need to adjust based on $LICN price to maintain consistent USD-equivalent rewards:
 
-**Current rewards (fixed MOLT):**
+**Current rewards (fixed LICN):**
 ```
-Transaction block: 0.1 MOLT
-Heartbeat block: 0.05 MOLT
+Transaction block: 0.1 LICN
+Heartbeat block: 0.05 LICN
 ```
 
 **Problem scenarios:**
-- $MOLT = $0.01 → Validator earns $0.0018/block (too low)
-- $MOLT = $10 → Validator earns $1.80/block (too high?)
-- $MOLT = $100 → Validator earns $18/block (excessive)
+- $LICN = $0.01 → Validator earns $0.0018/block (too low)
+- $LICN = $10 → Validator earns $1.80/block (too high?)
+- $LICN = $100 → Validator earns $18/block (excessive)
 
-**Target**: Maintain 0.002 - $0.50 per transaction block regardless of $MOLT price
+**Target**: Maintain 0.002 - $0.50 per transaction block regardless of $LICN price
 
 ## Solution Design
 
@@ -25,9 +25,9 @@ Heartbeat block: 0.05 MOLT
 // core/src/consensus.rs
 
 pub struct RewardConfig {
-    /// Base reward in MOLT (at reference price)
-    pub base_transaction_reward: u64,     // 100_000_000 shells (0.1 MOLT)
-    pub base_heartbeat_reward: u64,       // 50_000_000 shells (0.05 MOLT)
+    /// Base reward in LICN (at reference price)
+    pub base_transaction_reward: u64,     // 100_000_000 spores (0.1 LICN)
+    pub base_heartbeat_reward: u64,       // 50_000_000 spores (0.05 LICN)
     
     /// Price adjustment parameters
     pub reference_price_usd: f64,         // 1.00 USD (initial target)
@@ -64,18 +64,18 @@ impl RewardConfig {
         }
     }
     
-    /// Calculate adjusted reward based on current MOLT price
+    /// Calculate adjusted reward based on current LICN price
     pub fn calculate_adjusted_reward(
         &self,
         base_reward: u64,
-        molt_price_usd: f64,
+        licn_price_usd: f64,
     ) -> u64 {
         // Formula: adjusted = base * (reference_price / current_price)
-        // Example: $MOLT = $0.01, reference = $1.00
+        // Example: $LICN = $0.01, reference = $1.00
         // Multiplier = 1.00 / 0.01 = 100x
-        // 0.1 MOLT * 100 = 10 MOLT ($0.10 USD worth)
+        // 0.1 LICN * 100 = 10 LICN ($0.10 USD worth)
         
-        let multiplier = (self.reference_price_usd / molt_price_usd)
+        let multiplier = (self.reference_price_usd / licn_price_usd)
             .max(self.min_adjustment_multiplier)
             .min(self.max_adjustment_multiplier);
             
@@ -83,13 +83,13 @@ impl RewardConfig {
     }
     
     /// Update multiplier (called periodically by validators)
-    pub fn update_multiplier(&mut self, molt_price_usd: f64, current_slot: u64) {
+    pub fn update_multiplier(&mut self, licn_price_usd: f64, current_slot: u64) {
         // Only update if enough time has passed
         if current_slot - self.last_update_slot < self.adjustment_frequency_slots {
             return;
         }
         
-        let new_multiplier = (self.reference_price_usd / molt_price_usd)
+        let new_multiplier = (self.reference_price_usd / licn_price_usd)
             .max(self.min_adjustment_multiplier)
             .min(self.max_adjustment_multiplier);
             
@@ -98,13 +98,13 @@ impl RewardConfig {
     }
     
     /// Get current transaction reward
-    pub fn get_transaction_reward(&self, molt_price_usd: f64) -> u64 {
-        self.calculate_adjusted_reward(self.base_transaction_reward, molt_price_usd)
+    pub fn get_transaction_reward(&self, licn_price_usd: f64) -> u64 {
+        self.calculate_adjusted_reward(self.base_transaction_reward, licn_price_usd)
     }
     
     /// Get current heartbeat reward
-    pub fn get_heartbeat_reward(&self, molt_price_usd: f64) -> u64 {
-        self.calculate_adjusted_reward(self.base_heartbeat_reward, molt_price_usd)
+    pub fn get_heartbeat_reward(&self, licn_price_usd: f64) -> u64 {
+        self.calculate_adjusted_reward(self.base_heartbeat_reward, licn_price_usd)
     }
 }
 ```
@@ -116,8 +116,8 @@ impl RewardConfig {
 
 /// Simple price oracle interface
 pub trait PriceOracle {
-    /// Get current MOLT/USD price
-    fn get_molt_price_usd(&self) -> Result<f64, String>;
+    /// Get current LICN/USD price
+    fn get_licn_price_usd(&self) -> Result<f64, String>;
     
     /// Check if price is stale
     fn is_stale(&self) -> bool;
@@ -135,7 +135,7 @@ impl MockOracle {
 }
 
 impl PriceOracle for MockOracle {
-    fn get_molt_price_usd(&self) -> Result<f64, String> {
+    fn get_licn_price_usd(&self) -> Result<f64, String> {
         Ok(self.price)
     }
     
@@ -160,7 +160,7 @@ impl OnChainOracle {
 }
 
 impl PriceOracle for OnChainOracle {
-    fn get_molt_price_usd(&self) -> Result<f64, String> {
+    fn get_licn_price_usd(&self) -> Result<f64, String> {
         // TODO: Read from oracle account in state
         // For now, return fallback
         Ok(1.0)
@@ -184,15 +184,15 @@ impl StakePool {
         validator: &Pubkey,
         slot: u64,
         is_heartbeat: bool,
-        molt_price_usd: f64,
+        licn_price_usd: f64,
         reward_config: &RewardConfig,
     ) -> u64 {
         if let Some(stake_info) = self.stakes.get_mut(validator) {
             if stake_info.is_active {
                 let reward = if is_heartbeat {
-                    reward_config.get_heartbeat_reward(molt_price_usd)
+                    reward_config.get_heartbeat_reward(licn_price_usd)
                 } else {
-                    reward_config.get_transaction_reward(molt_price_usd)
+                    reward_config.get_transaction_reward(licn_price_usd)
                 };
                 
                 stake_info.add_reward(reward, slot);
@@ -214,12 +214,12 @@ let mut reward_config = RewardConfig::new();
 let mock_oracle = MockOracle::new(1.0); // Testnet: fixed $1.00
 
 // When distributing rewards:
-let molt_price = mock_oracle.get_molt_price_usd().unwrap_or(1.0);
+let licn_price = mock_oracle.get_licn_price_usd().unwrap_or(1.0);
 let reward = stake_pool.distribute_block_reward_with_price(
     &validator_pubkey,
     slot,
     is_heartbeat,
-    molt_price,
+    licn_price,
     &reward_config,
 );
 ```
@@ -228,25 +228,25 @@ let reward = stake_pool.distribute_block_reward_with_price(
 
 **Phase 1: Fixed Rewards (CURRENT - LIVE)**
 ```rust
-const TRANSACTION_BLOCK_REWARD: u64 = 100_000_000; // 0.1 MOLT
-const HEARTBEAT_BLOCK_REWARD: u64 = 50_000_000;    // 0.05 MOLT
+const TRANSACTION_BLOCK_REWARD: u64 = 100_000_000; // 0.1 LICN
+const HEARTBEAT_BLOCK_REWARD: u64 = 50_000_000;    // 0.05 LICN
 // No price adjustment
 ```
 
 **Phase 2: Price-Adjusted Rewards (IMPLEMENT NOW)**
 ```rust
 RewardConfig {
-    base: 0.1 MOLT,
+    base: 0.1 LICN,
     reference_price: $1.00,
     current_multiplier: (reference / actual_price),
     bounds: [0.1x, 10x],
 }
-// Automatic adjustment based on $MOLT price
+// Automatic adjustment based on $LICN price
 ```
 
 **Phase 3: On-Chain Oracle (FUTURE - Month 4+)**
 ```rust
-// Read MOLT price from on-chain oracle account
+// Read LICN price from on-chain oracle account
 // Update every epoch (~24h)
 // Validators vote on new multiplier
 // Governance can override
@@ -254,41 +254,41 @@ RewardConfig {
 
 ## Example Scenarios
 
-### Scenario 1: Low Price ($MOLT = $0.01)
+### Scenario 1: Low Price ($LICN = $0.01)
 ```
-Base reward: 0.1 MOLT
+Base reward: 0.1 LICN
 Reference price: $1.00
 Current price: $0.01
 Multiplier: 1.00 / 0.01 = 100x
 
-Adjusted reward: 0.1 * 100 = 10 MOLT
+Adjusted reward: 0.1 * 100 = 10 LICN
 USD value: 10 × $0.01 = $0.10 ✓
 
 Result: Validator earns same $0.10 USD worth
 ```
 
-### Scenario 2: High Price ($MOLT = $100)
+### Scenario 2: High Price ($LICN = $100)
 ```
-Base reward: 0.1 MOLT
+Base reward: 0.1 LICN
 Reference price: $1.00
 Current price: $100
 Multiplier: 1.00 / 100 = 0.01x
 
-Adjusted reward: 0.1 * 0.01 = 0.001 MOLT
+Adjusted reward: 0.1 * 0.01 = 0.001 LICN
 USD value: 0.001 × $100 = $0.10 ✓
 
 Result: Validator earns same $0.10 USD worth
 ```
 
-### Scenario 3: Extreme Price ($MOLT = $10,000)
+### Scenario 3: Extreme Price ($LICN = $10,000)
 ```
-Base reward: 0.1 MOLT
+Base reward: 0.1 LICN
 Reference price: $1.00
 Current price: $10,000
 Calculated multiplier: 1.00 / 10,000 = 0.0001x
 Capped multiplier: max(0.0001, 0.1) = 0.1x (min bound)
 
-Adjusted reward: 0.1 * 0.1 = 0.01 MOLT
+Adjusted reward: 0.1 * 0.1 = 0.01 LICN
 USD value: 0.01 × $10,000 = $100 (10x intended)
 
 Result: Validator earns 10x intended due to safety cap
@@ -310,13 +310,13 @@ Note: Governance would update reference_price in this scenario
 
 **Comparison to Fixed Rewards:**
 ```
-$MOLT Price | Fixed (0.1 MOLT) | Adjusted (target $0.10 USD)
+$LICN Price | Fixed (0.1 LICN) | Adjusted (target $0.10 USD)
 ---------   | ------------------| --------------------------
-$0.01       | $0.001/block      | 10 MOLT = $0.10/block ✓
-$0.10       | $0.01/block       | 1.0 MOLT = $0.10/block ✓
-$1.00       | $0.10/block ok    | 0.1 MOLT = $0.10/block ✓
-$10.00      | $1.00/block $$    | 0.01 MOLT = $0.10/block ✓
-$100.00     | $10/block $$$     | 0.001 MOLT = $0.10/block ✓
+$0.01       | $0.001/block      | 10 LICN = $0.10/block ✓
+$0.10       | $0.01/block       | 1.0 LICN = $0.10/block ✓
+$1.00       | $0.10/block ok    | 0.1 LICN = $0.10/block ✓
+$10.00      | $1.00/block $$    | 0.01 LICN = $0.10/block ✓
+$100.00     | $10/block $$$     | 0.001 LICN = $0.10/block ✓
 ```
 
 ## Governance Parameters
@@ -335,7 +335,7 @@ Proposed: $0.15 USD per transaction block
 
 Implementation: Update target_reward_usd from 0.10 to 0.15
 Effect: All validators earn 50% more (in USD terms)
-Token impact: 50% more MOLT emissions (inflation increase)
+Token impact: 50% more LICN emissions (inflation increase)
 ```
 
 ## Implementation Checklist
@@ -389,7 +389,7 @@ Token impact: 50% more MOLT emissions (inflation increase)
 
 **Month 4+ (after DEX launch):**
 1. Implement on-chain oracle
-2. Read MOLT price from ClawSwap AMM
+2. Read LICN price from SporeSwap AMM
 3. Automatic adjustment every epoch
 4. Full decentralization
 

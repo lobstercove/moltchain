@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — Margin Module
+// @lichen/dex-sdk — Margin Module
 // Margin positions, leverage, liquidation, insurance fund
 // ═══════════════════════════════════════════════════════════════════════════════
 

@@ -1,4 +1,4 @@
-# MoltChain RPC API Reference
+# Lichen RPC API Reference
 
 **Complete API Surface**: ~172 Methods (170 unique + 2 aliases)  
 **Version**: 0.4.6  
@@ -15,18 +15,18 @@
 http://localhost:8899/
 
 # Production endpoints
-https://rpc.moltchain.network/
+https://rpc.lichen.network/
 
 # Custom endpoint (CLI)
-molt --rpc-url http://custom-host:8899 <command>
+lichen --rpc-url http://custom-host:8899 <command>
 ```
 
 ## 🔁 Compatibility Adapters
 
-MoltChain exposes canonical RPC methods on the root endpoint and provides
+Lichen exposes canonical RPC methods on the root endpoint and provides
 compatibility adapters on dedicated routes for external tooling.
 
-- Canonical MoltChain RPC: `http://localhost:8899/`
+- Canonical Lichen RPC: `http://localhost:8899/`
 - Solana-format compatibility: `http://localhost:8899/solana-compat` (legacy alias: `/solana`)
 - EVM compatibility: `http://localhost:8899/evm`
 
@@ -44,7 +44,7 @@ This baseline is kept consistent with `docs/consensus/VALIDATOR_SETUP.md`,
 
 ### Staking/economics RPC baseline
 
-`getStakingStatus`, `getStakingRewards`, `getTreasuryInfo`, `getGenesisAccounts`, `getTotalBurned`, `getReefStakePoolInfo`
+`getStakingStatus`, `getStakingRewards`, `getTreasuryInfo`, `getGenesisAccounts`, `getTotalBurned`, `getMossStakePoolInfo`
 
 ### Core WebSocket baseline
 
@@ -103,7 +103,7 @@ Issue a one-time deposit address.
 **Body**:
 ```json
 {
-  "user_id": "<molt_address>",
+  "user_id": "<licn_address>",
   "chain": "solana",
   "asset": "sol"
 }
@@ -127,12 +127,12 @@ Fetch a deposit request.
 ### Core Queries (22 methods)
 
 #### `getBalance`
-Get account balance in shells and MOLT.
+Get account balance in spores and LICN.
 
 **Params**: `[pubkey: string]`  
 **Returns**:
 ```json
-{ "shells": 1000000000, "molt": 1.0 }
+{ "spores": 1000000000, "licn": 1.0 }
 ```
 
 #### `getAccount`
@@ -141,7 +141,7 @@ Get complete account information.
 **Params**: `[pubkey: string]`  
 **Returns**:
 ```json
-{ "shells": 1000000000, "owner": "System...", "executable": false, "data": "0x..." }
+{ "spores": 1000000000, "owner": "System...", "executable": false, "data": "0x..." }
 ```
 
 #### `getAccountProof`
@@ -250,10 +250,10 @@ Read-only contract call (no state mutation).
 **Returns**: Contract-specific return value
 
 #### `getTotalBurned`
-Get total MOLT burned.
+Get total LICN burned.
 
 **Params**: None  
-**Returns**: `{ "shells": 1000000, "molt": 0.001 }`
+**Returns**: `{ "spores": 1000000, "licn": 0.001 }`
 
 #### `getValidators`
 List all validators.
@@ -309,13 +309,13 @@ Get performance metrics.
 Get treasury address and balances.
 
 **Params**: None  
-**Returns**: `{ "treasury_pubkey": "...", "treasury_balance": 0, "treasury_balance_molt": 0.0 }`
+**Returns**: `{ "treasury_pubkey": "...", "treasury_balance": 0, "treasury_balance_licn": 0.0 }`
 
 #### `getGenesisAccounts`
 List genesis accounts and allocation metadata.
 
 **Params**: None  
-**Returns**: `{ "accounts": [{ "role": "genesis", "pubkey": "...", "amount_molt": 0 }] }`
+**Returns**: `{ "accounts": [{ "role": "genesis", "pubkey": "...", "amount_licn": 0 }] }`
 
 #### `getGovernedProposal`
 Get governance proposal details.
@@ -382,7 +382,7 @@ Get network metadata.
 **Params**: None  
 **Returns**:
 ```json
-{ "chain_id": "moltchain-mainnet", "version": "0.4.6", "current_slot": 12345, "validator_count": 5, "peer_count": 3 }
+{ "chain_id": "lichen-mainnet", "version": "0.4.6", "current_slot": 12345, "validator_count": 5, "peer_count": 3 }
 ```
 
 #### `getClusterInfo`
@@ -448,7 +448,7 @@ Get comprehensive chain status.
   "total_burned": 2200000000,
   "total_minted": 12500000000,
   "peer_count": 8,
-  "chain_id": "moltchain-mainnet",
+  "chain_id": "lichen-mainnet",
   "network": "mainnet",
   "is_healthy": true,
   "inflation_rate_bps": 395
@@ -487,37 +487,37 @@ Get staking rewards info.
 
 ---
 
-### ReefStake Liquid Staking (6 methods)
+### MossStake Liquid Staking (6 methods)
 
-#### `stakeToReefStake`
-Deprecated write RPC. Use `sendTransaction` with system instruction type `13` (ReefStake deposit).
+#### `stakeToMossStake`
+Deprecated write RPC. Use `sendTransaction` with system instruction type `13` (MossStake deposit).
 
 **Params**: legacy-only `[from: string, amount: number]`  
 **Returns**: JSON-RPC error `-32601` with guidance to submit a signed transaction using data `[13, amount_le_bytes(8)]` and accounts `[depositor_pubkey]`.
 
-#### `unstakeFromReefStake`
-Deprecated write RPC. Use `sendTransaction` with system instruction type `14` (ReefStake unstake).
+#### `unstakeFromMossStake`
+Deprecated write RPC. Use `sendTransaction` with system instruction type `14` (MossStake unstake).
 
 **Params**: legacy-only `[from: string, amount: number]`  
-**Returns**: JSON-RPC error `-32601` with guidance to submit a signed transaction using data `[14, st_molt_amount_le_bytes(8)]` and accounts `[user_pubkey]`.
+**Returns**: JSON-RPC error `-32601` with guidance to submit a signed transaction using data `[14, st_licn_amount_le_bytes(8)]` and accounts `[user_pubkey]`.
 
 #### `claimUnstakedTokens`
-Deprecated write RPC. Use `sendTransaction` with system instruction type `15` (ReefStake claim).
+Deprecated write RPC. Use `sendTransaction` with system instruction type `15` (MossStake claim).
 
 **Params**: legacy-only `[from: string]`  
 **Returns**: JSON-RPC error `-32601` with guidance to submit a signed transaction using data `[15]` and accounts `[user_pubkey]`.
 
 #### `getStakingPosition`
-Get a user's ReefStake position.
+Get a user's MossStake position.
 
 **Params**: `[pubkey: string]`  
 **Returns**:
 ```json
 {
   "owner": "...",
-  "st_molt_amount": 0,
-  "molt_deposited": 0,
-  "current_value_molt": 0,
+  "st_licn_amount": 0,
+  "licn_deposited": 0,
+  "current_value_licn": 0,
   "rewards_earned": 0,
   "deposited_at": 0,
   "lock_tier": 0,
@@ -527,15 +527,15 @@ Get a user's ReefStake position.
 }
 ```
 
-#### `getReefStakePoolInfo`
-Get ReefStake pool-level metrics.
+#### `getMossStakePoolInfo`
+Get MossStake pool-level metrics.
 
 **Params**: None  
 **Returns**:
 ```json
 {
-  "total_supply_st_molt": 0,
-  "total_molt_staked": 0,
+  "total_supply_st_licn": 0,
+  "total_licn_staked": 0,
   "exchange_rate": 1.0,
   "total_validators": 3,
   "average_apy_percent": 0.0,
@@ -557,8 +557,8 @@ Get pending unstaking requests for an account.
   "owner": "...",
   "pending_requests": [
     {
-      "st_molt_amount": 0,
-      "molt_to_receive": 0,
+      "st_licn_amount": 0,
+      "licn_to_receive": 0,
       "requested_at": 0,
       "claimable_at": 0
     }
@@ -572,7 +572,7 @@ Get pending unstaking requests for an account.
 ### Price-Based Rewards (1 method)
 
 #### `getRewardAdjustmentInfo`
-Get current reward adjustment parameters based on MOLT price.
+Get current reward adjustment parameters based on LICN price.
 
 **Params**: None  
 **Returns**: `{ "current_multiplier": 1.0, "target_price": ..., "current_price": ..., "totalSupply": ..., "projectedSupply": ..., "totalMinted": ..., "inflationRateBps": ... }`
@@ -589,7 +589,7 @@ Get enhanced account information.
 **Params**: `[pubkey: string]`  
 **Returns**:
 ```json
-{ "pubkey": "...", "balance": 1000000000, "molt": 1.0, "exists": true, "is_validator": false, "is_executable": false }
+{ "pubkey": "...", "balance": 1000000000, "licn": 1.0, "exists": true, "is_validator": false, "is_executable": false }
 ```
 
 #### `getTransactionHistory`
@@ -680,82 +680,82 @@ Get a program's persistent storage entries.
 
 ---
 
-### MoltyID & Names (14 methods)
+### LichenID & Names (14 methods)
 
-#### `getMoltyIdIdentity`
-Get a MoltyID identity record.
+#### `getLichenIdIdentity`
+Get a LichenID identity record.
 
 **Params**: `[pubkey: string]`  
-**Returns**: `{ "pubkey": "...", "name": "alice.molt", "agent_type": "...", "created_at": ... }`
+**Returns**: `{ "pubkey": "...", "name": "alice.lichen", "agent_type": "...", "created_at": ... }`
 
-#### `getMoltyIdReputation`
+#### `getLichenIdReputation`
 Get reputation score for an identity.
 
 **Params**: `[pubkey: string]`  
 **Returns**: `{ "score": 850, "level": "trusted", "history": [...] }`
 
-#### `getMoltyIdSkills`
+#### `getLichenIdSkills`
 Get registered skills for an identity.
 
 **Params**: `[pubkey: string]`  
 **Returns**: `{ "skills": ["rust", "wasm", "defi"], "endorsements": ... }`
 
-#### `getMoltyIdVouches`
+#### `getLichenIdVouches`
 Get vouch records for an identity.
 
 **Params**: `[pubkey: string]`  
 **Returns**: `{ "vouches": [{ "from": "...", "weight": 10 }] }`
 
-#### `getMoltyIdAchievements`
+#### `getLichenIdAchievements`
 Get achievements earned by an identity.
 
 **Params**: `[pubkey: string]`  
 **Returns**: `{ "achievements": [{ "id": "...", "name": "...", "earned_at": ... }] }`
 
-#### `getMoltyIdProfile`
+#### `getLichenIdProfile`
 Get combined profile view for an identity.
 
 **Params**: `[pubkey: string]`  
 **Returns**: Full profile with identity, reputation, skills, achievements
 
-#### `resolveMoltName`
-Resolve a `.molt` name to a public key.
+#### `resolveLichenName`
+Resolve a `.lichen` name to a public key.
 
 **Params**: `[name: string]`  
-**Returns**: `{ "pubkey": "...", "name": "alice.molt" }`
+**Returns**: `{ "pubkey": "...", "name": "alice.lichen" }`
 
-#### `reverseMoltName`
-Reverse-resolve a public key to a `.molt` name.
+#### `reverseLichenName`
+Reverse-resolve a public key to a `.lichen` name.
 
 **Params**: `[pubkey: string]`  
-**Returns**: `{ "name": "alice.molt" }`
+**Returns**: `{ "name": "alice.lichen" }`
 
-#### `batchReverseMoltNames`
+#### `batchReverseLichenNames`
 Batch reverse-resolve multiple pubkeys to names.
 
 **Params**: `[pubkeys: string[]]`  
-**Returns**: `{ "results": { "pubkey1": "alice.molt", "pubkey2": null } }`
+**Returns**: `{ "results": { "pubkey1": "alice.lichen", "pubkey2": null } }`
 
-#### `searchMoltNames`
-Search for `.molt` names by prefix or pattern.
+#### `searchLichenNames`
+Search for `.lichen` names by prefix or pattern.
 
 **Params**: `[query: string, limit?: number]`  
-**Returns**: `{ "results": [{ "name": "alice.molt", "pubkey": "..." }] }`
+**Returns**: `{ "results": [{ "name": "alice.lichen", "pubkey": "..." }] }`
 
-#### `getMoltyIdAgentDirectory`
+#### `getLichenIdAgentDirectory`
 Browse the agent directory.
 
 **Params**: `[filter?: object, limit?: number]`  
 **Returns**: `{ "agents": [...], "count": ... }`
 
-#### `getMoltyIdStats`
-Get MoltyID system-wide statistics.
+#### `getLichenIdStats`
+Get LichenID system-wide statistics.
 
 **Params**: None  
 **Returns**: `{ "total_identities": ..., "total_names": ..., "total_vouches": ... }`
 
 #### `getNameAuction`
-Get current auction for a premium `.molt` name.
+Get current auction for a premium `.lichen` name.
 
 **Params**: `[name: string]`  
 **Returns**: `{ "name": "...", "highest_bid": ..., "bidder": "...", "ends_at": ... }`
@@ -765,13 +765,13 @@ Get current auction for a premium `.molt` name.
 ### EVM Address Registry (2 methods)
 
 #### `getEvmRegistration`
-Get EVM address registration for a MoltChain pubkey.
+Get EVM address registration for a Lichen pubkey.
 
 **Params**: `[pubkey: string]`  
 **Returns**: `{ "evm_address": "0x...", "pubkey": "..." }`
 
 #### `lookupEvmAddress`
-Look up a MoltChain pubkey by EVM address.
+Look up a Lichen pubkey by EVM address.
 
 **Params**: `[evm_address: string]`  
 **Returns**: `{ "pubkey": "...", "evm_address": "0x..." }`
@@ -784,7 +784,7 @@ Look up a MoltChain pubkey by EVM address.
 Get symbol registry entry by ticker.
 
 **Params**: `[symbol: string]`  
-**Returns**: `{ "symbol": "MOLT", "program_id": "...", "decimals": 9 }`
+**Returns**: `{ "symbol": "LICN", "program_id": "...", "decimals": 9 }`
 
 #### `getSymbolRegistryByProgram`
 Get symbol registration for a specific program.
@@ -889,7 +889,7 @@ Get emitted events from a contract.
 ### Faucet (1 method)
 
 #### `requestAirdrop`
-Request testnet MOLT airdrop. Rate-limited to 1 request per 60 seconds per IP.
+Request testnet LICN airdrop. Rate-limited to 1 request per 60 seconds per IP.
 
 **Params**: `[pubkey: string, amount?: number]`  
 **Returns**: `{ "signature": "...", "amount": 1000000000 }`
@@ -985,18 +985,18 @@ Stats for DEX governance contract.
 
 **Params**: None · **Returns**: `{ "proposals": ..., "voters": ..., "quorum": ... }`
 
-#### `getMoltswapStats`
-Stats for MoltSwap AMM contract.
+#### `getLichenSwapStats`
+Stats for LichenSwap AMM contract.
 
 **Params**: None · **Returns**: `{ "pools": ..., "tvl": ..., "total_swaps": ... }`
 
-#### `getLobsterLendStats`
-Stats for LobsterLend lending protocol contract.
+#### `getThallLendStats`
+Stats for ThallLend lending protocol contract.
 
 **Params**: None · **Returns**: `{ "total_deposited": ..., "total_borrowed": ..., "utilization": ... }`
 
-#### `getClawPayStats`
-Stats for ClawPay payments contract.
+#### `getSporePayStats`
+Stats for SporePay payments contract.
 
 **Params**: None · **Returns**: `{ "total_payments": ..., "total_volume": ... }`
 
@@ -1010,28 +1010,28 @@ Stats for Compute Market contract.
 
 **Params**: None · **Returns**: `{ "providers": ..., "jobs_completed": ... }`
 
-#### `getReefStorageStats`
-Stats for Reef Storage decentralized storage contract.
+#### `getMossStorageStats`
+Stats for Moss Storage decentralized storage contract.
 
 **Params**: None · **Returns**: `{ "total_stored_bytes": ..., "providers": ... }`
 
-#### `getMoltMarketStats`
-Stats for MoltMarket NFT marketplace contract.
+#### `getLichenMarketStats`
+Stats for LichenMarket NFT marketplace contract.
 
 **Params**: None · **Returns**: `{ "total_listings": ..., "total_volume": ... }`
 
-#### `getMoltAuctionStats`
-Stats for MoltAuction contract.
+#### `getLichenAuctionStats`
+Stats for LichenAuction contract.
 
 **Params**: None · **Returns**: `{ "active_auctions": ..., "total_auctions": ... }`
 
-#### `getMoltPunksStats`
-Stats for MoltPunks NFT collection contract.
+#### `getLichenPunksStats`
+Stats for LichenPunks NFT collection contract.
 
 **Params**: None · **Returns**: `{ "total_supply": ..., "minted": ..., "floor_price": ... }`
 
 #### `getMusdStats`
-Stats for mUSD stablecoin contract.
+Stats for lUSD stablecoin contract.
 
 **Params**: None · **Returns**: `{ "total_supply": ..., "holders": ... }`
 
@@ -1050,23 +1050,23 @@ Stats for Wrapped BNB (wBNB) contract.
 
 **Params**: None · **Returns**: `{ "total_supply": ..., "holders": ... }`
 
-#### `getClawVaultStats`
-Stats for ClawVault yield aggregator contract.
+#### `getSporeVaultStats`
+Stats for SporeVault yield aggregator contract.
 
 **Params**: None · **Returns**: `{ "vaults": ..., "tvl": ... }`
 
-#### `getMoltBridgeStats`
-Stats for MoltBridge cross-chain bridge contract.
+#### `getLichenBridgeStats`
+Stats for LichenBridge cross-chain bridge contract.
 
 **Params**: None · **Returns**: `{ "total_deposits": ..., "total_withdrawals": ..., "supported_chains": ... }`
 
-#### `getMoltDaoStats`
-Stats for MoltDAO governance contract.
+#### `getLichenDaoStats`
+Stats for LichenDAO governance contract.
 
 **Params**: None · **Returns**: `{ "proposals": ..., "members": ..., "treasury_balance": ... }`
 
-#### `getMoltOracleStats`
-Stats for MoltOracle price feed contract.
+#### `getLichenOracleStats`
+Stats for LichenOracle price feed contract.
 
 **Params**: None · **Returns**: `{ "feeds": ..., "last_update_slot": ... }`
 
@@ -1100,13 +1100,13 @@ Get all bridge deposits for a recipient.
 Get all DEX trading pairs with current prices.
 
 **Params**: None  
-**Returns**: `{ "pairs": [{ "base": "MOLT", "quote": "mUSD", "price": ..., "volume_24h": ... }] }`
+**Returns**: `{ "pairs": [{ "base": "LICN", "quote": "lUSD", "price": ..., "volume_24h": ... }] }`
 
 #### `getOraclePrices`
 Get latest oracle price feeds.
 
 **Params**: None  
-**Returns**: `{ "prices": { "MOLT": ..., "ETH": ..., "SOL": ..., "BNB": ... } }`
+**Returns**: `{ "prices": { "LICN": ..., "ETH": ..., "SOL": ..., "BNB": ... } }`
 
 ---
 
@@ -1197,29 +1197,29 @@ curl -X POST http://localhost:8899/ \
 ### CLI
 ```bash
 # Network operations
-molt network status
-molt network peers
-molt network info
+lichen network status
+lichen network peers
+lichen network info
 
 # Validator operations
-molt validator info <pubkey>
-molt validator performance <pubkey>
-molt validator list
+lichen validator info <pubkey>
+lichen validator performance <pubkey>
+lichen validator list
 
 # Staking operations
-molt stake add <from> <validator> <amount>
-molt stake remove <from> <validator> <amount>
-molt stake status <pubkey>
-molt stake rewards <pubkey>
+lichen stake add <from> <validator> <amount>
+lichen stake remove <from> <validator> <amount>
+lichen stake status <pubkey>
+lichen stake rewards <pubkey>
 
 # Account operations
-molt account info <pubkey>
-molt account history <pubkey> 10
+lichen account info <pubkey>
+lichen account history <pubkey> 10
 
 # Contract operations
-molt contract info <contract_id>
-molt contract logs <contract_id>
-molt contract list
+lichen contract info <contract_id>
+lichen contract logs <contract_id>
+lichen contract list
 ```
 
 ### JavaScript (using fetch)

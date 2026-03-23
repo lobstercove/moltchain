@@ -1,4 +1,4 @@
-# 🦞 MoltChain Validator Setup Guide
+# 🦞 Lichen Validator Setup Guide
 
 **Production-ready testnet/mainnet validator deployment**
 
@@ -6,10 +6,10 @@
 
 ## Quick Start
 
-### 1. Build MoltChain
+### 1. Build Lichen
 
 ```bash
-cd moltchain
+cd lichen
 cargo build --release
 ```
 
@@ -33,7 +33,7 @@ cargo build --release
 ./scripts/setup-validator.sh \
   --network testnet \
   --genesis ./genesis.json \
-  --home ~/.moltchain \
+  --home ~/.lichen \
   --p2p-port 7001 \
   --rpc-port 8899
 ```
@@ -42,20 +42,20 @@ cargo build --release
 
 ```bash
 # Using generated start script
-~/.moltchain/start-validator.sh
+~/.lichen/start-validator.sh
 
 # Or manually
-./target/release/moltchain-validator --genesis ~/.moltchain/genesis.json 7001
+./target/release/lichen-validator --genesis ~/.lichen/genesis.json 7001
 ```
 
 ---
 
 ## Directory Structure
 
-After setup, your MoltChain installation looks like:
+After setup, your Lichen installation looks like:
 
 ```
-~/.moltchain/
+~/.lichen/
 ├── config.toml                    # Validator configuration
 ├── genesis.json                   # Genesis configuration
 ├── validator-keypair.json         # Validator identity (KEEP SECURE!)
@@ -91,7 +91,7 @@ Chain initialization parameters:
 
 ```json
 {
-  "chain_id": "moltchain-testnet-1",
+  "chain_id": "lichen-testnet-1",
   "genesis_time": "2026-03-19T00:00:00Z",
   "consensus": {
     "slot_duration_ms": 400,
@@ -147,7 +147,7 @@ You can pass external sweep RPCs when restarting:
 
 Options:
   --network <testnet|mainnet>    Network to join (default: testnet)
-  --home <PATH>                  MoltChain home directory
+  --home <PATH>                  Lichen home directory
   --genesis <PATH>               Path to genesis.json file (required)
   --keypair <PATH>               Path to validator keypair (optional)
   --data-dir <PATH>              Data directory
@@ -173,7 +173,7 @@ Options:
   --genesis ./genesis.json \
   --p2p-port 8001 \
   --rpc-port 9899 \
-  --data-dir /mnt/moltchain
+  --data-dir /mnt/lichen
 ```
 
 ### health-check.sh
@@ -190,15 +190,15 @@ Options:
 **Usage**:
 ```bash
 # Single check
-~/.moltchain/health-check.sh
+~/.lichen/health-check.sh
 
 # Continuous monitoring
-~/.moltchain/health-check.sh --watch
+~/.lichen/health-check.sh --watch
 ```
 
 **Output**:
 ```
-🦞 MoltChain Validator Health Check
+🦞 Lichen Validator Health Check
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Checking: http://localhost:9000
 
@@ -216,8 +216,8 @@ Checking: http://localhost:9000
 **Alerting**:
 Set environment variables for notifications:
 ```bash
-export MOLTCHAIN_ALERT_EMAIL="admin@example.com"
-export MOLTCHAIN_SLACK_WEBHOOK="https://hooks.slack.com/..."
+export LICHEN_ALERT_EMAIL="admin@example.com"
+export LICHEN_SLACK_WEBHOOK="https://hooks.slack.com/..."
 ```
 
 ### upgrade-validator.sh
@@ -308,7 +308,7 @@ This helper is now legacy for production v0.4.5 and intentionally fails fast. Us
 
 Or manually:
 ```bash
-sudo cp scripts/moltchain-validator.service /etc/systemd/system/
+sudo cp scripts/lichen-validator.service /etc/systemd/system/
 sudo systemctl daemon-reload
 ```
 
@@ -316,22 +316,22 @@ sudo systemctl daemon-reload
 
 ```bash
 # Enable auto-start on boot
-sudo systemctl enable moltchain-validator
+sudo systemctl enable lichen-validator
 
 # Start validator
-sudo systemctl start moltchain-validator
+sudo systemctl start lichen-validator
 
 # Check status
-sudo systemctl status moltchain-validator
+sudo systemctl status lichen-validator
 
 # View logs
-sudo journalctl -u moltchain-validator -f
+sudo journalctl -u lichen-validator -f
 
 # Restart
-sudo systemctl restart moltchain-validator
+sudo systemctl restart lichen-validator
 
 # Stop
-sudo systemctl stop moltchain-validator
+sudo systemctl stop lichen-validator
 ```
 
 ### Service Features
@@ -351,29 +351,29 @@ sudo systemctl stop moltchain-validator
 **Automated monitoring**:
 ```bash
 # Cron job for continuous monitoring
-*/5 * * * * /home/moltchain/.moltchain/health-check.sh
+*/5 * * * * /home/lichen/.lichen/health-check.sh
 ```
 
 **Monitoring as a service** (systemd timer):
 ```bash
 # Create timer unit
-sudo systemctl enable --now moltchain-health.timer
+sudo systemctl enable --now lichen-health.timer
 ```
 
 ### Prometheus Metrics
 
 **Exposed metrics** (port 9100):
-- `moltchain_slot_height` - Current slot
-- `moltchain_validator_count` - Active validators
-- `moltchain_tps` - Transactions per second
-- `moltchain_total_transactions` - Total transaction count
-- `moltchain_total_blocks` - Total block count
-- `moltchain_burned_molt` - Total burned MOLT
+- `lichen_slot_height` - Current slot
+- `lichen_validator_count` - Active validators
+- `lichen_tps` - Transactions per second
+- `lichen_total_transactions` - Total transaction count
+- `lichen_total_blocks` - Total block count
+- `lichen_burned_licn` - Total burned LICN
 
 **Scrape configuration**:
 ```yaml
 scrape_configs:
-  - job_name: 'moltchain'
+  - job_name: 'lichen'
     static_configs:
       - targets: ['localhost:9100']
 ```
@@ -386,12 +386,12 @@ scrape_configs:
 
 **Check 1: Genesis file**
 ```bash
-cat ~/.moltchain/genesis.json | jq '.'
+cat ~/.lichen/genesis.json | jq '.'
 ```
 
 **Check 2: Keypair permissions**
 ```bash
-ls -l ~/.moltchain/validator-keypair.json
+ls -l ~/.lichen/validator-keypair.json
 # Should be: -rw------- (600)
 ```
 
@@ -403,7 +403,7 @@ lsof -i :9000  # RPC port
 
 **Check 4: Logs**
 ```bash
-tail -f ~/.moltchain/logs/validator.log
+tail -f ~/.lichen/logs/validator.log
 ```
 
 ### Chain not progressing
@@ -434,17 +434,17 @@ netstat -an | grep 8000
 
 **Check disk space**:
 ```bash
-df -h ~/.moltchain/data
+df -h ~/.lichen/data
 ```
 
 **Cleanup old logs**:
 ```bash
-find ~/.moltchain/logs -name "*.log" -mtime +7 -delete
+find ~/.lichen/logs -name "*.log" -mtime +7 -delete
 ```
 
 **Archive old data**:
 ```bash
-~/.moltchain/backup.sh
+~/.lichen/backup.sh
 ```
 
 ### RPC not responding
@@ -458,7 +458,7 @@ curl -X POST http://localhost:9000 \
 
 **Check bind address**:
 ```bash
-grep bind_address ~/.moltchain/config.toml
+grep bind_address ~/.lichen/config.toml
 # Should be "0.0.0.0" for external access
 ```
 
@@ -476,10 +476,10 @@ sudo iptables -L -n | grep 9000
 
 ```bash
 # Run backup script
-~/.moltchain/backup.sh
+~/.lichen/backup.sh
 
 # Backups stored in:
-~/.moltchain/backups/
+~/.lichen/backups/
 ```
 
 **Backup contents**:
@@ -493,16 +493,16 @@ sudo iptables -L -n | grep 9000
 **Daily backups via cron**:
 ```bash
 # Add to crontab
-0 2 * * * /home/moltchain/.moltchain/backup.sh
+0 2 * * * /home/lichen/.lichen/backup.sh
 ```
 
 ### Recovery
 
 **Restore from backup**:
 ```bash
-cd ~/.moltchain/backups
-tar -xzf moltchain-backup-YYYYMMDD-HHMMSS.tar.gz -C ~/.moltchain
-tar -xzf moltchain-backup-YYYYMMDD-HHMMSS.tar.gz.data -C ~/.moltchain/data
+cd ~/.lichen/backups
+tar -xzf lichen-backup-YYYYMMDD-HHMMSS.tar.gz -C ~/.lichen
+tar -xzf lichen-backup-YYYYMMDD-HHMMSS.tar.gz.data -C ~/.lichen/data
 ```
 
 ---
@@ -555,45 +555,45 @@ sudo swapoff -a
 
 ```bash
 # Initialize validator keypair
-molt init --output ~/.moltchain/validator-keypair.json
+lichen init --output ~/.lichen/validator-keypair.json
 
 # Check validator identity
-molt identity show --keypair ~/.moltchain/validator-keypair.json
+lichen identity show --keypair ~/.lichen/validator-keypair.json
 
 # Get validator pubkey
-molt pubkey --keypair ~/.moltchain/validator-keypair.json
+lichen pubkey --keypair ~/.lichen/validator-keypair.json
 ```
 
 ### Monitoring
 
 ```bash
 # Check balance
-molt balance <address>
+lichen balance <address>
 
 # List validators
-molt validators
+lichen validators
 
 # Get current slot
-molt slot
+lichen slot
 
 # Get latest block
-molt latest
+lichen latest
 
-# Get total burned MOLT
-molt burned
+# Get total burned LICN
+lichen burned
 ```
 
 ---
 
 ## Support
 
-**Documentation**: https://developers.moltchain.network
-**GitHub**: https://github.com/lobstercove/moltchain
-**Email**: hello@moltchain.network
+**Documentation**: https://developers.lichen.network
+**GitHub**: https://github.com/lobstercove/lichen
+**Email**: hello@lichen.network
 **Discord**: https://discord.gg/gkQmsHXRXp
-**X**: https://x.com/MoltChainHQ
-**Telegram**: https://t.me/moltchainhq
+**X**: https://x.com/LichenHQ
+**Telegram**: https://t.me/lichenhq
 
 ---
 
-**🦞 Ready to molt! Let's build the economic future for agents! 🦞**
+**🦞 Ready to grow! Let's build the economic future for agents! 🦞**

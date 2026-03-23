@@ -1,8 +1,8 @@
-# MoltChain Sync Architecture
+# Lichen Sync Architecture
 
 ## Overview
 
-MoltChain implements a progressive, chunked sync system designed to handle millions of blocks efficiently while preventing memory exhaustion and DoS attacks.
+Lichen implements a progressive, chunked sync system designed to handle millions of blocks efficiently while preventing memory exhaustion and DoS attacks.
 
 ## Key Features
 
@@ -208,7 +208,7 @@ Response:
 Enable detailed sync logging:
 
 ```bash
-RUST_LOG=moltchain_validator::sync=debug cargo run --release
+RUST_LOG=lichen_validator::sync=debug cargo run --release
 ```
 
 Common issues:

@@ -1,7 +1,7 @@
 {
-  "name": "@moltchain/market-maker",
+  "name": "@lichen/market-maker",
   "version": "1.0.0",
-  "description": "Market maker bot for MoltyDEX",
+  "description": "Market maker bot for Lichen DEX",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -10,8 +10,8 @@
     "start:grid": "ts-node src/index.ts --strategy grid"
   },
   "dependencies": {
-    "@moltchain/dex-sdk": "file:../sdk",
-    "@moltchain/sdk": "file:../../../sdk/js"
+    "@lichen/dex-sdk": "file:../sdk",
+    "@lichen/sdk": "file:../../../sdk/js"
   },
   "devDependencies": {
     "@types/node": "^20.19.32",

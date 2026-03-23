@@ -1,6 +1,6 @@
-# MoltyDEX Market Maker Bot
+# Lichen DEX Market Maker Bot
 
-Automated market making for MoltyDEX with two strategies: **Spread** (symmetric quoting) and **Grid** (range-bound).
+Automated market making for Lichen DEX with two strategies: **Spread** (symmetric quoting) and **Grid** (range-bound).
 
 ## Quick Start
 

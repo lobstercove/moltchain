@@ -28,12 +28,12 @@ Result: ~17,280 heartbeat blocks/day when idle, full speed when active
 
 | Block Type | Reward | Purpose |
 |------------|--------|---------|
-| **Transaction Block** | 0.1 MOLT | Processing real work |
-| **Heartbeat Block** | 0.05 MOLT | Proving liveness |
+| **Transaction Block** | 0.1 LICN | Processing real work |
+| **Heartbeat Block** | 0.05 LICN | Proving liveness |
 
-**Daily Emission Target:** ~20,000 MOLT/day
-- Sustains 100M MOLT allocation with 20% annual decay ✓
-- Per validator (100 validators): 50-200 MOLT/day ✓
+**Daily Emission Target:** ~20,000 LICN/day
+- Sustains 100M LICN allocation with 20% annual decay ✓
+- Per validator (100 validators): 50-200 LICN/day ✓
 
 ---
 
@@ -65,8 +65,8 @@ if mempool.has_transactions() {
 ### Key Files Modified
 
 1. **`core/src/consensus.rs`**
-   - Added `TRANSACTION_BLOCK_REWARD` (180M shells)
-   - Added `HEARTBEAT_BLOCK_REWARD` (27M shells)
+   - Added `TRANSACTION_BLOCK_REWARD` (180M spores)
+   - Added `HEARTBEAT_BLOCK_REWARD` (27M spores)
    - Updated `distribute_block_reward()` to accept `is_heartbeat` flag
 
 2. **`validator/src/main.rs`**
@@ -119,14 +119,14 @@ Wait for genesis creation and "Validator is READY"
 **Expected Output When Idle:**
 ```
 💓 HEARTBEAT 1 | hash: abc12345 | txs: 0 | parent: def67890 | rep: 100
-💰 Heartbeat reward: 0.05 MOLT earned (liveness)
+💰 Heartbeat reward: 0.05 LICN earned (liveness)
 ```
 
 **Expected Output With Transactions:**
 ```
 📦 BLOCK 5 | hash: xyz98765 | txs: 3 | parent: uvw43210 | rep: 105
-💰 Block reward: 0.180 MOLT earned (unclaimed)
-   💰 Validator balance: 15.234 MOLT
+💰 Block reward: 0.180 LICN earned (unclaimed)
+   💰 Validator balance: 15.234 LICN
 ```
 
 ### 5. Trigger Transaction Activity
@@ -147,21 +147,21 @@ curl -X POST http://localhost:8899/request \
 ### Idle Network (Development)
 - **Block frequency:** 1 per 5 seconds
 - **Blocks per day:** ~17,280
-- **Daily emission:** 466 MOLT
-- **Per validator:** ~4.66 MOLT/day (100 validators)
+- **Daily emission:** 466 LICN
+- **Per validator:** ~4.66 LICN/day (100 validators)
 - **Resource usage:** Minimal (93% reduction vs constant)
 
 ### Active Network (Production Load)
 - **Block frequency:** 400ms (when transactions present)
 - **Blocks per day:** ~108,000 (transaction blocks)
-- **Daily emission:** ~19,906 MOLT
-- **Per validator:** ~199 MOLT/day (100 validators)
+- **Daily emission:** ~19,906 LICN
+- **Per validator:** ~199 LICN/day (100 validators)
 - **Resource usage:** Full utilization justified by work
 
 ### Mixed Mode (Real-World)
 - **Active hours:** 8 hours/day (user timezone peaks)
 - **Idle hours:** 16 hours/day
-- **Daily emission:** ~8,500 MOLT
+- **Daily emission:** ~8,500 LICN
 - **Sustainability:** 48+ years at this rate
 
 ---
@@ -181,8 +181,8 @@ curl -X POST http://localhost:8899/request \
    - Log shows "📦 BLOCK" with tx count
 
 3. **Validator Earnings:**
-   - Heartbeat: 0.05 MOLT
-   - Transaction: 0.1 MOLT
+   - Heartbeat: 0.05 LICN
+   - Transaction: 0.1 LICN
    - Balance increases correctly
 
 4. **Network Sync:**
@@ -202,7 +202,7 @@ curl -X POST http://localhost:8899/request \
 
 ## 💡 Alignment with Vision
 
-This implementation embodies MoltChain's **Proof of Contribution** philosophy:
+This implementation embodies Lichen's **Proof of Contribution** philosophy:
 
 ### ✅ Value-Based Rewards
 - Validators rewarded for **real work** (processing transactions)
@@ -249,4 +249,4 @@ This implementation embodies MoltChain's **Proof of Contribution** philosophy:
 
 ---
 
-**The molt is complete. The network breathes efficiently.** 🦞⚡
+**The upgrade is complete. The network breathes efficiently.** 🦞⚡

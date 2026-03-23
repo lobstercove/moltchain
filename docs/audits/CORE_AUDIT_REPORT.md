@@ -1,4 +1,4 @@
-# MoltChain Core Crate — Comprehensive Production-Readiness Audit
+# Lichen Core Crate — Comprehensive Production-Readiness Audit
 
 **Audit Date:** 2025-01-XX  
 **Scope:** All 20 source files in `core/src/`, `Cargo.toml`, 5 test files, 1 bench file  
@@ -31,7 +31,7 @@
    - [network.rs](#networkrs)
    - [nft.rs](#nftrs)
    - [privacy.rs](#privacyrs)
-   - [reefstake.rs](#reefstakers)
+   - [mossstake.rs](#mossstakers)
 3. [Test Coverage Assessment](#test-coverage-assessment)
 4. [Critical Findings Summary](#critical-findings-summary)
 5. [Recommendations Priority Matrix](#recommendations-priority-matrix)
@@ -40,7 +40,7 @@
 
 ## Executive Summary
 
-The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) with a Solana-inspired account model, BFT+PoC consensus, WASM smart contracts (wasmer), and an EVM compatibility layer (revm). The codebase shows evidence of **multiple prior audit rounds** (AUDIT-FIX annotations, PERF-FIX/PERF-OPT series, C6/C10/H1-H16/M1-M11/T1-T7 fix annotations), indicating active hardening.
+The lichen-core crate is a Rust blockchain runtime (~15,000 lines of source) with a Solana-inspired account model, BFT+PoC consensus, WASM smart contracts (wasmer), and an EVM compatibility layer (revm). The codebase shows evidence of **multiple prior audit rounds** (AUDIT-FIX annotations, PERF-FIX/PERF-OPT series, C6/C10/H1-H16/M1-M11/T1-T7 fix annotations), indicating active hardening.
 
 ### Severity Counts
 
@@ -116,16 +116,16 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 - **[LOW] S-ACCT-1 (line ~108):** `Keypair::from_seed()` creates a deterministic keypair. The function exists and is used in tests. If accidentally used in production, keys are predictable. Consider `#[cfg(test)]` gating.
 
 #### 3. Atomicity / Consistency
-- **[INFO] A-ACCT-1:** All balance mutations (`stake`, `unstake`, `lock`, `unlock`, `deduct_spendable`, `add_spendable`) use checked arithmetic and maintain the invariant `shells = spendable + staked + locked`. Well-implemented.
+- **[INFO] A-ACCT-1:** All balance mutations (`stake`, `unstake`, `lock`, `unlock`, `deduct_spendable`, `add_spendable`) use checked arithmetic and maintain the invariant `spores = spendable + staked + locked`. Well-implemented.
 
 #### 4. Performance Bottlenecks
 - None.
 
 #### 5. Dead Code
-- **[LOW] D-ACCT-1 (line ~148):** `fixup_legacy()` handles migration from accounts where `spendable == 0 && staked == 0 && locked == 0 && shells > 0`. This is a one-time migration pattern that will become dead code post-migration. Consider adding a deprecation annotation or removing after migration window.
+- **[LOW] D-ACCT-1 (line ~148):** `fixup_legacy()` handles migration from accounts where `spendable == 0 && staked == 0 && locked == 0 && spores > 0`. This is a one-time migration pattern that will become dead code post-migration. Consider adding a deprecation annotation or removing after migration window.
 
 #### 6. Naming / Consistency
-- **[LOW] N-ACCT-1 (line ~50):** `Account::new(molt, owner)` takes `molt` (integer MOLT), then internally converts to shells. The parameter name could confuse callers — consider `molt_amount` or adding a separate `Account::new_shells()`.
+- **[LOW] N-ACCT-1 (line ~50):** `Account::new(licn, owner)` takes `lichen` (integer LICN), then internally converts to spores. The parameter name could confuse callers — consider `licn_amount` or adding a separate `Account::new_spores()`.
 
 #### 7. Missing Functionality
 - **[MEDIUM] F-ACCT-1:** No `Display` or `Debug` impl for `Pubkey` that shows the Base58 representation. Debug shows raw bytes. Can lead to confusing log output.
@@ -235,7 +235,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 - None.
 
 #### 3–10. All Categories
-- **[LOW] N-CI-1 (line ~40):** `ContractInstruction::Call` has doc comment mentioning "lamports" — a Solana vestige. Should say "shells".
+- **[LOW] N-CI-1 (line ~40):** `ContractInstruction::Call` has doc comment mentioning "lamports" — a Solana vestige. Should say "spores".
 - Clean implementation. JSON-based serialization for instruction variants.
 
 ---
@@ -279,7 +279,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 - None.
 
 #### 8. Blockchain-Specific Issues
-- **[INFO] B-GEN-1:** Genesis distribution totals 1B MOLT: 25% community treasury, 35% builder grants, 10% validator rewards, 10% founding moltys, 10% ecosystem partnerships, 10% reserve pool. This matches the whitepaper.
+- **[INFO] B-GEN-1:** Genesis distribution totals 1B LICN: 25% community treasury, 35% builder grants, 10% validator rewards, 10% founding symbionts, 10% ecosystem partnerships, 10% reserve pool. This matches the whitepaper.
 
 #### 9. Error Handling
 - Adequate.
@@ -429,7 +429,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 
 #### 8. Blockchain-Specific Issues
 - **[INFO] B-CON-1:** Leader selection uses `sqrt(stake) * sqrt(reputation)` weighting. This is the whitepaper design. `integer_sqrt()` is pure integer arithmetic (Newton's method) — deterministic.
-- **[INFO] B-CON-2:** Bootstrap system: first 200 validators get a 100K MOLT grant with 50/50 reward split until debt is repaid or time cap reached. Well-tested.
+- **[INFO] B-CON-2:** Bootstrap system: first 200 validators get a 100K LICN grant with 50/50 reward split until debt is repaid or time cap reached. Well-tested.
 
 #### 9. Error Handling
 - Adequate throughout.
@@ -494,7 +494,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
   
   **Mitigation note:** The code comment says contract-program conflicts are "handled by the batch layer" — but the batch layer doesn't provide per-key locking within a shared batch. This needs verification that all contract TXs end up in the same conflict group.
 
-- **[HIGH] S-PROC-3 (line ~420):** `compute_transaction_fee()` reads reputation from MoltyID contract storage via `state.get_reputation()`. This is a **state read during fee computation** which happens before the batch. If a preceding TX in the same block modifies the caller's reputation, the fee for subsequent TXs still uses the stale pre-block reputation. Not exploitable for fund theft but could give incorrect fee discounts within a single block.
+- **[HIGH] S-PROC-3 (line ~420):** `compute_transaction_fee()` reads reputation from LichenID contract storage via `state.get_reputation()`. This is a **state read during fee computation** which happens before the batch. If a preceding TX in the same block modifies the caller's reputation, the fee for subsequent TXs still uses the stale pre-block reputation. Not exploitable for fund theft but could give incorrect fee discounts within a single block.
 
 #### 3. Atomicity / Consistency
 - **[INFO] A-PROC-1:** Fee is charged BEFORE the batch (`charge_fee_direct`), so failed TXs still pay fees. This prevents free-compute DoS. Good.
@@ -524,7 +524,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 - Adequate. All instruction handlers return `Result` and errors are properly surfaced in `TxResult`.
 
 #### 10. Test Gaps
-- **Good coverage** in inline tests (transfer, replay protection, signature validation, ReefStake deposit/unstake/claim, deploy, ABI set, faucet). Missing: test for parallel TX processing conflict detection, test for rent charging across epoch boundaries, test for rate limiting.
+- **Good coverage** in inline tests (transfer, replay protection, signature validation, MossStake deposit/unstake/claim, deploy, ABI set, faucet). Missing: test for parallel TX processing conflict detection, test for rent charging across epoch boundaries, test for rate limiting.
 
 ---
 
@@ -553,7 +553,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 - **[INFO] A-MULTI-1:** `verify_threshold()` deduplicates signers via `HashSet` to prevent counting the same key twice. Good fix (C6).
 
 #### 4–10. Remaining Categories
-- **[LOW] N-MULTI-1:** `GenesisWallet.keypair_path` uses relative paths (`.moltchain/genesis-wallet-{chain_id}.json`). The directory may not exist. No `create_dir_all()` call.
+- **[LOW] N-MULTI-1:** `GenesisWallet.keypair_path` uses relative paths (`.lichen/genesis-wallet-{chain_id}.json`). The directory may not exist. No `create_dir_all()` call.
 - Tests cover basic generation and threshold verification.
 
 ---
@@ -606,15 +606,15 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 
 ---
 
-### reefstake.rs
+### mossstake.rs
 
-**File:** `core/src/reefstake.rs` (623 lines)
+**File:** `core/src/mossstake.rs` (623 lines)
 
 #### 1. Stubs / Incomplete Features
 - None — fully implemented liquid staking protocol.
 
 #### 2. Security Vulnerabilities
-- **[LOW] S-RS-1 (line ~370):** `transfer()` proportional `molt_deposited` tracking uses integer division: `(st_molt_amount * molt_deposited) / total_before`. Dust loss on each partial transfer slightly disadvantages the sender. Accumulated over many transfers, this could cause accounting discrepancies.
+- **[LOW] S-RS-1 (line ~370):** `transfer()` proportional `licn_deposited` tracking uses integer division: `(st_licn_amount * licn_deposited) / total_before`. Dust loss on each partial transfer slightly disadvantages the sender. Accumulated over many transfers, this could cause accounting discrepancies.
 
 #### 3. Atomicity / Consistency
 - **[INFO] A-RS-1:** Exchange rate uses fixed-point arithmetic with `RATE_PRECISION = 1e9`. All math is u128-widened. Good implementation (T3.2/T6.2 fix).
@@ -633,7 +633,7 @@ The moltchain-core crate is a Rust blockchain runtime (~15,000 lines of source) 
 - **[MEDIUM] F-RS-1:** Lock tier cannot be downgraded. If a user deposits with `Lock365` tier, they cannot change to `Flexible` even after the lock expires. The tier is permanently associated with the position.
 
 #### 8. Blockchain-Specific Issues
-- `REEFSTAKE_BLOCK_SHARE_BPS = 1000` (10% of block rewards). Integration with block reward distribution is in the validator, not in core.
+- `MOSSSTAKE_BLOCK_SHARE_BPS = 1000` (10% of block rewards). Integration with block reward distribution is in the validator, not in core.
 
 #### 9. Error Handling
 - Adequate.

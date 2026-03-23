@@ -1,4 +1,4 @@
-# MoltChain Ecosystem Sweep — Feb 25, 2026
+# Lichen Ecosystem Sweep — Feb 25, 2026
 
 ## Scope (from production deadline request)
 
@@ -54,7 +54,7 @@ Rules applied during execution:
 
 ### 5) DEX Referral Program Contract/Frontend Alignment
 - [ ] Verify referral contract state transitions + payout semantics.
-- [ ] Ensure frontend rates and copy exactly match contract logic (base + MoltyID verified path + referee discount duration).
+- [ ] Ensure frontend rates and copy exactly match contract logic (base + LichenID verified path + referee discount duration).
 - [ ] Ensure referral links/redirects preserve and attribute referral IDs correctly.
 - [ ] Remove hardcoded level data; derive levels/rewards dynamically from contract/RPC.
 - [ ] Add contract/frontend integration tests.
@@ -74,8 +74,8 @@ Rules applied during execution:
 - [x] Fix all copy icons to show copied/check/revert behavior consistently.
 - [x] Update deposit modal to include BNB bridge path (plus SOL/ETH) with proper icon assets.
 - [x] Remove Font Awesome placeholders where logo URLs are required.
-- [x] Ensure asset list behavior: show MOLT even zero, wrapped assets only when balance > 0.
-- [ ] Remove `REEF` token from wallet/dex/contracts/bootstrap if present.
+- [x] Ensure asset list behavior: show LICN even zero, wrapped assets only when balance > 0.
+- [ ] Remove `MOSS` token from wallet/dex/contracts/bootstrap if present.
 - [ ] Add tests for modal actions and copy feedback.
 
 ### 9) Bridge Operational Validation (SOL/ETH/BNB)
@@ -85,8 +85,8 @@ Rules applied during execution:
 - [ ] Add/expand e2e tests where missing.
 
 ### 10) Token Metadata & Logos (Genesis/Registry + UI)
-- [x] Set logos for `wETH`, `wBNB`, `wSOL`, `mUSD` from provided URLs.
-- [x] Update `MOLT` logo URL to provided production URL.
+- [x] Set logos for `wETH`, `wBNB`, `wSOL`, `lUSD` from provided URLs.
+- [x] Update `LICN` logo URL to provided production URL.
 - [x] Ensure wrapped token metadata support in contracts/bootstrap path.
 - [ ] Ensure DEX balances and wallet assets pull logos from token metadata (not hardcoded map).
 - [ ] Add tests for metadata propagation.
@@ -103,7 +103,7 @@ Rules applied during execution:
 
 ### 13) Explorer Search Correctness
 - [x] Audit search classifier coverage: slot/hash/address/contract/symbol.
-- [x] Fix `MOLT` search routing to token/contract page behavior.
+- [x] Fix `LICN` search routing to token/contract page behavior.
 - [x] Remove unnecessary `Registry Metadata` block on address view.
 - [x] Add search routing tests.
 
@@ -125,7 +125,7 @@ Rules applied during execution:
 - [x] Capture run artifacts/log summary in this file.
 
 ### 16) QA Funding Request
-- [x] Fund wallet: `4KmyJaRyJg3yNX6LzCvSpD7MhAducE69DKtEDseRMktB` with MOLT.
+- [x] Fund wallet: `4KmyJaRyJg3yNX6LzCvSpD7MhAducE69DKtEDseRMktB` with LICN.
 - [x] Create another token and fund same wallet for DEX testing.
 - [x] Record tx hashes.
 
@@ -133,7 +133,7 @@ Rules applied during execution:
 - [ ] Produce review-first threat model for DEX and prediction market fraud vectors.
 - [ ] Define anti-manipulation controls for: self-trading, wash-trading, oracle/latency exploitation, stale-price fills, queue-jumping, replay/nonce abuse.
 - [ ] Define fair execution controls: deterministic matching, maker/taker sequencing, bounded slippage, stale quote rejection.
-- [ ] Define anti-MEV/anti-arbitrage-at-fraud controls feasible for MoltChain architecture.
+- [ ] Define anti-MEV/anti-arbitrage-at-fraud controls feasible for Lichen architecture.
 - [ ] Define monitoring/alerting + circuit breakers for abnormal microstructure behavior.
 - [ ] After approval, convert design to implementation tasks across contracts, RPC, and frontend.
 
@@ -147,9 +147,9 @@ Rules applied during execution:
 - [x] Remove nested/double scrollbar behavior in wallet settings modal.
 - [x] Mirror the same single-scroll modal behavior in extension full-page wallet styles.
 
-### 20) Identity vs .molt Separation + Timestamp Correctness
-- [x] Enforce strict separation between identity display name and reverse-resolved `.molt` name in explorer identity rendering.
-- [x] Remove fallback paths that infer `.molt` ownership from identity name fields.
+### 20) Identity vs .lichen Separation + Timestamp Correctness
+- [x] Enforce strict separation between identity display name and reverse-resolved `.lichen` name in explorer identity rendering.
+- [x] Remove fallback paths that infer `.lichen` ownership from identity name fields.
 - [x] Harden identity date rendering to avoid false `Jan 1, 1970` output for invalid/non-epoch values.
 - [x] Verify contract-side name registration payment logic is enforced (no free successful register path).
 
@@ -168,19 +168,19 @@ Rules applied during execution:
 - 2026-02-25: DEX wallet lifecycle pass complete: create-wallet button now hides after first create, wallet list updates immediately, saved-wallet auto-restore now uses active connect path (removed forced view-only label).
 - 2026-02-25: DEX order form pass (partial): added cross/isolated toggle UI, dynamic leverage cap from margin API (`maxLeverage/max_leverage`), non-negative numeric input clamps, margin entry/liq now reflect manual limit price when provided.
 - 2026-02-25: Validation: `node dex/dex.test.js` => 1877 passed, 0 failed.
-- 2026-02-25: Wallet pass (partial): copy action feedback now uses check/revert state, deposit modal includes BNB/SOL/ETH paths with logo assets, wrapped assets render with token logos and hide on zero balance (MOLT still shown).
-- 2026-02-25: Registry metadata pass (partial): updated `MOLT` and wrapped token `logo_url` metadata in validator bootstrap registration.
-- 2026-02-25: Explorer search routing pass: address-like queries probe `getContractInfo` and route contracts to `contract.html`; symbol (`MOLT`) routing now targets contract page; all search params URL-encoded.
+- 2026-02-25: Wallet pass (partial): copy action feedback now uses check/revert state, deposit modal includes BNB/SOL/ETH paths with logo assets, wrapped assets render with token logos and hide on zero balance (LICN still shown).
+- 2026-02-25: Registry metadata pass (partial): updated `LICN` and wrapped token `logo_url` metadata in validator bootstrap registration.
+- 2026-02-25: Explorer search routing pass: address-like queries probe `getContractInfo` and route contracts to `contract.html`; symbol (`LICN`) routing now targets contract page; all search params URL-encoded.
 - 2026-02-25: Validation: `node explorer/explorer.test.js` => 102 passed, 0 failed.
 - 2026-02-25: CI lockfile fix: regenerated `tests/expected-contracts.json` to include `shielded_pool` and `wbnb_token`; `tests/update-expected-contracts.py --check` now passes.
 - 2026-02-25: CI lint/format fix: resolved strict clippy violations across `core/`, `p2p/`, `cli/`, and `validator/`; `cargo clippy --workspace -- -D warnings` passes; `cargo fmt --all -- --check` passes.
 - 2026-02-25: CI tests/build validation: `contracts/prediction_market` tests pass, all contract WASM builds pass, `cargo test --workspace` passes.
-- 2026-02-25: Standalone contract test loop fix: resolved failing suites in `contracts/moltyid`, `contracts/musd_token`, and `contracts/dex_governance` test expectations/setup; full `for dir in contracts/*` loop now returns `FINAL_FAIL=0`.
+- 2026-02-25: Standalone contract test loop fix: resolved failing suites in `contracts/lichenid`, `contracts/lusd_token`, and `contracts/dex_governance` test expectations/setup; full `for dir in contracts/*` loop now returns `FINAL_FAIL=0`.
 - 2026-02-25: Runtime reset + cluster orchestration: executed `./reset-blockchain.sh testnet`, then launched validators V1/V2/V3 with 15s staggering (`run-validator.sh testnet 1/2/3 --dev-mode`).
 - 2026-02-25: Runtime service status: RPC endpoints `8899/8901/8903` all returned matching live slots; faucet port `9100` responded (HTTP 404 on `/`, service active).
 - 2026-02-25: Runtime checks: `bash test-rpc-comprehensive.sh` => 22 pass, 0 fail; `bash test-cli-comprehensive.sh` => 28 pass, 0 fail.
-- 2026-02-25: QA funding complete: transferred `100 MOLT` to `4KmyJaRyJg3yNX6LzCvSpD7MhAducE69DKtEDseRMktB` (tx `b3436979c8de26802d272488960961986f54436f03ab845ff3fce345b4e83500`).
-- 2026-02-25: Additional token funding: created `QADT` token (`token create` tx `99a0c041901209a256cd0b497e87186c1a519eae88acf47230e4cc041b8f2f8c`) and minted secondary token balance for DEX testing to same wallet via mUSD mint (tx `fe71840e48a33ed72804dd6c423777d9931c56ea26bc4733c88e58b88e8ae6cd`).
+- 2026-02-25: QA funding complete: transferred `100 LICN` to `4KmyJaRyJg3yNX6LzCvSpD7MhAducE69DKtEDseRMktB` (tx `b3436979c8de26802d272488960961986f54436f03ab845ff3fce345b4e83500`).
+- 2026-02-25: Additional token funding: created `QADT` token (`token create` tx `99a0c041901209a256cd0b497e87186c1a519eae88acf47230e4cc041b8f2f8c`) and minted secondary token balance for DEX testing to same wallet via lUSD mint (tx `fe71840e48a33ed72804dd6c423777d9931c56ea26bc4733c88e58b88e8ae6cd`).
 - 2026-02-25: Explorer address-view cleanup: removed `Registry Metadata` row from `address.html` and pruned `registryMetadata` element handling in `js/address.js`.
 - 2026-02-25: Explorer contract logo rendering fix: normalized token profile metadata in `explorer/js/contract.js` to merge registry + `token_metadata` and support logo key fallbacks (`logo_url`/`logo`/`icon`/`icon_url`/`image`), restoring wrapped-token logo display on `contract.html`.
 - 2026-02-25: Explorer websocket stabilization pass: added intentional lifecycle safeguards in `explorer/js/explorer.js` (cleanup of reconnect timers, explicit close behavior, old-instance teardown on network switch) and prevented duplicate `subscribeBlocks` registration in `explorer/js/transactions.js`.
@@ -190,10 +190,10 @@ Rules applied during execution:
 - 2026-02-25: Validation: `node wallet/tests/audit-wallet.js` => 60 passed, 0 failed.
 - 2026-02-25: Validation: `node dex/dex.test.js` => 1879 passed, 0 failed.
 - 2026-02-25: Wallet settings modal scroll fix: removed nested scrollbar behavior by making settings modal container non-scrolling and keeping scrolling only on modal body (`wallet/wallet.css` + extension mirror in `wallet/extension/src/styles/wallet.css`).
-- 2026-02-25: Identity/.molt consistency fix: removed explorer fallback that treated identity names as `.molt` registrations (`explorer/js/address.js`), so `.molt` display now strictly depends on reverse resolution (`reverseMoltName`).
+- 2026-02-25: Identity/.lichen consistency fix: removed explorer fallback that treated identity names as `.lichen` registrations (`explorer/js/address.js`), so `.lichen` display now strictly depends on reverse resolution (`reverseLichenName`).
 - 2026-02-25: Identity timestamp rendering fix: explorer now treats non-epoch/invalid values as `Unknown` instead of showing misleading 1970 dates (`explorer/js/address.js`).
-- 2026-02-25: Name registration payment audit: verified `contracts/moltyid/src/lib.rs` `register_name` enforces `paid >= required_cost` via `moltchain_sdk::get_value()` and returns error `7` on insufficient payment (no successful free registration path).
-- 2026-02-25: Wallet identity CTA placement fix: moved `.molt` register CTA directly under `No name registered` helper text in wallet + extension full identity views.
+- 2026-02-25: Name registration payment audit: verified `contracts/lichenid/src/lib.rs` `register_name` enforces `paid >= required_cost` via `lichen_sdk::get_value()` and returns error `7` on insufficient payment (no successful free registration path).
+- 2026-02-25: Wallet identity CTA placement fix: moved `.lichen` register CTA directly under `No name registered` helper text in wallet + extension full identity views.
 - 2026-02-25: Wallet WS status consistency fix: chain status bar now reports WS-live state when account WS subscription is healthy, preventing false `Reconnecting…` when WS is active (`wallet/js/wallet.js`).
 - 2026-02-25: Validation: `node explorer/explorer.test.js` => 102 passed, 0 failed.
 - 2026-02-25: Validation: `node tests/test_wallet_audit.js` => 60 passed, 0 failed.

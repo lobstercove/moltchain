@@ -1,10 +1,10 @@
 #!/bin/bash
-# MoltChain Validator - One-Command Setup and Run
+# Lichen Validator - One-Command Setup and Run
 # For agents and humans alike 🦞⚡
 
 set -e  # Exit on error
 
-echo "🦞 MoltChain Validator Setup"
+echo "🦞 Lichen Validator Setup"
 echo "============================"
 echo ""
 
@@ -69,11 +69,11 @@ echo "🔌 Checking ports..."
 for port in "${PORTS[@]}"; do
     if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
         echo -e "${YELLOW}⚠️  Port $port is in use${NC}"
-        echo "   Kill existing process? (pkill -f moltchain-validator)"
+        echo "   Kill existing process? (pkill -f lichen-validator)"
         read -p "Kill and continue? (y/N): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            pkill -f moltchain-validator || true
+            pkill -f lichen-validator || true
             sleep 2
         else
             exit 1
@@ -86,13 +86,13 @@ done
 # Build if needed
 echo ""
 echo "🔨 Building validator..."
-if [ ! -f "target/release/moltchain-validator" ]; then
+if [ ! -f "target/release/lichen-validator" ]; then
     echo "   First build - this will take 2-5 minutes..."
     cargo build --release
     echo -e "${GREEN}✓${NC} Build complete"
 else
     echo "   Binary exists, checking if rebuild needed..."
-    if [ "$(find . -name '*.rs' -newer target/release/moltchain-validator | wc -l)" -gt 0 ]; then
+    if [ "$(find . -name '*.rs' -newer target/release/lichen-validator | wc -l)" -gt 0 ]; then
         echo "   Source changed, rebuilding..."
         cargo build --release
         echo -e "${GREEN}✓${NC} Rebuild complete"
@@ -104,14 +104,14 @@ fi
 # Check for keypair
 echo ""
 echo "🔐 Checking validator identity..."
-KEYPAIR_DIR="$HOME/.moltchain"
+KEYPAIR_DIR="$HOME/.lichen"
 KEYPAIR_PATH="$KEYPAIR_DIR/validator-keypair.json"
 
 mkdir -p "$KEYPAIR_DIR"
 
 if [ ! -f "$KEYPAIR_PATH" ]; then
     echo "   No keypair found, generating..."
-    cargo run --release --bin molt-cli -- \
+    cargo run --release --bin lichen-cli -- \
         generate-keypair \
         --output "$KEYPAIR_PATH" 2>/dev/null
     
@@ -128,7 +128,7 @@ else
 fi
 
 # Get validator address
-VALIDATOR_ADDRESS=$(cargo run --release --bin molt-cli -- \
+VALIDATOR_ADDRESS=$(cargo run --release --bin lichen-cli -- \
     pubkey --keypair "$KEYPAIR_PATH" 2>/dev/null | tail -1)
 echo "   Validator address: $VALIDATOR_ADDRESS"
 

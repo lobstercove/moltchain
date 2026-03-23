@@ -1,4 +1,4 @@
-# Sync Scalability Solutions for MoltChain
+# Sync Scalability Solutions for Lichen
 
 ## Problem Statement
 
@@ -166,7 +166,7 @@ const CHECKPOINT_INTERVAL: u64 = 5000;   // Frequent checkpoints
 
 ## Conclusion
 
-With these optimizations, MoltChain can:
+With these optimizations, Lichen can:
 - ✅ Handle millions of blocks efficiently
 - ✅ Bootstrap new validators in minutes (not hours)
 - ✅ Use constant memory regardless of chain length

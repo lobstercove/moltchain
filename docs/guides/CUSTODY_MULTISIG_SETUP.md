@@ -1,6 +1,6 @@
 # Custody Multi-Signer Setup Guide
 
-**Applies to:** MoltChain Custody Service (`custody/src/main.rs`)  
+**Applies to:** Lichen Custody Service (`custody/src/main.rs`)  
 **Date:** February 14, 2026
 
 This guide covers the current multi-signer custody architecture and staged setup flow for FROST Ed25519 threshold signing on Solana and Gnosis Safe multisig on EVM chains.
@@ -31,7 +31,7 @@ Multi-signer mode uses **different protocols per chain**:
 
 FROST (Flexible Round-Optimized Schnorr Threshold) is a threshold signing protocol for Ed25519. With a `t-of-n` setup (e.g., 2-of-3), any `t` signers can cooperate to produce a valid Ed25519 signature, but fewer than `t` cannot sign anything — and no single signer ever sees or holds the full private key.
 
-MoltChain uses `frost-ed25519` v2.2 from the ZCash Foundation.
+Lichen uses `frost-ed25519` v2.2 from the ZCash Foundation.
 
 ### Step 1: Plan Your Signer Topology
 

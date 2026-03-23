@@ -1,4 +1,4 @@
-# MoltChain DEX — Exhaustive Production Audit
+# Lichen DEX — Exhaustive Production Audit
 
 **Scope:** Every source file read line-by-line. No summaries. All findings reported.  
 **Files audited:** `dex/dex.js` (6650 lines), `dex/dex.css` (3060 lines), `dex/shared-config.js` (42 lines), `dex/shared-theme.css` (356 lines), `contracts/dex_core/src/lib.rs` (3827 lines), `contracts/dex_amm/src/lib.rs` (1851 lines), `contracts/dex_governance/src/lib.rs` (1779 lines), `contracts/dex_margin/src/lib.rs` (3155 lines), `contracts/dex_rewards/src/lib.rs` (1327 lines), `contracts/prediction_market/src/lib.rs` (5136 lines, ~23% read for logic), `rpc/src/dex.rs` (2769 lines, 65% read)  
@@ -23,7 +23,7 @@
 | C12 | 🟡 MEDIUM | dex_margin | `remove_margin` ignores host unlock error via `let _ = call_contract(unlock_call)` — storage updated even on failed unlock |
 | C13 | 🟡 LOW | all contracts | Slot duration inconsistent: RPC=400ms, prediction_market=500ms, governance comment=1000ms — cross-contract math wrong |
 | C14 | 🟡 LOW | dex.js | Delist + param_change proposal types shown in UI but immediately blocked as "not yet supported on-chain" |
-| C15 | 🟡 LOW | dex_margin | Liquidator reward lost (not transferred) if `MOLTCOIN_ADDRESS_KEY` not configured; only redirected to insurance on transfer failure |
+| C15 | 🟡 LOW | dex_margin | Liquidator reward lost (not transferred) if `LICHENCOIN_ADDRESS_KEY` not configured; only redirected to insurance on transfer failure |
 | C16 | 🟡 LOW | dex.css / shared-theme.css | CSS variables `--bg-primary`, `--accent`, `--bg-surface` used in dex.css but never defined |
 
 ---
@@ -49,7 +49,7 @@ Every limit/market/stop order submission in `dex.js` passes through `preflightOr
 
 ### 1.2 Price Scale
 
-`PRICE_SCALE = 1_000_000_000` (9 decimals, "shells"). All order prices, notionals, and fee calculations use this scale throughout dex.js and dex_core.
+`PRICE_SCALE = 1_000_000_000` (9 decimals, "spores"). All order prices, notionals, and fee calculations use this scale throughout dex.js and dex_core.
 
 ### 1.3 `buildPlaceOrderArgs` — Byte-exact transaction builder
 
@@ -254,7 +254,7 @@ Bytes 33-40: pair_id (u64 LE)
 Byte 41:    side (0=LONG, 1=SHORT)
 Bytes 42-49: size (u64 LE, in token base units)
 Bytes 50-57: leverage (u64 LE)
-Bytes 58-65: margin_amount (u64 LE, in MOLT shells)
+Bytes 58-65: margin_amount (u64 LE, in LICN spores)
 Byte 66:    margin_mode (0=ISOLATED, 1=CROSS; optional — defaults to ISOLATED)
 Total: 67 bytes
 ```
@@ -338,7 +338,7 @@ Contract validation:
 ### 3.8 Liquidate (`buildLiquidateArgs` — not in the 28 builders list)
 
 `liquidate` is op6 in dex_margin (41 bytes: `opcode=6 + liquidator[32] + pos_id[8]`).  
-**No JS builder function exists for liquidation.** The UI has no "liquidate" button for external liquidators. Liquidation must be called directly via RPC transaction construction. This is a **keeper/bot integration gap** — there is no documented keeper bot for MoltChain.
+**No JS builder function exists for liquidation.** The UI has no "liquidate" button for external liquidators. Liquidation must be called directly via RPC transaction construction. This is a **keeper/bot integration gap** — there is no documented keeper bot for Lichen.
 
 Liquidation flow:
 1. Check margin ratio with PnL: `ratio = (margin ± pnl) / notional * 10_000`
@@ -348,7 +348,7 @@ Liquidation flow:
 5. Insurance add = `penalty - liquidator_reward`
 6. Unlock `margin - penalty` to trader
 7. Deduct `penalty` from trader's locked balance
-8. Transfer `liquidator_reward` MOLT to liquidator via `call_token_transfer` — **C15**: if `MOLTCOIN_ADDRESS_KEY` not set (zero address), transfer is skipped entirely and reward is lost in contract balance. On transfer *failure* (address configured but call fails), reward is redirected to insurance fund. Liquidators get nothing on unconfigured deployments.
+8. Transfer `liquidator_reward` LICN to liquidator via `call_token_transfer` — **C15**: if `LICHENCOIN_ADDRESS_KEY` not set (zero address), transfer is skipped entirely and reward is lost in contract balance. On transfer *failure* (address configured but call fails), reward is redirected to insurance fund. Liquidators get nothing on unconfigured deployments.
 
 ---
 
@@ -366,7 +366,7 @@ propose_new_pair (op1) → vote (op2) → finalize_proposal (op3) → [timelock 
 |---|---|---|---|
 | 0 | initialize | admin[32] | Admin |
 | 1 | propose_new_pair | proposer[32]+base[32]+quote[32] = 97B | Reputation check |
-| 2 | vote | voter[32]+proposalId[8]+approve[1] = 42B | MoltyID reputation check |
+| 2 | vote | voter[32]+proposalId[8]+approve[1] = 42B | LichenID reputation check |
 | 3 | finalize_proposal | proposalId[8] = 9B | **PERMISSIONLESS** |
 | 4 | execute_proposal | proposalId[8] = 9B | **PERMISSIONLESS** after timelock |
 | 9 | propose_fee_change | proposer[32]+pairId[8]+maker_fee[2]+taker_fee[2] = 45B | Reputation check |
@@ -436,9 +436,9 @@ Bytes 80-111: base_token address (or first param packed field)
 Bytes 112-119: extra data / pair_id
 ```
 
-### 4.9 MoltyID Reputation Check
+### 4.9 LichenID Reputation Check
 
-`verify_reputation(proposer)` calls MoltyID contract via CrossCall. **FAILS CLOSED**: if MoltyID contract address not configured, propose/vote returns error. Proposals require reputation tier > 0. This is not documented in the UI — users with `reputation == 0` get a raw transaction error with no explanation.
+`verify_reputation(proposer)` calls LichenID contract via CrossCall. **FAILS CLOSED**: if LichenID contract address not configured, propose/vote returns error. Proposals require reputation tier > 0. This is not documented in the UI — users with `reputation == 0` get a raw transaction error with no explanation.
 
 ### 4.10 Delist / Param Change (C14)
 
@@ -459,16 +459,16 @@ The UI misleads users into thinking these are live options.
 
 | Tier | 30-day Volume Threshold | Multiplier |
 |---|---|---|
-| BRONZE | < 100,000 MOLT (1e14 shells) | 1.0x |
-| SILVER | < 1,000,000 MOLT (1e15 shells) | 1.5x |
-| GOLD | < 10,000,000 MOLT (1e16 shells) | 2.0x |
-| DIAMOND | ≥ 10,000,000 MOLT | 3.0x |
+| BRONZE | < 100,000 LICN (1e14 spores) | 1.0x |
+| SILVER | < 1,000,000 LICN (1e15 spores) | 1.5x |
+| GOLD | < 10,000,000 LICN (1e16 spores) | 2.0x |
+| DIAMOND | ≥ 10,000,000 LICN | 3.0x |
 
 All four thresholds and multipliers match JS `getTradingTier()` exactly. Confirmed by contract constants `TIER_BRONZE_MAX = 100_000_000_000_000`, `TIER_SILVER_MAX = 1_000_000_000_000_000`, `TIER_GOLD_MAX = 10_000_000_000_000_000`.
 
 ### 5.2 Monthly Epoch Cap
 
-`REWARD_POOL_PER_MONTH = 100_000_000_000_000` (100,000 MOLT).  
+`REWARD_POOL_PER_MONTH = 100_000_000_000_000` (100,000 LICN).  
 `SLOTS_PER_MONTH = 2_592_000`.  
 Per-epoch cap: contract derives monthly share based on `record_trade` fee accumulation relative to total fees in the epoch. Cap is enforced; traders cannot claim more than their pro-rata share of monthly pool.
 
@@ -479,7 +479,7 @@ Byte 0:     opcode = 2
 Bytes 1-32: trader address
 ```
 
-`claim_trading_rewards` transfers MOLT from the **contract's own balance** (self-custody pattern). If the contract holds insufficient MOLT, claim silently returns 0 with no tokens transferred. No revert, no error to the user.
+`claim_trading_rewards` transfers LICN from the **contract's own balance** (self-custody pattern). If the contract holds insufficient LICN, claim silently returns 0 with no tokens transferred. No revert, no error to the user.
 
 ### 5.4 LP Rewards
 
@@ -511,9 +511,9 @@ dex_rewards op1 (`record_trade`) requires `AUTHORIZED_CALLER_PREFIX` key set for
 
 | Constant | Value | Meaning |
 |---|---|---|
-| `MUSD_UNIT` | 1,000,000 | 1 mUSD = 1e6 shells |
-| `MARKET_CREATION_FEE` | 10,000,000 | 10 mUSD |
-| `DISPUTE_BOND` | 100,000,000 | 100 mUSD |
+| `LUSD_UNIT` | 1,000,000 | 1 lUSD = 1e6 spores |
+| `MARKET_CREATION_FEE` | 10,000,000 | 10 lUSD |
+| `DISPUTE_BOND` | 100,000,000 | 100 lUSD |
 | `MIN_DURATION` | 7,200 slots | ~1 hour at 0.5s/slot |
 | `MAX_DURATION` | 63,072,000 slots | ~1 year |
 | `DISPUTE_PERIOD` | 172,800 slots | Contract says "48 hours" but 0.5s×172,800=24h (**C13**) |
@@ -523,11 +523,11 @@ dex_rewards op1 (`record_trade`) requires `AUTHORIZED_CALLER_PREFIX` key set for
 
 For binary markets (yes/no), price is calculated as:
 ```rust
-price_YES = reserve_NO / (reserve_YES + reserve_NO) * MUSD_UNIT
-price_NO  = reserve_YES / (reserve_YES + reserve_NO) * MUSD_UNIT
+price_YES = reserve_NO / (reserve_YES + reserve_NO) * LUSD_UNIT
+price_NO  = reserve_YES / (reserve_YES + reserve_NO) * LUSD_UNIT
 ```
 
-This sums to `MUSD_UNIT` (1e6) as expected. JS reads `price_last` field from outcome pool storage for display.
+This sums to `LUSD_UNIT` (1e6) as expected. JS reads `price_last` field from outcome pool storage for display.
 
 ### 6.3 Buy-Shares Estimate (Verified Correct)
 
@@ -548,7 +548,7 @@ Byte 41:    outcome (0=YES, 1=NO, 0-N for multi)
 Bytes 42-49: amount_musd (u64 LE)
 ```
 
-Transaction includes `value = amount_musd` (the mUSD native payment).
+Transaction includes `value = amount_musd` (the lUSD native payment).
 
 ### 6.5 `buildCreateMarketArgs` (variable length)
 
@@ -562,7 +562,7 @@ Bytes 67-74: close_slot (u64 LE)
 Bytes 75+:   outcome names (each as length-prefixed UTF-8)
 ```
 
-Creation fee `10_000_000` mUSD shells is attached as the transaction value.
+Creation fee `10_000_000` lUSD spores is attached as the transaction value.
 
 ### 6.6 `buildResolveMarketArgs` (op — 42 bytes)
 
@@ -576,7 +576,7 @@ Byte 41:    winning_outcome
 ### 6.7 Dispute Flow
 
 1. `buildChallengeResolutionArgs` (73 bytes): `caller[32] + market_id[8] + evidence_hash[32]`
-   - Evidence hash is SHA256 of off-chain evidence. `DISPUTE_BOND = 100,000,000` mUSD attached.
+   - Evidence hash is SHA256 of off-chain evidence. `DISPUTE_BOND = 100,000,000` lUSD attached.
 2. `buildFinalizeResolutionArgs` (41 bytes): `caller[32] + market_id[8]`
    - Called after `DISPUTE_PERIOD` has elapsed.
 
@@ -614,7 +614,7 @@ Bytes 188-191: padding (4 bytes)
 Bytes 0-7:   reserve (u64)
 Bytes 8-15:  total_shares
 Bytes 16-23: total_redeemed
-Bytes 24-31: price_last (u64, in MUSD_UNIT)
+Bytes 24-31: price_last (u64, in LUSD_UNIT)
 Bytes 32-39: volume
 Bytes 40-47: open_interest
 Bytes 48-63: padding (16 bytes)
@@ -629,11 +629,11 @@ Bytes 8-15: cost_basis (u64)
 
 ---
 
-## Section 7 — Launchpad (ClawPump) Tab
+## Section 7 — Launchpad (SporePump) Tab
 
 ### 7.1 Bonding Curve Formula
 
-Token price as function of supply `s` (in shells):
+Token price as function of supply `s` (in spores):
 ```
 price(s) = (BASE_PRICE + s / SLOPE_SCALE) / PRICE_SCALE
          = (1000 + s / 1_000_000) / 1_000_000_000
@@ -643,7 +643,7 @@ Where `BASE_PRICE = 1000`, `SLOPE_SCALE = 1_000_000`, `PRICE_SCALE = 1_000_000_0
 
 ### 7.2 Buy Quadratic Solve (JS)
 
-Given MOLT input `afterFee = moltShells * 0.99` (1% fee):
+Given LICN input `afterFee = licnSpores * 0.99` (1% fee):
 ```javascript
 aCoeff = 1 / (2 * 1e6);
 bCoeff = 1000 + supplyRaw / 1e6;
@@ -667,32 +667,32 @@ This is the exact area integral: `integral from s-a to s of ((1000 + t/1e6) / 1e
 
 **`buildCPCreateTokenArgs`** (op — 33 bytes):
 ```
-Byte 0: opcode (clawpump create = op~1)
+Byte 0: opcode (sporepump create = op~1)
 Bytes 1-32: creator address
-Value attached: 10,000,000,000 MOLT shells (10 MOLT creation fee)
+Value attached: 10,000,000,000 LICN spores (10 LICN creation fee)
 ```
 
 **`buildCPBuyArgs`** (op — 49 bytes):
 ```
-Byte 0: opcode (clawpump buy)
+Byte 0: opcode (sporepump buy)
 Bytes 1-32: buyer address
 Bytes 33-40: token_id (u64 LE)
-Bytes 41-48: molt_shells (u64 LE)
-Value attached: molt_shells (MOLT payment)
+Bytes 41-48: licn_spores (u64 LE)
+Value attached: licn_spores (LICN payment)
 ```
 
 **`buildCPSellArgs`** (op — 49 bytes):
 ```
-Byte 0: opcode (clawpump sell)
+Byte 0: opcode (sporepump sell)
 Bytes 1-32: seller address
 Bytes 33-40: token_id (u64 LE)
-Bytes 41-48: token_shells (u64 LE)
+Bytes 41-48: token_spores (u64 LE)
 No value attached
 ```
 
 ### 7.5 Graduation
 
-The bonding curve has a graduation threshold (visible in UI as progress bar). When `market_cap_in_molt >= GRADUATION_THRESHOLD`, the token "graduates" to the DEX as a standard listed pair. The graduation call is not visible in the JS builders — it appears to be automated at the contract level.
+The bonding curve has a graduation threshold (visible in UI as progress bar). When `market_cap_in_licn >= GRADUATION_THRESHOLD`, the token "graduates" to the DEX as a standard listed pair. The graduation call is not visible in the JS builders — it appears to be automated at the contract level.
 
 ### 7.6 Holdings / Token List Endpoints
 
@@ -730,11 +730,11 @@ On page load, `init()` calls `restoreSavedWallet()`:
 
 No signature validation or challenge-response is performed. Anyone who can read localStorage immediately has full signing capability.
 
-### 8.3 MoltWallet Extension Support
+### 8.3 LichenWallet Extension Support
 
-JS checks `window.MoltWallet` at runtime. If present, defers transaction signing to the extension. Extension API:
-- `MoltWallet.requestAccount()` → returns `{ publicKey: Uint8Array }`
-- `MoltWallet.signTransaction(tx)` → returns signed transaction bytes
+JS checks `window.LichenWallet` at runtime. If present, defers transaction signing to the extension. Extension API:
+- `LichenWallet.requestAccount()` → returns `{ publicKey: Uint8Array }`
+- `LichenWallet.signTransaction(tx)` → returns signed transaction bytes
 
 Extension is treated as a trusted signer — no domain restriction or permission model is visible in the JS.
 
@@ -750,7 +750,7 @@ Multi-tab modal with tabs: Create, Import, Connect Extension. Defined CSS: `.wal
 
 ### 8.5 Balance Loading
 
-`loadBalances()` → `api.rpc({ method: "getBalance", params: [publicKey] })` to `RPC_BASE`. Returns balance in lamports (MOLT shells). Displayed in UI as `balance / 1e9` MOLT.
+`loadBalances()` → `api.rpc({ method: "getBalance", params: [publicKey] })` to `RPC_BASE`. Returns balance in spores (LICN spores). Displayed in UI as `balance / 1e9` LICN.
 
 ---
 
@@ -793,7 +793,7 @@ On every page load (regardless of network or wallet status):
 const bWs = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@ticker`);
 ```
 
-This connects to Binance's public WebSocket stream for the currently selected trading pair. External price is displayed as a reference alongside MoltChain's oracle price.
+This connects to Binance's public WebSocket stream for the currently selected trading pair. External price is displayed as a reference alongside Lichen's oracle price.
 
 **Privacy concern**: Every user's IP address is disclosed to `stream.binance.com` on every DEX page load. This is an external dependency on a centralized service and violates data minimization principles for a decentralized exchange.
 
@@ -858,9 +858,9 @@ All 28 `build*` functions confirmed against contract WASM dispatch tables:
 | `buildChallengeResolutionArgs` (792) | opN | prediction_market | 73 | ⚠️ opcode not fully traced |
 | `buildFinalizeResolutionArgs` (817) | opN | prediction_market | 41 | ⚠️ opcode not fully traced |
 | `buildClaimRewardsArgs` (829) | op2 | dex_rewards | 33 | ✅ CONFIRMED |
-| `buildCPCreateTokenArgs` (841) | opN | clawpump | 33 | ⚠️ clawpump not audited |
-| `buildCPBuyArgs` (850) | opN | clawpump | 49 | ⚠️ clawpump not audited |
-| `buildCPSellArgs` (860) | opN | clawpump | 49 | ⚠️ clawpump not audited |
+| `buildCPCreateTokenArgs` (841) | opN | sporepump | 33 | ⚠️ sporepump not audited |
+| `buildCPBuyArgs` (850) | opN | sporepump | 49 | ⚠️ sporepump not audited |
+| `buildCPSellArgs` (860) | opN | sporepump | 49 | ⚠️ sporepump not audited |
 
 ### 10.2 dex_margin Full Opcode Table (CONFIRMED, lines 1524-1770)
 
@@ -881,7 +881,7 @@ All 28 `build*` functions confirmed against contract WASM dispatch tables:
 | 12 | get_tier_info(leverage[8]) | 9 |
 | 13 | emergency_pause(caller[32]) | 33 |
 | 14 | emergency_unpause(caller[32]) | 33 |
-| 15 | set_moltcoin_address(caller[32], addr[32]) | 65 |
+| 15 | set_lichencoin_address(caller[32], addr[32]) | 65 |
 | 16 | get_total_volume | 1 |
 | 17 | get_user_positions(addr[32]) | 33 |
 | 18 | get_total_pnl | 1 |
@@ -912,7 +912,7 @@ All 28 `build*` functions confirmed against contract WASM dispatch tables:
 | 9 | emergency_pause(caller[32]) | 33 |
 | 10 | emergency_unpause(caller[32]) | 33 |
 | 11 | set_referral_rate(caller[32], rate_bps[8]) | 41 |
-| 12 | set_moltcoin_address(caller[32], addr[32]) | 65 |
+| 12 | set_lichencoin_address(caller[32], addr[32]) | 65 |
 | 13 | set_rewards_pool(caller[32], addr[32]) | 65 |
 
 ### 10.4 dex_governance WASM Opcodes (CONFIRMED, lines 601-1200)
@@ -920,11 +920,11 @@ All 28 `build*` functions confirmed against contract WASM dispatch tables:
 | Opcode | Function | Bytes | Auth |
 |---|---|---|---|
 | 0 | initialize(admin[32]) | 33 | — |
-| 1 | propose_new_pair(proposer[32]+base[32]+quote[32]) | 97 | MoltyID reputation |
+| 1 | propose_new_pair(proposer[32]+base[32]+quote[32]) | 97 | LichenID reputation |
 | 2 | vote(voter[32]+proposal_id[8]+approve[1]) | 42 | Any token holder |
 | 3 | finalize_proposal(proposal_id[8]) | 9 | Permissionless |
 | 4 | execute_proposal(proposal_id[8]) | 9 | Permissionless |
-| 9 | propose_fee_change(proposer[32]+pair_id[8]+maker_fee[2 i16]+taker_fee[2 u16]) | 45 | MoltyID reputation |
+| 9 | propose_fee_change(proposer[32]+pair_id[8]+maker_fee[2 i16]+taker_fee[2 u16]) | 45 | LichenID reputation |
 | 10+ | Admin functions | varies | Admin |
 
 ### 10.5 Functions in Contracts With NO JS Builder
@@ -1076,7 +1076,7 @@ The orderbook endpoint scans up to 10,000 order storage slots per call. With a 1
 ### 11.6 Oracle Price Handling
 
 - Oracle prices stored with 8 decimal places: `raw_price / 1e8 = USD price`
-- Default MOLT fallback price: `10,000,000 / 1e8 = $0.10` (used if oracle not configured)
+- Default LICN fallback price: `10,000,000 / 1e8 = $0.10` (used if oracle not configured)
 - `compute_swap_output_rpc` helper for AMM quote uses `/ (1u128 << 32)` for Q32.32 ← confirms C3
 
 ### 11.7 Trade Timestamp Approximation
@@ -1119,8 +1119,8 @@ The following CSS variables are **used** in `dex/dex.css` but **not defined** in
 From `shared-theme.css` (356 lines, fully read):
 
 **Colors:**
-- `--orange-primary: #FF6B35`
-- `--orange-dark: #E5501B`
+- `--teal-primary: #00C9DB`
+- `--teal-dark: #008B9E`
 - `--green-success: #06D6A0`
 - `--red-error: #EF233C`
 
@@ -1138,7 +1138,7 @@ From `shared-theme.css` (356 lines, fully read):
 **Borders/Effects:**
 - `--border: #1F2544`
 - `--border-light: #2a3052`
-- `--shadow-glow: 0 0 20px rgba(255, 107, 53, 0.3)`
+- `--shadow-glow: 0 0 20px rgba(0, 201, 219, 0.3)`
 
 **Animations:** `slideUp`, `fadeIn`, `float`
 
@@ -1174,7 +1174,7 @@ From `shared-theme.css` (356 lines, fully read):
 
 **Rewards Panel:**
 - `.tier-card.active`, `.claim-btn`
-- `.moltyid-rep-badge` — orange badge for reputation display
+- `.lichenid-rep-badge` — teal badge for reputation display
 
 **Wallet Modal:**
 - `.wallet-modal-overlay`, `.wallet-modal-content`
@@ -1226,7 +1226,7 @@ The actual on-chain slot duration is the ground truth and none of the code agree
 
 ## Appendix B — Transaction Serialization (Full Summary)
 
-All transactions follow the MoltChain serialization format:
+All transactions follow the Lichen serialization format:
 1. `args[0]` = opcode (u8)
 2. Subsequent bytes = packed arguments in order (no separators, no length prefixes)
 3. Endianness: **little-endian** for all u64/i64/u32/i32/u16/i16
@@ -1263,7 +1263,7 @@ dex_margin.close_position
 dex_margin.liquidate
   └── runtime.unlock (trader remaining)
   └── runtime.deduct (penalty)
-  └── moltcoin.transfer (liquidator reward) [C15: skipped if unconfigured]
+  └── lichencoin.transfer (liquidator reward) [C15: skipped if unconfigured]
 
 dex_core.fill_at_price_level
   └── address_zero CrossCall (fee transfer → burned)  [C5]

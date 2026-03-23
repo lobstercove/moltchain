@@ -1,4 +1,4 @@
-# MoltChain Production Audit Findings (Documentation Only)
+# Lichen Production Audit Findings (Documentation Only)
 
 Date: 2026-02-22  
 Scope reviewed: core runtime, contracts, RPC/WS paths, custody service, wallet frontend extension  
@@ -14,16 +14,16 @@ Scope updated per follow-up request to implement and verify fixes.
 - Consensus-bypass prediction create path removed from live mutation flow in [rpc/src/prediction.rs](rpc/src/prediction.rs); endpoint now rejects direct state writes and instructs transaction-based creation.
 - Wallet popup RPC-derived rendering hardened in [wallet/extension/src/popup/popup.js](wallet/extension/src/popup/popup.js) by escaping dynamic content in activity and staking templates.
 - Custody RocksDB CF tuning implemented in [custody/src/main.rs](custody/src/main.rs) with shared block cache, bloom/index caching, prefix extractors, and per-CF option presets.
-- MoltyID given-vouch reverse index implemented in [contracts/moltyid/src/lib.rs](contracts/moltyid/src/lib.rs) and consumed in [rpc/src/lib.rs](rpc/src/lib.rs) to replace hot-path O(n²) scans (with compatibility fallback).
+- LichenID given-vouch reverse index implemented in [contracts/lichenid/src/lib.rs](contracts/lichenid/src/lib.rs) and consumed in [rpc/src/lib.rs](rpc/src/lib.rs) to replace hot-path O(n²) scans (with compatibility fallback).
 
 ### Verification performed
 
-- `cargo check -p moltchain-core` ✅
-- `cargo check -p moltchain-rpc` ✅
-- `cargo check -p moltchain-custody` ✅
-- `cargo test -p moltchain-rpc --lib` ✅ (7 passed)
-- `cargo test -p moltchain-custody` ✅ (38 passed)
-- `cargo test -p moltchain-core privacy --lib` ✅ (module compiles; no matching test filter cases)
+- `cargo check -p lichen-core` ✅
+- `cargo check -p lichen-rpc` ✅
+- `cargo check -p lichen-custody` ✅
+- `cargo test -p lichen-rpc --lib` ✅ (7 passed)
+- `cargo test -p lichen-custody` ✅ (38 passed)
+- `cargo test -p lichen-core privacy --lib` ✅ (module compiles; no matching test filter cases)
 
 ### Notes
 
@@ -49,8 +49,8 @@ Implemented per follow-up request: non-disruptive transaction-template path for 
 
 ### Validation
 
-- `cargo check -p moltchain-rpc` ✅
-- `cargo test -p moltchain-rpc parse_json_transaction -- --nocapture` ✅ (0 selected, parser path still compiles and links)
+- `cargo check -p lichen-rpc` ✅
+- `cargo test -p lichen-rpc parse_json_transaction -- --nocapture` ✅ (0 selected, parser path still compiles and links)
 
 ### Remaining non-blocking gap (documented)
 
@@ -98,20 +98,20 @@ Implemented per follow-up request: non-disruptive transaction-template path for 
   - Added fail-closed guard for unsupported multi-signer production mode unless explicitly overridden with `CUSTODY_ALLOW_UNSAFE_MULTISIGNER=1` in [custody/src/main.rs](custody/src/main.rs).
 
 - **Contract accounting fix**
-  - In [contracts/clawpump/src/lib.rs](contracts/clawpump/src/lib.rs), graduation platform-revenue accounting now updates only after full successful DEX migration (`create_pair` + `create_pool` + `add_liquidity`).
+  - In [contracts/sporepump/src/lib.rs](contracts/sporepump/src/lib.rs), graduation platform-revenue accounting now updates only after full successful DEX migration (`create_pair` + `create_pool` + `add_liquidity`).
 
 ### Validation
 
-- `cargo check -p moltchain-core` ✅
-- `cargo check -p moltchain-custody` ✅
-- `cargo check --manifest-path contracts/clawpump/Cargo.toml` ✅
-- `cargo check -p moltchain-rpc` ✅
-- `cargo check -p moltchain-validator` ✅
+- `cargo check -p lichen-core` ✅
+- `cargo check -p lichen-custody` ✅
+- `cargo check --manifest-path contracts/sporepump/Cargo.toml` ✅
+- `cargo check -p lichen-rpc` ✅
+- `cargo check -p lichen-validator` ✅
 
 ### Deep sweep — additional production gaps (contracts + custody)
 
-- **HIGH — ClawPump graduation cross-contract migration remains non-atomic**
-  - Evidence: [contracts/clawpump/src/lib.rs](contracts/clawpump/src/lib.rs) executes `create_pair`, `create_pool`, `add_liquidity` as three independent external calls.
+- **HIGH — SporePump graduation cross-contract migration remains non-atomic**
+  - Evidence: [contracts/sporepump/src/lib.rs](contracts/sporepump/src/lib.rs) executes `create_pair`, `create_pool`, `add_liquidity` as three independent external calls.
   - Risk: partial success can leave cross-protocol divergence (e.g., pair exists without pool/liquidity).
   - Recommendation: move to idempotent 2-phase migration with explicit phase markers + compensation actions, or a router-side atomic orchestration contract.
 
@@ -140,8 +140,8 @@ Implemented per follow-up request: non-disruptive transaction-template path for 
   - New env control: `CUSTODY_WEBHOOK_MAX_INFLIGHT` (default `64`, capped at `1024`).
   - Effect: prevents unbounded `tokio::spawn` fan-out under bursty event loads.
 
-- **MoltDAO proposal payload bounds enforced**
-  - Added strict maximum sizes in [contracts/moltdao/src/lib.rs](contracts/moltdao/src/lib.rs):
+- **LichenDAO proposal payload bounds enforced**
+  - Added strict maximum sizes in [contracts/lichendao/src/lib.rs](contracts/lichendao/src/lib.rs):
     - title ≤ 256 bytes
     - description ≤ 8 KiB
     - action payload ≤ 16 KiB
@@ -154,8 +154,8 @@ Implemented per follow-up request: non-disruptive transaction-template path for 
   - Risk: authenticated operator error/misuse could route signed event payloads to unintended destinations.
   - Recommendation: add optional hostname allowlist + private CIDR deny-by-default policy for production.
 
-- **MEDIUM — MoltDAO still performs raw pointer copies in multiple entrypoints**
-  - Evidence: [contracts/moltdao/src/lib.rs](contracts/moltdao/src/lib.rs#L317-L333) and other call paths use direct pointer copies from external args.
+- **MEDIUM — LichenDAO still performs raw pointer copies in multiple entrypoints**
+  - Evidence: [contracts/lichendao/src/lib.rs](contracts/lichendao/src/lib.rs#L317-L333) and other call paths use direct pointer copies from external args.
   - Risk: while bounded for proposal path now, similar input-bound protections are not yet standardized across all handlers.
   - Recommendation: introduce shared bounded-copy helpers/macros and apply consistently contract-wide.
 
@@ -165,10 +165,10 @@ Implemented per follow-up request: non-disruptive transaction-template path for 
 
 - **Contract pointer-read hardening rolled out in priority contracts**
   - Added internal safe address-read helper (`read_address32`) and replaced direct external pointer copies in:
-    - [contracts/moltdao/src/lib.rs](contracts/moltdao/src/lib.rs)
+    - [contracts/lichendao/src/lib.rs](contracts/lichendao/src/lib.rs)
     - [contracts/compute_market/src/lib.rs](contracts/compute_market/src/lib.rs)
-    - [contracts/clawpay/src/lib.rs](contracts/clawpay/src/lib.rs)
-  - MoltDAO now also uses bounded variable-length reader (`read_bounded_bytes`) for proposal and execute paths, with max-size enforcement before allocation/copy.
+    - [contracts/sporepay/src/lib.rs](contracts/sporepay/src/lib.rs)
+  - LichenDAO now also uses bounded variable-length reader (`read_bounded_bytes`) for proposal and execute paths, with max-size enforcement before allocation/copy.
 
 - **Custody webhook destination allowlist added**
   - Added optional config `CUSTODY_WEBHOOK_ALLOWED_HOSTS` to [custody/src/main.rs](custody/src/main.rs).
@@ -177,9 +177,9 @@ Implemented per follow-up request: non-disruptive transaction-template path for 
 
 ### Validation run
 
-- `cargo check --manifest-path contracts/moltdao/Cargo.toml` ✅
+- `cargo check --manifest-path contracts/lichendao/Cargo.toml` ✅
 - `cargo check --manifest-path contracts/compute_market/Cargo.toml` ✅
-- `cargo check --manifest-path contracts/clawpay/Cargo.toml` ✅
+- `cargo check --manifest-path contracts/sporepay/Cargo.toml` ✅
 - `cargo check --manifest-path custody/Cargo.toml` ✅
 
 ### Residual note
@@ -265,7 +265,7 @@ The codebase contains strong hardening work in several areas (notably `core/src/
   - Add migration completion markers to retire fallback scans once indexed state is complete.
   - Introduce dedicated secondary indexes for reserve/webhook/event queries that are currently full-scan.
 
-## 6) MEDIUM — RPC MoltyID vouch retrieval contains acknowledged O(n²) scan path
+## 6) MEDIUM — RPC LichenID vouch retrieval contains acknowledged O(n²) scan path
 
 - Evidence:
   - [rpc/src/lib.rs](rpc/src/lib.rs#L6896-L6901)
@@ -321,7 +321,7 @@ The codebase contains strong hardening work in several areas (notably `core/src/
 ## 11) MEDIUM — Contract host-pointer reads include unbounded input lengths in at least one production contract
 
 - Evidence:
-  - [contracts/moltoracle/src/lib.rs](contracts/moltoracle/src/lib.rs#L46-L57)
+  - [contracts/lichenoracle/src/lib.rs](contracts/lichenoracle/src/lib.rs#L46-L57)
 - Why this matters:
   - Caller-controlled lengths are used for allocation/copy with no explicit upper bound.
   - Risk includes memory pressure, trap behavior, and inconsistent failure surfaces.

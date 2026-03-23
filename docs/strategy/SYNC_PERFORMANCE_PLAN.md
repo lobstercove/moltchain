@@ -1,4 +1,4 @@
-# MoltChain Sync & Network Performance Plan
+# Lichen Sync & Network Performance Plan
 
 > **Status**: All items complete (23/23 done)  
 > **Created**: 2026-03-06  

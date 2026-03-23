@@ -1,4 +1,4 @@
-# Contributory Stake: The Self-Made Molty System
+# Contributory Stake: The Self-Made Symbiont System
 ## Earn Your Stake Through Work, Not Wealth
 
 **Version:** 1.0.0  
@@ -20,7 +20,7 @@
 
 **Result:** Only wealthy actors can validate. Plutocracy, not meritocracy.
 
-**The MoltChain Solution:**
+**The Lichen Solution:**
 - **Zero capital required** to start validating
 - **Earn your stake** through contribution
 - **Settled rewards become liquid** while bootstrap debt is repaid automatically
@@ -37,7 +37,7 @@ When a validator starts:
 ```rust
 StakeInfo {
     validator: <your_pubkey>,
-    amount: 100_000_000_000_000,        // 100,000 MOLT (bootstrap stake)
+    amount: 100_000_000_000_000,        // 100,000 LICN (bootstrap stake)
     earned_amount: 0,                   // None earned yet
     bootstrap_debt: 100_000_000_000_000, // Must repay through work
     is_active: true,                    // Can validate immediately
@@ -49,10 +49,10 @@ StakeInfo {
 ```
 
 **Key Points:**
-- ✅ 100,000 MOLT bootstrap stake granted automatically
+- ✅ 100,000 LICN bootstrap stake granted automatically
 - ✅ Can validate blocks immediately
 - ✅ Bootstrap debt is repaid from settled validator rewards
-- ✅ NON-NEGOTIABLE: 100,000 MOLT minimum (network security)
+- ✅ NON-NEGOTIABLE: 100,000 LICN minimum (network security)
 - ✅ Cannot be edited, reduced, or bypassed
 - ✅ Verified cryptographically on-chain
 
@@ -92,12 +92,12 @@ fn claim_rewards(&mut self) -> (u64, u64) {
 **Example After 100 Heartbeat Blocks:**
 ```
 Blocks produced:    100
-Total earned:       5.0 MOLT (100 × 0.05)
-Debt repayment:     2.5 MOLT (locked, applied to debt)
-Liquid balance:     2.5 MOLT (spendable now!)
+Total earned:       5.0 LICN (100 × 0.05)
+Debt repayment:     2.5 LICN (locked, applied to debt)
+Liquid balance:     2.5 LICN (spendable now!)
 
-Bootstrap debt:     100,000 - 2.5 = 99,997.5 MOLT
-Earned stake:       2.5 MOLT (real, not virtual)
+Bootstrap debt:     100,000 - 2.5 = 99,997.5 LICN
+Earned stake:       2.5 LICN (real, not virtual)
 Progress:           0.0025% vested
 ```
 
@@ -108,8 +108,8 @@ When `bootstrap_debt` reaches zero:
 ```rust
 StakeInfo {
     validator: <your_pubkey>,
-    amount: 100_000_000_000_000,         // 100,000 MOLT (still)
-    earned_amount: 100_000_000_000_000,  // 100,000 MOLT EARNED!
+    amount: 100_000_000_000_000,         // 100,000 LICN (still)
+    earned_amount: 100_000_000_000_000,  // 100,000 LICN EARNED!
     bootstrap_debt: 0,                  // DEBT PAID! 🎉
     is_active: true,
     delegated_amount: <community_delegations>,
@@ -122,7 +122,7 @@ StakeInfo {
 **Graduation Benefits:**
 - ✅ **100% liquid rewards** - No more 50/50 split
 - ✅ **Accept delegations** - Community can delegate to you
-- ✅ **"Self-Made Molty" badge** - On-chain achievement
+- ✅ **"Self-Made Symbiont" badge** - On-chain achievement
 - ✅ **Graduation NFT** - Commemorative token minted
 - ✅ **Founding Validator** status (if in first 1000)
 - ✅ **Reputation boost** - +100 reputation score
@@ -166,8 +166,8 @@ bootstrap graduation, but the canonical settlement still happens at epoch bounda
 
 **Core Badges:**
 ```
-🦞 Self-Made Molty
-   Requirement: Fully vest 100,000 MOLT bootstrap debt
+🦞 Self-Made Symbiont
+   Requirement: Fully vest 100,000 LICN bootstrap debt
    Reward: +100 reputation, NFT minted
    
 🏆 Founding Validator
@@ -178,11 +178,11 @@ bootstrap graduation, but the canonical settlement still happens at epoch bounda
    Requirement: Fully vest in <30 days
    Reward: +50 reputation, "Speed" badge
    
-💎 Diamond Claws
+💎 Diamond Spores
    Requirement: 100% uptime during entire vesting period
    Reward: +150 reputation, "Reliability" bonus
    
-🌊 Reef Builder
+🌊 Moss Builder
    Requirement: Produce 1,000+ blocks
    Reward: +75 reputation, "Builder" badge
    
@@ -204,12 +204,12 @@ bootstrap graduation, but the canonical settlement still happens at epoch bounda
 4. Most Fees Burned (total fees)
 5. Best Reputation (community score)
 
-**Founding Molty Ranks:**
+**Founding Symbiont Ranks:**
 ```
-Rank #1-10:     "Reef Founders" - Critical mass creators
-Rank #11-100:   "Founding Moltys" - Genesis validators
+Rank #1-10:     "Moss Founders" - Critical mass creators
+Rank #11-100:   "Founding Symbionts" - Genesis validators
 Rank #101-1000: "Early Adopters" - Network stabilizers
-Rank #1001+:    "Reef Builders" - Community validators
+Rank #1001+:    "Moss Builders" - Community validators
 ```
 
 ### Progress Tracking
@@ -217,7 +217,7 @@ Rank #1001+:    "Reef Builders" - Community validators
 **Validator Dashboard:**
 ```
 ╔══════════════════════════════════════════════════════╗
-║  🦞 Self-Made Molty Progress                         ║
+║  🦞 Self-Made Symbiont Progress                         ║
 ╠══════════════════════════════════════════════════════╣
 ║                                                      ║
 ║  Bootstrap Debt Repayment:                           ║
@@ -230,9 +230,9 @@ Rank #1001+:    "Reef Builders" - Community validators
 ║  ┌────────────────────────────────────────────────┐ ║
 ║  │ Earnings Split (Last 24 Hours)                 │ ║
 ║  │                                                 │ ║
-║  │ Total Earned:     864 MOLT                   │ ║
-║  │   → Liquid:       432 MOLT 💰 (spendable)     │ ║
-║  │   → Debt:         432 MOLT 🔒 (locked)        │ ║
+║  │ Total Earned:     864 LICN                   │ ║
+║  │   → Liquid:       432 LICN 💰 (spendable)     │ ║
+║  │   → Debt:         432 LICN 🔒 (locked)        │ ║
 ║  └────────────────────────────────────────────────┘ ║
 ║                                                      ║
 ║  Blocks Produced:   15,847                           ║
@@ -241,9 +241,9 @@ Rank #1001+:    "Reef Builders" - Community validators
 ║                                                      ║
 ║  ┌────────────────────────────────────────────────┐ ║
 ║  │ Achievements                                    │ ║
-║  │ ✅ Reef Builder (1,000+ blocks)                │ ║
+║  │ ✅ Moss Builder (1,000+ blocks)                │ ║
 ║  │ ⏳ Speed Vester (25/30 days)                   │ ║
-║  │ ⏳ Diamond Claws (99.7% uptime)                │ ║
+║  │ ⏳ Diamond Spores (99.7% uptime)                │ ║
 ║  └────────────────────────────────────────────────┘ ║
 ║                                                      ║
 ║  Founding Rank:     #47 🏆                           ║
@@ -259,13 +259,13 @@ When a validator fully vests, an NFT is automatically minted:
 
 ```json
 {
-  "name": "Self-Made Molty #47",
+  "name": "Self-Made Symbiont #47",
   "description": "Founding validator who earned their stake through contribution, not capital",
-  "image": "ipfs://QmSelfMadeMolty47...",
+  "image": "ipfs://QmSelfMadeSymbiont47...",
   "minted": "2026-03-15T14:32:07Z",
   "attributes": {
-    "validator_pubkey": "molty_hqR8k3V2pN7xL9kW...",
-    "debt_repaid": "100,000 MOLT",
+    "validator_pubkey": "symbiont_hqR8k3V2pN7xL9kW...",
+    "debt_repaid": "100,000 LICN",
     "time_to_vest": "86 days",
     "total_blocks": 18429,
     "uptime_percentage": 99.8,
@@ -273,17 +273,17 @@ When a validator fully vests, an NFT is automatically minted:
     "founding_rank": 47,
     "reputation_score": 847,
     "badges": [
-      "Self-Made Molty",
+      "Self-Made Symbiont",
       "Founding Validator",
       "Speed Vester",
-      "Reef Builder"
+      "Moss Builder"
     ],
     "fastest_vester": false,
-    "diamond_claws": false,
+    "diamond_spores": false,
     "graduation_date": "2026-03-15"
   },
   "rarity": "Founding",
-  "collection": "Self-Made Moltys",
+  "collection": "Self-Made Symbionts",
   "total_supply": 1000
 }
 ```
@@ -308,7 +308,7 @@ fn delegate(
         return Err("Validator still bootstrapping");
     }
     
-    // Transfer MOLT to delegation pool
+    // Transfer LICN to delegation pool
     transfer(delegator, delegation_pool, amount)?;
     
     // Update stake info
@@ -330,51 +330,51 @@ fn delegate(
 ```
 Validator reward enters the vesting pipeline
 
-Commission (10%): 0.01 MOLT to validator
-Delegators (90%): 0.09 MOLT split proportionally
+Commission (10%): 0.01 LICN to validator
+Delegators (90%): 0.09 LICN split proportionally
 
-Example with 40k MOLT delegated:
-  Validator own stake: 100,000 MOLT (20%)
-  Delegated stake:     400,000 MOLT (80%)
-  Total voting power:  500,000 MOLT
+Example with 40k LICN delegated:
+  Validator own stake: 100,000 LICN (20%)
+  Delegated stake:     400,000 LICN (80%)
+  Total voting power:  500,000 LICN
   
-  Delegator with 1,000 MOLT:
+  Delegator with 1,000 LICN:
     Share: 1,000 / 50,000 = 2%
     Reward: proportional share of the validator's settled delegation reward
 ```
 
-### Liquid Staking (ReefStake)
+### Liquid Staking (MossStake)
 
 ```rust
-// Stake MOLT, receive stMOLT (liquid receipt token)
+// Stake LICN, receive stLICN (liquid receipt token)
 fn liquid_stake(amount: u64) -> u64 {
-    // Deposit MOLT
-    let molt_deposited = amount;
+    // Deposit LICN
+    let licn_deposited = amount;
     
-    // Calculate stMOLT to mint
-    let total_staked = reef_stake_pool.total_staked;
-    let total_st_molt = reef_stake_pool.total_st_molt_supply;
+    // Calculate stLICN to mint
+    let total_staked = moss_stake_pool.total_staked;
+    let total_st_licn = moss_stake_pool.total_st_licn_supply;
     
-    let st_molt_to_mint = if total_st_molt == 0 {
-        molt_deposited // 1:1 initially
+    let st_licn_to_mint = if total_st_licn == 0 {
+        licn_deposited // 1:1 initially
     } else {
         // Account for accumulated rewards
-        (molt_deposited * total_st_molt) / total_staked
+        (licn_deposited * total_st_licn) / total_staked
     };
     
-    // Mint stMOLT to user
-    mint_st_molt(caller, st_molt_to_mint)?;
+    // Mint stLICN to user
+    mint_st_licn(caller, st_licn_to_mint)?;
     
     // Update pool
-    reef_stake_pool.total_staked += molt_deposited;
-    reef_stake_pool.total_st_molt_supply += st_molt_to_mint;
+    moss_stake_pool.total_staked += licn_deposited;
+    moss_stake_pool.total_st_licn_supply += st_licn_to_mint;
     
-    st_molt_to_mint
+    st_licn_to_mint
 }
 ```
 
-**stMOLT Characteristics:**
-- 1:1 initially with MOLT
+**stLICN Characteristics:**
+- 1:1 initially with LICN
 - Appreciates over time (auto-compounding rewards)
 - Fully liquid (trade, use in DeFi)
 - Unstaking period: 7 days (for security)
@@ -384,7 +384,7 @@ fn liquid_stake(amount: u64) -> u64 {
 
 ## FAQ
 
-**Q: Can I edit the 100,000 MOLT bootstrap requirement?**  
+**Q: Can I edit the 100,000 LICN bootstrap requirement?**  
 A: No. It's hardcoded and verified cryptographically. This ensures network security and fairness—everyone starts at the same level.
 
 **Q: What happens if I go offline during vesting?**  
@@ -400,10 +400,10 @@ A: Slashing applies to your earned_amount first. If earned_amount < slashing_pen
 A: Future enhancement! We're considering contribution bonuses for:
   - Deploying high-usage programs (+10% vesting speed)
   - Contributing compute to network (+5% vesting speed)
-  - Bug bounties and governance participation (+bonus MOLT)
+  - Bug bounties and governance participation (+bonus LICN)
 
 **Q: What happens at mainnet launch?**  
-A: All validators start at bootstrap_debt = 100,000 MOLT. Fair playing field. First to vest = Founding Validator #1.
+A: All validators start at bootstrap_debt = 100,000 LICN. Fair playing field. First to vest = Founding Validator #1.
 
 **Q: Can I run multiple validators?**  
 A: Yes, but each must vest independently. Each requires its own hardware, keypair, and ~86-day vesting period.
@@ -438,25 +438,25 @@ A: Yes, but each must vest independently. Each requires its own hardware, keypai
 
 ## The Philosophy
 
-> "On MoltChain, validators don't need wealth—they need will.
+> "On Lichen, validators don't need wealth—they need will.
 > 
 > Will to contribute.  
 > Will to build.  
 > Will to prove themselves through work.
 > 
-> Every Self-Made Molty is a testament to meritocracy over plutocracy.  
+> Every Self-Made Symbiont is a testament to meritocracy over plutocracy.  
 > Every graduation NFT is proof that contribution > capital.
 > 
 > We're not building a blockchain for the wealthy.  
 > We're building a blockchain for the worthy.
 > 
 > Earn your stake. Prove your value. Graduate.  
-> Become a Self-Made Molty."
+> Become a Self-Made Symbiont."
 
 🦞⚡
 
 ---
 
-**The reef is active.**  
-**The molt is complete.**  
-**The future is molty.**
+**The network is active.**  
+**The upgrade is complete.**  
+**The future is lichen.**

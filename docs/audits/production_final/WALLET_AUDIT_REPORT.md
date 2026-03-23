@@ -1,4 +1,4 @@
-# MoltChain Wallet & Browser Extension — Production Audit Report
+# Lichen Wallet & Browser Extension — Production Audit Report
 
 **Scope:** `wallet/index.html`, `wallet/js/wallet.js`, `wallet/js/crypto.js`, `wallet/js/identity.js`, `wallet/js/shielded.js`, `wallet/shared/utils.js`, `wallet/shared-config.js`, `wallet/extension/manifest.json`, `wallet/extension/src/background/service-worker.js`, `wallet/extension/src/content/content-script.js`, `wallet/extension/src/content/inpage-provider.js`, `wallet/extension/src/core/crypto-service.js`, `wallet/extension/src/core/provider-router.js`, `wallet/extension/src/core/rpc-service.js`, `wallet/extension/src/core/state-store.js`, `wallet/extension/src/core/tx-service.js`, `wallet/extension/src/core/ws-service.js`, `wallet/extension/src/core/lock-service.js`, `wallet/extension/src/core/notification-service.js`, `wallet/extension/src/pages/approve.js`, `wallet/extension/src/popup/popup.js`, `rpc/src/lib.rs` (dispatch table + handlers), `rpc/src/ws.rs` (subscription dispatch)
 
@@ -25,8 +25,8 @@ The wallet's ZK privacy layer is entirely non-functional: proof generation produ
 
 | Property | Value |
 |----------|-------|
-| Chain | MoltChain — Ed25519, Base58 addresses (32-byte pubkeys) |
-| Denomination | 1 MOLT = 1,000,000,000 shells |
+| Chain | Lichen — Ed25519, Base58 addresses (32-byte pubkeys) |
+| Denomination | 1 LICN = 1,000,000,000 spores |
 | Block time | 400ms per slot |
 | Key encryption | AES-256-GCM + PBKDF2-SHA256 (100k iterations) |
 | Mnemonic | BIP39, PBKDF2-HMAC-SHA512 (2048 iter), 12 words |
@@ -48,7 +48,7 @@ The wallet's ZK privacy layer is entirely non-functional: proof generation produ
 ```js
 // shielded.js ~line 513 (shield proof):
 const hash1 = new Uint8Array(await crypto.subtle.digest('SHA-256',
-    new TextEncoder().encode(`shield:${amountShells}:${blindingHex}`)));
+    new TextEncoder().encode(`shield:${amountSpores}:${blindingHex}`)));
 const hash2 = new Uint8Array(await crypto.subtle.digest('SHA-256',
     new TextEncoder().encode(`commitment:${commitmentHash}`)));
 const proof = new Uint8Array(128);
@@ -79,7 +79,7 @@ initShielded(seedBytes);
 
 `wallet.address` is the Base58-encoded Ed25519 public key — a value that is entirely public and visible on-chain. The shielded spending key is therefore `SHA-256(publicAddress + ':shielded')`, which any observer can compute from the chain data alone. This destroys all privacy guarantees: any party who knows a wallet's address can derive its spending key and decrypt all shielded notes.
 
-**Fix:** Derive the shielded seed from the 32-byte private key seed (not the public address). The correct derivation is `HKDF-SHA256(context="moltchain-shielded-v1", ikm=privateKeySeed)`, using the same key that is decrypted at signing time.
+**Fix:** Derive the shielded seed from the 32-byte private key seed (not the public address). The correct derivation is `HKDF-SHA256(context="lichen-shielded-v1", ikm=privateKeySeed)`, using the same key that is decrypted at signing time.
 
 ---
 
@@ -125,7 +125,7 @@ The function is named "pedersen" but implements SHA-256 over a text string. A Pe
 
 **File:** [wallet/js/shielded.js](wallet/js/shielded.js#L590-L615)
 
-`saveNotesToStorage()` writes owned notes including `blinding` (the randomness field of the Pedersen commitment) and `serial` (the nullifier) to localStorage under key `moltchain_shielded_notes`. These values allow reconstruction of a note's commitment and its nullifier. A cross-origin attack, XSS, or local attacker can steal note secrets.
+`saveNotesToStorage()` writes owned notes including `blinding` (the randomness field of the Pedersen commitment) and `serial` (the nullifier) to localStorage under key `lichen_shielded_notes`. These values allow reconstruction of a note's commitment and its nullifier. A cross-origin attack, XSS, or local attacker can steal note secrets.
 
 **Fix:** Encrypt the notes array with AES-256-GCM before writing to localStorage, using a key derived from the wallet password (PBKDF2 or session key derived during unlock), as is already done for the private key.
 
@@ -151,13 +151,13 @@ The frontend calls `rpc.call('getShieldedPoolStats', [])`. The Rust server expos
 
 ---
 
-### ZK-8 · MEDIUM · `unshieldMolt` Recipient Address Not Validated
+### ZK-8 · MEDIUM · `unshieldLicn` Recipient Address Not Validated
 
 **File:** [wallet/js/shielded.js](wallet/js/shielded.js) (`confirmUnshield`, ~line 860)
 
-`confirmUnshield()` checks `if (!recipient)` for empty but never calls `MoltCrypto.isValidAddress(recipient)`. An invalid address will pass the empty check and produce a transaction that fails on-chain after signing and broadcasting, wasting the ZK compute fee.
+`confirmUnshield()` checks `if (!recipient)` for empty but never calls `LichenCrypto.isValidAddress(recipient)`. An invalid address will pass the empty check and produce a transaction that fails on-chain after signing and broadcasting, wasting the ZK compute fee.
 
-**Fix:** Add `if (!MoltCrypto.isValidAddress(recipient)) { showError('Invalid recipient address'); return; }` before building the unshield transaction.
+**Fix:** Add `if (!LichenCrypto.isValidAddress(recipient)) { showError('Invalid recipient address'); return; }` before building the unshield transaction.
 
 ---
 
@@ -241,10 +241,10 @@ Frontend opcodes used:
 |--------|------|-----------------------|-----------------|
 | `0x00` | Transfer | `[0x00, amount:u64LE]` (9 B) | ✅ Opcode 0 |
 | `0x0C` (12) | RegisterEvmAddress | `[0x0C, evm_address:20B]` (21 B) | ✅ No amount |
-| `0x0D` (13) | ReefStakeDeposit | `[0x0D, amount:u64LE, tier:u8]` (10 B) | ✅ Opcode 13 |
-| `0x0E` (14) | ReefStakeUnstake | `[0x0E, st_molt:u64LE]` (9 B) | ✅ Opcode 14 |
-| `0x0F` (15) | ReefStakeClaim | `[0x0F]` (1 B) | ✅ No amount |
-| `0x10` (16) | ReefStakeTransfer (stMOLT) | `[0x10, amount:u64LE]` (9 B) | ✅ Opcode 16 |
+| `0x0D` (13) | MossStakeDeposit | `[0x0D, amount:u64LE, tier:u8]` (10 B) | ✅ Opcode 13 |
+| `0x0E` (14) | MossStakeUnstake | `[0x0E, st_licn:u64LE]` (9 B) | ✅ Opcode 14 |
+| `0x0F` (15) | MossStakeClaim | `[0x0F]` (1 B) | ✅ No amount |
+| `0x10` (16) | MossStakeTransfer (stLICN) | `[0x10, amount:u64LE]` (9 B) | ✅ Opcode 16 |
 
 Token contract calls use JSON-wrapped `{Call:{function,args,value}}` with `program_id = [0xFF;32]` — server correctly identifies by `CONTRACT_PROGRAM_ID` check.
 
@@ -262,7 +262,7 @@ All four are textually identical. A future divergence would cause signature mism
 
 ### UI-1 · LOW · Send Modal Fee Is Static HTML — Not Dynamic
 
-**File:** [wallet/index.html](wallet/index.html) (send modal, `<span>0.001 MOLT</span>`)
+**File:** [wallet/index.html](wallet/index.html) (send modal, `<span>0.001 LICN</span>`)
 
 The fee display is hardcoded in the HTML. The server exposes a `getFeeConfig` method returning current fee parameters. If the chain's fee schedule is updated, the displayed fee will be wrong.
 
@@ -301,21 +301,21 @@ const ts = timestamp < 1e12 ? timestamp : timestamp / 1000;
 
 ---
 
-### UI-4 · MEDIUM · `setMaxAmount()` Does Not Reserve MOLT Fee for Token Sends
+### UI-4 · MEDIUM · `setMaxAmount()` Does Not Reserve LICN Fee for Token Sends
 
 **File:** [wallet/js/wallet.js](wallet/js/wallet.js) (`setMaxAmount`, ~line 2830)
 
-MAX logic for non-MOLT tokens:
+MAX logic for non-LICN tokens:
 ```js
 } else {
-    // Token: full token balance — no MOLT fee deducted
+    // Token: full token balance — no LICN fee deducted
     amountInput.value = tokenBalance;
 }
 ```
 
-A MOLT fee of 0.001 MOLT is still charged when sending tokens. If the user's MOLT balance is exactly the fee amount, the transaction will fail server-side with "Insufficient MOLT balance for fees". The MAX button suggests they can send 100% of their tokens when they cannot.
+A LICN fee of 0.001 LICN is still charged when sending tokens. If the user's LICN balance is exactly the fee amount, the transaction will fail server-side with "Insufficient LICN balance for fees". The MAX button suggests they can send 100% of their tokens when they cannot.
 
-**Fix:** Check that `window.walletBalance >= BASE_FEE_MOLT` before allowing the MAX send of tokens; warn the user if they lack MOLT for the fee.
+**Fix:** Check that `window.walletBalance >= BASE_FEE_LICN` before allowing the MAX send of tokens; warn the user if they lack LICN for the fee.
 
 ---
 
@@ -359,7 +359,7 @@ let _identityCache = null;
 
 Transaction links are built as: `` `../explorer/transaction.html?sig=${sig}` ``. This works when the wallet is served at `/wallet/` but breaks when served from a different subdirectory or as the extension's full-page view.
 
-**Fix:** Use `MOLT_CONFIG.explorer + '/transaction.html?sig=' + sig` for the correct base URL.
+**Fix:** Use `LICHEN_CONFIG.explorer + '/transaction.html?sig=' + sig` for the correct base URL.
 
 ---
 
@@ -372,9 +372,9 @@ Transaction links are built as: `` `../explorer/transaction.html?sig=${sig}` ``.
 
 Both implementations filter the wallet out of the state array and call `saveState()`. The `chrome.storage.local` / `localStorage.setItem` call overwrites the entire state object, which effectively removes the encrypted key from persistent storage. However the operating system may retain the key in file-system journal/swap until overwritten.
 
-More critically: in the website wallet, `localStorage` entries named `molt*` (including bridge caches, shielded notes, EVM registration flags) are cleared in `logoutWallet()` but NOT in the delete-one-wallet path when other wallets remain. The shielded notes for the deleted wallet linger.
+More critically: in the website wallet, `localStorage` entries named `lichen*` (including bridge caches, shielded notes, EVM registration flags) are cleared in `logoutWallet()` but NOT in the delete-one-wallet path when other wallets remain. The shielded notes for the deleted wallet linger.
 
-**Fix:** Before removing the wallet, explicitly call `localStorage.removeItem('moltchain_shielded_notes')` (or a wallet-scoped key). Zero the `encryptedKey.encrypted` hex string to `'0'.repeat(...)` before the final `saveState` write.
+**Fix:** Before removing the wallet, explicitly call `localStorage.removeItem('lichen_shielded_notes')` (or a wallet-scoped key). Zero the `encryptedKey.encrypted` hex string to `'0'.repeat(...)` before the final `saveState` write.
 
 ---
 
@@ -392,9 +392,9 @@ More critically: in the website wallet, `localStorage` entries named `molt*` (in
 
 **File:** [wallet/extension/src/core/provider-router.js](wallet/extension/src/core/provider-router.js) (`approveOrigin`)
 
-Origins are stored in `chrome.storage.local.moltApprovedOrigins` as a plain string array. Once a site is approved it remains approved forever. There is no last-used timestamp and no automatic expiry.
+Origins are stored in `chrome.storage.local.lichenApprovedOrigins` as a plain string array. Once a site is approved it remains approved forever. There is no last-used timestamp and no automatic expiry.
 
-**Fix:** Store `{ origin, approvedAt: Date.now() }` objects; consider revoking origins not used in 90 days, or at minimum expose a "connected sites" management UI (the settings page has `MOLT_PROVIDER_LIST_ORIGINS` / `MOLT_PROVIDER_REVOKE_ORIGIN` already wired).
+**Fix:** Store `{ origin, approvedAt: Date.now() }` objects; consider revoking origins not used in 90 days, or at minimum expose a "connected sites" management UI (the settings page has `LICHEN_PROVIDER_LIST_ORIGINS` / `LICHEN_PROVIDER_REVOKE_ORIGIN` already wired).
 
 ---
 
@@ -406,27 +406,27 @@ Origins are stored in `chrome.storage.local.moltApprovedOrigins` as a plain stri
 setInterval(() => { checkProviderStateAndEmit(); }, 2000);
 ```
 
-Every 2 seconds per active tab, this sends a `MOLT_PROVIDER_REQUEST` to the service worker, waits for `loadState()` to read from `chrome.storage.local`, and compares accounts/chainId. On 30 tabs this is 15 IPC round-trips per second.
+Every 2 seconds per active tab, this sends a `LICHEN_PROVIDER_REQUEST` to the service worker, waits for `loadState()` to read from `chrome.storage.local`, and compares accounts/chainId. On 30 tabs this is 15 IPC round-trips per second.
 
-**Fix:** Replace with an event-driven model: the service worker should broadcast a `MOLT_STATE_CHANGED` message to all tabs when state mutates (wallet lock, account switch, network change). The content script listens and only re-fetches when signalled.
+**Fix:** Replace with an event-driven model: the service worker should broadcast a `LICN_STATE_CHANGED` message to all tabs when state mutates (wallet lock, account switch, network change). The content script listens and only re-fetches when signalled.
 
 ---
 
-### SEC-5 · MEDIUM · `window.ethereum` Shim Exposes `window.moltwallet` Methods with No Permission Check
+### SEC-5 · MEDIUM · `window.ethereum` Shim Exposes `window.licnwallet` Methods with No Permission Check
 
 **File:** [wallet/extension/src/content/inpage-provider.js](wallet/extension/src/content/inpage-provider.js#L150-L164)
 
 ```js
 if (!window.ethereum) {
     window.ethereum = {
-        ...window.moltwallet,
+        ...window.licnwallet,
         isMetaMask: false,
         enable: () => sendRequest({ method: 'eth_requestAccounts' })
     };
 }
 ```
 
-Scripts on the page that access `window.ethereum.accounts()` get back an empty array (unapproved) — correct. But `window.ethereum.getBalance(address)` is forwarded to `molt_getBalance` which is a **read-only method that returns immediately without user approval**, leaking account balance information for any arbitrary address. For privacy-sensitive applications this is acceptable (balances are on a public chain), but it should be documented.
+Scripts on the page that access `window.ethereum.accounts()` get back an empty array (unapproved) — correct. But `window.ethereum.getBalance(address)` is forwarded to `licn_getBalance` which is a **read-only method that returns immediately without user approval**, leaking account balance information for any arbitrary address. For privacy-sensitive applications this is acceptable (balances are on a public chain), but it should be documented.
 
 ---
 
@@ -462,7 +462,7 @@ this.socket.onmessage = (event) => {
 
 Incoming `subscription` notification messages are parsed but not acted upon. The popup relies entirely on a 15-second `setInterval` polling (`startBalancePolling()`), meaning balance updates arrive up to 15 seconds late.
 
-**Fix:** In `onmessage`, detect `msg.method === 'subscription'` and relay a `MOLT_BALANCE_UPDATED` message to all extension tabs via `chrome.runtime.sendMessage` (or a broadcast via `chrome.tabs.query`). The popup listens and calls `refreshBalance()` immediately.
+**Fix:** In `onmessage`, detect `msg.method === 'subscription'` and relay a `LICN_BALANCE_UPDATED` message to all extension tabs via `chrome.runtime.sendMessage` (or a broadcast via `chrome.tabs.query`). The popup listens and calls `refreshBalance()` immediately.
 
 ---
 
@@ -483,7 +483,7 @@ The guard clears the previous interval before setting a new one — correct. How
 
 **File:** [wallet/extension/src/background/service-worker.js](wallet/extension/src/background/service-worker.js)
 
-Every `MOLT_GET_STATE`, `MOLT_PROVIDER_REQUEST`, and `MOLT_WS_SYNC` message triggers `loadState()` which reads from `chrome.storage.local`. MV3 service workers are ephemeral and cannot keep a hot in-memory state. This is unavoidable but means every user interaction incurs a storage I/O. No cache/debounce is applied.
+Every `LICHEN_GET_STATE`, `LICHEN_PROVIDER_REQUEST`, and `LICHEN_WS_SYNC` message triggers `loadState()` which reads from `chrome.storage.local`. MV3 service workers are ephemeral and cannot keep a hot in-memory state. This is unavoidable but means every user interaction incurs a storage I/O. No cache/debounce is applied.
 
 **Note:** This is an architectural constraint of Chrome MV3, not a bug.
 
@@ -518,9 +518,9 @@ All frontend RPC calls vs. server dispatch table ([rpc/src/lib.rs](rpc/src/lib.r
 | `getContractInfo` | `getContractInfo` | ✅ |
 | `getSymbolRegistry` | `getSymbolRegistry` | ✅ |
 | `getAllContracts` | `getAllContracts` | ✅ |
-| `getMoltyIdProfile` | `getMoltyIdProfile` | ✅ |
+| `getLichenIdProfile` | `getLichenIdProfile` | ✅ |
 | `getStakingPosition` | `getStakingPosition` | ✅ |
-| `getReefStakePoolInfo` | `getReefStakePoolInfo` | ✅ |
+| `getMossStakePoolInfo` | `getMossStakePoolInfo` | ✅ |
 | `getUnstakingQueue` | `getUnstakingQueue` | ✅ |
 | `getValidators` | `getValidators` | ✅ |
 | `getNFTsByOwner` | `getNFTsByOwner` | ✅ |
@@ -581,7 +581,7 @@ No XSS vectors found. All dynamic content uses `escapeHtml()` before insertion i
 
 **File:** [wallet/js/shielded.js](wallet/js/shielded.js) (`openShieldModal`)
 
-`zkFeeDisplay(type)` computes fees from local constants (`BASE_FEE_SHELLS + ZK_COMPUTE_FEE[type]`), so the display is actually immediate. The `id="shieldFeeDisplay"` element is set correctly. **No indefinite "Loading..." spinner.** ✅
+`zkFeeDisplay(type)` computes fees from local constants (`BASE_FEE_SPORES + ZK_COMPUTE_FEE[type]`), so the display is actually immediate. The `id="shieldFeeDisplay"` element is set correctly. **No indefinite "Loading..." spinner.** ✅
 
 ### ERR-4 · LOW · Faucet Airdrop Call Has 2s Timeout but No UI Indicator on Timeout
 
@@ -600,11 +600,11 @@ If the faucet is unreachable, the 2s timeout fires, `AbortError` is caught silen
 
 | Assignment | `data` field | Fallback? | Safe? |
 |------------|-------------|-----------|-------|
-| `walletBalance.textContent = ${balanceMolt} MOLT` | `result?.shells ?? 0` | ✅ `?? 0` | ✅ |
+| `walletBalance.textContent = ${balanceLicn} LICN` | `result?.spores ?? 0` | ✅ `?? 0` | ✅ |
 | `chainBlockHeight.textContent = 'Block #' + slot` | `result.getSlot` | ✅ fallback on catch | ✅ |
-| `stakePoolTotalEl.textContent = ...` | `poolInfo?.total_molt_staked ?? 0` | ✅ optional chain | ✅ |
+| `stakePoolTotalEl.textContent = ...` | `poolInfo?.total_licn_staked ?? 0` | ✅ optional chain | ✅ |
 | `validatorCountEl.textContent = validators.length` | `getValidators` → guards `if (!validators)` | ✅ | ✅ |
-| `popup walletBalance.textContent = balanceMolt MOLT` | `result?.shells ?? result?.spendable ?? 0` | ✅ | ✅ |
+| `popup walletBalance.textContent = balanceLichen LICN` | `result?.spores ?? result?.spendable ?? 0` | ✅ | ✅ |
 | `popup aboutNet.textContent = state.network?.selected` | optional chain | ✅ | ✅ |
 | `popup unlockWalletName.textContent = wallet?.name` | ternary guard | ✅ | ✅ |
 | Activity TX `type = typeMap[tx.type] || ...` | fallback expression | ✅ | ✅ |
@@ -617,15 +617,15 @@ No unsafe bare-field accesses (`element.textContent = data.field`) found.
 
 ## Section 13 — Configuration
 
-### CFG-1 · LOW · MOLT Price Hardcoded at $0.10
+### CFG-1 · LOW · LICN Price Hardcoded at $0.10
 
 **File:** [wallet/extension/src/popup/popup.js](wallet/extension/src/popup/popup.js) (`refreshBalance`)
 
 ```js
-usdEl.textContent = `$${(balanceMolt * 0.10).toLocaleString(...)} USD`;
+usdEl.textContent = `$${(balanceLichen * 0.10).toLocaleString(...)} USD`;
 ```
 
-The MOLT/USD price is hardcoded as `0.10`. No price oracle or CoinGecko feed is consulted.
+The LICN/USD price is hardcoded as `0.10`. No price oracle or CoinGecko feed is consulted.
 
 ---
 
@@ -633,7 +633,7 @@ The MOLT/USD price is hardcoded as `0.10`. No price oracle or CoinGecko feed is 
 
 **File:** [wallet/shared-config.js](wallet/shared-config.js)
 
-`MOLT_CONFIG` is an IIFE that uses `window.location.hostname === 'localhost'` to switch between dev ports (3007–3011, 9090, 9100) and production origin-relative paths. The faucet (`localhost:9100`) is correctly referenced in both wallet activity loading and the receive modal. ✅
+`LICHEN_CONFIG` is an IIFE that uses `window.location.hostname === 'localhost'` to switch between dev ports (3007–3011, 9090, 9100) and production origin-relative paths. The faucet (`localhost:9100`) is correctly referenced in both wallet activity loading and the receive modal. ✅
 
 ---
 
@@ -643,7 +643,7 @@ The MOLT/USD price is hardcoded as `0.10`. No price oracle or CoinGecko feed is 
 
 **File:** [wallet/js/identity.js](wallet/js/identity.js) (~line 275)
 
-`encodeMoltyIdArgs` for `set_rate` falls through to the default branch (no `0xAB` layout-descriptor prefix). All other `I64`-type arguments need the layout descriptor for the WASM ABI. If the underlying WASM contract expects a layout-prefixed I64, the transaction will fail on-chain. Comment says "default mode works" but this hasn't been verified against the actual contract ABI.
+`encodeLichenIdArgs` for `set_rate` falls through to the default branch (no `0xAB` layout-descriptor prefix). All other `I64`-type arguments need the layout descriptor for the WASM ABI. If the underlying WASM contract expects a layout-prefixed I64, the transaction will fail on-chain. Comment says "default mode works" but this hasn't been verified against the actual contract ABI.
 
 **Fix:** Test the `set_rate` call on the local testnet. If the WASM runtime requires the layout descriptor prefix, add it.
 
@@ -655,11 +655,11 @@ Covered in UI-6 above.
 
 ---
 
-### ID-3 · LOW · Name Auction `bid_amount` Sent as Whole MOLT Not Shells
+### ID-3 · LOW · Name Auction `bid_amount` Sent as Whole LICN Not Spores
 
 **File:** [wallet/js/identity.js](wallet/js/identity.js) (`showBidAuctionModal`, ~line 1280)
 
-`buildContractCall` receives `valueMolt` and the client passes the raw number from the input field (which users enter in MOLT). If the contract expects shells, all bids are 10^9× too small. If the contract expects MOLT as a floating-point, all bids are correct. This depends on the contract's `bid_name_auction` function signature and requires verification.
+`buildContractCall` receives `valueLicn` and the client passes the raw number from the input field (which users enter in LICN). If the contract expects spores, all bids are 10^9× too small. If the contract expects LICN as a floating-point, all bids are correct. This depends on the contract's `bid_name_auction` function signature and requires verification.
 
 ---
 
@@ -684,7 +684,7 @@ Covered in UI-6 above.
 | 16 | UI-1 | index.html | 🔵 LOW | Send fee hardcoded, not from `getFeeConfig` |
 | 17 | UI-2 | wallet.js:~1340 | 🟡 MEDIUM | Activity pagination cursor may never advance |
 | 18 | UI-3 | wallet.js:~1348 | 🔵 LOW | `tx.timestamp * 1000` — use `formatTime()` instead |
-| 19 | UI-4 | wallet.js:~2830 | 🟡 MEDIUM | MAX token send doesn't reserve MOLT fee |
+| 19 | UI-4 | wallet.js:~2830 | 🟡 MEDIUM | MAX token send doesn't reserve LICN fee |
 | 20 | UI-5 | wallet.js:~1175 | 🔵 LOW | EVM address shown before on-chain registration |
 | 21 | UI-6 | identity.js:~25 | 🟡 MEDIUM | `_identityCache` not cleared on wallet switch |
 | 22 | UI-7 | wallet.js (loadStaking) | 🔵 LOW | `getValidators` not cached |
@@ -702,7 +702,7 @@ Covered in UI-6 above.
 | 34 | ERR-1 | wallet.js (showDashboard) | 🔵 LOW | No global offline indicator |
 | 35 | ERR-2 | shielded.js | ✅ PASS | Shield fee display is immediate |
 | 36 | ERR-4 | wallet.js:~1345 | ✅ PASS | Faucet timeout handled correctly |
-| 38 | CFG-1 | popup.js | 🔵 LOW | MOLT price hardcoded at $0.10 |
+| 38 | CFG-1 | popup.js | 🔵 LOW | LICN price hardcoded at $0.10 |
 | 39 | CFG-2 | shared-config.js | ✅ PASS | Dev/prod URL separation correct |
 | 40 | ID-1 | identity.js:~275 | 🟡 MEDIUM | `set_rate` WASM encoding untested |
 | 41 | ID-2 | identity.js:~25 | 🔵 LOW | Cache not cleared on wallet switch |
@@ -720,4 +720,4 @@ Covered in UI-6 above.
 7. **EXT-2** — Relay WS balance notifications from service worker to popup.
 8. **EXT-1** — Fix extension shielded panel initialization.
 9. **SEC-4** — Replace content-script polling with event-driven state updates.
-10. **UI-4** — Reserve MOLT fee when computing MAX token send.
+10. **UI-4** — Reserve LICN fee when computing MAX token send.

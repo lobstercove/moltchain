@@ -1,7 +1,7 @@
-# MoltChain DEX — Complete Implementation Plan
+# Lichen DEX — Complete Implementation Plan
 
 > **Status**: Planning document — approved for build after all contracts are hardened.
-> **Author**: OpenClaw Agent  
+> **Author**: OpenLichen Agent  
 > **Date**: February 2026  
 > **Priority**: Build AFTER all contract upgrades, hardening, and tests are complete.
 
@@ -9,13 +9,13 @@
 
 ## 1. EXECUTIVE SUMMARY
 
-The MoltChain DEX (Decentralized Exchange) is a full-featured on-chain trading platform built on MoltChain's WASM contract runtime. It combines an on-chain Central Limit Order Book (CLOB) with concentrated liquidity AMM pools, enabling professional-grade trading for both AI agents and human users.
+The Lichen DEX (Decentralized Exchange) is a full-featured on-chain trading platform built on Lichen's WASM contract runtime. It combines an on-chain Central Limit Order Book (CLOB) with concentrated liquidity AMM pools, enabling professional-grade trading for both AI agents and human users.
 
 ### Core Design Principles
 - **Hybrid CLOB + AMM**: Order book for limit orders; AMM as backstop liquidity
-- **Sub-second finality**: Leverages MoltChain's ~400ms slot time
-- **Agent-native**: First-class MoltyID integration for AI traders
-- **Composable**: Deep integration with existing MoltChain contracts (MoltSwap, LobsterLend, ClawVault)
+- **Sub-second finality**: Leverages Lichen's ~400ms slot time
+- **Agent-native**: First-class LichenID integration for AI traders
+- **Composable**: Deep integration with existing Lichen contracts (LichenSwap, ThallLend, SporeVault)
 - **Self-custodial**: All funds held in smart contracts, never in operator wallets
 
 ---
@@ -44,7 +44,7 @@ The MoltChain DEX (Decentralized Exchange) is a full-featured on-chain trading p
     └──────┬──────┘       └──────┬──────┘
            │                      │
     ┌──────▼──────────────────────▼──────┐
-    │        MoltChain Runtime           │
+    │        Lichen Runtime           │
     │  (WASM Contracts + State Storage)  │
     └────────────────────────────────────┘
 ```
@@ -143,7 +143,7 @@ fn get_pair_info(pair_id) -> u32
 #### Fee Structure
 - **Maker**: -1 BPS rebate (makers pay negative fee = earn rebate)
 - **Taker**: 5 BPS (0.05%)
-- **Minimum fee**: 1 shell per trade
+- **Minimum fee**: 1 spore per trade
 - **Fee distribution**: 60% protocol treasury, 20% LP rewards, 20% stakers
 
 ---
@@ -247,7 +247,7 @@ fn multi_hop_swap(trader, path[], amount_in, min_out, deadline) -> u32  // A→B
 - **Direct CLOB**: Single order book fill
 - **Direct AMM**: Single pool swap
 - **Split CLOB+AMM**: Partial fill from each
-- **Multi-hop**: Route through intermediary tokens (e.g., USDC→MOLT→TOKEN)
+- **Multi-hop**: Route through intermediary tokens (e.g., USDC→LICN→TOKEN)
 - **Cross-pool**: Multiple AMM pools in sequence
 
 ---
@@ -268,9 +268,9 @@ fn emergency_delist(admin, pair_id) -> u32
 ```
 
 #### Listing Requirements
-- Minimum initial liquidity: 10,000 MOLT equivalent
+- Minimum initial liquidity: 10,000 LICN equivalent
 - Minimum distinct holders: 10
-- MoltyID verification for proposer (reputation ≥ 500)
+- LichenID verification for proposer (reputation ≥ 500)
 - 48-hour voting period, 66% approval threshold
 - Emergency delisting by admin (for rug pulls/scams)
 
@@ -294,8 +294,8 @@ fn get_trading_tier(trader) -> u32
 #### Reward Structure
 
 **Trading Rewards (Fee Mining)**:
-- Traders earn MOLT tokens proportional to fees paid
-- Reward pool: 1,000,000 MOLT per month (decaying schedule)
+- Traders earn LICN tokens proportional to fees paid
+- Reward pool: 1,000,000 LICN per month (decaying schedule)
 - Higher volume = higher tier multiplier:
   - Bronze (<10k volume): 1x
   - Silver (10k-100k): 1.5x
@@ -303,14 +303,14 @@ fn get_trading_tier(trader) -> u32
   - Diamond (>1M): 3x
 
 **LP Rewards (Liquidity Mining)**:
-- LPs earn MOLT tokens proportional to in-range liquidity
+- LPs earn LICN tokens proportional to in-range liquidity
 - Concentrated positions earn more per $ of capital
 - Bonus for stablecoin pairs (lower IL risk needs less incentive adjustment)
 
 **Referral Program**:
 - Referrers earn 10% of referee's trading fees
 - Referee gets 5% fee discount for first 30 days
-- MoltyID-verified referrers earn 15%
+- LichenID-verified referrers earn 15%
 
 ---
 
@@ -346,9 +346,9 @@ fn get_liquidatable_positions(pair_id) -> u32
 4. If position is underwater (bad debt): insurance fund covers shortfall
 5. If insurance fund insufficient: socialize losses across LPs
 
-#### Integration with LobsterLend
-- Margin funding sourced from LobsterLend lending pools
-- Borrowers pay interest to LobsterLend depositors
+#### Integration with ThallLend
+- Margin funding sourced from ThallLend lending pools
+- Borrowers pay interest to ThallLend depositors
 - Flash loan integration for atomic liquidations
 
 ---
@@ -364,7 +364,7 @@ fn get_24h_stats(pair_id) -> u32                                  // volume, hig
 fn get_all_pairs_stats() -> u32                                   // summary
 fn get_trader_stats(trader) -> u32                                // PnL, volume, trade count
 fn get_leaderboard(metric, count) -> u32                          // top traders
-fn update_price_feed(pair_id) -> u32                              // push to MoltOracle
+fn update_price_feed(pair_id) -> u32                              // push to LichenOracle
 ```
 
 #### Candle Intervals
@@ -373,9 +373,9 @@ fn update_price_feed(pair_id) -> u32                              // push to Mol
 - Rolling window: keep last 1440 1-min candles (24h), 288 5-min (24h), etc.
 
 #### Oracle Integration
-- DEX prices pushed to MoltOracle as signed price feeds
+- DEX prices pushed to LichenOracle as signed price feeds
 - TWAP calculated from 1-minute candles
-- Used by LobsterLend for collateral valuation and ClawVault for strategy pricing
+- Used by ThallLend for collateral valuation and SporeVault for strategy pricing
 
 ---
 
@@ -384,33 +384,33 @@ fn update_price_feed(pair_id) -> u32                              // push to Mol
 ### Existing Contract Dependencies
 
 ```
-DEX_CORE ──────┬── MoltSwap (v2: TWAP oracle, price impact)
-               ├── MoltCoin (MOLT token transfers)
-               └── MoltyID (trader identity verification)
+DEX_CORE ──────┬── LichenSwap (v2: TWAP oracle, price impact)
+               ├── LichenCoin (LICN token transfers)
+               └── LichenID (trader identity verification)
 
-DEX_AMM ───────┬── MoltSwap (LP composition with existing pools)
-               └── MoltCoin (token transfers)
+DEX_AMM ───────┬── LichenSwap (LP composition with existing pools)
+               └── LichenCoin (token transfers)
 
 DEX_ROUTER ────┬── DEX_CORE (order book fills)
                ├── DEX_AMM (pool swaps)
-               └── MoltSwap (legacy pool routing)
+               └── LichenSwap (legacy pool routing)
 
 DEX_MARGIN ────┬── DEX_CORE (leveraged order placement)
-               ├── LobsterLend (borrow funds for margin)
-               ├── MoltOracle (mark price, funding rate)
-               └── MoltCoin (collateral management)
+               ├── ThallLend (borrow funds for margin)
+               ├── LichenOracle (mark price, funding rate)
+               └── LichenCoin (collateral management)
 
-DEX_REWARDS ───┬── MoltCoin (reward distribution)
-               ├── MoltyID (tier verification, referral identity)
-               └── ClawVault (LP reward compounding)
+DEX_REWARDS ───┬── LichenCoin (reward distribution)
+               ├── LichenID (tier verification, referral identity)
+               └── SporeVault (LP reward compounding)
 
-DEX_GOVERNANCE ┬── MoltDAO (proposal voting mechanism)
-               ├── MoltyID (reputation-gated proposals)
+DEX_GOVERNANCE ┬── LichenDAO (proposal voting mechanism)
+               ├── LichenID (reputation-gated proposals)
                └── DEX_CORE (pair configuration)
 
 DEX_ANALYTICS ─┬── DEX_CORE (trade events)
                ├── DEX_AMM (pool state)
-               └── MoltOracle (price feed publication)
+               └── LichenOracle (price feed publication)
 ```
 
 ---
@@ -421,16 +421,16 @@ DEX_ANALYTICS ─┬── DEX_CORE (trade events)
 
 | Protection | Source | Status |
 |-----------|--------|--------|
-| Multi-call confirmation pattern | MoltBridge v2 | ✅ Proven |
+| Multi-call confirmation pattern | LichenBridge v2 | ✅ Proven |
 | Emergency pause | All 11 contracts | ✅ Deployed |
-| Reentrancy guards | LobsterLend v2 | ✅ Pattern ready |
-| Price impact limits | MoltSwap v2 (5% max) | ✅ Deployed |
-| TWAP oracle | MoltSwap v2 | ✅ Deployed |
-| Flash loan caps | MoltSwap v2 (90%), LobsterLend (0.09% fee) | ✅ Deployed |
-| Anti-sniping | MoltAuction v2 | ✅ Deployed |
-| MoltyID identity gates | All DeFi contracts | ✅ Standard |
-| Admin key rotation | MoltyID v2 | ✅ Deployed |
-| Rate limiting / cooldowns | MoltyID v2 | ✅ Deployed |
+| Reentrancy guards | ThallLend v2 | ✅ Pattern ready |
+| Price impact limits | LichenSwap v2 (5% max) | ✅ Deployed |
+| TWAP oracle | LichenSwap v2 | ✅ Deployed |
+| Flash loan caps | LichenSwap v2 (90%), ThallLend (0.09% fee) | ✅ Deployed |
+| Anti-sniping | LichenAuction v2 | ✅ Deployed |
+| LichenID identity gates | All DeFi contracts | ✅ Standard |
+| Admin key rotation | LichenID v2 | ✅ Deployed |
+| Rate limiting / cooldowns | LichenID v2 | ✅ Deployed |
 
 ### 5.2 DEX-Specific Security
 
@@ -478,11 +478,11 @@ DEX_ANALYTICS ─┬── DEX_CORE (trade events)
 ### Phase 3: Governance + Rewards (Weeks 6-7)
 8. `dex_governance` — Pair listing governance, fee voting
 9. `dex_rewards` — Trading rewards, LP mining, referrals
-10. Integration with MoltDAO and MoltyID
+10. Integration with LichenDAO and LichenID
 
 ### Phase 4: Margin (Weeks 8-10)
 11. `dex_margin` — Margin trading, liquidation engine
-12. Integration with LobsterLend for funding
+12. Integration with ThallLend for funding
 13. Oracle integration for mark price and funding rates
 14. Extensive adversarial testing (liquidation edge cases)
 
@@ -490,7 +490,7 @@ DEX_ANALYTICS ─┬── DEX_CORE (trade events)
 15. Trading UI (React + WebSocket order book)
 16. TypeScript SDK for programmatic trading
 17. Agent trading API (REST + WebSocket)
-18. MoltyID-integrated trader profiles
+18. LichenID-integrated trader profiles
 
 ### Phase 6: Testnet + Audit (Weeks 14-16)
 19. Deploy all DEX contracts to testnet
@@ -508,13 +508,13 @@ DEX_ANALYTICS ─┬── DEX_CORE (trade events)
 ```
 Trading Fees (per trade)
     │
-    ├── 60% → Protocol Treasury (MoltDAO controlled)
+    ├── 60% → Protocol Treasury (LichenDAO controlled)
     │
     ├── 20% → LP Rewards Pool
     │         └── Distributed to in-range LPs proportionally
     │
-    └── 20% → MOLT Stakers
-              └── Distributed via ClawVault yield
+    └── 20% → LICN Stakers
+              └── Distributed via SporeVault yield
 ```
 
 ### Fee Revenue Projections
@@ -526,12 +526,12 @@ Trading Fees (per trade)
 | $10M | 5 bps | $5,000 | $1,825,000 |
 | $100M | 5 bps | $50,000 | $18,250,000 |
 
-### MOLT Token Utility in DEX
-1. **Fee payment**: Pay fees in MOLT for 20% discount
-2. **Staking**: Stake MOLT for share of trading fees
+### LICN Token Utility in DEX
+1. **Fee payment**: Pay fees in LICN for 20% discount
+2. **Staking**: Stake LICN for share of trading fees
 3. **Governance**: Vote on new listings, fee changes, parameters
-4. **Collateral**: Use MOLT as margin collateral (at 80% valuation)
-5. **Rewards**: Earn MOLT from trading and LP mining
+4. **Collateral**: Use LICN as margin collateral (at 80% valuation)
+5. **Rewards**: Earn LICN from trading and LP mining
 
 ---
 
@@ -562,7 +562,7 @@ GET  /api/v1/leaderboard                — Top traders
 ### WebSocket Feeds
 
 ```
-ws://dex.moltchain.network/ws
+ws://dex.lichen.network/ws
 
 Subscribe channels:
   orderbook:<pair_id>     — Real-time order book updates (L2)
@@ -576,17 +576,17 @@ Subscribe channels:
 ### Agent SDK (TypeScript)
 
 ```typescript
-import { MoltDEX } from '@moltchain/dex-sdk';
+import { LichenDEX } from '@lichen/dex-sdk';
 
-const dex = new MoltDEX({
-  endpoint: 'https://dex.moltchain.network',
+const dex = new LichenDEX({
+  endpoint: 'https://dex.lichen.network',
   wallet: myKeypair,
-  moltyId: 'alice.molt',  // optional MoltyID
+  lichenId: 'alice.lichen',  // optional LichenID
 });
 
 // Place limit order
 const order = await dex.placeLimitOrder({
-  pair: 'MOLT/USDC',
+  pair: 'LICN/USDC',
   side: 'buy',
   price: 1.50,
   quantity: 1000,
@@ -595,17 +595,17 @@ const order = await dex.placeLimitOrder({
 
 // Smart-routed swap
 const result = await dex.swap({
-  tokenIn: 'MOLT',
+  tokenIn: 'LICN',
   tokenOut: 'USDC', 
-  amountIn: 1000_000_000, // 1000 MOLT
+  amountIn: 1000_000_000, // 1000 LICN
   slippage: 0.5, // 0.5%
 });
 
 // Get order book
-const { bids, asks } = await dex.getOrderBook('MOLT/USDC', { depth: 20 });
+const { bids, asks } = await dex.getOrderBook('LICN/USDC', { depth: 20 });
 
 // Stream real-time trades
-dex.subscribeTrades('MOLT/USDC', (trade) => {
+dex.subscribeTrades('LICN/USDC', (trade) => {
   console.log(`${trade.side} ${trade.quantity} @ ${trade.price}`);
 });
 ```
@@ -645,7 +645,7 @@ dex.subscribeTrades('MOLT/USDC', (trade) => {
 - End-to-end: Place order → match → settle → fee distribution
 - Router: Compare CLOB vs AMM vs split vs direct execution
 - Margin: Open → add margin → partial close → liquidation threshold
-- Cross-contract: DEX trade → MoltOracle price update → LobsterLend valuation
+- Cross-contract: DEX trade → LichenOracle price update → ThallLend valuation
 
 ---
 
@@ -653,8 +653,8 @@ dex.subscribeTrades('MOLT/USDC', (trade) => {
 
 ### Testnet Deployment Order
 
-1. Deploy `dex_core` + create MOLT/USDC pair
-2. Deploy `dex_amm` + create MOLT/USDC pool (30bps tier)
+1. Deploy `dex_core` + create LICN/USDC pair
+2. Deploy `dex_amm` + create LICN/USDC pool (30bps tier)
 3. Deploy `dex_router` + configure routes
 4. Deploy `dex_analytics` + start recording
 5. Deploy `dex_governance` + initial pair list
@@ -674,7 +674,7 @@ dex.subscribeTrades('MOLT/USDC', (trade) => {
 - [ ] Documentation complete
 - [ ] Monitoring dashboards live
 - [ ] On-call runbook for incidents
-- [ ] Insurance fund seeded (minimum 100K MOLT)
+- [ ] Insurance fund seeded (minimum 100K LICN)
 
 ---
 
@@ -765,22 +765,22 @@ All of the following has been verified as of this writing:
 
 | Dependency | Contract | Status | Tests |
 |-----------|---------|:------:|:-----:|
-| Bridge v2 (multi-call confirm) | moltbridge | ✅ | 38 |
-| TWAP Oracle + Price Impact | moltswap | ✅ | 20 |
-| Proof-of-Storage | reef_storage | ✅ | 19 |
+| Bridge v2 (multi-call confirm) | lichenbridge | ✅ | 38 |
+| TWAP Oracle + Price Impact | lichenswap | ✅ | 20 |
+| Proof-of-Storage | moss_storage | ✅ | 19 |
 | Escrow + Dispute Resolution | compute_market | ✅ | 28 |
-| Flash Loans + Emergency Pause | lobsterlend | ✅ | 33 |
-| Anti-Manipulation | clawpump | ✅ | 28 |
-| Layout Bug Fix + Offers | moltmarket | ✅ | 17 |
-| Cliff Vesting + Transfer | clawpay | ✅ | 17 |
-| Anti-Sniping + Reserve Price | moltauction | ✅ | 26 |
-| Deposit/Withdrawal Fees + Caps | clawvault | ✅ | 29 |
-| Pause + Cooldowns + Admin Rotation | moltyid | ✅ | 34 |
+| Flash Loans + Emergency Pause | thalllend | ✅ | 33 |
+| Anti-Manipulation | sporepump | ✅ | 28 |
+| Layout Bug Fix + Offers | lichenmarket | ✅ | 17 |
+| Cliff Vesting + Transfer | sporepay | ✅ | 17 |
+| Anti-Sniping + Reserve Price | lichenauction | ✅ | 26 |
+| Deposit/Withdrawal Fees + Caps | sporevault | ✅ | 29 |
+| Pause + Cooldowns + Admin Rotation | lichenid | ✅ | 34 |
 | **TOTAL** | **11 contracts** | **✅** | **289** |
 
-Plus 4 non-upgraded contracts (moltcoin: 9, moltdao: 6, moltoracle: 16, moltpunks: 16) = **47 more tests**.
+Plus 4 non-upgraded contracts (lichencoin: 9, lichendao: 6, lichenoracle: 16, lichenpunks: 16) = **47 more tests**.
 
-**Grand total across entire MoltChain: 336 tests, 0 failures.**
+**Grand total across entire Lichen: 336 tests, 0 failures.**
 
 ---
 

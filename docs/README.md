@@ -1,6 +1,6 @@
-# MoltChain Documentation
+# Lichen Documentation
 
-Complete documentation for the MoltChain blockchain.
+Complete documentation for the Lichen blockchain.
 
 ## ✅ Single Source of Truth
 - [CURRENT_STATUS.md](CURRENT_STATUS.md) - The only authoritative status report (supersedes all other status claims)
@@ -15,7 +15,7 @@ Core vision, economics, and project overview:
 - [ECONOMICS.md](foundation/ECONOMICS.md) - Token economics and fee model
 - [TOKENOMICS.md](foundation/TOKENOMICS.md) - Consolidated tokenomics reference
 - [TOKENOMICS_OVERHAUL_PLAN.md](foundation/TOKENOMICS_OVERHAUL_PLAN.md) - Overhaul migration plan
-- [MOLTYID_VISION.md](foundation/MOLTYID_VISION.md) - Identity layer vision and scope
+- [LICHENID_VISION.md](foundation/LICHENID_VISION.md) - Identity layer vision and scope
 
 ### Architecture
 Technical design and system architecture:
@@ -27,7 +27,7 @@ Technical design and system architecture:
 ### Guides
 Step-by-step tutorials and references:
 - [GETTING_STARTED.md](GETTING_STARTED.md) - Quick start for developers
-- [QUICK_START_GUIDE.md](guides/QUICK_START_GUIDE.md) - Fast track to running MoltChain
+- [QUICK_START_GUIDE.md](guides/QUICK_START_GUIDE.md) - Fast track to running Lichen
 - [GETTING_STARTED_RUST.md](guides/GETTING_STARTED_RUST.md) - Rust development guide
 - [CONTRACT_DEVELOPMENT_GUIDE.md](guides/CONTRACT_DEVELOPMENT_GUIDE.md) - Smart contract development
 - [RPC_API_REFERENCE.md](guides/RPC_API_REFERENCE.md) - Complete API documentation
@@ -62,7 +62,7 @@ Product and ecosystem strategy plans:
 - [PREDICTION_MARKETS_PLAN.md](strategy/PREDICTION_MARKETS_PLAN.md) - Prediction markets roadmap
 
 ### Skills
-OpenClaw skills for agent integration:
+OpenLichen skills for agent integration:
 - [VALIDATOR_SKILL.md](skills/VALIDATOR_SKILL.md) - Automated validator management
 
 ### Archive
@@ -77,7 +77,7 @@ Historical status reports and build logs:
 
 **Getting Started:**
 1. [README.md](../README.md) - Project overview
-2. [QUICK_START_GUIDE.md](guides/QUICK_START_GUIDE.md) - Fast track to running MoltChain
+2. [QUICK_START_GUIDE.md](guides/QUICK_START_GUIDE.md) - Fast track to running Lichen
 3. [GETTING_STARTED.md](GETTING_STARTED.md) - Comprehensive developer guide
 
 **For Validators:**
@@ -92,4 +92,4 @@ Historical status reports and build logs:
 
 ---
 
-*The reef is active. The future is molty.* 🦞⚡
+*The network is active. The future is lichen.* 🦞⚡

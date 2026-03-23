@@ -1,4 +1,4 @@
-# 🧪 MoltChain Integration Test Report
+# 🧪 Lichen Integration Test Report
 **Date:** February 8, 2026  
 **Validator PID:** 97421  
 **RPC Port:** 8899  
@@ -20,31 +20,31 @@
 ### ✅ WORKING COMMANDS (17/20)
 
 #### Identity & Wallet (2/2)
-- ✅ `molt identity new` - Creates new keypair
-- ✅ `molt identity show` - Displays pubkey from keypair
+- ✅ `lichen identity new` - Creates new keypair
+- ✅ `lichen identity show` - Displays pubkey from keypair
 
 #### Balance & Account (3/3)
-- ✅ `molt balance <address>` - Shows balance breakdown
-- ✅ `molt wallet balance --keypair <file>` - Wallet balance
-- ✅ `molt balance <address>` - Full breakdown with spendable/staked/locked
+- ✅ `lichen balance <address>` - Shows balance breakdown
+- ✅ `lichen wallet balance --keypair <file>` - Wallet balance
+- ✅ `lichen balance <address>` - Full breakdown with spendable/staked/locked
 
 #### Block Operations (4/4)
-- ✅ `molt block <slot>` - Get block by slot
-- ✅ `molt block` - Get latest block (when no slot specified)
-- ✅ `molt latest` - Get latest block
-- ✅ `molt slot` - Get current slot
+- ✅ `lichen block <slot>` - Get block by slot
+- ✅ `lichen block` - Get latest block (when no slot specified)
+- ✅ `lichen latest` - Get latest block
+- ✅ `lichen slot` - Get current slot
 
 #### Chain & Network (3/3)
-- ✅ `molt status` - Comprehensive chain status
-- ✅ `molt metrics` - Performance metrics
-- ✅ `molt validators` - List all validators
+- ✅ `lichen status` - Comprehensive chain status
+- ✅ `lichen metrics` - Performance metrics
+- ✅ `lichen validators` - List all validators
 
 #### Staking (2/2)
-- ✅ `molt staking info <address>` - Staking info (via RPC call)
-- ✅ `molt staking rewards <address>` - Rewards info
+- ✅ `lichen staking info <address>` - Staking info (via RPC call)
+- ✅ `lichen staking rewards <address>` - Rewards info
 
 #### Supply & Economics (3/3)
-- ✅ `molt burned` - Total burned MOLT
+- ✅ `lichen burned` - Total burned LICN
 - ✅ Total supply (via `status` command)
 - ✅ Total staked (via `metrics` command)
 
@@ -52,7 +52,7 @@
 
 #### 1. **network info** - Parsing Error ❌
 ```bash
-$ molt network info
+$ lichen network info
 ⚠️  Could not fetch network info: Failed to parse network info
 ```
 **Problem:** CLI expects different JSON format than RPC returns  
@@ -60,7 +60,7 @@ $ molt network info
 
 #### 2. **account info** - Parsing Error ❌
 ```bash
-$ molt account info <address>
+$ lichen account info <address>
 ⚠️  Could not fetch account info: Failed to parse account info
 ```
 **Problem:** CLI parser mismatch with RPC response  
@@ -76,10 +76,10 @@ $ molt account info <address>
 ### ✅ WORKING ENDPOINTS (18/24)
 
 #### Account & Balance (4/4)
-- ✅ `getBalance` - Returns 8 fields (shells, molt, spendable, spendable_molt, staked, staked_molt, locked, locked_molt)
+- ✅ `getBalance` - Returns 8 fields (spores, licn, spendable, spendable_licn, staked, staked_licn, locked, locked_licn)
 - ✅ `getAccountInfo` - Account details (owner, executable, data)
 - ✅ Balance breakdown working across all account types
-- ✅ Genesis treasury: 1B MOLT (all spendable)
+- ✅ Genesis treasury: 1B LICN (all spendable)
 
 #### Block Operations (4/4)
 - ✅ `getBlock` - Get block by slot
@@ -93,9 +93,9 @@ $ molt account info <address>
 - ✅ `getStakingInfo` - Staking details
 
 #### Supply & Economics (4/4)
-- ✅ `getTotalSupply` - Total MOLT supply
-- ✅ `getCirculatingSupply` - Circulating MOLT
-- ✅ `getTotalBurned` - Burned MOLT
+- ✅ `getTotalSupply` - Total LICN supply
+- ✅ `getCirculatingSupply` - Circulating LICN
+- ✅ `getTotalBurned` - Burned LICN
 - ✅ `getTotalStaked` - Total staked (now shows 10K correctly, not 1B bug!)
 
 #### Chain Info (3/3)
@@ -141,28 +141,28 @@ $ molt account info <address>
 ### Validator Account
 ```json
 {
-  "molt": "10000.0000",
-  "shells": 10000000000000,
+  "licn": "10000.0000",
+  "spores": 10000000000000,
   "spendable": 0,              // ✅ Correct: 0 spendable initially
-  "spendable_molt": "0.0000",
+  "spendable_licn": "0.0000",
   "staked": 10000000000000,    // ✅ Correct: 10K staked
-  "staked_molt": "10000.0000",
+  "staked_licn": "10000.0000",
   "locked": 0,
-  "locked_molt": "0.0000"
+  "locked_licn": "0.0000"
 }
 ```
 
 ### Genesis Treasury
 ```json
 {
-  "molt": "1000000000.0000",
-  "shells": 1000000000000000000,
+  "licn": "1000000000.0000",
+  "spores": 1000000000000000000,
   "spendable": 1000000000000000000, // ✅ Correct: All spendable
-  "spendable_molt": "1000000000.0000",
+  "spendable_licn": "1000000000.0000",
   "staked": 0,                       // ✅ Correct: None staked
-  "staked_molt": "0.0000",
+  "staked_licn": "0.0000",
   "locked": 0,
-  "locked_molt": "0.0000"
+  "locked_licn": "0.0000"
 }
 ```
 
@@ -196,8 +196,8 @@ $ molt account info <address>
 ### 🚧 Needed for Full EVM Integration
 - [ ] Add `nonce`, `code_hash`, `storage_root` fields to Account
 - [ ] Implement RLP transaction decoding
-- [ ] Map 20-byte EVM addresses ↔ 32-byte MoltChain pubkeys
-- [ ] EVM gas → MOLT shells conversion
+- [ ] Map 20-byte EVM addresses ↔ 32-byte Lichen pubkeys
+- [ ] EVM gas → LICN spores conversion
 - [ ] eth_* RPC method implementations
 - [ ] EVM bytecode execution (WASM wrapper or native EVM)
 
@@ -298,8 +298,8 @@ cargo build --release
 wscat -c ws://localhost:8900
 
 # 6. Contract integration test
-./target/release/molt deploy counter.wasm
-./target/release/molt call <contract> increment
+./target/release/lichen deploy counter.wasm
+./target/release/lichen call <contract> increment
 ```
 
 ### Day 3 (3-4 hours)
@@ -330,7 +330,7 @@ wscat -c ws://localhost:8900
 
 ## 📝 Conclusion
 
-**Current State:** MoltChain is **85% testnet-ready**
+**Current State:** Lichen is **85% testnet-ready**
 
 **Critical Path to 95%:**
 1. Fix 3 CLI parsers (2 hours) ✅

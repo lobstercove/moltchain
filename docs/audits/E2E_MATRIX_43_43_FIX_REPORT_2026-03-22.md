@@ -21,18 +21,18 @@ After integrating the CU (Compute Unit) gas model and several other v0.4.5 harde
 |-------|--------|
 | **File** | `tests/resolve-funded-signers.py` line 83 |
 | **Tests Fixed** | 10 (DEX margin liquidation), 13 (prediction multi-outcome), others |
-| **Root Cause** | Sort key was `(-shells, priority, path)` — selected `builder_grants` (highest balance) as `AGENT_KEYPAIR` instead of `genesis-primary` (admin of all contracts) |
-| **Fix** | Changed sort to `(priority, -shells, path)` — admin priority over balance |
-| **Why It Mattered** | `genesis-primary` is admin of ALL 29 contracts. Operations like `set_mark_price` (dex_margin), `admin_register_reserved_name` (MoltyID), and market creation requiring reputation all silently fail when called by a non-admin keypair. The contract returns non-zero but the TX is still committed as "Success" — making the failure invisible. |
+| **Root Cause** | Sort key was `(-spores, priority, path)` — selected `builder_grants` (highest balance) as `AGENT_KEYPAIR` instead of `genesis-primary` (admin of all contracts) |
+| **Fix** | Changed sort to `(priority, -spores, path)` — admin priority over balance |
+| **Why It Mattered** | `genesis-primary` is admin of ALL 29 contracts. Operations like `set_mark_price` (dex_margin), `admin_register_reserved_name` (LichenID), and market creation requiring reputation all silently fail when called by a non-admin keypair. The contract returns non-zero but the TX is still committed as "Success" — making the failure invisible. |
 
 **Before:**
 ```python
-funded.sort(key=lambda c: (-c["shells"], priority(c["path"]), c["path"]))
+funded.sort(key=lambda c: (-c["spores"], priority(c["path"]), c["path"]))
 ```
 
 **After:**
 ```python
-funded.sort(key=lambda c: (priority(c["path"]), -c["shells"], c["path"]))
+funded.sort(key=lambda c: (priority(c["path"]), -c["spores"], c["path"]))
 ```
 
 > **Key Discovery**: `genesis-primary` is admin of ALL contracts (set at genesis via `named_init_args(&admin)` and `opcode_init_args(&admin)`). `builder_grants` has the highest balance but NO admin rights. This distinction caused the most insidious silent failures across multiple tests.
@@ -168,7 +168,7 @@ if (errorMsg.includes('rate limit')) {
 |-------|--------|
 | **File** | `tests/test_marketplace_audit.js` line ~840 |
 | **Tests Fixed** | 21 (marketplace audit) |
-| **Root Cause** | M-38.7 assertion used `String.includes('call_token_transfer(payment_token, marketplace_addr, seller, royalty_amount)')` but the Rust source (moltmarket/src/lib.rs lines 1360-1365) formats this across 6 lines |
+| **Root Cause** | M-38.7 assertion used `String.includes('call_token_transfer(payment_token, marketplace_addr, seller, royalty_amount)')` but the Rust source (lichenmarket/src/lib.rs lines 1360-1365) formats this across 6 lines |
 | **Fix** | Vicinity-based check: find fallback log message index, slice 300 chars, verify `call_token_transfer`, `seller`, and `royalty_amount` all present within that vicinity |
 
 ---
@@ -209,7 +209,7 @@ if (errorMsg.includes('rate limit')) {
 ## Recurring Patterns & Lessons
 
 ### 1. Silent Contract Call Failures
-MoltChain commits ALL transactions as "Success" — including contract calls that return non-zero (error). This makes debugging extremely difficult because the test sees a successful TX but the contract operation was never executed.
+Lichen commits ALL transactions as "Success" — including contract calls that return non-zero (error). This makes debugging extremely difficult because the test sees a successful TX but the contract operation was never executed.
 
 **Recommendation**: Add a transaction result field that distinguishes between TX-level success and contract-level success.
 

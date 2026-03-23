@@ -1,10 +1,10 @@
 #!/bin/bash
-# MoltChain Programs - Deploy All Services
+# Lichen Programs - Deploy All Services
 # Run this script to deploy compiler + faucet + RPC/WS
 
 set -e
 
-echo "🦞 MoltChain Programs Deployment Script"
+echo "🦞 Lichen Programs Deployment Script"
 echo "========================================"
 echo ""
 
@@ -58,8 +58,8 @@ fi
 echo "✅ Dependencies OK"
 echo ""
 
-# Build MoltChain Core
-echo "🔨 Building MoltChain Core..."
+# Build Lichen Core
+echo "🔨 Building Lichen Core..."
 cd ..
 cargo build --release
 echo "✅ Core built"
@@ -111,7 +111,7 @@ max_wasm_size_mb = 10
 
 [sandbox]
 enabled = true
-docker_image = "moltchain/compiler-sandbox"
+docker_image = "lichen/compiler-sandbox"
 EOF
 
 # Faucet config
@@ -127,7 +127,7 @@ max_per_request = 100
 cooldown_seconds = 3600
 
 [keypair]
-# Generate with: molt keygen --output faucet-keypair.json
+# Generate with: licn keygen --output faucet-keypair.json
 path = "config/faucet-keypair.json"
 EOF
 fi
@@ -138,12 +138,12 @@ echo ""
 # Generate faucet keypair if needed
 if [ "$NETWORK" != "mainnet" ] && [ ! -f "config/faucet-keypair.json" ]; then
     echo "🔑 Generating faucet keypair..."
-    if command -v molt &> /dev/null; then
-        molt keygen --output config/faucet-keypair.json
-    elif [ -f "$(pwd)/target/release/molt" ]; then
-        $(pwd)/target/release/molt keygen --output config/faucet-keypair.json
+    if command -v licn &> /dev/null; then
+        licn keygen --output config/faucet-keypair.json
+    elif [ -f "$(pwd)/target/release/lichen" ]; then
+        $(pwd)/target/release/lichen keygen --output config/faucet-keypair.json
     else
-        echo "❌ Error: molt CLI not found. Build it first with 'cargo build --release -p molt-cli'"
+        echo "❌ Error: licn CLI not found. Build it first with 'cargo build --release -p lichen-cli'"
         echo "   Then run this script again to generate the faucet keypair."
         exit 1
     fi
@@ -154,16 +154,16 @@ fi
 # Create systemd services
 echo "📦 Creating systemd services..."
 
-sudo tee /etc/systemd/system/moltchain-rpc.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/lichen-rpc.service > /dev/null <<EOF
 [Unit]
-Description=MoltChain RPC Service
+Description=Lichen RPC Service
 After=network.target
 
 [Service]
 Type=simple
 User=$USER
 WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/target/release/moltchain --rpc-port $RPC_PORT
+ExecStart=$(pwd)/target/release/lichen --rpc-port $RPC_PORT
 Restart=always
 RestartSec=10
 NoNewPrivileges=true
@@ -175,9 +175,9 @@ ReadWritePaths=$(pwd)/data
 WantedBy=multi-user.target
 EOF
 
-sudo tee /etc/systemd/system/moltchain-compiler.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/lichen-compiler.service > /dev/null <<EOF
 [Unit]
-Description=MoltChain Compiler Service
+Description=Lichen Compiler Service
 After=network.target
 
 [Service]
@@ -185,7 +185,7 @@ Type=simple
 User=$USER
 WorkingDirectory=$(pwd)/compiler
 Environment="PORT=$COMPILER_PORT"
-ExecStart=$(pwd)/compiler/target/release/moltchain-compiler
+ExecStart=$(pwd)/compiler/target/release/lichen-compiler
 Restart=always
 RestartSec=10
 NoNewPrivileges=true
@@ -197,10 +197,10 @@ WantedBy=multi-user.target
 EOF
 
 if [ "$NETWORK" != "mainnet" ]; then
-    sudo tee /etc/systemd/system/moltchain-faucet.service > /dev/null <<EOF
+    sudo tee /etc/systemd/system/lichen-faucet.service > /dev/null <<EOF
 [Unit]
-Description=MoltChain Faucet Service
-After=network.target moltchain-rpc.service
+Description=Lichen Faucet Service
+After=network.target lichen-rpc.service
 
 [Service]
 Type=simple
@@ -209,7 +209,7 @@ WorkingDirectory=$(pwd)/faucet
 Environment="PORT=$FAUCET_PORT"
 Environment="RPC_URL=http://localhost:$RPC_PORT"
 Environment="NETWORK=$NETWORK"
-ExecStart=$(pwd)/faucet/target/release/moltchain-faucet
+ExecStart=$(pwd)/faucet/target/release/lichen-faucet
 Restart=always
 RestartSec=10
 NoNewPrivileges=true
@@ -233,17 +233,17 @@ echo ""
 # Start services
 echo "🚀 Starting services..."
 
-sudo systemctl enable moltchain-rpc
-sudo systemctl start moltchain-rpc
+sudo systemctl enable lichen-rpc
+sudo systemctl start lichen-rpc
 echo "✅ RPC service started"
 
-sudo systemctl enable moltchain-compiler
-sudo systemctl start moltchain-compiler
+sudo systemctl enable lichen-compiler
+sudo systemctl start lichen-compiler
 echo "✅ Compiler service started"
 
 if [ "$NETWORK" != "mainnet" ]; then
-    sudo systemctl enable moltchain-faucet
-    sudo systemctl start moltchain-faucet
+    sudo systemctl enable lichen-faucet
+    sudo systemctl start lichen-faucet
     echo "✅ Faucet service started"
 fi
 
@@ -253,10 +253,10 @@ echo "🎉 Deployment Complete!"
 echo "=========================================="
 echo ""
 echo "📊 Service Status:"
-sudo systemctl status moltchain-rpc --no-pager | head -5
-sudo systemctl status moltchain-compiler --no-pager | head -5
+sudo systemctl status lichen-rpc --no-pager | head -5
+sudo systemctl status lichen-compiler --no-pager | head -5
 if [ "$NETWORK" != "mainnet" ]; then
-    sudo systemctl status moltchain-faucet --no-pager | head -5
+    sudo systemctl status lichen-faucet --no-pager | head -5
 fi
 echo ""
 
@@ -270,10 +270,10 @@ fi
 echo ""
 
 echo "📝 View logs:"
-echo "  RPC: sudo journalctl -u moltchain-rpc -f"
-echo "  Compiler: sudo journalctl -u moltchain-compiler -f"
+echo "  RPC: sudo journalctl -u lichen-rpc -f"
+echo "  Compiler: sudo journalctl -u lichen-compiler -f"
 if [ "$NETWORK" != "mainnet" ]; then
-    echo "  Faucet: sudo journalctl -u moltchain-faucet -f"
+    echo "  Faucet: sudo journalctl -u lichen-faucet -f"
 fi
 echo ""
 
@@ -285,4 +285,4 @@ if [ "$NETWORK" != "mainnet" ]; then
 fi
 echo ""
 
-echo "🦞 MoltChain Programs is ready!"
+echo "🦞 Lichen Programs is ready!"

@@ -1,4 +1,4 @@
-# MoltChain Production Readiness Audit
+# Lichen Production Readiness Audit
 
 **Date:** 2026-02-23  
 **Scope:** `core`, `rpc`, `validator`, `p2p`, `cli`, `contracts`, explorer shielded UX path  
@@ -29,12 +29,12 @@ Current state is **near-production for core runtime reliability**, with **target
 
 Commands executed:
 - `cargo test --workspace --no-run`
-- `cargo test -p moltchain-rpc --no-run`
-- `cargo test -p moltchain-validator --no-run`
+- `cargo test -p lichen-rpc --no-run`
+- `cargo test -p lichen-validator --no-run`
 
 Result:
 - ✅ Workspace test targets compile successfully.
-- ✅ `moltchain-rpc` and `moltchain-validator` test targets compile successfully.
+- ✅ `lichen-rpc` and `lichen-validator` test targets compile successfully.
 - ⚠️ Warnings remain (unused imports/variables, minor mutability warning), but no compile failures.
 
 ### 2.2 Static Risk-Marker Sweep
@@ -173,4 +173,4 @@ Declare full production readiness only when all are true:
 
 ## 8) Conclusion
 
-MoltChain is in a **strong near-production state** with **no immediate blockers** surfaced here, and meaningful shielded observability improvements are now in place. The remaining gap to “production everywhere” is primarily a **systematic hardening pass** (panic-safety + contracts error handling), not foundational architecture rewrites.
+Lichen is in a **strong near-production state** with **no immediate blockers** surfaced here, and meaningful shielded observability improvements are now in place. The remaining gap to “production everywhere” is primarily a **systematic hardening pass** (panic-safety + contracts error handling), not foundational architecture rewrites.

@@ -1,4 +1,4 @@
-# Moltchain Full Production-Readiness Audit — March 2, 2026
+# Lichen Full Production-Readiness Audit — March 2, 2026
 
 **Auditor:** Code-level, line-by-line  
 **Scope:** Entire repository — core, contracts, RPC/WS, CLI, P2P, validator, SDK, compiler, all frontends, infra, tests  
@@ -56,21 +56,21 @@ The `detect_and_award_achievements()` function uses instruction opcode numbers t
 | 7 | `system_mint_nft` | "Unstake" |
 | 8 | `system_transfer_nft` | "ClaimUnstake" |
 | 9 | `system_stake` | "RegisterEvmAddress" → EVM Connected (108) |
-| 16 | `system_reefstake_transfer` | "Shield" → Privacy Pioneer (57) |
+| 16 | `system_mossstake_transfer` | "Shield" → Privacy Pioneer (57) |
 | 17 | `system_deploy_contract` | "Unshield" |
 | 18 | `system_set_contract_abi` | "ShieldedTransfer" |
 | 19 | `system_faucet_airdrop` | "CreateCollection" |
 | 20 | `system_register_symbol` | "MintNFT" |
 | 21 | `system_propose_governed_transfer` | "TransferNFT" |
-| 23 | `system_shield_deposit` | "ReefStakeTransfer" |
+| 23 | `system_shield_deposit` | "MossStakeTransfer" |
 
-**Impact:** Every user performing any of these 11 operations gets the wrong MoltyID achievement badge. Achievements are best-effort (errors don't block txs), but this is systemic incorrect on-chain state.
+**Impact:** Every user performing any of these 11 operations gets the wrong LichenID achievement badge. Achievements are best-effort (errors don't block txs), but this is systemic incorrect on-chain state.
 
 **Fix:** Remap all achievement match arms to align with the actual dispatch table:
 ```
 6 → CreateCollection (63), 7 → MintNFT (64), 8 → TransferNFT (65),
 9 → Stake (41), 10 → Unstake (42), 11 → ClaimUnstake,
-12 → RegisterEvmAddress (108), 16 → ReefStakeTransfer (48),
+12 → RegisterEvmAddress (108), 16 → MossStakeTransfer (48),
 23 → ShieldDeposit (57), 24 → UnshieldWithdraw (58), 25 → ShieldedTransfer (59)
 ```
 
@@ -177,9 +177,9 @@ Guarded by `contains_key` check above it. Safe but should use `if let` pattern f
 
 ## 2. Smart Contracts
 
-### CON-01 — Placeholder challenge verification in reef_storage [CRITICAL]
+### CON-01 — Placeholder challenge verification in moss_storage [CRITICAL]
 
-**File:** `contracts/reef_storage/src/lib.rs` lines 966–970  
+**File:** `contracts/moss_storage/src/lib.rs` lines 966–970  
 
 ```rust
 // Verify response is non-zero (placeholder; real impl would check merkle proof)
@@ -205,13 +205,13 @@ return true; // graceful degradation for unconfigured deployments
 
 Payout operations report success while doing nothing. Users think they received funds but didn't.
 
-**Fix:** Change to `return false;` (matching the fix already applied to clawpump's CON-05).
+**Fix:** Change to `return false;` (matching the fix already applied to sporepump's CON-05).
 
 ---
 
-### CON-03 — `transfer_molt_out` silently returns `true` when token unconfigured [HIGH]
+### CON-03 — `transfer_licn_out` silently returns `true` when token unconfigured [HIGH]
 
-**File:** `contracts/clawvault/src/lib.rs` line 464  
+**File:** `contracts/sporevault/src/lib.rs` line 464  
 
 ```rust
 return true; // graceful degradation: token not configured yet
@@ -223,9 +223,9 @@ Same pattern as CON-02. Vault withdrawals silently succeed with no actual token 
 
 ---
 
-### CON-04 — `transfer_molt_out` silently returns `true` in reef_storage [HIGH]
+### CON-04 — `transfer_licn_out` silently returns `true` in moss_storage [HIGH]
 
-**File:** `contracts/reef_storage/src/lib.rs` line 80  
+**File:** `contracts/moss_storage/src/lib.rs` line 80  
 
 Same pattern. Storage payments reported as successful but never actually transfer.
 
@@ -233,9 +233,9 @@ Same pattern. Storage payments reported as successful but never actually transfe
 
 ---
 
-### CON-05 — Hardcoded `[0x4D; 32]` fallback address in moltmarket [MEDIUM]
+### CON-05 — Hardcoded `[0x4D; 32]` fallback address in lichenmarket [MEDIUM]
 
-**File:** `contracts/moltmarket/src/lib.rs` lines 290, 1086, 1172, 1424  
+**File:** `contracts/lichenmarket/src/lib.rs` lines 290, 1086, 1172, 1424  
 
 Four locations use a hardcoded 32-byte address `[0x4D; 32]` as fallback when fee recipient isn't configured.
 
@@ -243,9 +243,9 @@ Four locations use a hardcoded 32-byte address `[0x4D; 32]` as fallback when fee
 
 ---
 
-### CON-06 — Hardcoded `[0x4D; 32]` fallback address in moltauction [MEDIUM]
+### CON-06 — Hardcoded `[0x4D; 32]` fallback address in lichenauction [MEDIUM]
 
-**File:** `contracts/moltauction/src/lib.rs` line 92  
+**File:** `contracts/lichenauction/src/lib.rs` line 92  
 
 Same magic address pattern.
 
@@ -255,7 +255,7 @@ Same magic address pattern.
 
 ### CON-07 — Missing `get_caller()` in `initialize()` for 3 contracts [MEDIUM]
 
-**Files:** `contracts/moltcoin/src/lib.rs`, `contracts/moltpunks/src/lib.rs`, `contracts/moltswap/src/lib.rs`  
+**Files:** `contracts/lichencoin/src/lib.rs`, `contracts/lichenpunks/src/lib.rs`, `contracts/lichenswap/src/lib.rs`  
 
 These contracts' `initialize()` functions don't call `get_caller()` to verify the deployer identity, meaning anyone could re-initialize.
 
@@ -275,7 +275,7 @@ Same missing caller check pattern.
 
 ### CON-09 — `respond_challenge` returns success on caller mismatch [MEDIUM]
 
-**File:** `contracts/reef_storage/src/lib.rs` line 943  
+**File:** `contracts/moss_storage/src/lib.rs` line 943  
 
 Returns `0` (success) when the caller doesn't match the expected provider, instead of returning an error code.
 
@@ -283,15 +283,15 @@ Returns `0` (success) when the caller doesn't match the expected provider, inste
 
 ---
 
-### CON-10 — Oracle price integration is still a placeholder in lobsterlend [LOW]
+### CON-10 — Oracle price integration is still a placeholder in thalllend [LOW]
 
-**File:** `contracts/lobsterlend/src/lib.rs` line 13  
+**File:** `contracts/thalllend/src/lib.rs` line 13  
 
 ```rust
 // Oracle price integration placeholder
 ```
 
-**Fix:** Wire to moltoracle contract for real price feeds.
+**Fix:** Wire to lichenoracle contract for real price feeds.
 
 ---
 
@@ -329,7 +329,7 @@ Proof verification checks length and delegates crypto to host runtime. This is b
 
 ---
 
-### CON-14 — prediction_market directly reads MoltyID internal storage keys [LOW]
+### CON-14 — prediction_market directly reads LichenID internal storage keys [LOW]
 
 **File:** `contracts/prediction_market/src/lib.rs` line 1473  
 
@@ -531,12 +531,12 @@ Default state root is a zero hash.
 **File:** `wallet/js/wallet.js` line 14  
 
 ```javascript
-const MOCK_PRICES = { MOLT: 0.10, mUSD: 1.0, wSOL: 150.0, wETH: 3000.0, wBNB: 600.0 };
+const MOCK_PRICES = { LICN: 0.10, lUSD: 1.0, wSOL: 150.0, wETH: 3000.0, wBNB: 600.0 };
 ```
 
 Every user's portfolio USD value is calculated with these static fake prices that never update. Shows fake financial data to users.
 
-**Fix:** Fetch live prices from DEX oracle or moltoracle contract via RPC, with MOCK_PRICES as clearly-labeled offline fallback only.
+**Fix:** Fetch live prices from DEX oracle or lichenoracle contract via RPC, with MOCK_PRICES as clearly-labeled offline fallback only.
 
 ---
 
@@ -572,7 +572,7 @@ Lines: 623, 640, 690, 695, 826, 970, 978, 984, 1022, 1028, 1033, 1067, 1077, 110
 
 **File:** `dex/dex.js`  
 
-Hardcoded MOLT price used as initial/fallback.
+Hardcoded LICN price used as initial/fallback.
 
 **Fix:** Fetch from oracle or mark clearly as genesis-only with auto-disable after first trade.
 
@@ -594,7 +594,7 @@ Alert dialogs for marketplace operations.
 
 Direct connection to `wss://stream.binance.com` for external price data. Will fail if Binance blocks the origin, changes API, or connection is unreliable.
 
-**Fix:** Proxy through backend or use moltoracle as price source.
+**Fix:** Proxy through backend or use lichenoracle as price source.
 
 ---
 
@@ -727,13 +727,13 @@ Same pattern as FE-18.
 **File:** `programs/deploy-services.sh` line 143  
 
 ```bash
-# TODO: Use real molt keygen
-echo '{"pubkey":"molt1faucet...","secret":"..."}' > config/faucet-keypair.json
+# TODO: Use real lichen keygen
+echo '{"pubkey":"licn1faucet...","secret":"..."}' > config/faucet-keypair.json
 ```
 
 Writes a dummy keypair with placeholder values. Non-functional in any real deployment.
 
-**Fix:** Use actual `moltchain keygen` to generate keypair, or require pre-existing keypair file.
+**Fix:** Use actual `lichen keygen` to generate keypair, or require pre-existing keypair file.
 
 ---
 
@@ -771,7 +771,7 @@ If admin endpoints are enabled and the token is empty, there's no authentication
 **File:** `scripts/health-check.sh` line 5  
 
 ```bash
-RPC_URL="${MOLTCHAIN_RPC_URL:-http://localhost:9000}"
+RPC_URL="${LICHEN_RPC_URL:-http://localhost:9000}"
 ```
 
 Default is port 9000 but canonical RPC port is 8899 everywhere else.
@@ -842,7 +842,7 @@ Empty directory. Shared utils exist as separate copies in `monitoring/shared/` a
 
 Generated service files lack `NoNewPrivileges`, `ProtectSystem=strict`, etc.
 
-**Fix:** Match security hardening from `deploy/moltchain-validator.service`.
+**Fix:** Match security hardening from `deploy/lichen-validator.service`.
 
 ---
 
@@ -948,7 +948,7 @@ New validators can't discover peers without manual config.
 ### TEST-01 — 16 of 29 contracts have only WASM load+initialize coverage [HIGH]
 
 These contracts have no function-level test coverage:
-- bountyboard, clawpay, clawpump, compute_market, dex_analytics, dex_governance, dex_margin, dex_rewards, lobsterlend, moltauction, moltbridge, moltcoin, moltdao, moltoracle, reef_storage, shielded_pool
+- bountyboard, sporepay, sporepump, compute_market, dex_analytics, dex_governance, dex_margin, dex_rewards, thalllend, lichenauction, lichenbridge, lichencoin, lichendao, lichenoracle, moss_storage, shielded_pool
 
 **Fix:** Create E2E test matrix for every contract function.
 
@@ -1044,10 +1044,10 @@ No test covers: create wallet → fund via faucet → deploy contract → call c
 | ID | Finding | Fix | File(s) | Est. |
 |----|---------|-----|---------|------|
 | CORE-01 | Achievement opcode mismatch | Remap all match arms | `core/src/processor.rs` | 1h |
-| CON-01 | reef_storage placeholder verification | Implement Merkle proof check | `contracts/reef_storage/src/lib.rs` | 3h |
+| CON-01 | moss_storage placeholder verification | Implement Merkle proof check | `contracts/moss_storage/src/lib.rs` | 3h |
 | CON-02 | prediction_market silent return true | Change to `return false` | `contracts/prediction_market/src/lib.rs` | 15m |
-| CON-03 | clawvault silent return true | Change to `return false` | `contracts/clawvault/src/lib.rs` | 15m |
-| CON-04 | reef_storage silent return true | Change to `return false` | `contracts/reef_storage/src/lib.rs` | 15m |
+| CON-03 | sporevault silent return true | Change to `return false` | `contracts/sporevault/src/lib.rs` | 15m |
+| CON-04 | moss_storage silent return true | Change to `return false` | `contracts/moss_storage/src/lib.rs` | 15m |
 | CLI-01 | Zero blockhash | Fetch from RPC | `cli/src/marketplace_demo.rs` | 30m |
 | FE-01 | MOCK_PRICES | Fetch from oracle/RPC | `wallet/js/wallet.js` | 2h |
 | FE-02 | DEX hardcoded addresses | Require registry, fail clearly | `dex/dex.js` | 1h |
@@ -1079,7 +1079,7 @@ No test covers: create wallet → fund via faucet → deploy contract → call c
 | CORE-02 | Pedersen hash-to-curve | RFC 9380 or justify | 4h |
 | CORE-03 | Merkle tree O(n) | Incremental updates | 4h |
 | CON-09 | respond_challenge wrong return | Fix return code | 15m |
-| CON-10 | lobsterlend oracle placeholder | Wire to moltoracle | 2h |
+| CON-10 | thalllend oracle placeholder | Wire to lichenoracle | 2h |
 | CON-11 | dex_core fail-open | Change to fail-closed | 30m |
 | RPC-01 | Mutex unwrap panics | Handle PoisonError | 1h |
 | FE-08–14 | Console.log, dead CSS, etc. | Cleanup pass | 2h |
@@ -1099,8 +1099,8 @@ No test covers: create wallet → fund via faucet → deploy contract → call c
 | # | Task | Status | Date | Notes |
 |---|------|--------|------|-------|
 | 1 | CORE-01: Fix achievement opcodes | ✅ Done | 2026-03-02 | Remapped all 11 match arms |
-| 2 | CON-01: reef_storage Merkle proof | ✅ Done | 2026-03-02 | Added audit comment; placeholder accepted |
-| 3 | CON-02/03/04: Silent return true→false | ✅ Done | 2026-03-02 | clawvault, reef_storage, prediction_market |
+| 2 | CON-01: moss_storage Merkle proof | ✅ Done | 2026-03-02 | Added audit comment; placeholder accepted |
+| 3 | CON-02/03/04: Silent return true→false | ✅ Done | 2026-03-02 | sporevault, moss_storage, prediction_market |
 | 4 | CLI-01: Zero blockhash fix | ✅ Done | 2026-03-02 | Fetch recent blockhash via RPC |
 | 5 | FE-01: Replace MOCK_PRICES with oracle | ✅ Done | 2026-03-02 | Live getDexPairs/getOraclePrices feed |
 | 6 | FE-02: DEX address fallback removal | ✅ Done | 2026-03-02 | needsFallback flag + console warning |

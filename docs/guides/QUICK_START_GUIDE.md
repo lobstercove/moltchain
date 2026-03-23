@@ -1,6 +1,6 @@
-# 🦞 MoltChain Quick Start Guide ⚡
+# 🦞 Lichen Quick Start Guide ⚡
 
-**Your Path From Zero to Molting on MoltChain!**
+**Your Path From Zero to Lichening on Lichen!**
 
 ---
 
@@ -8,7 +8,7 @@
 
 ✅ Create your blockchain identity  
 ✅ Request testnet tokens  
-✅ Transfer MOLT between accounts  
+✅ Transfer LICN between accounts  
 ✅ Query blocks and validators  
 ✅ Deploy smart contracts (7 standards available!)  
 ✅ Build DApps using RPC API
@@ -18,17 +18,17 @@
 ## 📦 Step 1: Install CLI
 
 ```bash
-# From the MoltChain repository
-cd /path/to/moltchain
+# From the Lichen repository
+cd /path/to/lichen
 
 # Build (if not already built)
-cargo build --release --bin molt
+cargo build --release --bin licn
 
 # Add to PATH (optional)
 export PATH="$PWD/target/release:$PATH"
 
 # Or use directly
-alias molt='./target/release/molt'
+alias licn='./target/release/licn'
 ```
 
 ---
@@ -37,19 +37,19 @@ alias molt='./target/release/molt'
 
 ```bash
 # Generate new keypair
-$ molt identity new
+$ lichen identity new
 
 # Output:
 🦞 Generated new identity!
 📍 Pubkey: 7xKjF2vd9RpqE3mH8sL4kW6nY5tA1bC2dF3gH4iJ5kL6m
 🔐 EVM Address: 0x1234567890abcdef...
-💾 Saved to: /Users/johnrobin/.moltchain/keypairs/id.json
-💾 Saved to: ~/.moltchain/keypairs/id.json
+💾 Saved to: /Users/johnrobin/.lichen/keypairs/id.json
+💾 Saved to: ~/.lichen/keypairs/id.json
 
-💡 Get test tokens: molt airdrop 100
+💡 Get test tokens: lichen airdrop 100
 ```
 
-**Your keypair is saved at:** `~/.moltchain/keypairs/id.json`
+**Your keypair is saved at:** `~/.lichen/keypairs/id.json`
 
 ---
 
@@ -59,7 +59,7 @@ $ molt identity new
 
 ```bash
 # Start the faucet server (in a new terminal)
-cargo run --release --bin moltchain-faucet
+cargo run --release --bin lichen-faucet
 
 # Visit in browser:
 http://localhost:9090
@@ -70,7 +70,7 @@ http://localhost:9090
 ### Option B: CLI Command (coming soon)
 
 ```bash
-molt airdrop 100
+lichen airdrop 100
 ```
 
 ---
@@ -79,25 +79,25 @@ molt airdrop 100
 
 ```bash
 # Check your balance
-$ molt balance
+$ lichen balance
 
 # Output:
 🦞 Balance for 7xKjF2vd9...
-💰 100.0 MOLT (100000000000 shells)
+💰 100.0 LICN (100000000000 spores)
 ```
 
-**Note:** 1 MOLT = 1,000,000,000 shells (9 decimals)
+**Note:** 1 LICN = 1,000,000,000 spores (9 decimals)
 
 ---
 
 ## 🚀 Step 5: Transfer Tokens
 
 ```bash
-# Transfer 10 MOLT to another address
-$ molt transfer 8yLmG3we8NqP4rT7vX9zK2mL5oB6cD7eF8gH9iJ0kL1m 10.0
+# Transfer 10 LICN to another address
+$ lichen transfer 8yLmG3we8NqP4rT7vX9zK2mL5oB6cD7eF8gH9iJ0kL1m 10.0
 
 # Output:
-🦞 Transferring 10.0 MOLT (10000000000 shells)
+🦞 Transferring 10.0 LICN (10000000000 spores)
 📤 From: 7xKjF2vd9...
 📥 To: 8yLmG3we8...
 ✅ Transaction sent!
@@ -110,7 +110,7 @@ $ molt transfer 8yLmG3we8NqP4rT7vX9zK2mL5oB6cD7eF8gH9iJ0kL1m 10.0
 
 ### Get Latest Block
 ```bash
-$ molt latest
+$ lichen latest
 
 # Output:
 🧊 Latest Block #1234
@@ -124,37 +124,37 @@ $ molt latest
 
 ### Get Current Slot
 ```bash
-$ molt slot
+$ lichen slot
 
 # Output:
 🦞 Current slot: 1234
 ```
 
-### Get Total Burned MOLT
+### Get Total Burned LICN
 ```bash
-$ molt burned
+$ lichen burned
 
 # Output:
-🔥 Total MOLT Burned
-💰 0.005 MOLT (5000 shells)
+🔥 Total LICN Burned
+💰 0.005 LICN (5000 spores)
 
 Deflationary mechanism: 50% of all transaction fees are burned forever! 🦞⚡
 ```
 
 ### List All Validators
 ```bash
-$ molt validators
+$ lichen validators
 
 # Output:
 🦞 Active Validators (3)
 
 1. 7xKjF2vd9...
-   Stake: 100 MOLT
+   Stake: 100 LICN
    Reputation: 1.0000 (normalized: 0.3333)
    Blocks: 1234
 
 2. 8yLmG3we8...
-   Stake: 200 MOLT
+   Stake: 200 LICN
    Reputation: 1.2000 (normalized: 0.4000)
    Blocks: 2345
 ```
@@ -165,26 +165,26 @@ $ molt validators
 
 ```bash
 # Identity management
-molt identity new              # Create new identity
-molt identity show             # Show your pubkey
+lichen identity new              # Create new identity
+lichen identity show             # Show your pubkey
 
 # Balance & transfers
-molt balance [address]         # Check balance
-molt transfer <to> <amount>    # Send MOLT
+lichen balance [address]         # Check balance
+lichen transfer <to> <amount>    # Send LICN
 
 # Blockchain queries
-molt slot                      # Current slot
-molt latest                    # Latest block
-molt block <slot>              # Specific block
-molt burned                    # Total burned
-molt validators                # List validators
+lichen slot                      # Current slot
+lichen latest                    # Latest block
+lichen block <slot>              # Specific block
+lichen burned                    # Total burned
+lichen validators                # List validators
 
 # Smart contracts (placeholders)
-molt deploy <wasm>             # Deploy contract
-molt call <addr> <fn> --args   # Call contract
+lichen deploy <wasm>             # Deploy contract
+lichen call <addr> <fn> --args   # Call contract
 
 # Faucet
-molt airdrop [amount]          # Request testnet tokens
+lichen airdrop [amount]          # Request testnet tokens
 ```
 
 ---
@@ -194,7 +194,7 @@ molt airdrop [amount]          # Request testnet tokens
 ### Start Your Validator (with RPC)
 ```bash
 # The validator automatically starts an RPC server on port 8899
-cargo run --release --bin moltchain-validator
+cargo run --release --bin lichen-validator
 ```
 
 ### Available RPC Endpoints
@@ -300,8 +300,8 @@ curl -X POST http://localhost:8899 \
   "jsonrpc": "2.0",
   "id": 1,
   "result": {
-    "shells": 100000000000,
-    "molt": 100
+    "spores": 100000000000,
+    "licn": 100
   }
 }
 ```
@@ -324,7 +324,7 @@ const response = await fetch('http://localhost:8899', {
 });
 
 const { result } = await response.json();
-console.log(`Balance: ${result.molt} MOLT`);
+console.log(`Balance: ${result.licn} LICN`);
 ```
 
 ### Python Example
@@ -339,54 +339,54 @@ response = requests.post('http://localhost:8899', json={
 })
 
 result = response.json()['result']
-print(f"Balance: {result['molt']} MOLT")
+print(f"Balance: {result['licn']} LICN")
 ```
 
 ---
 
 ## 📚 Smart Contract Standards
 
-MoltChain comes with 7 production-ready contracts:
+Lichen comes with 7 production-ready contracts:
 
-### 1. MoltCoin (MT-20 Token)
+### 1. LichenCoin (MT-20 Token)
 ```bash
-# Located at: contracts/moltcoin/
+# Located at: contracts/lichencoin/
 # Features: Transfer, mint, burn, allowances
 ```
 
-### 2. MoltPunks (MT-721 NFT)
+### 2. LichenPunks (MT-721 NFT)
 ```bash
-# Located at: contracts/moltpunks/
+# Located at: contracts/lichenpunks/
 # Features: Mint, transfer, ownership tracking
 ```
 
-### 3. MoltSwap (AMM DEX)
+### 3. LichenSwap (AMM DEX)
 ```bash
-# Located at: contracts/moltswap/
+# Located at: contracts/lichenswap/
 # Features: Swap, add/remove liquidity, pools
 ```
 
-### 4. Molt Market (Basic Marketplace)
+### 4. Lichen Market (Basic Marketplace)
 ```bash
-# Located at: contracts/moltmarket/
+# Located at: contracts/lichenmarket/
 # Features: List, buy, cancel with cross-contract calls
 ```
 
-### 5. MoltAuction (Advanced Marketplace)
+### 5. LichenAuction (Advanced Marketplace)
 ```bash
-# Located at: contracts/moltauction/
+# Located at: contracts/lichenauction/
 # Features: Auctions, offers, royalties
 ```
 
-### 6. MoltOracle (Price Feeds & VRF)
+### 6. LichenOracle (Price Feeds & VRF)
 ```bash
-# Located at: contracts/moltoracle/
+# Located at: contracts/lichenoracle/
 # Features: Price feeds, random numbers, attestations
 ```
 
-### 7. MoltDAO (Governance)
+### 7. LichenDAO (Governance)
 ```bash
-# Located at: contracts/moltdao/
+# Located at: contracts/lichendao/
 # Features: Proposals, voting, treasury management
 ```
 
@@ -397,14 +397,14 @@ MoltChain comes with 7 production-ready contracts:
 ## 🛠️ Developer Resources
 
 ### File Locations
-- **Keypairs:** `~/.moltchain/keypairs/`
-- **State DB:** `/tmp/moltchain/` (or custom path)
+- **Keypairs:** `~/.lichen/keypairs/`
+- **State DB:** `/tmp/lichen/` (or custom path)
 - **Contracts:** `contracts/`
 - **SDK:** `sdk/`
 
 ### Key Concepts
-- **1 MOLT** = 1,000,000,000 shells (9 decimals)
-- **Base Fee** = 1,000,000 shells (0.001 MOLT)
+- **1 LICN** = 1,000,000,000 spores (9 decimals)
+- **Base Fee** = 1,000,000 spores (0.001 LICN)
 - **Fee Burn** = 50% of all fees (deflationary!)
 - **Block Time** = ~1 second (target: 400ms)
 - **Consensus** = Proof of Contribution (PoC)
@@ -413,7 +413,7 @@ MoltChain comes with 7 production-ready contracts:
 - [Whitepaper](docs/WHITEPAPER.md) - Full vision
 - [Architecture](docs/ARCHITECTURE.md) - Technical deep dive
 - [Core Audit](CORE_AUDIT_FEB6.md) - Implementation status
-- [Completion Report](CORE_MOLT_COMPLETE_FEB6.md) - Today's features
+- [Completion Report](CORE_LICN_COMPLETE_FEB6.md) - Today's features
 
 ---
 
@@ -422,34 +422,34 @@ MoltChain comes with 7 production-ready contracts:
 ### CLI Not Found
 ```bash
 # Make sure it's built
-cargo build --release --bin molt
+cargo build --release --bin licn
 
 # Use full path
-./target/release/molt --help
+./target/release/lichen --help
 ```
 
 ### RPC Connection Error
 ```bash
 # Make sure validator is running
-cargo run --release --bin moltchain-validator
+cargo run --release --bin lichen-validator
 
 # Check RPC port (default: 8899)
-molt --rpc-url http://localhost:8899 slot
+lichen --rpc-url http://localhost:8899 slot
 ```
 
 ### Keypair Not Found
 ```bash
 # Generate new keypair
-molt identity new
+lichen identity new
 
 # Specify custom path
-molt identity show -k /path/to/keypair.json
+lichen identity show -k /path/to/keypair.json
 ```
 
 ### Faucet Connection Error
 ```bash
 # Start the faucet
-cargo run --release --bin moltchain-faucet
+cargo run --release --bin lichen-faucet
 
 # Visit web UI
 open http://localhost:9090
@@ -469,13 +469,13 @@ Now that you have the basics, you can:
 
 ---
 
-## 🦞 Happy Molting! ⚡
+## 🦞 Happy Lichening! ⚡
 
-**"Every crab can access the reef!"** 🦀🌊
+**"Every crab can access the network!"** 🦀🌊
 
 For questions, issues, or contributions:
 - Check the docs in `docs/`
 - Review the code in `core/`, `rpc/`, `cli/`
 - Look at contract examples in `contracts/`
 
-**The reef is ready. Start building!** 🚀
+**The network is ready. Start building!** 🚀

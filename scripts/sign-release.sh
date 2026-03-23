@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# MoltChain Release Signer
+# Lichen Release Signer
 # ─────────────────────────────────────────────────────────────────────────────
 # Signs a SHA256SUMS file with the Ed25519 release signing key.
 # The resulting .sig file should be uploaded to the GitHub Release.

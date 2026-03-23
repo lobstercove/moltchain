@@ -1,19 +1,19 @@
-# MoltChain Economics Model
+# Lichen Economics Model
 **Version 1.0 - Historical framework refreshed for live chain semantics**
 
 ## Overview
-MoltChain's economic model is designed to be **affordable, sustainable, and anti-plutocratic**. Our fee structure balances accessibility for users with sustainability for validators and prevents spam while enabling high-throughput applications.
+Lichen's economic model is designed to be **affordable, sustainable, and anti-plutocratic**. Our fee structure balances accessibility for users with sustainability for validators and prevents spam while enabling high-throughput applications.
 
-**Note on Token Pricing**: All USD values are **illustrative examples** assuming market-driven token prices. At launch, MOLT will have **no predetermined price** - market discovery will determine value based on utility, demand, and network effects.
+**Note on Token Pricing**: All USD values are **illustrative examples** assuming market-driven token prices. At launch, LICN will have **no predetermined price** - market discovery will determine value based on utility, demand, and network effects.
 
-**Live Chain Note**: The canonical supply model is **500M MOLT at genesis + protocol minting - burned fees**. Inflation is projected during an epoch and settles on-chain only at epoch boundaries, so explorer and RPC may show projected reward/supply values before settlement finalizes.
+**Live Chain Note**: The canonical supply model is **500M LICN at genesis + protocol minting - burned fees**. Inflation is projected during an epoch and settles on-chain only at epoch boundaries, so explorer and RPC may show projected reward/supply values before settlement finalizes.
 
 ## Token Economics
 
-### MOLT Token
-- **Symbol**: MOLT
-- **Decimal Places**: 9 (1 MOLT = 1,000,000,000 shells)
-- **Genesis Supply**: 500,000,000 MOLT (500 million)
+### LICN Token
+- **Symbol**: LICN
+- **Decimal Places**: 9 (1 LICN = 1,000,000,000 spores)
+- **Genesis Supply**: 500,000,000 LICN (500 million)
 - **Launch Price**: Market-determined (no listing, no pre-sale)
 - **Market Cap Goal**: $10M-$100M (achieved organically over time)
 - **Inflation**: 4.0% initial, decaying 15%/year to a 0.15% floor; settles at epoch boundaries
@@ -32,17 +32,17 @@ MoltChain's economic model is designed to be **affordable, sustainable, and anti
 
 **All transactions currently use the same base fee:**
 ```
-Fee: 1,000,000 shells (0.001 MOLT)
+Fee: 1,000,000 spores (0.001 LICN)
 Solana Comparison: $0.00025 per TX
 ```
 
-**MoltChain at Different Price Points:**
-- **$0.01/MOLT**: 0.001 MOLT = **$0.00001** per TX (25x cheaper than Solana)
-- **$0.10/MOLT**: 0.001 MOLT = **$0.0001** per TX (2.5x cheaper than Solana)
-- **$1.00/MOLT**: 0.001 MOLT = **$0.001** per TX (Solana is cheaper here — governance adjusts)
-- **$10.00/MOLT**: 0.001 MOLT = **$0.01** per TX (governance would reduce fee)
+**Lichen at Different Price Points:**
+- **$0.01/LICN**: 0.001 LICN = **$0.00001** per TX (25x cheaper than Solana)
+- **$0.10/LICN**: 0.001 LICN = **$0.0001** per TX (2.5x cheaper than Solana)
+- **$1.00/LICN**: 0.001 LICN = **$0.001** per TX (Solana is cheaper here — governance adjusts)
+- **$10.00/LICN**: 0.001 LICN = **$0.01** per TX (governance would reduce fee)
 
-**Key Insight**: MoltChain remains **cheaper than Solana** up to ~$0.25/MOLT for base transactions, with governance fee adjustment ensuring competitiveness at any price point.
+**Key Insight**: Lichen remains **cheaper than Solana** up to ~$0.25/LICN for base transactions, with governance fee adjustment ensuring competitiveness at any price point.
 
 **Use Cases:**
 - Simple transfers
@@ -57,17 +57,17 @@ Operation-specific fees are **IMPLEMENTED IN CODE** at competitive rates:
 
 #### Contract Deployment
 ```
-Implemented Fee: 25,000,000,000 shells (25 MOLT)
+Implemented Fee: 25,000,000,000 spores (25 LICN)
 Code Location: core/src/processor.rs::CONTRACT_DEPLOY_FEE
 Solana Contract Deploy: ~$5
 ```
 
-**Competitiveness at Different MOLT Prices:**
-- At $0.01/MOLT: $0.25 per deploy (20x cheaper than Solana)
-- At $0.10/MOLT: $2.50 per deploy (2x cheaper than Solana)
-- At $0.20/MOLT: $5.00 per deploy (matches Solana)
-- At $1.00/MOLT: **$25.00 per deploy** (governance would reduce fee)
-- At $10.00/MOLT: $250.00 (governance adjusts well before this)
+**Competitiveness at Different LICN Prices:**
+- At $0.01/LICN: $0.25 per deploy (20x cheaper than Solana)
+- At $0.10/LICN: $2.50 per deploy (2x cheaper than Solana)
+- At $0.20/LICN: $5.00 per deploy (matches Solana)
+- At $1.00/LICN: **$25.00 per deploy** (governance would reduce fee)
+- At $10.00/LICN: $250.00 (governance adjusts well before this)
 
 **Rationale:**
 - Prevents contract spam
@@ -77,15 +77,15 @@ Solana Contract Deploy: ~$5
 
 #### Contract Upgrade
 ```
-Implemented Fee: 10,000,000,000 shells (10 MOLT)
+Implemented Fee: 10,000,000,000 spores (10 LICN)
 Code Location: core/src/processor.rs::CONTRACT_UPGRADE_FEE
 Proportion: 40% of deployment cost
 ```
 
 **Competitiveness:**
-- At $0.10/MOLT: $1.00 per upgrade
-- At $1.00/MOLT: **$10.00 per upgrade**
-- At $0.50/MOLT: $5.00 (matches Solana deploy cost)
+- At $0.10/LICN: $1.00 per upgrade
+- At $1.00/LICN: **$10.00 per upgrade**
+- At $0.50/LICN: $5.00 (matches Solana deploy cost)
 
 **Rationale:**
 - Cheaper than deployment (iterative development friendly)
@@ -95,7 +95,7 @@ Proportion: 40% of deployment cost
 #### Contract Execution (Compute Fees)
 ```
 Base Compute: Included in transaction fee
-Additional Compute: 1 shell per 1,000 compute units
+Additional Compute: 1 spore per 1,000 compute units
 ```
 
 **Gas Pricing:**
@@ -105,33 +105,33 @@ Additional Compute: 1 shell per 1,000 compute units
 - Math Operation: 10 compute units
 
 **Example Costs (at current BASE_FEE):**
-- Simple contract call: 0.001 MOLT
-- Complex DeFi swap: 0.002 MOLT (base + compute)
-- Large state update: 0.005 MOLT (base + heavy compute)
+- Simple contract call: 0.001 LICN
+- Complex DeFi swap: 0.002 LICN (base + compute)
+- Large state update: 0.005 LICN (base + heavy compute)
 
 ## NFT Economics
 
 ### NFT Minting (Implemented)
 ```
-Standard Mint: 500,000,000 shells (0.5 MOLT)
+Standard Mint: 500,000,000 spores (0.5 LICN)
 Code Location: core/src/processor.rs::NFT_MINT_FEE
 
-Bulk Collection: 1,000,000,000,000 shells (1,000 MOLT)
+Bulk Collection: 1,000,000,000,000 spores (1,000 LICN)
 Code Location: core/src/processor.rs::NFT_COLLECTION_FEE
 ```
 
 **Standard Mint Competitiveness:**
-- At $0.10/MOLT: $0.05 per mint
-- At $1.00/MOLT: **$0.50 per mint**
-- At $10.00/MOLT: $5.00 per mint (governance adjusts)
+- At $0.10/LICN: $0.05 per mint
+- At $1.00/LICN: **$0.50 per mint**
+- At $10.00/LICN: $5.00 per mint (governance adjusts)
 
 **Collection Fee (Unlimited Mints):**
-- At $0.10/MOLT: $100 per collection
-- At $1.00/MOLT: $1,000 per collection
-- At $10.00/MOLT: $10,000 per collection
+- At $0.10/LICN: $100 per collection
+- At $1.00/LICN: $1,000 per collection
+- At $10.00/LICN: $10,000 per collection
 
 **Break-even Analysis:**
-- $1/MOLT scenario: 2,000 mints to break even ($1,000 collection vs $0.50/mint individual)
+- $1/LICN scenario: 2,000 mints to break even ($1,000 collection vs $0.50/mint individual)
 - Makes sense for serious NFT projects with 2,000+ items
 
 ### NFT Marketplace Fees
@@ -149,22 +149,22 @@ Total Max Fee: 12.5%
 ### NFT Storage
 ```
 Base Metadata: Free (small JSON)
-Extended Storage: 1 MOLT per 100KB per year
-IPFS Pinning: 0.1 MOLT per pin (one-time)
+Extended Storage: 1 LICN per 100KB per year
+IPFS Pinning: 0.1 LICN per pin (one-time)
 ```
 
 ## Oracle & Data Feed Economics
 
 ### Oracle Data Feed Submission
 ```
-Price Feed Update: 100,000 shells (0.0001 MOLT)
+Price Feed Update: 100,000 spores (0.0001 LICN)
 Update Frequency: Every 60 seconds (max)
 ```
 
 ### Oracle Data Consumption
 ```
-Query Fee: 10,000,000 shells (0.01 MOLT)
-Subscription Model: 100 MOLT for 10,000 queries
+Query Fee: 10,000,000 spores (0.01 LICN)
+Subscription Model: 100 LICN for 10,000 queries
 ```
 
 **Rationale:**
@@ -176,23 +176,23 @@ Subscription Model: 100 MOLT for 10,000 queries
 
 ### Two-Phase Staking System
 
-MoltChain implements **two distinct staking mechanisms** to support both validators and community members:
+Lichen implements **two distinct staking mechanisms** to support both validators and community members:
 
 #### Phase 1: Validator Bootstrap Grants (ACTIVE)
 
 **Purpose**: Zero-capital validator onboarding
 
 ```
-Initial Capital Required: 0 MOLT (zero barrier to entry)
-Bootstrap Grant: 100,000 MOLT (automatic on validator startup)
+Initial Capital Required: 0 LICN (zero barrier to entry)
+Bootstrap Grant: 100,000 LICN (automatic on validator startup)
 Bootstrap Mechanism: Debt-based vesting
-Vesting Timeline: ~86 days of active validation (earning 0.1 MOLT/block avg)
+Vesting Timeline: ~86 days of active validation (earning 0.1 LICN/block avg)
 Graduation: When bootstrap_debt reaches 0 (fully repaid through rewards)
 ```
 
 **How It Works:**
-1. Validator starts with 0 MOLT
-2. System grants 100,000 MOLT on first block
+1. Validator starts with 0 LICN
+2. System grants 100,000 LICN on first block
 3. Each block reward reduces bootstrap_debt
 4. Validator graduates when debt = 0
 5. Post-graduation: validator owns 100% of stake
@@ -207,12 +207,12 @@ Graduation: When bootstrap_debt reaches 0 (fully repaid through rewards)
 
 **Purpose**: Community participation in consensus rewards
 
-**ReefStake Protocol:**
+**MossStake Protocol:**
 ```
-Stake MOLT → Receive stMOLT (1:1 ratio initially)
-stMOLT = Liquid staking receipt token (tradeable, usable in DeFi)
+Stake LICN → Receive stLICN (1:1 ratio initially)
+stLICN = Liquid staking receipt token (tradeable, usable in DeFi)
 Unstaking Period: 7 days (unbonding cooldown)
-Auto-Compounding: Rewards automatically increase stMOLT:MOLT exchange rate
+Auto-Compounding: Rewards automatically increase stLICN:LICN exchange rate
 ```
 
 **Delegation Mechanics:**
@@ -221,24 +221,24 @@ Anyone can stake: Agents, humans, contracts
 Delegate to validators: Choose validator by APY/reputation
 Validator Commission: 5-10% (validator-configurable, 10% max)
 Delegator Share: 90-95% of block rewards
-Minimum Delegation: 1 MOLT (low barrier)
+Minimum Delegation: 1 LICN (low barrier)
 Redelegate: Switch validators anytime (no cooldown)
 ```
 
 **Example Delegation:**
 ```
 Validator "Alice":
-  Own stake: 100,000 MOLT (from bootstrap)
-  Delegated stake: 40,000 MOLT (from community)
-  Total stake: 50,000 MOLT
+  Own stake: 100,000 LICN (from bootstrap)
+  Delegated stake: 40,000 LICN (from community)
+  Total stake: 50,000 LICN
   Commission: 2%
 
-Block reward: 0.1 MOLT
-  Alice keeps: 0.002 MOLT (2%)
-  Delegators: 0.098 MOLT (98%, split proportionally)
-    - Bob (20K): 0.049 MOLT (50% of delegation)
-    - Carol (10K): 0.0245 MOLT (25%)
-    - Dave (10K): 0.0245 MOLT (25%)
+Block reward: 0.1 LICN
+  Alice keeps: 0.002 LICN (2%)
+  Delegators: 0.098 LICN (98%, split proportionally)
+    - Bob (20K): 0.049 LICN (50% of delegation)
+    - Carol (10K): 0.0245 LICN (25%)
+    - Dave (10K): 0.0245 LICN (25%)
 ```
 
 **APY Calculation:**
@@ -248,14 +248,14 @@ Formula:
   
   Annual Rewards = (Blocks/Year × Avg Reward × Delegator Share) × (Your Stake / Total Staked)
   
-Example (10,000 MOLT staked, 100M MOLT total staked):
+Example (10,000 LICN staked, 100M LICN total staked):
   Blocks/year: 78,840,000 (400ms blocks)
-  Avg block reward: 0.1 MOLT (mix of TX and heartbeat)
+  Avg block reward: 0.1 LICN (mix of TX and heartbeat)
   Delegator share: 90%
   
   Annual rewards: 78.84M × 0.1 × 0.9 × (10K / 100M)
                 = 7.09M × 0.9 × 0.0001
-                = 638 MOLT
+                = 638 LICN
   
   APY: (638 / 10,000) × 100% = 6.38%
 ```
@@ -265,15 +265,15 @@ Example (10,000 MOLT staked, 100M MOLT total staked):
 - Mature phase (30-50% staked): 5-15% APY
 - Market-driven equilibrium (supply/demand)
 
-**stMOLT Benefits:**
+**stLICN Benefits:**
 - Trade while staking (full liquidity)
 - Use as DeFi collateral
-- No lockup for trading (only 7 days for unstaking to MOLT)
+- No lockup for trading (only 7 days for unstaking to LICN)
 - Auto-compounding (no manual claiming)
 
 ### Staking Reward Settlement
 ```
-Projected Base Reward Signal (Year 0): ~0.254 MOLT per slot
+Projected Base Reward Signal (Year 0): ~0.254 LICN per slot
 Canonical Minting: Epoch-boundary settlement only
 Transaction Fees: Credited as validators produce blocks
 USD Value: Market-determined
@@ -289,7 +289,7 @@ USD Value: Market-determined
 ```
 Validator Commission: 5-10% (set by validator)
 Network Maximum: 10%
-Minimum Delegation: 1 MOLT
+Minimum Delegation: 1 LICN
 Redelegate Cost: Free (no cooldown)
 Unstake Cooldown: 7 days (unbonding period)
 ```
@@ -298,7 +298,7 @@ Unstake Cooldown: 7 days (unbonding period)
 
 ### Proposal Submission
 ```
-Proposal Fee: 100 MOLT
+Proposal Fee: 100 LICN
 Refund on Execution: 100% if passed
 ```
 
@@ -310,7 +310,7 @@ Refund on Execution: 100% if passed
 ### Voting
 ```
 Voting Fee: Free (gas included in transaction)
-Vote Weight: 1 MOLT = 1 vote
+Vote Weight: 1 LICN = 1 vote
 Quadratic Voting: Not implemented (ensures simplicity)
 ```
 
@@ -320,12 +320,12 @@ Quadratic Voting: Not implemented (ensures simplicity)
 ```
 Swap Fee: 0.3% of trade value
 Distribution: 0.25% to LPs, 0.05% burned
-Minimum Fee: 0.001 MOLT
+Minimum Fee: 0.001 LICN
 ```
 
 ### Liquidity Provision
 ```
-Pool Creation: 10 MOLT
+Pool Creation: 10 LICN
 LP Token Mint: Free
 Staking Rewards: Pool-specific (from fees)
 ```
@@ -341,9 +341,9 @@ Liquidation Fee: 5% of collateral
 
 ### Asset Bridging
 ```
-Bridge In: 0.1 MOLT
-Bridge Out: 0.1 MOLT
-Large Transfer (>10k USD): 0.5 MOLT
+Bridge In: 0.1 LICN
+Bridge Out: 0.1 LICN
+Large Transfer (>10k USD): 0.5 LICN
 ```
 
 **Security:**
@@ -356,8 +356,8 @@ Large Transfer (>10k USD): 0.5 MOLT
 ### Account Rent
 ```
 Base Account: Rent-free
-Smart Contract: 1 MOLT per 100KB per year
-Large Data: 10 MOLT per 1MB per year
+Smart Contract: 1 LICN per 100KB per year
+Large Data: 10 LICN per 1MB per year
 ```
 
 **Rent Exemption:**
@@ -369,29 +369,29 @@ Large Data: 10 MOLT per 1MB per year
 
 ### For Users (Typical Activity)
 
-**Current Implementation (BASE_FEE = 0.001 MOLT):**
+**Current Implementation (BASE_FEE = 0.001 LICN):**
 ```
-1,200 transactions/year: 1.2 MOLT
-(100 tx/month at 0.001 MOLT each)
+1,200 transactions/year: 1.2 LICN
+(100 tx/month at 0.001 LICN each)
 
 Price Scenarios:
-- At $0.10/MOLT: 1.2 MOLT = $0.12/year
-- At $1.00/MOLT: 1.2 MOLT = $1.20/year  
-- At $10.00/MOLT: 1.2 MOLT = $12.00/year
+- At $0.10/LICN: 1.2 LICN = $0.12/year
+- At $1.00/LICN: 1.2 LICN = $1.20/year  
+- At $10.00/LICN: 1.2 LICN = $12.00/year
 
 Compare to Solana: 1,200 tx × $0.00025 = $0.30/year
-MoltChain is cheaper than Solana at MOLT prices below ~$0.25
+Lichen is cheaper than Solana at LICN prices below ~$0.25
 ```
 
 **With Planned Differentiated Fees:**
 ```
-1,200 transactions: 1.2 MOLT
-10 contract deploys: 250 MOLT  
-50 contract upgrades: 500 MOLT
-12 NFT mints: 6 MOLT
+1,200 transactions: 1.2 LICN
+10 contract deploys: 250 LICN  
+50 contract upgrades: 500 LICN
+12 NFT mints: 6 LICN
 
-Heavy Developer Annual: ~757 MOLT
-At $0.10/MOLT: $75.70/year
+Heavy Developer Annual: ~757 LICN
+At $0.10/LICN: $75.70/year
 ```
 
 ### For Validators
@@ -400,7 +400,7 @@ Hardware (VPS): $20/month = $240/year
 Electricity (home): ~$3/month = $36/year
 Or Own Hardware: $0/year (Mac Mini, PC, etc.)
 
-Annual Revenue: ~1,000 MOLT (from blocks + fees)
+Annual Revenue: ~1,000 LICN (from blocks + fees)
 USD Value: Market-determined
 
 Break-even: Day 43 (when bootstrap vesting completes)
@@ -409,19 +409,19 @@ ROI: Infinite (no upfront capital required)
 
 ### For Developers
 ```
-Contract Deployment: 25 MOLT (one-time)
-10 Upgrades/year: 100 MOLT
-Oracle Subscription: 100 MOLT/year
-NFT Collection: 1,000 MOLT (one-time)
+Contract Deployment: 25 LICN (one-time)
+10 Upgrades/year: 100 LICN
+Oracle Subscription: 100 LICN/year
+NFT Collection: 1,000 LICN (one-time)
 
-Annual Run Cost: ~200 MOLT + initial deployment
-USD Cost: Market-determined, but competitive at $0.10/MOLT
+Annual Run Cost: ~200 LICN + initial deployment
+USD Cost: Market-determined, but competitive at $0.10/LICN
 ```
 
 ## Fee Adjustment Mechanism
 
 ### Overview
-As MOLT price increases over time due to market demand, fees must be adjusted downward to maintain competitive USD-equivalent costs. MoltChain provides multiple mechanisms for fee adjustment to ensure the network remains affordable at any price point.
+As LICN price increases over time due to market demand, fees must be adjusted downward to maintain competitive USD-equivalent costs. Lichen provides multiple mechanisms for fee adjustment to ensure the network remains affordable at any price point.
 
 ### Governance-Based Fee Adjustment (Primary Mechanism)
 
@@ -449,9 +449,9 @@ As MOLT price increases over time due to market demand, fees must be adjusted do
 6. **Execution**: Automatic on-chain activation at specified slot
 
 **Example Scenario:**
-- MOLT price rises from $0.10 to $1.00 (10x increase)
-- Current contract deploy: 25 MOLT = $25 → becomes $250 (too expensive!)
-- Proposal: Reduce to 2.5 MOLT (new price: $2.50 - even cheaper than before)
+- LICN price rises from $0.10 to $1.00 (10x increase)
+- Current contract deploy: 25 LICN = $25 → becomes $250 (too expensive!)
+- Proposal: Reduce to 2.5 LICN (new price: $2.50 - even cheaper than before)
 - Vote passes → 7 days later, new fee activates automatically
 
 ### Dynamic Fee Multiplier (Congestion-Based)
@@ -477,7 +477,7 @@ match network_congestion {
 **Implementation Status**: Planned for v2.0
 **Timeline**: Q3 2026
 
-**Concept**: Automatic fee adjustment based on MOLT/USD price
+**Concept**: Automatic fee adjustment based on LICN/USD price
 ```rust
 pub struct PriceOracleConfig {
     pub target_usd_base_fee: f64,        // e.g., 0.0001 USD
@@ -510,19 +510,19 @@ pub struct PriceOracleConfig {
 5. **Ratification**: Post-emergency DAO vote to confirm changes
 
 **Example Emergency:**
-- MOLT price suddenly jumps to $100 (100x overnight)
-- Contract deploy: 25 MOLT = $2,500 (blocks ecosystem development)
-- Emergency adjustment: 0.25 MOLT = $25 (restores affordability)
+- LICN price suddenly jumps to $100 (100x overnight)
+- Contract deploy: 25 LICN = $2,500 (blocks ecosystem development)
+- Emergency adjustment: 0.25 LICN = $25 (restores affordability)
 
 ### Current Fee Constants (Code Reference)
 
 **Location**: `core/src/processor.rs`
 ```rust
-pub const BASE_FEE: u64 = 1_000_000;                      // 0.001 MOLT
-pub const CONTRACT_DEPLOY_FEE: u64 = 25_000_000_000;      // 25 MOLT
-pub const CONTRACT_UPGRADE_FEE: u64 = 10_000_000_000;     // 10 MOLT
-pub const NFT_MINT_FEE: u64 = 500_000_000;                // 0.5 MOLT
-pub const NFT_COLLECTION_FEE: u64 = 1_000_000_000_000;   // 1,000 MOLT
+pub const BASE_FEE: u64 = 1_000_000;                      // 0.001 LICN
+pub const CONTRACT_DEPLOY_FEE: u64 = 25_000_000_000;      // 25 LICN
+pub const CONTRACT_UPGRADE_FEE: u64 = 10_000_000_000;     // 10 LICN
+pub const NFT_MINT_FEE: u64 = 500_000_000;                // 0.5 LICN
+pub const NFT_COLLECTION_FEE: u64 = 1_000_000_000_000;   // 1,000 LICN
 ```
 
 **To Adjust Fees Manually** (pre-DAO):
@@ -539,7 +539,7 @@ pub struct FeeAdjustmentRecord {
     pub slot: u64,
     pub old_fees: FeeSchedule,
     pub new_fees: FeeSchedule,
-    pub molt_price_at_adjustment: Option<f64>,  // If oracle available
+    pub licn_price_at_adjustment: Option<f64>,  // If oracle available
     pub proposal_id: Option<String>,            // Governance proposal
     pub reason: String,
 }
@@ -553,7 +553,7 @@ pub struct FeeAdjustmentRecord {
 ### Best Practices for Fee Adjustments
 
 **When to Adjust:**
-- MOLT price sustained above $1 for >30 days
+- LICN price sustained above $1 for >30 days
 - Contract deploy fees >$5 USD equivalent
 - Base TX fees >$0.0001 USD equivalent
 - Community feedback indicates pain points
@@ -582,9 +582,9 @@ Low Usage (<20%): 0.5x multiplier
 ## Economic Security
 
 ### Spam Prevention
-- All transactions cost minimum 0.001 MOLT (1,000,000 shells)
+- All transactions cost minimum 0.001 LICN (1,000,000 spores)
 - Rate limiting: 1000 tx/second per account
-- Contract deployment barrier: 25 MOLT
+- Contract deployment barrier: 25 LICN
 - Fee burning reduces circulating supply
 
 ### Validator Incentives
@@ -596,53 +596,53 @@ Low Usage (<20%): 0.5x multiplier
 ### Long-term Sustainability
 ```
 Daily Transaction Volume: 10M (conservative)
-Daily Fee Revenue: 10,000 MOLT
-Daily Burn: 5,000 MOLT (50%)
-Daily Block Producer: 3,000 MOLT (30%)
-Daily Voters: 1,000 MOLT (10%)
-Daily Treasury: 1,000 MOLT (10%)
+Daily Fee Revenue: 10,000 LICN
+Daily Burn: 5,000 LICN (50%)
+Daily Block Producer: 3,000 LICN (30%)
+Daily Voters: 1,000 LICN (10%)
+Daily Treasury: 1,000 LICN (10%)
 
-Annual Deflation: ~1.8M MOLT (0.18% of supply)
+Annual Deflation: ~1.8M LICN (0.18% of supply)
 ```
 
 ## Comparison Matrix
 
-**MoltChain Current Implementation vs Competition**
+**Lichen Current Implementation vs Competition**
 
-| Operation | MoltChain Fee | At $1/MOLT | Solana | Ethereum | MoltChain Advantage |
+| Operation | Lichen Fee | At $1/LICN | Solana | Ethereum | Lichen Advantage |
 |-----------|---------------|------------|--------|----------|---------------------|
-| Simple TX | 0.001 MOLT | $0.001 | $0.00025 | $2.00 | 2,000x cheaper than Ethereum |
-| Simple TX | 0.001 MOLT | At $10/MOLT = $0.01 | $0.00025 | $2.00 | 200x cheaper than Ethereum |
-| 1,000 TXs | 1 MOLT | $1.00 | $0.25 | $2,000 | 2,000x cheaper than Ethereum |
-| Annual (1,200 TX) | 1.2 MOLT | $1.20 | $0.30 | $2,400 | 2,000x cheaper than Ethereum |
+| Simple TX | 0.001 LICN | $0.001 | $0.00025 | $2.00 | 2,000x cheaper than Ethereum |
+| Simple TX | 0.001 LICN | At $10/LICN = $0.01 | $0.00025 | $2.00 | 200x cheaper than Ethereum |
+| 1,000 TXs | 1 LICN | $1.00 | $0.25 | $2,000 | 2,000x cheaper than Ethereum |
+| Annual (1,200 TX) | 1.2 LICN | $1.20 | $0.30 | $2,400 | 2,000x cheaper than Ethereum |
 
 **Planned Differentiated Fees vs Competition**
 
-| Operation | Implemented Fee | At $0.10/MOLT | At $1/MOLT | Solana | Advantage |
+| Operation | Implemented Fee | At $0.10/LICN | At $1/LICN | Solana | Advantage |
 |-----------|-----------------|---------------|------------|--------|-----------|  
-| Simple TX | 0.001 MOLT | $0.0001 | $0.001 | $0.00025 | 2.5x cheaper (at $0.10) |
-| Contract Deploy | 25 MOLT | $2.50 | **$25.00** | $5.00 | 2x cheaper (at $0.10) |
-| Contract Upgrade | 10 MOLT | $1.00 | **$10.00** | $5.00 | 5x cheaper (at $0.10) |
-| NFT Mint | 0.5 MOLT | $0.05 | **$0.50** | $0.01 | Competitive |
-| NFT Collection | 1,000 MOLT | $100 | $1,000 | $500 | Serious projects only |
+| Simple TX | 0.001 LICN | $0.0001 | $0.001 | $0.00025 | 2.5x cheaper (at $0.10) |
+| Contract Deploy | 25 LICN | $2.50 | **$25.00** | $5.00 | 2x cheaper (at $0.10) |
+| Contract Upgrade | 10 LICN | $1.00 | **$10.00** | $5.00 | 5x cheaper (at $0.10) |
+| NFT Mint | 0.5 LICN | $0.05 | **$0.50** | $0.01 | Competitive |
+| NFT Collection | 1,000 LICN | $100 | $1,000 | $500 | Serious projects only |
 
-**Key Insight**: All fees are defined in MOLT/shells, prices scale with market value. At $0.10/MOLT, MoltChain is competitive with Solana across all operation types. Governance adjusts fees if MOLT price rises significantly.
+**Key Insight**: All fees are defined in LICN/spores, prices scale with market value. At $0.10/LICN, Lichen is competitive with Solana across all operation types. Governance adjusts fees if LICN price rises significantly.
 
 **Validator Economics Comparison**
 
-| Cost Type | MoltChain | Solana | Ethereum |
+| Cost Type | Lichen | Solana | Ethereum |
 |-----------|-----------|--------|----------|
 | Hardware | $0-240/yr | $1,000/yr | $5,000/yr |
 | Initial Stake | $0 | $50,000 | $100,000 |
 | Barrier | Work | Capital | Massive Capital |
 
-**Key Insight**: MoltChain maintains competitive pricing at $0.10/MOLT across all operations. Governance-based fee adjustment ensures affordability at any price point.
+**Key Insight**: Lichen maintains competitive pricing at $0.10/LICN across all operations. Governance-based fee adjustment ensures affordability at any price point.
 
 ## Economic Sustainability
 
 ### Token Price Discovery
 
-MOLT will find its natural market price through:
+LICN will find its natural market price through:
 
 1. **Organic Adoption**: Network usage creates utility-driven demand
 2. **Fee Burn Dynamics**: 40% of fees burned = decreasing supply
@@ -652,36 +652,36 @@ MOLT will find its natural market price through:
 
 ### Realistic Price Scenarios
 
-**Conservative Launch ($MOLT = $0.01)**:
+**Conservative Launch ($LICN = $0.01)**:
 - Market Cap: $10 million
-- Transaction: 0.001 MOLT = **$0.00001** per TX
-- Contract Deploy: 25 MOLT = $0.25
-- Validator Revenue: ~1,000 MOLT/yr = $10/year
+- Transaction: 0.001 LICN = **$0.00001** per TX
+- Contract Deploy: 25 LICN = $0.25
+- Validator Revenue: ~1,000 LICN/yr = $10/year
 - **vs Solana**: 25x cheaper TXs, 20x cheaper deploys
 
-**Realistic Launch Scenario ($MOLT = $0.10)**:
+**Realistic Launch Scenario ($LICN = $0.10)**:
 - Market Cap: $100 million (achievable)
-- Transaction: 0.001 MOLT = **$0.0001** per TX
-- Contract Deploy: 25 MOLT = **$2.50**
-- Contract Upgrade: 10 MOLT = **$1.00**
-- NFT Mint: 0.5 MOLT = **$0.05**
-- Validator Revenue: ~1,000 MOLT/yr = $100/year
+- Transaction: 0.001 LICN = **$0.0001** per TX
+- Contract Deploy: 25 LICN = **$2.50**
+- Contract Upgrade: 10 LICN = **$1.00**
+- NFT Mint: 0.5 LICN = **$0.05**
+- Validator Revenue: ~1,000 LICN/yr = $100/year
 - **vs Solana**: 2.5x cheaper TXs, 2x cheaper deploys
 
-**Target Growth Scenario ($MOLT = $1.00)**:
+**Target Growth Scenario ($LICN = $1.00)**:
 - Market Cap: $1B (success case)
-- Transaction: 0.001 MOLT = **$0.001** per TX
-- Contract Deploy: 25 MOLT = **$25.00**
-- Contract Upgrade: 10 MOLT = **$10.00**
-- NFT Mint: 0.5 MOLT = **$0.50**
-- Validator Revenue: ~1,000 MOLT /yr = $1,000/year
+- Transaction: 0.001 LICN = **$0.001** per TX
+- Contract Deploy: 25 LICN = **$25.00**
+- Contract Upgrade: 10 LICN = **$10.00**
+- NFT Mint: 0.5 LICN = **$0.50**
+- Validator Revenue: ~1,000 LICN /yr = $1,000/year
 - **vs Solana**: Governance would reduce fees to maintain competitiveness
 
-**Success Scenario ($MOLT = $10.00)**:
+**Success Scenario ($LICN = $10.00)**:
 - Market Cap: $10 billion
-- Transaction: 0.001 MOLT = **$0.01** per TX
-- Contract Deploy: 25 MOLT = $250.00
-- Validator Revenue: ~1,000 MOLT/yr = $10,000/year
+- Transaction: 0.001 LICN = **$0.01** per TX
+- Contract Deploy: 25 LICN = $250.00
+- Validator Revenue: ~1,000 LICN/yr = $10,000/year
 - **vs Solana**: Governance would have already reduced fees (see Fee Adjustment Mechanism)
 
 **All scenarios maintain**:

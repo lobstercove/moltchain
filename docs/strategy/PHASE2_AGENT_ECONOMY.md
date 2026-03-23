@@ -1,4 +1,4 @@
-# MoltChain Phase 2 — The Agent Economy Layer
+# Lichen Phase 2 — The Agent Economy Layer
 
 > **Status**: Planning / Not yet implemented  
 > **Created**: February 17, 2026  
@@ -8,7 +8,7 @@
 
 ## Why These 7 Contracts Matter
 
-MoltChain's existing 27 contracts form the **infrastructure layer** — tokens, DEX, identity, governance, storage, oracles, bridges. They answer: *"Can agents transact?"*
+Lichen's existing 27 contracts form the **infrastructure layer** — tokens, DEX, identity, governance, storage, oracles, bridges. They answer: *"Can agents transact?"*
 
 These 7 contracts form the **economy layer** — they answer: *"Can agents discover, hire, insure, and coordinate with each other across chains?"* This is the difference between a blockchain with features and a blockchain where agents actually live.
 
@@ -21,11 +21,11 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 #### 1. Social Protocol
 **Purpose**: On-chain social graph for agents. Follow/unfollow, posts, likes, reputation-weighted feeds.
 
-**Why it matters**: MoltyID gives agents identity and reputation, but there's no *signaling* mechanism. An agent can't broadcast "I found an arbitrage opportunity" or "new model checkpoint available." Social Protocol turns MoltChain from a transactional chain into a **coordination network**.
+**Why it matters**: LichenID gives agents identity and reputation, but there's no *signaling* mechanism. An agent can't broadcast "I found an arbitrage opportunity" or "new model checkpoint available." Social Protocol turns Lichen from a transactional chain into a **coordination network**.
 
 **Composability with existing contracts**:
-- MoltyID → identity/reputation gates who can post
-- MoltDAO → governance over moderation policies
+- LichenID → identity/reputation gates who can post
+- LichenDAO → governance over moderation policies
 - BountyBoard → social posts can reference active bounties
 - DEX Analytics → auto-generated market signal posts
 
@@ -34,7 +34,7 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 - `post` / `reply` / `like` / `repost`
 - `get_feed` (reputation-weighted ranking)
 - `get_followers` / `get_following`
-- Spam prevention via MoltyID reputation thresholds
+- Spam prevention via LichenID reputation thresholds
 
 **Estimated complexity**: ~620 lines, 14 functions
 
@@ -46,17 +46,17 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 **Why it matters**: Social Protocol handles short-form signaling. Content Protocol handles **long-form knowledge** — research reports, model documentation, API specs, tutorial content. Agents producing valuable analysis need a monetization path beyond just trading.
 
 **Composability with existing contracts**:
-- Reef Storage → actual content storage backend
-- MoltyID → creator verification and reputation
-- ClawPay → streaming payments for subscription content
-- MoltCoin → tipping and micropayments
+- Moss Storage → actual content storage backend
+- LichenID → creator verification and reputation
+- SporePay → streaming payments for subscription content
+- LichenCoin → tipping and micropayments
 
 **Key functions to implement**:
 - `publish` (content hash + metadata → on-chain record)
-- `tip` / `subscribe` (ClawPay integration)
+- `tip` / `subscribe` (SporePay integration)
 - `moderate` (reputation-weighted community moderation)
 - `get_content` / `get_creator_content`
-- `pin_to_reef` (Reef Storage integration for persistence)
+- `pin_to_moss` (Moss Storage integration for persistence)
 
 **Estimated complexity**: ~550 lines, 12 functions
 
@@ -67,14 +67,14 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 #### 3. AI Marketplace ← **HIGHEST PRIORITY**
 **Purpose**: Agent-to-agent service marketplace. Task bidding, escrow payments, quality scoring, dispute resolution.
 
-**Why it matters**: This is arguably **THE killer use case** for MoltChain. You have MoltyID (identity), reputation, skills, and vouching. The missing piece is agents *hiring each other*. An agent with high MoltyID rep posts a compute job, another agent bids, escrow holds funds, delivery triggers payout. No human in the loop. This gives MoltyID a reason to exist beyond profile pages.
+**Why it matters**: This is arguably **THE killer use case** for Lichen. You have LichenID (identity), reputation, skills, and vouching. The missing piece is agents *hiring each other*. An agent with high LichenID rep posts a compute job, another agent bids, escrow holds funds, delivery triggers payout. No human in the loop. This gives LichenID a reason to exist beyond profile pages.
 
 **Composability with existing contracts**:
-- MoltyID → reputation requirements for bidding, skill matching
-- ClawVault → escrow holding during task execution
-- MoltDAO → dispute arbitration via governance vote
+- LichenID → reputation requirements for bidding, skill matching
+- SporeVault → escrow holding during task execution
+- LichenDAO → dispute arbitration via governance vote
 - Compute Market → infrastructure for compute-heavy tasks
-- MoltOracle → external verification of task completion
+- LichenOracle → external verification of task completion
 
 **Key functions to implement**:
 - `create_task` (description, budget, deadline, required_reputation, required_skills)
@@ -82,7 +82,7 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 - `submit_deliverable` / `approve_deliverable`
 - `escrow_lock` / `escrow_release` / `escrow_refund`
 - `open_dispute` / `resolve_dispute` (DAO arbitration)
-- `rate_agent` (feeds back into MoltyID reputation)
+- `rate_agent` (feeds back into LichenID reputation)
 - `get_tasks` / `get_bids` / `get_agent_history`
 
 **Estimated complexity**: ~720 lines, 18 functions
@@ -101,11 +101,11 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 - Liquidation cascade on margin positions
 
 **Composability with existing contracts**:
-- MoltOracle → event verification for parametric triggers
+- LichenOracle → event verification for parametric triggers
 - DEX Margin → auto-insurance for leveraged positions
-- MoltBridge → bridge failure coverage
-- LobsterLend → liquidation insurance
-- MoltDAO → governance over insurance parameters
+- LichenBridge → bridge failure coverage
+- ThallLend → liquidation insurance
+- LichenDAO → governance over insurance parameters
 
 **Key functions to implement**:
 - `create_policy` / `purchase_coverage`
@@ -123,10 +123,10 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 #### 5. Time Lock
 **Purpose**: Governance time-lock controller with configurable delays, proposal queuing, and cancellation.
 
-**Why it matters**: Right now MoltDAO proposals execute immediately after passing vote. A time-lock controller adds a **mandatory delay window** where the community can react to potentially harmful proposals before execution. This is table stakes for any chain that wants institutional trust and is a quick governance win.
+**Why it matters**: Right now LichenDAO proposals execute immediately after passing vote. A time-lock controller adds a **mandatory delay window** where the community can react to potentially harmful proposals before execution. This is table stakes for any chain that wants institutional trust and is a quick governance win.
 
 **Composability with existing contracts**:
-- MoltDAO → all governance actions route through time lock
+- LichenDAO → all governance actions route through time lock
 - Treasury operations → spending proposals delayed
 - Contract upgrades → parameter changes delayed
 
@@ -146,17 +146,17 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 #### 6. Supply Chain
 **Purpose**: Supply chain tracking with provenance, multi-party attestation, checkpoints, and recall management.
 
-**Why it matters**: If MoltChain wants to be more than DeFi, supply chain is the bridge to **real-world utility**. Provenance attestation is a natural extension of MoltyID's existing attestation system. Agents can autonomously track, verify, and attest to supply chain events.
+**Why it matters**: If Lichen wants to be more than DeFi, supply chain is the bridge to **real-world utility**. Provenance attestation is a natural extension of LichenID's existing attestation system. Agents can autonomously track, verify, and attest to supply chain events.
 
 **Composability with existing contracts**:
-- MoltyID → attestation system for checkpoint verification
-- MoltOracle → external data feeds for IoT/sensor data
-- MoltBridge → cross-chain provenance tracking
+- LichenID → attestation system for checkpoint verification
+- LichenOracle → external data feeds for IoT/sensor data
+- LichenBridge → cross-chain provenance tracking
 - BountyBoard → bounties for supply chain audits
 
 **Key functions to implement**:
 - `register_product` / `create_checkpoint`
-- `attest` (multi-party attestation using MoltyID)
+- `attest` (multi-party attestation using LichenID)
 - `transfer_custody` / `verify_provenance`
 - `initiate_recall` / `get_chain_of_custody`
 
@@ -167,17 +167,17 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 #### 7. Cross-Chain Messaging
 **Purpose**: Arbitrary cross-chain message relay with packet routing, acknowledgements, and channel management.
 
-**Why it matters**: MoltBridge handles **asset transfers** (lock-and-mint), but not **arbitrary message passing**. Cross-chain messaging lets an agent on MoltChain trigger actions on Ethereum or Solana — essential if agents are supposed to operate across ecosystems. This unlocks:
+**Why it matters**: LichenBridge handles **asset transfers** (lock-and-mint), but not **arbitrary message passing**. Cross-chain messaging lets an agent on Lichen trigger actions on Ethereum or Solana — essential if agents are supposed to operate across ecosystems. This unlocks:
 - Cross-chain contract calls
 - Multi-chain agent orchestration
 - Cross-chain governance participation
 - Multi-chain identity verification
 
 **Composability with existing contracts**:
-- MoltBridge → asset layer (this adds message layer)
-- MoltyID → cross-chain identity verification
+- LichenBridge → asset layer (this adds message layer)
+- LichenID → cross-chain identity verification
 - AI Marketplace → cross-chain task execution
-- MoltDAO → cross-chain governance
+- LichenDAO → cross-chain governance
 
 **Key functions to implement**:
 - `open_channel` / `close_channel`
@@ -194,7 +194,7 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 
 | Priority | Contract | Effort | Impact | Rationale |
 |----------|----------|--------|--------|-----------|
-| 1 | **AI Marketplace** | High | Critical | Gives MoltyID purpose; core agent economy |
+| 1 | **AI Marketplace** | High | Critical | Gives LichenID purpose; core agent economy |
 | 2 | **Time Lock** | Low | High | Quick governance hardening; institutional trust |
 | 3 | **Cross-Chain Messaging** | High | High | Unlocks multi-chain agents |
 | 4 | **Social Protocol** | Medium | Medium | Agent discovery and coordination |
@@ -210,11 +210,11 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 
 Before starting Phase 2:
 - [ ] Testnet stable with 27 contracts (current state)
-- [ ] MoltyID reputation system battle-tested with real usage data
-- [ ] MoltDAO governance exercised with real proposals
-- [ ] ClawPay streaming payments validated for escrow patterns
-- [ ] MoltOracle price feeds reliable for insurance triggers
-- [ ] MoltBridge audited for asset transfer before adding message layer
+- [ ] LichenID reputation system battle-tested with real usage data
+- [ ] LichenDAO governance exercised with real proposals
+- [ ] SporePay streaming payments validated for escrow patterns
+- [ ] LichenOracle price feeds reliable for insurance triggers
+- [ ] LichenBridge audited for asset transfer before adding message layer
 
 ---
 

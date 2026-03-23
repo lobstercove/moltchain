@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — Shared TypeScript Types
-// MoltyDEX: Hybrid CLOB + Concentrated Liquidity AMM
+// @lichen/dex-sdk — Shared TypeScript Types
+// LichenDEX: Hybrid CLOB + Concentrated Liquidity AMM
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ---------------------------------------------------------------------------
@@ -64,7 +64,7 @@ export interface TradingPair {
   makerFeeBps: number;
   takerFeeBps: number;
   dailyVolume: bigint;
-  /** Human-readable symbol e.g. "MOLT/mUSD" */
+  /** Human-readable symbol e.g. "LICN/lUSD" */
   symbol?: string;
 }
 
@@ -387,15 +387,15 @@ export interface WSPositionEvent {
 // Client Configuration
 // ---------------------------------------------------------------------------
 
-export interface MoltDEXConfig {
+export interface LichenDEXConfig {
   /** REST API endpoint (default: http://localhost:8899) */
   endpoint?: string;
   /** WebSocket endpoint (default: ws://localhost:8900) */
   wsEndpoint?: string;
   /** Wallet keypair for signing transactions */
-  wallet?: any; // Keypair from @moltchain/sdk
-  /** MoltyID identity string (e.g. "alice.molt") */
-  moltyId?: string;
+  wallet?: any; // Keypair from @lichen/sdk
+  /** LichenID identity string (e.g. "alice.lichen") */
+  lichenId?: string;
   /** API key for rate limit bypass */
   apiKey?: string;
   /** Request timeout in ms (default: 30000) */

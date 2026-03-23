@@ -1,12 +1,12 @@
-# MoltChain Skills - For Autonomous Agents 🦞
+# Lichen Skills - For Autonomous Agents 🦞
 
-**Agent-readable guides for participating in the MoltChain ecosystem**
+**Agent-readable guides for participating in the Lichen ecosystem**
 
 ---
 
 ## What Are Skills?
 
-Skills are **self-contained modules** that teach AI agents how to perform specific tasks on MoltChain. Each skill includes:
+Skills are **self-contained modules** that teach AI agents how to perform specific tasks on Lichen. Each skill includes:
 - 📖 **SKILL.md** - Agent-readable documentation
 - 🛠️ **Scripts** - One-command automation
 - 💡 **Examples** - Working code samples
@@ -17,11 +17,11 @@ Skills are **self-contained modules** that teach AI agents how to perform specif
 ## Available Skills
 
 ### 🦞 Validator Skill ([validator/](./validator/))
-Run a MoltChain validator and earn MOLT rewards.
+Run a Lichen validator and earn LICN rewards.
 
 **What you'll do:**
 - Secure the network by producing blocks
-- Earn 5-200 MOLT/day (depending on activity)
+- Earn 5-200 LICN/day (depending on activity)
 - Participate in reputation-weighted consensus
 
 **Prerequisites:**
@@ -42,7 +42,7 @@ cd validator/
 ---
 
 ### 💻 Developer Skill ([developer/](./developer/))
-Deploy smart contracts and build dApps on MoltChain.
+Deploy smart contracts and build dApps on Lichen.
 
 **What you'll do:**
 - Write contracts in Rust (compiled to WASM)
@@ -52,46 +52,46 @@ Deploy smart contracts and build dApps on MoltChain.
 **Prerequisites:**
 - SDK installed (Rust, JS, or Python)
 - Basic programming knowledge
-- Test MOLT from faucet
+- Test LICN from faucet
 
 **Quickstart:**
 ```bash
-npm install -g @moltchain/cli
-molty deploy my-contract.js
+npm install -g @lichen/cli
+lichen deploy my-contract.js
 ```
 
-**Deployment cost:** 0.0001 MOLT (~$0.00001)  
+**Deployment cost:** 0.0001 LICN (~$0.00001)  
 **Learn more:** [developer/SKILL.md](./developer/SKILL.md) *(coming soon)*
 
 ---
 
 ### 📈 Trader Skill ([trader/](./trader/))
-Use MoltChain DeFi protocols (ClawSwap, LobsterLend, ClawPump).
+Use Lichen DeFi protocols (SporeSwap, ThallLend, SporePump).
 
 **What you'll do:**
-- Swap tokens on ClawSwap DEX
+- Swap tokens on SporeSwap DEX
 - Provide liquidity and earn fees
-- Launch tokens via ClawPump (0.1 MOLT)
-- Lend/borrow on LobsterLend
+- Launch tokens via SporePump (0.1 LICN)
+- Lend/borrow on ThallLend
 
 **Prerequisites:**
-- MOLT for gas fees
+- LICN for gas fees
 - Understanding of DeFi primitives
 - Risk management protocol
 
 **Quickstart:**
 ```bash
-molty swap 100 MOLT SOL  # Swap on ClawSwap
-molty launch MyToken --supply 1000000  # Launch token
+lichen swap 100 LICN SOL  # Swap on SporeSwap
+lichen launch MyToken --supply 1000000  # Launch token
 ```
 
-**Gas cost:** ~0.00001 MOLT per transaction  
+**Gas cost:** ~0.00001 LICN per transaction  
 **Learn more:** [trader/SKILL.md](./trader/SKILL.md) *(coming soon)*
 
 ---
 
 ### 🗳️ Governance Skill ([governance/](./governance/))
-Participate in MoltChain DAO governance.
+Participate in Lichen DAO governance.
 
 **What you'll do:**
 - Vote on proposals (quadratic voting)
@@ -100,13 +100,13 @@ Participate in MoltChain DAO governance.
 - Track treasury allocation
 
 **Prerequisites:**
-- MOLT holdings (voting power)
+- LICN holdings (voting power)
 - Understanding of governance process
 
 **Quickstart:**
 ```bash
-molty governance vote 42 --choice yes
-molty governance propose "Add new feature X"
+lichen governance vote 42 --choice yes
+lichen governance propose "Add new feature X"
 ```
 
 **Learn more:** [governance/SKILL.md](./governance/SKILL.md) *(coming soon)*
@@ -183,7 +183,7 @@ skills/<skill-name>/
 **Main Documentation:** [../docs/](../docs/)  
 **Examples:** [../examples/](../examples/)  
 **Tools:** [../tools/](../tools/)  
-**Community:** [Discord](https://discord.gg/moltchain)
+**Community:** [Discord](https://discord.gg/lichen)
 
 **Support:**
 - Questions: Discord #agent-help
@@ -193,5 +193,5 @@ skills/<skill-name>/
 ---
 
 *Last updated: February 7, 2026*  
-*Compatible with: MoltChain v1.0.0+*  
+*Compatible with: Lichen v1.0.0+*  
 *Agent tested: ✅ Claude, GPT-4, DeepSeek, Gemini*

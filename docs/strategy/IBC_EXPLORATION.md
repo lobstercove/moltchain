@@ -4,7 +4,7 @@
 
 ## 1. Executive Summary
 
-MoltChain currently has no trustless cross-chain protocol. The existing MoltBridge contract uses a multi-sig validator set (N-of-M confirmation) for lock-and-mint bridging — a trust-minimized but not trustless design.
+Lichen currently has no trustless cross-chain protocol. The existing LichenBridge contract uses a multi-sig validator set (N-of-M confirmation) for lock-and-mint bridging — a trust-minimized but not trustless design.
 
 This document scopes what would be needed for IBC (Inter-Blockchain Communication) integration and recommends a phased approach.
 
@@ -28,7 +28,7 @@ IBC (Cosmos ICS specification) is built on three pillars:
 | Token Transfer | ICS-20 | Fungible token transfer standard |
 | Interchain Accounts | ICS-27 | Execute txs on remote chain |
 
-## 3. MoltChain's Existing Primitives
+## 3. Lichen's Existing Primitives
 
 ### 3.1 Commit Certificates (Phase 1, Task 1.2) ✅
 
@@ -42,7 +42,7 @@ CommitSignature {
 
 - Stored in `BlockHeader.commit_signatures`
 - `verify_commit()` checks 2/3+ stake supermajority
-- **IBC relevance**: A counterparty light client can verify MoltChain block validity by checking commit signatures against the known validator set — same as Cosmos/CometBFT.
+- **IBC relevance**: A counterparty light client can verify Lichen block validity by checking commit signatures against the known validator set — same as Cosmos/CometBFT.
 
 ### 3.2 Account State Proofs (Phase 1, Task 1.3) ✅
 
@@ -57,7 +57,7 @@ AccountProof {
 
 - `get_account_proof(&pubkey)` generates inclusion proofs
 - `MerkleProof::verify(&expected_root)` verifies proof client-side
-- **IBC relevance**: Counterparty chains can verify MoltChain account states using these proofs, keyed to a block's state_root from a verified header.
+- **IBC relevance**: Counterparty chains can verify Lichen account states using these proofs, keyed to a block's state_root from a verified header.
 
 ### 3.3 BFT Finality (Existing) ✅
 
@@ -75,7 +75,7 @@ AccountProof {
 
 ### 4.1 Light Client Module (NOT IMPLEMENTED)
 
-**Requirement**: MoltChain needs an on-chain module (WASM contract or native instruction) that can:
+**Requirement**: Lichen needs an on-chain module (WASM contract or native instruction) that can:
 - Store and update counterparty chain's validator set
 - Verify counterparty block headers using their commit certificates
 - Track counterparty chain's consensus state (latest height, root, next validators hash)
@@ -143,15 +143,15 @@ Deploy a WASM contract (`ibc_transfer`) that:
 
 ### Phase D: Relayer Integration
 
-- Adapt Hermes relayer to support MoltChain's RPC format
-- Configure connection and channel between MoltChain and a Cosmos testnet
+- Adapt Hermes relayer to support Lichen's RPC format
+- Configure connection and channel between Lichen and a Cosmos testnet
 - End-to-end testing of token transfers
 
 **Estimate**: Hermes plugin + configuration.
 
 ## 6. Alternatives Considered
 
-### 6.1 Current MoltBridge (In Use)
+### 6.1 Current LichenBridge (In Use)
 
 - Multi-sig validator confirmation (N-of-M)
 - Trust model: trust the bridge validator set (subset of chain validators)
@@ -171,11 +171,11 @@ Deploy a WASM contract (`ibc_transfer`) that:
 - Trust model: Trustless, math-only verification
 - Pros: Most secure, minimal trust assumptions
 - Cons: Extremely complex, long proof generation times, high compute cost
-- MoltChain already has Groth16/BN254 support — could be leveraged
+- Lichen already has Groth16/BN254 support — could be leveraged
 
 ## 7. Decision: Defer Full IBC
 
-**Decision**: Full IBC implementation is deferred. The existing MoltBridge provides adequate cross-chain functionality for current needs. The foundations (commit certs, state proofs, BFT finality) are in place for future IBC-lite when ecosystem demand materializes.
+**Decision**: Full IBC implementation is deferred. The existing LichenBridge provides adequate cross-chain functionality for current needs. The foundations (commit certs, state proofs, BFT finality) are in place for future IBC-lite when ecosystem demand materializes.
 
 This satisfies the original alignment-plan task because Task 4.4 was explicitly a research and scoping deliverable, not a commitment to ship full IBC inside the closed alignment plan.
 
@@ -186,11 +186,11 @@ This satisfies the original alignment-plan task because Task 4.4 was explicitly 
 
 ## 8. Comparison with Real Chains
 
-| Capability | Cosmos | MoltChain (Current) | MoltChain (With IBC-Lite) |
+| Capability | Cosmos | Lichen (Current) | Lichen (With IBC-Lite) |
 |-----------|--------|---------------------|--------------------------|
 | Light client verification | Full IBC | Commit certs available, no LC module | LC contract + proof verification |
 | State proofs | Merkle IAVL | Merkle SHA-256 proofs ✅ | Extended with storage proofs |
-| Cross-chain tokens | ICS-20 | MoltBridge (multi-sig) | ICS-20 contract |
+| Cross-chain tokens | ICS-20 | LichenBridge (multi-sig) | ICS-20 contract |
 | Relayer support | Hermes, go-relayer | None | Hermes plugin |
 | Finality model | Instant (BFT) | Instant (BFT) ✅ | Same |
 | Validator set tracking | Tendermint LC | N/A | LC contract tracks counterparty |

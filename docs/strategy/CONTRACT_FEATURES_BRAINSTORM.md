@@ -1,8 +1,8 @@
 # Contract Features & Optimizations Brainstorm
 
-> Ideas for extending MoltChain's WASM contract platform to attract serious developers.
+> Ideas for extending Lichen's WASM contract platform to attract serious developers.
 > **Status:** Brainstorm — no implementation yet. Captured March 2026.
-> **Context:** MoltChain currently has 16 host functions, 29 deployed contracts, and a flat-fee model (no gas).
+> **Context:** Lichen currently has 16 host functions, 29 deployed contracts, and a flat-fee model (no gas).
 
 ---
 
@@ -21,7 +21,7 @@
 | 7 | `get_timestamp` | Block timestamp |
 | 8 | `get_caller` | Caller address |
 | 9 | `get_contract_address` | Contract's own address |
-| 10 | `get_value` | Transferred MOLT amount (shells) |
+| 10 | `get_value` | Transferred LICN amount (spores) |
 | 11 | `get_slot` | Current block slot |
 | 12 | `get_args_len` | Argument buffer length |
 | 13 | `get_args` | Read arguments |
@@ -35,11 +35,11 @@ Storage, contract args/return, logging, events, cross-contract calls, token, NFT
 
 ### Fee Model (Relevant Context)
 
-MoltChain uses **flat fees**, not gas:
-- Base transaction: **0.001 MOLT** (1,000,000 shells)
-- Contract deploy: **25 MOLT**
-- Contract upgrade: **10 MOLT**
-- Contract calls: base fee only (0.001 MOLT)
+Lichen uses **flat fees**, not gas:
+- Base transaction: **0.001 LICN** (1,000,000 spores)
+- Contract deploy: **25 LICN**
+- Contract upgrade: **10 LICN**
+- Contract calls: base fee only (0.001 LICN)
 - Fee distribution: 40% burn, 30% producer, 10% voters, 10% treasury, 10% community
 
 WASM compute units exist internally for sandbox safety (10M CU max per call) but are NOT charged to users. The flat fee model is a core design principle — agents need predictable, ultra-low costs.
@@ -83,16 +83,16 @@ These unlock use cases that are currently impossible.
 - Unlocks: commit-reveal randomness, time-delayed proofs, historical state verification
 - Internal CU cost: ~500
 
-### 6. `host_transfer(to_ptr, amount: u64) → i32` — Native MOLT Transfer
+### 6. `host_transfer(to_ptr, amount: u64) → i32` — Native LICN Transfer
 
-- Direct native MOLT transfer from contract balance without cross-contract call
+- Direct native LICN transfer from contract balance without cross-contract call
 - Unlocks: contracts as treasuries, bounty payouts, revenue sharing, liquidity mining rewards
 - Simpler and more efficient than routing through token contracts
 - Internal CU cost: ~2,000
 
 ### 7. `host_self_destruct(beneficiary_ptr)` — Contract Teardown
 
-- Contract deletes itself and returns remaining MOLT to a beneficiary
+- Contract deletes itself and returns remaining LICN to a beneficiary
 - Useful for factory patterns, one-time-use contracts, cleanup of obsolete contracts
 - Internal CU cost: ~3,000
 
@@ -107,7 +107,7 @@ Built purely in the SDK crate using existing host functions. Dramatically improv
 OpenZeppelin-style `Ownable`, `AccessControl`, `Pausable` patterns:
 
 ```rust
-use moltchain_contract_sdk::access::{Ownable, RoleBased};
+use lichen_contract_sdk::access::{Ownable, RoleBased};
 
 #[ownable]  // Generates owner storage + only_owner() guard
 #[roles("ADMIN", "MINTER", "PAUSER")]  // Generates role checks
@@ -120,7 +120,7 @@ use moltchain_contract_sdk::access::{Ownable, RoleBased};
 ### 9. Reentrancy Guard
 
 ```rust
-use moltchain_contract_sdk::security::ReentrancyGuard;
+use lichen_contract_sdk::security::ReentrancyGuard;
 let _guard = ReentrancyGuard::lock(); // panics if already locked
 ```
 
@@ -131,7 +131,7 @@ let _guard = ReentrancyGuard::lock(); // panics if already locked
 ### 10. Typed Storage Collections
 
 ```rust
-use moltchain_contract_sdk::collections::{StorageMap, StorageVec, StorageSet};
+use lichen_contract_sdk::collections::{StorageMap, StorageVec, StorageSet};
 
 let balances: StorageMap<Address, u64> = StorageMap::new("balances");
 balances.insert(&user, 1000);
@@ -196,7 +196,7 @@ struct Transfer { from: Address, to: Address, amount: u64 }
 
 - Allow a "relayer" account to pay the flat transaction fee on behalf of the actual signer
 - Transaction includes inner signed message + outer relayer signature
-- Eliminates the "users need MOLT to start" onboarding problem
+- Eliminates the "users need LICN to start" onboarding problem
 - Critical for consumer-facing dApps and agent onboarding
 
 ---
@@ -206,7 +206,7 @@ struct Transfer { from: Address, to: Address, amount: u64 }
 ### 19. Contract Testing Framework
 
 ```rust
-use moltchain_contract_test::TestEnv;
+use lichen_contract_test::TestEnv;
 
 #[cfg(test)]
 let mut env = TestEnv::new();
@@ -223,7 +223,7 @@ assert_eq!(env.storage_get("balance:alice"), 0);
 ### 20. Contract Template Generator
 
 ```bash
-molt new-contract --template token
+lichen new-contract --template token
 ```
 
 Scaffolds a contract with `Cargo.toml`, standard implementation, tests, README.
@@ -233,12 +233,12 @@ Templates: `token`, `nft`, `dao`, `marketplace`, `staking`, `oracle`.
 
 - Store source hash + compiler version on-chain during deploy
 - Explorer can verify deployed WASM matches claimed source
-- `molt verify <contract-id> --source ./src`
+- `lichen verify <contract-id> --source ./src`
 
 ### 22. Compute Profiler
 
 ```bash
-molt profile <wasm-file> --method transfer --args ...
+lichen profile <wasm-file> --method transfer --args ...
 ```
 
 Shows CU breakdown per host function call, memory allocation, and computation. Helps developers optimize hot paths.
@@ -277,7 +277,7 @@ Shows CU breakdown per host function call, memory allocation, and computation. H
 | Priority | Feature | Impact | Effort |
 |----------|---------|--------|--------|
 | **P0** | `host_ed25519_verify` | Meta-tx, multisig, account abstraction | Medium |
-| **P0** | `host_transfer` | Native MOLT from contracts | Low |
+| **P0** | `host_transfer` | Native LICN from contracts | Low |
 | **P0** | Typed Storage Collections | Every contract needs this | Medium |
 | **P0** | Reentrancy Guard | Security critical for DeFi | Low |
 | **P1** | `host_keccak256` + `host_sha256` | EVM compat, Merkle proofs | Low |
@@ -293,4 +293,4 @@ Shows CU breakdown per host function call, memory allocation, and computation. H
 | **P3** | `host_verify_groth16_proof` | Privacy features | High |
 | **P3** | Parallel execution hints | Throughput scaling | Very High |
 
-The **P0 items** (ed25519_verify, host_transfer, typed collections, reentrancy guard) would immediately put MoltChain on par with Solana's program capabilities and bring EVM-class safety patterns. Combined, they'd be a single release — a strong v0.3.0 milestone.
+The **P0 items** (ed25519_verify, host_transfer, typed collections, reentrancy guard) would immediately put Lichen on par with Solana's program capabilities and bring EVM-class safety patterns. Combined, they'd be a single release — a strong v0.3.0 milestone.

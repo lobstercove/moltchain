@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================
-# MoltChain Validator Launcher
+# Lichen Validator Launcher
 # ============================================================================
 #
 # Usage: ./run-validator.sh [network] <validator_number>
@@ -82,7 +82,7 @@ case $VALIDATOR_NUM in
     ;;
 esac
 
-echo "MoltChain Validator: $NAME"
+echo "Lichen Validator: $NAME"
 echo "=================================="
 echo "Network: $NETWORK"
 echo "RPC:     http://localhost:$RPC_PORT"
@@ -100,12 +100,12 @@ fi
 
 echo ""
 echo "Block Production:"
-echo "   No TXs: Heartbeat every 5s (0.135 MOLT)"
-echo "   With TXs: 400ms blocks (0.9 MOLT)"
+echo "   No TXs: Heartbeat every 5s (0.135 LICN)"
+echo "   With TXs: 400ms blocks (0.9 LICN)"
 echo ""
 
-if [ -z "${MOLTCHAIN_SIGNER_BIND:-}" ]; then
-  export MOLTCHAIN_SIGNER_BIND="127.0.0.1:${SIGNER_PORT}"
+if [ -z "${LICHEN_SIGNER_BIND:-}" ]; then
+  export LICHEN_SIGNER_BIND="127.0.0.1:${SIGNER_PORT}"
 fi
 
 # Collect extra flags (e.g. --dev-mode, --import-key /path)
@@ -137,7 +137,7 @@ for i in $(seq 1 $#); do
     fi
 done
 
-BIN_PATH="${REPO_ROOT}/target/release/moltchain-validator"
+BIN_PATH="${REPO_ROOT}/target/release/lichen-validator"
 if [ -x "$BIN_PATH" ]; then
   exec "$BIN_PATH" \
     --network "$NETWORK" \
@@ -149,7 +149,7 @@ if [ -x "$BIN_PATH" ]; then
 else
   echo "Release binary not found at $BIN_PATH"
   echo "Building with cargo..."
-  exec cargo run --release --bin moltchain-validator -- \
+  exec cargo run --release --bin lichen-validator -- \
     --network "$NETWORK" \
     --rpc-port "$RPC_PORT" \
     --ws-port "$WS_PORT" \

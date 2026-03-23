@@ -1,4 +1,4 @@
-# MoltChain Developer Portal — Build Plan
+# Lichen Developer Portal — Build Plan
 
 **Date:** February 10, 2026  
 **Location:** `developers/`  
@@ -9,7 +9,7 @@
 
 ## Overview
 
-The Developer Portal is the one-stop reference for anyone building on MoltChain. It consolidates all API docs, SDK references, contract guides, CLI docs, and tutorials into a cohesive, searchable portal with the same dark-navy + orange design system used by Explorer and Marketplace.
+The Developer Portal is the one-stop reference for anyone building on Lichen. It consolidates all API docs, SDK references, contract guides, CLI docs, and tutorials into a cohesive, searchable portal with the same dark-navy + teal design system used by Explorer and Marketplace.
 
 ---
 
@@ -18,7 +18,7 @@ The Developer Portal is the one-stop reference for anyone building on MoltChain.
 ### Navigation Structure
 
 ```
-[Home/Hub]  [Guides]  [API Reference]  [SDK]  [Contracts]  [CLI]  [MoltyID]
+[Home/Hub]  [Guides]  [API Reference]  [SDK]  [Contracts]  [CLI]  [LichenID]
 ```
 
 ### Page List
@@ -30,12 +30,12 @@ The Developer Portal is the one-stop reference for anyone building on MoltChain.
 | 3 | **Architecture** | `architecture.html` | Network diagram, consensus (PoC), execution model, state management, block lifecycle |
 | 4 | **JSON-RPC Reference** | `rpc-reference.html` | Every RPC method: name, params, return type, example request/response. Grouped by category |
 | 5 | **WebSocket Reference** | `ws-reference.html` | Subscription methods, event types, connection lifecycle, code examples |
-| 6 | **JS/TS SDK** | `sdk-js.html` | `@moltchain/sdk` — Connection, Keypair, PublicKey, Transaction, all methods with types |
-| 7 | **Python SDK** | `sdk-python.html` | `moltchain-sdk` — Connection, Keypair, Transaction, all methods with docstrings |
-| 8 | **Rust SDK** | `sdk-rust.html` | `moltchain-client` — Client, types, error handling, async patterns |
+| 6 | **JS/TS SDK** | `sdk-js.html` | `@lichen/sdk` — Connection, Keypair, PublicKey, Transaction, all methods with types |
+| 7 | **Python SDK** | `sdk-python.html` | `lichen-sdk` — Connection, Keypair, Transaction, all methods with docstrings |
+| 8 | **Rust SDK** | `sdk-rust.html` | `lichen-client` — Client, types, error handling, async patterns |
 | 9 | **Smart Contract Dev** | `contracts.html` | How WASM contracts work, SDK functions, storage model, cross-contract calls, testing |
 | 10 | **Contract Reference** | `contract-reference.html` | All 16 contracts: name, address, exported functions, parameters, return codes, storage keys |
-| 11 | **MoltyID Guide** | `moltyid.html` | .molt naming, reputation, trust tiers, identity-gated access, agent discovery, integration guide |
+| 11 | **LichenID Guide** | `lichenid.html` | .lichen naming, reputation, trust tiers, identity-gated access, agent discovery, integration guide |
 | 12 | **CLI Reference** | `cli-reference.html` | Every CLI command with flags, examples, output format |
 | 13 | **Validator Guide** | `validator.html` | Setup, config.toml reference, staking, monitoring, systemd deployment |
 | 14 | **Changelog** | `changelog.html` | Version history, breaking changes, new features |
@@ -56,7 +56,7 @@ developers/
 ├── sdk-rust.html               # Rust SDK reference
 ├── contracts.html              # Smart contract dev guide
 ├── contract-reference.html     # All 16 contracts reference
-├── moltyid.html                # MoltyID integration guide
+├── lichenid.html                # LichenID integration guide
 ├── cli-reference.html          # CLI command reference
 ├── validator.html              # Validator setup guide
 ├── changelog.html              # Version history
@@ -68,7 +68,7 @@ developers/
 │   ├── contract-data.js        # Contract function definitions from all 16 contracts
 │   └── cli-data.js             # CLI command definitions
 ├── assets/
-│   ├── MoltDev_Logo_256.png    # Portal logo (to be created)
+│   ├── LichenDev_Logo_256.png    # Portal logo (to be created)
 │   └── diagrams/               # Architecture SVG diagrams
 └── docs/                       # (optional) raw markdown source for migration
 ```
@@ -81,8 +81,8 @@ developers/
 
 **Layout:** Full-width hero → 3-column card grid → live stats bar → code snippet
 
-- **Hero:** "Build on MoltChain" headline, subtitle, two CTAs ("Get Started" → getting-started, "API Docs" → rpc-reference)
-- **Card Grid (6 cards):** Quick Start, API Reference, SDKs, Smart Contracts, MoltyID, Validator Guide — each with icon, title, description, link
+- **Hero:** "Build on Lichen" headline, subtitle, two CTAs ("Get Started" → getting-started, "API Docs" → rpc-reference)
+- **Card Grid (6 cards):** Quick Start, API Reference, SDKs, Smart Contracts, LichenID, Validator Guide — each with icon, title, description, link
 - **Live Stats Bar:** Block height, TPS, validators, total accounts — fetched from RPC (same pattern as explorer)
 - **Quick Code Snippet:** Tabbed code block (JS / Python / Rust / CLI) showing "Connect and get balance" in each language
 - **Footer:** Links to GitHub, Discord, Explorer, Marketplace
@@ -91,10 +91,10 @@ developers/
 
 **Layout:** Sidebar TOC + main content with numbered steps
 
-- **Step 1 — Install CLI:** `curl` one-liner, build from source, verify with `molt --version`
-- **Step 2 — Create Wallet:** `molt wallet new`, show output, explain mnemonic safety
-- **Step 3 — Get Testnet Tokens:** Web faucet link + `molt faucet request` (if available)
-- **Step 4 — First Transfer:** `molt transfer` command with full example
+- **Step 1 — Install CLI:** `curl` one-liner, build from source, verify with `lichen --version`
+- **Step 2 — Create Wallet:** `lichen wallet new`, show output, explain mnemonic safety
+- **Step 3 — Get Testnet Tokens:** Web faucet link + `lichen faucet request` (if available)
+- **Step 4 — First Transfer:** `lichen transfer` command with full example
 - **Step 5 — Deploy a Contract:** Write minimal contract, compile to WASM, deploy with CLI
 - **Each step:** Collapsible code block, expected output, "Next" button
 
@@ -108,7 +108,7 @@ Sections:
 - Transaction lifecycle (submit → mempool → block → commit)
 - State model (RocksDB column families, account structure)
 - WASM execution (Wasmer runtime, host functions, gas metering)
-- MoltyID trust tier integration in mempool/processor
+- LichenID trust tier integration in mempool/processor
 - Network topology (gossip, sync, bootstrap)
 
 ### Page 4: JSON-RPC Reference (`rpc-reference.html`)
@@ -188,7 +188,7 @@ Data populated from actual SDK source:
 **Layout:** Tutorial-style with code blocks
 
 Sections:
-1. **How Contracts Work** — WASM target, `#![no_std]`, `extern "C"` exports, `moltchain-sdk`
+1. **How Contracts Work** — WASM target, `#![no_std]`, `extern "C"` exports, `lichen-sdk`
 2. **SDK Functions** — `storage_get/set/remove`, `get_caller`, `get_value`, `get_timestamp`, `get_slot`, `emit_event`, `log`, `contract_return`
 3. **Cross-Contract Calls** — `call_contract()`, `call_token_balance()`
 4. **Token Module** — `token_transfer`, `token_mint`, `token_burn`, `token_create`
@@ -206,38 +206,38 @@ Sections:
 All 16 contracts documented:
 | Contract | Category | Functions |
 |----------|----------|-----------|
-| moltcoin | Token | 9 |
-| moltdao | Governance | 6 |
-| moltswap | DEX | 10 |
-| moltyid | Identity | 34 |
-| moltoracle | Oracle | 13 |
-| moltauction | NFT Auction | 10 |
-| moltmarket | NFT Market | 6 |
-| moltpunks | NFT Collection | 8 |
-| clawpump | Bonding Curve | 8 |
-| clawvault | Yield Vault | 7 |
-| lobsterlend | Lending | 7 |
-| reef_storage | Storage | 7 |
-| moltbridge | Bridge | 8 |
+| lichencoin | Token | 9 |
+| lichendao | Governance | 6 |
+| lichenswap | DEX | 10 |
+| lichenid | Identity | 34 |
+| lichenoracle | Oracle | 13 |
+| lichenauction | NFT Auction | 10 |
+| lichenmarket | NFT Market | 6 |
+| lichenpunks | NFT Collection | 8 |
+| sporepump | Bonding Curve | 8 |
+| sporevault | Yield Vault | 7 |
+| thalllend | Lending | 7 |
+| moss_storage | Storage | 7 |
+| lichenbridge | Bridge | 8 |
 | compute_market | Compute | 8 |
 | bountyboard | Bounties | 8 |
-| clawpay | Streaming | 7 |
+| sporepay | Streaming | 7 |
 
 Each function: name, parameters (types), return codes, description, storage keys affected. Data defined in `js/contract-data.js`.
 
-### Page 11: MoltyID Guide (`moltyid.html`)
+### Page 11: LichenID Guide (`lichenid.html`)
 
 **Layout:** Guide-style with diagrams
 
 Sections:
-1. **What is MoltyID** — Universal AI agent identity layer
-2. **.molt Naming** — Registration, resolution, reverse lookup, transfer, renewal, costs
+1. **What is LichenID** — Universal AI agent identity layer
+2. **.lichen Naming** — Registration, resolution, reverse lookup, transfer, renewal, costs
 3. **Reputation System** — How reputation accrues, typed feedback, achievements
 4. **Trust Tiers** — Table: tier 0-5, thresholds, privileges, fee discounts, mempool priority
 5. **Agent Discovery** — Endpoints, metadata, availability, rate setting
 6. **Agent Profile** — Full profile assembly, what data is returned
-7. **Identity-Gated Access** — How other contracts use MoltyID (MoltBridge, Compute Market, BountyBoard, ClawPay, MoltSwap)
-8. **Integration Guide** — Step-by-step for contract developers to add MoltyID gates
+7. **Identity-Gated Access** — How other contracts use LichenID (LichenBridge, Compute Market, BountyBoard, SporePay, LichenSwap)
+8. **Integration Guide** — Step-by-step for contract developers to add LichenID gates
 9. **Web of Trust** — Vouching, attestations, skill verification
 10. **SDK Examples** — Register identity, register name, check reputation (JS/Python/Rust)
 
@@ -246,12 +246,12 @@ Sections:
 **Layout:** Command list sidebar + main content
 
 Categories:
-- **Identity:** `molt identity new`, `molt identity show`, `molt identity export`
-- **Wallet:** `molt wallet new`, `molt wallet import`, `molt balance`, `molt transfer`
-- **Contracts:** `molt deploy`, `molt call`, `molt contract info`
-- **Validator:** `molt validator start`, `molt validator stake`, `molt validator status`
-- **Network:** `molt health`, `molt version`, `molt config`
-- **Query:** `molt block`, `molt tx`, `molt account`
+- **Identity:** `lichen identity new`, `lichen identity show`, `lichen identity export`
+- **Wallet:** `lichen wallet new`, `lichen wallet import`, `lichen balance`, `lichen transfer`
+- **Contracts:** `lichen deploy`, `lichen call`, `lichen contract info`
+- **Validator:** `lichen validator start`, `lichen validator stake`, `lichen validator status`
+- **Network:** `lichen health`, `lichen version`, `lichen config`
+- **Query:** `lichen block`, `lichen tx`, `lichen account`
 
 Each command: syntax, flags/options, example, expected output.
 
@@ -264,7 +264,7 @@ Sections:
 2. **Installation** — Build from source, Docker
 3. **Configuration** — `config.toml` reference (every field documented)
 4. **Genesis** — Joining a network, genesis block
-5. **Staking** — How to stake, validator set, ReefStake
+5. **Staking** — How to stake, validator set, MossStake
 6. **Monitoring** — Prometheus metrics, health endpoints, log levels
 7. **Deployment** — systemd service, Docker compose, security hardening
 8. **Troubleshooting** — Common issues and resolutions
@@ -305,7 +305,7 @@ Needed components beyond shared theme:
 
 ### Color Usage (from shared-base-styles.css):
 - Background: `#0A0E27` (body), `#141830` (cards)
-- Primary: `#FF6B35` (orange — CTAs, active nav, links)
+- Primary: `#00C9DB` (teal — CTAs, active nav, links)
 - Secondary: `#004E89` (blue — info boxes)
 - Success: `#06D6A0` (green — success codes)
 - Text: `#FFFFFF` (headings), `#A0AEC0` (body), `#718096` (muted)
@@ -317,8 +317,8 @@ Needed components beyond shared theme:
 <nav class="nav">
   <div class="nav-container">
     <div class="nav-logo">
-      <img src="assets/MoltDev_Logo_256.png" class="logo-icon" alt="MoltChain Dev">
-      <span class="logo-text">MoltChain Dev</span>
+      <img src="assets/LichenDev_Logo_256.png" class="logo-icon" alt="Lichen Dev">
+      <span class="logo-text">Lichen Dev</span>
     </div>
     <ul class="nav-menu">
       <li><a href="index.html">Hub</a></li>
@@ -327,7 +327,7 @@ Needed components beyond shared theme:
       <li><a href="sdk-js.html">SDK</a></li>
       <li><a href="contracts.html">Contracts</a></li>
       <li><a href="cli-reference.html">CLI</a></li>
-      <li><a href="moltyid.html">MoltyID</a></li>
+      <li><a href="lichenid.html">LichenID</a></li>
     </ul>
     <div class="nav-actions">
       <div class="search-container">
@@ -364,7 +364,7 @@ const RPC_METHODS = [
   {
     name: "getBalance",
     category: "Account",
-    description: "Returns the balance of an account in shells",
+    description: "Returns the balance of an account in spores",
     params: [{ name: "address", type: "string", description: "Base58-encoded public key" }],
     returns: { type: "object", fields: [{ name: "balance", type: "number" }, { name: "reputation", type: "number" }] },
     example: {
@@ -381,14 +381,14 @@ Array of all 16 contracts with every exported function:
 ```js
 const CONTRACTS = [
   {
-    name: "moltyid",
-    displayName: "MoltyID — Universal Identity",
+    name: "lichenid",
+    displayName: "LichenID — Universal Identity",
     category: "Identity",
-    description: "AI agent identity, .molt naming, reputation, trust tiers",
+    description: "AI agent identity, .lichen naming, reputation, trust tiers",
     functions: [
       {
         name: "register_identity",
-        description: "Register a new MoltyID identity",
+        description: "Register a new LichenID identity",
         params: [{ name: "name_ptr", type: "*const u8" }, { name: "name_len", type: "u32" }],
         returns: "0 = success, 1 = already registered, 2 = name too long",
         storageKeys: ["id:{hex(caller)}", "id_count"]
@@ -405,12 +405,12 @@ Array of CLI commands parsed from `cli/src/main.rs`:
 ```js
 const CLI_COMMANDS = [
   {
-    command: "molt wallet new",
+    command: "lichen wallet new",
     category: "Wallet",
     description: "Create a new wallet with BIP39 mnemonic",
     flags: ["--output <path>", "--words <12|24>"],
-    example: "molt wallet new --words 24",
-    output: "Mnemonic: word1 word2 ...\nPublic Key: 5abc...\nSaved to ~/.moltchain/wallet.json"
+    example: "lichen wallet new --words 24",
+    output: "Mnemonic: word1 word2 ...\nPublic Key: 5abc...\nSaved to ~/.lichen/wallet.json"
   },
   // ...
 ];
@@ -433,7 +433,7 @@ const CLI_COMMANDS = [
 | 9 | `sdk-python.html` | CSS, JS, parse `sdk/python/` | ~300 |
 | 10 | `sdk-rust.html` | CSS, JS, parse `sdk/rust/` | ~300 |
 | 11 | `js/contract-data.js` | Parse all 16 contracts | ~800 |
-| 12 | `contracts.html` + `contract-reference.html` + `moltyid.html` | CSS, JS, contract-data | ~900 |
+| 12 | `contracts.html` + `contract-reference.html` + `lichenid.html` | CSS, JS, contract-data | ~900 |
 | 13 | `js/cli-data.js` + `cli-reference.html` | Parse `cli/src/main.rs` | ~400 |
 | 14 | `architecture.html` + `validator.html` + `changelog.html` | CSS, JS | ~700 |
 
@@ -446,6 +446,6 @@ const CLI_COMMANDS = [
 1. **CSS + JS framework** (steps 1-2) — everything else depends on this
 2. **Hub landing** (step 3) — the entry point
 3. **RPC Reference** (steps 5-6) — most useful to developers immediately
-4. **Contract guide + MoltyID** (steps 11-12) — the differentiator
+4. **Contract guide + LichenID** (steps 11-12) — the differentiator
 5. **SDK docs** (steps 8-10) — needed for onboarding
 6. **Getting Started + CLI + Validator** (steps 4, 13-14) — tutorials and ops

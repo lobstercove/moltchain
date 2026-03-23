@@ -134,7 +134,7 @@ REST reads
 - `/launchpad/stats`, `/launchpad/tokens`, `/launchpad/tokens/:id`, `/launchpad/tokens/:id/holders`
 
 Contract writes
-- ClawPump named calls: `create_token`, `buy`, `sell`
+- SporePump named calls: `create_token`, `buy`, `sell`
 
 Status
 - ✅ Primary launch/trade flows wired.
@@ -182,8 +182,8 @@ Status
 - Improved wallet-gated disabled button contrast so reconnect CTA text remains readable.
 
 Files updated:
-- `moltchain/dex/dex.js` (wallet session restore/persist, switch signer hydration)
-- `moltchain/dex/dex.css` (wallet-gate disabled readability)
+- `lichen/dex/dex.js` (wallet session restore/persist, switch signer hydration)
+- `lichen/dex/dex.css` (wallet-gate disabled readability)
 
 ## Expanded Realtime + Matrix Test Plan (Binary + Multi-Outcome)
 

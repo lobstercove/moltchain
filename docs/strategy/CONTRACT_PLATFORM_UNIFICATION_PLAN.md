@@ -1,6 +1,6 @@
 # Contract Platform Unification Plan
 
-This document defines the rewrite direction needed to make MoltChain's contract platform coherent across ABI, dispatch, CPI, storage, compiler output, and SDKs.
+This document defines the rewrite direction needed to make Lichen's contract platform coherent across ABI, dispatch, CPI, storage, compiler output, and SDKs.
 
 ## Current State
 
@@ -28,7 +28,7 @@ That mismatch will keep causing contract authors to encode the wrong safety assu
 
 ### 4. Storage access is partly generic and partly special-cased
 
-The processor injects special cross-contract storage data for MoltyID reputation lookups rather than relying on one canonical cross-program read model. See [core/src/processor.rs](../../core/src/processor.rs#L4704).
+The processor injects special cross-contract storage data for LichenID reputation lookups rather than relying on one canonical cross-program read model. See [core/src/processor.rs](../../core/src/processor.rs#L4704).
 
 ### 5. Oracle and protocol state live across different storage domains
 
@@ -117,7 +117,7 @@ Replace special-case CPI patterns with explicit call descriptors and protocol-re
 
 Acceptance criteria:
 
-- no MoltyID-specific storage injection in processor path,
+- no LichenID-specific storage injection in processor path,
 - CPI docs match implementation exactly,
 - nested-call tests cover rollback, events, value transfer, and depth limits.
 

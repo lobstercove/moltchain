@@ -3,7 +3,7 @@
 // Places buy/sell orders at fixed price intervals in a range
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { MoltDEX } from '@moltchain/dex-sdk';
+import { LichenDEX } from '@lichen/dex-sdk';
 import { GridConfig } from '../config';
 
 interface GridLevel {
@@ -14,7 +14,7 @@ interface GridLevel {
 }
 
 export class GridStrategy {
-  private dex: MoltDEX;
+  private dex: LichenDEX;
   private pairId: number;
   private config: GridConfig;
   private dryRun: boolean;
@@ -24,7 +24,7 @@ export class GridStrategy {
   private currentPrice: number = 0;
 
   constructor(
-    dex: MoltDEX,
+    dex: LichenDEX,
     pairId: number,
     config: GridConfig,
     dryRun: boolean = false,

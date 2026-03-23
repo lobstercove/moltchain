@@ -1,4 +1,4 @@
-# MoltChain Test Coverage Audit Report
+# Lichen Test Coverage Audit Report
 
 **Date:** March 2, 2026  
 **Scope:** All test suites, benchmarks, fuzz targets, e2e tests, frontend tests, SDK tests
@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-MoltChain has **~22,300 lines** of test code across Rust integration tests, **~7,800 lines** of frontend JS tests, **~900 lines** of SDK tests, and **~180 lines** of fuzz targets. Core transaction processing and consensus have strong coverage (94 + 81 `#[test]` functions respectively), but significant gaps exist in **22 of 28 smart contracts** (no dedicated test suites), **P2P gossip protocol** (0 tests), **NFT/marketplace core modules** (0 tests), **RPC DEX/Launchpad/Prediction** submodules (0 inline tests), **WebSocket** (1 test), and all **SDK test files require a live validator** rather than running offline.
+Lichen has **~22,300 lines** of test code across Rust integration tests, **~7,800 lines** of frontend JS tests, **~900 lines** of SDK tests, and **~180 lines** of fuzz targets. Core transaction processing and consensus have strong coverage (94 + 81 `#[test]` functions respectively), but significant gaps exist in **22 of 28 smart contracts** (no dedicated test suites), **P2P gossip protocol** (0 tests), **NFT/marketplace core modules** (0 tests), **RPC DEX/Launchpad/Prediction** submodules (0 inline tests), **WebSocket** (1 test), and all **SDK test files require a live validator** rather than running offline.
 
 ---
 
@@ -33,7 +33,7 @@ MoltChain has **~22,300 lines** of test code across Rust integration tests, **~7
 | **Marketplace** | `marketplace.rs` | 47 | **0** | ❌ **NONE** |
 | **lib.rs** | `lib.rs` | — | **0** | N/A (re-exports) |
 | Processor | `processor.rs` | 4334+ | **81** | ✅ Excellent |
-| ReefStake | `reefstake.rs` | — | 3 | ⚠️ Minimal |
+| MossStake | `mossstake.rs` | — | 3 | ⚠️ Minimal |
 | State Store | `state.rs` | 6582+ | 22 | ✅ Good |
 | Transaction | `transaction.rs` | — | 9 | ✅ Good |
 
@@ -194,9 +194,9 @@ Shell-based CLI integration tests exist (`test-cli-comprehensive.sh`) but requir
 | # | Contract | Dedicated Test Suite | contract_coverage.rs | caller_verification.rs | E2E Coverage | Verdict |
 |---|----------|---------------------|---------------------|----------------------|-------------|---------|
 | 1 | bountyboard | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 2 | clawpay | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 3 | clawpump | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 4 | clawvault | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 2 | sporepay | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 3 | sporepump | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 4 | sporevault | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
 | 5 | compute_market | ❌ | ✅ **Deep** (33 funcs) | ❌ | ❌ | ✅ Good |
 | 6 | dex_amm | ✅ `tests/adversarial.rs` (15k) | ✅ Load + init | ❌ | ✅ e2e.rs | ✅ Good |
 | 7 | dex_analytics | ❌ | ✅ Load + init | ❌ | ✅ e2e.rs | ⚠️ Light |
@@ -205,19 +205,19 @@ Shell-based CLI integration tests exist (`test-cli-comprehensive.sh`) but requir
 | 10 | dex_margin | ✅ `tests/adversarial.rs` (17k) | ✅ Load + init | ❌ | ✅ e2e.rs | ✅ Good |
 | 11 | dex_rewards | ❌ | ✅ Load + init | ✅ initialize | ✅ e2e.rs | ⚠️ Medium |
 | 12 | dex_router | ❌ | ✅ Load + init | ❌ | ✅ e2e.rs | ⚠️ Light |
-| 13 | lobsterlend | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 14 | moltauction | ❌ | ✅ Load + init | ✅ create_auction | ❌ | ⚠️ Light |
-| 15 | moltbridge | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 16 | moltcoin | ✅ `test_contract.py` (4k) | ✅ Load + init | ✅ approve, mint | ❌ | ✅ Good |
-| 17 | moltdao | ❌ | ✅ **Deep** (25 funcs) | ✅ cancel_proposal | ❌ | ✅ Good |
-| 18 | moltmarket | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 19 | moltoracle | ❌ | ✅ **Deep** (24 funcs) | ✅ submit_price | ❌ | ✅ Good |
-| 20 | moltpunks | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 21 | moltswap | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 22 | moltyid | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
-| 23 | musd_token | ✅ `tests/adversarial.rs` (18k) | ✅ Load + init | ❌ | ✅ e2e.rs | ✅ Good |
+| 13 | thalllend | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 14 | lichenauction | ❌ | ✅ Load + init | ✅ create_auction | ❌ | ⚠️ Light |
+| 15 | lichenbridge | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 16 | lichencoin | ✅ `test_contract.py` (4k) | ✅ Load + init | ✅ approve, mint | ❌ | ✅ Good |
+| 17 | lichendao | ❌ | ✅ **Deep** (25 funcs) | ✅ cancel_proposal | ❌ | ✅ Good |
+| 18 | lichenmarket | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 19 | lichenoracle | ❌ | ✅ **Deep** (24 funcs) | ✅ submit_price | ❌ | ✅ Good |
+| 20 | lichenpunks | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 21 | lichenswap | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 22 | lichenid | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 23 | lusd_token | ✅ `tests/adversarial.rs` (18k) | ✅ Load + init | ❌ | ✅ e2e.rs | ✅ Good |
 | 24 | prediction_market | ✅ `tests/` (3 files, 104k!) | ✅ Load + init | ❌ | ❌ | ✅ Excellent |
-| 25 | reef_storage | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
+| 25 | moss_storage | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
 | 26 | shielded_pool | ❌ | ✅ Load + init | ❌ | ✅ ZK lifecycle | ⚠️ Medium |
 | 27 | wbnb_token | ❌ | ✅ Load + init | ❌ | ❌ | ⚠️ Light |
 | 28 | weth_token | ❌ | ✅ **Deep** (21 funcs) | ❌ | ❌ | ✅ Good |
@@ -252,7 +252,7 @@ Shell-based CLI integration tests exist (`test-cli-comprehensive.sh`) but requir
 | **Hash** | Only 2 tests — missing: collision resistance validation, large input performance |
 | **Consensus** | Strong (94 tests) but missing: network partition simulation, Byzantine fault scenarios beyond double-vote |
 | **EVM** | Only 6 tests — missing: all ERC-20 methods, gas estimation edge cases, contract creation via EVM, address translation validation |
-| **ReefStake** | Only 3 tests — missing: partial unstake, reward distribution, epoch boundary, slashing during stake |
+| **MossStake** | Only 3 tests — missing: partial unstake, reward distribution, epoch boundary, slashing during stake |
 | **Multisig** | Only 3 tests — missing: threshold changes, owner rotation, concurrent approval races |
 | **Genesis** | Only 4 tests — missing: invalid genesis data, genesis with maximum validators, duplicate account handling |
 
@@ -319,7 +319,7 @@ None found — all test files contain actual executable tests.
 
 ### P1 — High (Should Fix Before Mainnet)
 
-9. **16 contracts with only load+init coverage** (bountyboard, clawpay, clawpump, clawvault, dex_analytics, dex_rewards, dex_router, lobsterlend, moltauction, moltbridge, moltmarket, moltpunks, moltswap, moltyid, reef_storage, wbnb_token)
+9. **16 contracts with only load+init coverage** (bountyboard, sporepay, sporepump, sporevault, dex_analytics, dex_rewards, dex_router, thalllend, lichenauction, lichenbridge, lichenmarket, lichenpunks, lichenswap, lichenid, moss_storage, wbnb_token)
 10. **Frontend JS tests re-implement source functions** instead of importing — tests may pass while real code is broken
 11. **`caller_verification.rs` uses string matching** instead of execution-based testing
 12. **Rust SDK has no real test suite** — only 10 basic inline tests + example requiring live validator
@@ -328,7 +328,7 @@ None found — all test files contain actual executable tests.
 
 ### P2 — Medium (Technical Debt)
 
-15. **Account, Hash, Multisig, ReefStake** — all have ≤3 tests each
+15. **Account, Hash, Multisig, MossStake** — all have ≤3 tests each
 16. **EVM compatibility** — only 6 tests for a complex translation layer
 17. **SDK tests require live validator** — can't run in CI without infrastructure
 18. **No benchmarks** for contract execution, ZK proofs, or mempool contention

@@ -1,7 +1,7 @@
 {
-  "name": "@moltchain/dex-loadtest",
+  "name": "@lichen/dex-loadtest",
   "version": "1.0.0",
-  "description": "Load testing harness for MoltyDEX",
+  "description": "Load testing harness for Lichen DEX",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -11,8 +11,8 @@
     "test:all": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@moltchain/dex-sdk": "file:../sdk",
-    "@moltchain/sdk": "file:../../../sdk/js"
+    "@lichen/dex-sdk": "file:../sdk",
+    "@lichen/sdk": "file:../../../sdk/js"
   },
   "devDependencies": {
     "@types/node": "^20.19.32",

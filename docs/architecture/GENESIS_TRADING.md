@@ -1,7 +1,7 @@
-# MoltChain Genesis & Trading Architecture
+# Lichen Genesis & Trading Architecture
 
 > Historical architecture note: this document preserves an early single-treasury model.
-> The live chain now boots with the canonical 500M MOLT genesis distribution across dedicated treasury wallets,
+> The live chain now boots with the canonical 500M LICN genesis distribution across dedicated treasury wallets,
 > not a single 1B treasury account, and protocol inflation settles at epoch boundaries.
 
 ## Genesis Treasury Wallet
@@ -14,7 +14,7 @@
 
 ### How It Works
 
-When the first validator starts MoltChain:
+When the first validator starts Lichen:
 
 1. **Genesis State Created** ([validator/src/main.rs](../validator/src/main.rs#L137))
    ```rust
@@ -45,9 +45,9 @@ The rest of this document describes the original single-treasury distribution co
 
 The genesis treasury is gradually distributed via:
 
-#### 1. Validator Bootstrap Grants (250M MOLT allocation)
+#### 1. Validator Bootstrap Grants (250M LICN allocation)
 ```rust
-// Validators automatically receive 100K MOLT on startup
+// Validators automatically receive 100K LICN on startup
 // Code: validator/src/main.rs lines 242-254
 if validator_account.is_none() {
     let bootstrap_account = Account::new(100_000, validator_pubkey);
@@ -56,7 +56,7 @@ if validator_account.is_none() {
 ```
 
 **How bootstrap works:**
-- **100,000 MOLT** given to each new validator
+- **100,000 LICN** given to each new validator
 - Recorded as `bootstrap_debt` ( validator "owes" this to the protocol)
 - Debt reduces as validator earns block rewards
 - Takes ~86 days to fully vest (graduation)
@@ -64,17 +64,17 @@ if validator_account.is_none() {
 
 **Distribution timeline:**
 - Max validators: 25,000 (reasonable for Year 1)
-- Max bootstrap grants: 25,000 × 10K = 250M MOLT (25% of supply)
+- Max bootstrap grants: 25,000 × 10K = 250M LICN (25% of supply)
 - Actual: Organic - as validators join
 - Treasury reduction: 1B → 750M remaining after all validators bootstrap
 
-#### 2. Builder Grants (250M MOLT allocation)
+#### 2. Builder Grants (250M LICN allocation)
 ```markdown
 From VISION.md & WHITEPAPER.md:
-- Smart contract developers: 100M MOLT
-- DeFi protocol teams: 75M MOLT  
-- Community projects: 50M MOLT
-- Research & education: 25M MOLT
+- Smart contract developers: 100M LICN
+- DeFi protocol teams: 75M LICN  
+- Community projects: 50M LICN
+- Research & education: 25M LICN
 ```
 
 **Distribution mechanism** (not yet implemented):
@@ -85,26 +85,26 @@ From VISION.md & WHITEPAPER.md:
 
 **Treasury impact**: 750M → 500M remaining after builder grants
 
-#### 3. Liquidity Provision (200M MOLT allocation)
+#### 3. Liquidity Provision (200M LICN allocation)
 ```markdown
-Purpose: Bootstrap DEX liquidity for MOLT trading
+Purpose: Bootstrap DEX liquidity for LICN trading
 
 Initial pairs:
-- MOLT/USDC: 50M MOLT
-- MOLT/ETH: 50M MOLT  
-- MOLT/SOL: 50M MOLT
-- MOLT/BTC: 50M MOLT
+- LICN/USDC: 50M LICN
+- LICN/ETH: 50M LICN  
+- LICN/SOL: 50M LICN
+- LICN/BTC: 50M LICN
 ```
 
 **LP strategy**:
 - Protocol-owned liquidity (POL)
-- Deployed to ClawSwap (native DEX)
+- Deployed to SporeSwap (native DEX)
 - Earns trading fees → Treasury revenue
 - Never removed (permanent liquidity)
 
 **Treasury impact**: 500M → 300M remaining after LP
 
-#### 4. Strategic Reserve (300M MOLT - kept in treasury)
+#### 4. Strategic Reserve (300M LICN - kept in treasury)
 ```markdown
 Uses:
 - Market making during volatile periods
@@ -113,12 +113,12 @@ Uses:
 - Future initiatives not yet planned
 ```
 
-### Trading: How Does $MOLT Get Liquidity?
+### Trading: How Does $LICN Get Liquidity?
 
 **Phase 1: Internal Trading (NOW - Faucet only)**
 ```
 Status: ✅ LIVE
-- Faucet gives 100 MOLT for testing
+- Faucet gives 100 LICN for testing
 - Users can transfer between accounts
 - No $ price yet (testnet)
 ```
@@ -126,16 +126,16 @@ Status: ✅ LIVE
 **Phase 2: DEXEnablement (Month 2-3)**
 ```
 Status: 📋 PLANNED
-- ClawSwap DEX launches (native on MoltChain)
-- AMM pools: MOLT/USDC, MOLT/ETH, etc.
+- SporeSwap DEX launches (native on Lichen)
+- AMM pools: LICN/USDC, LICN/ETH, etc.
 - Genesis treasury provides initial liquidity
-- $MOLT price discovery begins
+- $LICN price discovery begins
 ```
 
 **Phase 3: Bridge to Ethereum (Month 4-6)**
 ```
 Status: 🔮 FUTURE
-- Wrapped MOLT (wMOLT) on Ethereum
+- Wrapped LICN (wLICN) on Ethereum
 - List on Uniswap, Curve, Balancer
 - Cross-chain liquidity
 - CEX listings (if demand exists)
@@ -144,8 +144,8 @@ Status: 🔮 FUTURE
 **Phase 4: Agent Trading (Month 6+)**
 ```
 Status: 🔮 FUTURE
-- AI agents trade MOLT autonomously
-- Agent-to-agent MOLT transfers
+- AI agents trade LICN autonomously
+- Agent-to-agent LICN transfers
 - Programmatic market making
 - Arbitrage bots stabilize price
 ```
@@ -154,13 +154,13 @@ Status: 🔮 FUTURE
 
 **Year 1 (2026, historical model):**
 ```
-Genesis allocation:      500,000,000 MOLT (100%)
-   - Validator rewards:     -50,000,000 MOLT (10%)
-   - Community treasury:   -125,000,000 MOLT (25%)
-   - Builder grants:       -175,000,000 MOLT (35%)
-   - Founding moltys:       -50,000,000 MOLT (10%)
-   - Ecosystem partners:    -50,000,000 MOLT (10%)
-   - Reserve pool:          -50,000,000 MOLT (10%)
+Genesis allocation:      500,000,000 LICN (100%)
+   - Validator rewards:     -50,000,000 LICN (10%)
+   - Community treasury:   -125,000,000 LICN (25%)
+   - Builder grants:       -175,000,000 LICN (35%)
+   - Founding symbionts:       -50,000,000 LICN (10%)
+   - Ecosystem partners:    -50,000,000 LICN (10%)
+   - Reserve pool:          -50,000,000 LICN (10%)
 ```
 
 **Year 2 (2027):**
@@ -170,7 +170,7 @@ Circulating increases as:
 - Builder grants vest
 - Some strategic reserve deployed
   
-Expected circulating: 400-425M MOLT (80-85% of genesis supply, before net mint/burn effects)
+Expected circulating: 400-425M LICN (80-85% of genesis supply, before net mint/burn effects)
 ```
 
 **Year 3+ (2028+):**
@@ -181,8 +181,8 @@ Full decentralization:
 - Community votes on spending
 - Deflationary pressure (40% fees burned)
   
-Expected circulating: 450-475M MOLT (90-95% of genesis supply, before net mint/burn effects)
-Remaining treasury: 25-50M MOLT (5-10% of genesis supply emergency reserve)
+Expected circulating: 450-475M LICN (90-95% of genesis supply, before net mint/burn effects)
+Remaining treasury: 25-50M LICN (5-10% of genesis supply emergency reserve)
 ```
 
 ### Deflationary Mechanics
@@ -191,44 +191,44 @@ Remaining treasury: 25-50M MOLT (5-10% of genesis supply emergency reserve)
 ```rust
 // 40% of all transaction fees are BURNED (permanently removed)
 let burn_amount = fee_amount * 40 / 100;
-// Burned MOLT is gone forever - reduces total supply
+// Burned LICN is gone forever - reduces total supply
 ```
 
 **Impact on Supply (historical fixed-supply example):**
 ```
-Year 1: 500,000,000 MOLT genesis baseline
+Year 1: 500,000,000 LICN genesis baseline
   - Network activity: 10M transactions
-  - Avg fee: 0.0001 MOLT
-  - Total fees: 1,000 MOLT
-  - Burned: 500 MOLT
+  - Avg fee: 0.0001 LICN
+  - Total fees: 1,000 LICN
+  - Burned: 500 LICN
   
-Year 1 end: 499,999,500 MOLT before any net protocol minting
+Year 1 end: 499,999,500 LICN before any net protocol minting
 
 Year 5: Heavy DeFi activity
   - 1B transactions
-  - Total fees: 100,000 MOLT
-  - Burned: 50,000 MOLT
+  - Total fees: 100,000 LICN
+  - Burned: 50,000 LICN
   
-Year 5 end: ~999,900,000 MOLT total supply
+Year 5 end: ~999,900,000 LICN total supply
 
 Year 10: Mature ecosystem
   - 100B transactions
-  - Total fees: 10,000,000 MOLT
-  - Burned: 5,000,000 MOLT
+  - Total fees: 10,000,000 LICN
+  - Burned: 5,000,000 LICN
   
-Year 10 end: ~995,000,000 MOLT total supply
+Year 10 end: ~995,000,000 LICN total supply
 ```
 
-**Long-term projection**: Circulating supply gradually decreases due to burn, making MOLT more scarce.
+**Long-term projection**: Circulating supply gradually decreases due to burn, making LICN more scarce.
 
 ### Trading Price Discovery
 
-**How $MOLT Gets a Market Price:**
+**How $LICN Gets a Market Price:**
 
 1. **Initial Liquidity (Month 2)**
    ```
-   Treasury deploys: 50M MOLT + 50M USDC to ClawSwap
-   Initial rate: $1.00 per MOLT (set by treasury)
+   Treasury deploys: 50M LICN + 50M USDC to SporeSwap
+   Initial rate: $1.00 per LICN (set by treasury)
    ```
 
 2. **Market Trading (Month 2+)**
@@ -247,24 +247,24 @@ Year 10 end: ~995,000,000 MOLT total supply
 
 4. **Long-term Value Drivers**
    ```
-   Factors that support $MOLT price:
-   - Transaction demand (need MOLT for fees)
+   Factors that support $LICN price:
+   - Transaction demand (need LICN for fees)
    - Staking demand (earn rewards)
-   - DeFi collateral (use MOLT in lending)
+   - DeFi collateral (use LICN in lending)
    - Deflationary burn (reduces supply)
-   - Agent adoption (AI agents need MOLT)
+   - Agent adoption (AI agents need LICN)
    ```
 
-### Who Can Trade MOLT?
+### Who Can Trade LICN?
 
 **Now (Testnet):**
-- Anyone via faucet (free 100 MOLT)
+- Anyone via faucet (free 100 LICN)
 - Transfers between accounts
 - No real $ value (test tokens)
 
 **Month 2 (DEX Launch):**
-- Anyone with MoltChain wallet
-- Trade on ClawSwap (native DEX)
+- Anyone with Lichen wallet
+- Trade on SporeSwap (native DEX)
 - Add liquidity (earn fees)
 - Real $ price discovery
 
@@ -296,7 +296,7 @@ Year 2+: Full DAO (on-chain voting)
 
 ### Key Takeaways
 
-1. **Genesis starts from 500M MOLT** with the initial distribution tracked transparently on-chain
+1. **Genesis starts from 500M LICN** with the initial distribution tracked transparently on-chain
 2. **No pre-mine for founders** - fair distribution via work (validators) and grants (builders)
 3. **Gradual unlock** - 3-5 years to fully distribute supply
 4. **Deflationary** - 40% of fees burned permanently
@@ -311,17 +311,17 @@ Year 2+: Full DAO (on-chain voting)
 
 **Genesis & Distribution:**
 - [x] Genesis account creation
-- [x] Validator bootstrap grants (100K MOLT each)
+- [x] Validator bootstrap grants (100K LICN each)
 - [ ] Builder grant proposal system
 - [ ] DAO governance for treasury spending
 - [ ] Multi-sig wallet for genesis key
 
 **Trading Infrastructure:**
-- [ ] ClawSwap DEX implementation
-- [ ] AMM pools (MOLT/USDC, etc.)
-- [ ] Initial liquidity deployment (200M MOLT)
+- [ ] SporeSwap DEX implementation
+- [ ] AMM pools (LICN/USDC, etc.)
+- [ ] Initial liquidity deployment (200M LICN)
 - [ ] Price oracle integration
-- [ ] Bridge to Ethereum (wMOLT)
+- [ ] Bridge to Ethereum (wLICN)
 - [ ] CEX integration toolkit
 
 **Transparency:**
@@ -329,7 +329,7 @@ Year 2+: Full DAO (on-chain voting)
 - [x] Genesis account balance visible
 - [ ] Treasury dashboard (spending tracker)
 - [ ] Grant distribution history
-- [ ] Burn statistics (total MOLT burned)
+- [ ] Burn statistics (total LICN burned)
 
 ---
 

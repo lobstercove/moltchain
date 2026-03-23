@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-# Prometheus Configuration — MoltyDEX
+# Prometheus Configuration — Lichen DEX
 # ═══════════════════════════════════════════════════════════════════════════════
 
 global:
@@ -15,10 +15,10 @@ alerting:
         - targets: ['alertmanager:9093']
 
 scrape_configs:
-  # ─── MoltChain Node Metrics ───
-  - job_name: 'moltchain'
+  # ─── Lichen Node Metrics ───
+  - job_name: 'lichen'
     static_configs:
-      - targets: ['moltchain:9100']
+      - targets: ['lichen:9100']
     metrics_path: /metrics
     scrape_interval: 5s
 

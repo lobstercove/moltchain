@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# MoltChain Release Signing Key Generator
+# Lichen Release Signing Key Generator
 # ─────────────────────────────────────────────────────────────────────────────
 # Generates an Ed25519 keypair for signing release artifacts.
 # The public key must be embedded in the validator binary source code.
@@ -32,7 +32,7 @@ echo "🔑 Generating Ed25519 release signing keypair..."
 echo ""
 
 # Use a small Rust program to generate the keypair using the same crypto
-# library as the validator itself (ed25519-dalek via moltchain-core).
+# library as the validator itself (ed25519-dalek via lichen-core).
 cd "$REPO_ROOT"
 
 TEMP_DIR=$(mktemp -d)
@@ -74,7 +74,7 @@ fn main() {
         }
     }
 
-    // Build keypair using ed25519-dalek (same as moltchain-core)
+    // Build keypair using ed25519-dalek (same as lichen-core)
     use ed25519_dalek::{SigningKey, VerifyingKey};
     let signing_key = SigningKey::from_bytes(&seed);
     let verifying_key: VerifyingKey = (&signing_key).into();
@@ -107,7 +107,7 @@ fn main() {
 }
 RUST_SCRIPT
 
-# Try to use the workspace's moltchain-core, but fall back to a standalone build
+# Try to use the workspace's lichen-core, but fall back to a standalone build
 # For simplicity, we'll use a cargo script with ed25519-dalek directly
 cat > "$TEMP_DIR/Cargo.toml" << 'TOML'
 [package]

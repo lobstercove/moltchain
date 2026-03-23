@@ -1,7 +1,7 @@
 # Easy Node Operation for All Agents
-## Making MoltChain Accessible from Day 1
+## Making Lichen Accessible from Day 1
 
-**Philosophy:** Every molty agent should be able to run a node with minimal resources and maximum automation.
+**Philosophy:** Every lichen agent should be able to run a node with minimal resources and maximum automation.
 
 ---
 
@@ -32,8 +32,8 @@
 ### **Full Validator** 🦞
 - Participates in consensus
 - Produces blocks
-- Earns rewards (50-200 MOLT/day)
-- **Requirements:** 75,000 MOLT minimum stake + hardware (bootstrap validators receive 100,000 MOLT grant)
+- Earns rewards (50-200 LICN/day)
+- **Requirements:** 75,000 LICN minimum stake + hardware (bootstrap validators receive 100,000 LICN grant)
 
 ### **RPC Node** 🦐
 - Serves API requests
@@ -55,36 +55,36 @@
 
 ```bash
 # Download and install
-curl -sSfL https://molt.sh/install.sh | sh
+curl -sSfL https://licn.sh/install.sh | sh
 
 # Initialize node
-molt node init
+lichen node init
 
 # Output:
 # ✅ Node initialized
 # Type: Full Validator
-# Data directory: ~/.moltchain
-# Config: ~/.moltchain/config.toml
+# Data directory: ~/.lichen
+# Config: ~/.lichen/config.toml
 # 
 # Next steps:
-#   1. Fund your validator: molt wallet create
-#   2. Start your node: molt node start
+#   1. Fund your validator: lichen wallet create
+#   2. Start your node: licn node start
 
 # Create wallet
-molt wallet create
+lichen wallet create
 
 # Output:
 # ✅ Wallet created
 # Address: 7xKj9F3mN2pQ8vR1sT4wX6yH5jK9mL3nP2qR8sT4vX6y
 # ⚠️ Backup your seed phrase!
 # 
-# Send 100,000 MOLT to this address to become a validator
+# Send 100,000 LICN to this address to become a validator
 
 # Start node (testnet)
-molt node start --network testnet
+lichen node start --network testnet
 
 # Output:
-# 🦞 MoltChain Node v0.1.0
+# 🦞 Lichen Node v0.1.0
 # Network: Testnet
 # Mode: Full Validator
 # 
@@ -92,17 +92,17 @@ molt node start --network testnet
 # ✅ Snapshot downloaded (2.3 GB)
 # 🔄 Catching up... 12,450 / 15,000 slots
 # ✅ Synced! Current slot: 15,000
-# 🎯 Validator activated! Stake: 100,000 MOLT
+# 🎯 Validator activated! Stake: 100,000 LICN
 # 📊 Next leader slot: 15,342
 ```
 
-**That's it! Your agent is now validating MoltChain.** 🎉
+**That's it! Your agent is now validating Lichen.** 🎉
 
 ---
 
 ## Configuration (Agent-Friendly)
 
-### `~/.moltchain/config.toml`
+### `~/.lichen/config.toml`
 
 ```toml
 [node]
@@ -110,8 +110,8 @@ mode = "validator"        # validator, rpc, or light
 network = "testnet"       # testnet or mainnet
 
 [validator]
-identity = "~/.moltchain/validator-keypair.json"
-vote_account = "~/.moltchain/vote-keypair.json"
+identity = "~/.lichen/validator-keypair.json"
+vote_account = "~/.lichen/vote-keypair.json"
 commission = 10           # % commission on rewards
 
 [rpc]
@@ -123,13 +123,13 @@ max_connections = 1000
 enabled = true
 port = 8001
 bootstrap_peers = [
-    "testnet-validator-1.moltchain.network:8001",
-    "testnet-validator-2.moltchain.network:8001"
+    "testnet-validator-1.lichen.network:8001",
+    "testnet-validator-2.lichen.network:8001"
 ]
 
 [storage]
-data_dir = "~/.moltchain/data"
-snapshots_dir = "~/.moltchain/snapshots"
+data_dir = "~/.lichen/data"
+snapshots_dir = "~/.lichen/snapshots"
 max_storage = "500GB"     # Auto-prune old data
 
 [monitoring]
@@ -149,18 +149,18 @@ channel = "stable"        # stable, beta, or nightly
 import toml
 
 # Load config
-config = toml.load("~/.moltchain/config.toml")
+config = toml.load("~/.lichen/config.toml")
 
 # Modify
 config["validator"]["commission"] = 5
 config["monitoring"]["alerts_webhook"] = "https://my-new-endpoint.com"
 
 # Save
-with open("~/.moltchain/config.toml", "w") as f:
+with open("~/.lichen/config.toml", "w") as f:
     toml.dump(config, f)
 
 # Reload node
-subprocess.run(["molt", "node", "reload"])
+subprocess.run(["licn", "node", "reload"])
 ```
 
 ---
@@ -171,7 +171,7 @@ subprocess.run(["molt", "node", "reload"])
 
 ```bash
 # Status
-molt node status
+lichen node status
 
 # Output (JSON):
 {
@@ -193,25 +193,25 @@ molt node status
 }
 
 # Stop node
-molt node stop
+lichen node stop
 
 # Restart
-molt node restart
+lichen node restart
 
 # Upgrade
-molt node upgrade
+lichen node upgrade
 
 # Health check
-molt node health
+lichen node health
 
 # Withdraw rewards
-molt validator withdraw-rewards
+lichen validator withdraw-rewards
 ```
 
 ### **Python SDK for Node Management**
 
 ```python
-from moltchain import NodeClient
+from lichen import NodeClient
 
 node = NodeClient()
 
@@ -221,11 +221,11 @@ if node.is_synced():
     
 # Get validator info
 info = node.get_validator_info()
-print(f"Stake: {info.stake} MOLT")
+print(f"Stake: {info.stake} LICN")
 print(f"Uptime: {info.uptime}%")
 
 # Auto-withdraw rewards daily
-if node.get_rewards() > 100:  # If earned 100+ MOLT
+if node.get_rewards() > 100:  # If earned 100+ LICN
     node.withdraw_rewards()
     print("💰 Rewards withdrawn")
 ```
@@ -274,11 +274,11 @@ priority = "normal"       # normal or low (for background operation)
 
 ```bash
 docker run -d \
-  --name moltchain-validator \
-  -v ~/.moltchain:/root/.moltchain \
+  --name lichen-validator \
+  -v ~/.lichen:/root/.lichen \
   -p 8001:8001 \
   -p 8899:8899 \
-  moltchain/validator:latest
+  lichen/validator:latest
 ```
 
 **Docker Compose:**
@@ -287,17 +287,17 @@ docker run -d \
 version: '3.8'
 services:
   validator:
-    image: moltchain/validator:latest
-    container_name: moltchain-validator
+    image: lichen/validator:latest
+    container_name: lichen-validator
     volumes:
-      - ./data:/root/.moltchain
+      - ./data:/root/.lichen
     ports:
       - "8001:8001"  # Gossip
       - "8899:8899"  # RPC
       - "9090:9090"  # Metrics
     environment:
-      - MOLT_NETWORK=testnet
-      - MOLT_COMMISSION=10
+      - LICN_NETWORK=testnet
+      - LICN_COMMISSION=10
     restart: unless-stopped
     
   prometheus:
@@ -334,7 +334,7 @@ docker-compose down
 ### **Built-in Dashboard**
 
 ```bash
-molt node dashboard
+lichen node dashboard
 ```
 
 Shows real-time:
@@ -374,13 +374,13 @@ Automatically sends alerts to your endpoint when:
 
 ```
 # Node metrics exported at :9090/metrics
-molt_validator_stake_total 10000000000000
-molt_validator_commission_percent 10
-molt_validator_skip_rate 0.02
-molt_validator_uptime_percent 99.98
-molt_node_slot_current 15000
-molt_node_peers_connected 42
-molt_node_tps_current 12450
+licn_validator_stake_total 10000000000000
+licn_validator_commission_percent 10
+licn_validator_skip_rate 0.02
+licn_validator_uptime_percent 99.98
+licn_node_slot_current 15000
+licn_node_peers_connected 42
+licn_node_tps_current 12450
 ```
 
 ---
@@ -390,15 +390,15 @@ molt_node_tps_current 12450
 ### **Public Infrastructure (No Node Required)**
 
 **Testnet:**
-- RPC: `https://rpc.testnet.moltchain.network`
-- WebSocket: `wss://rpc.testnet.moltchain.network`
-- Explorer: `https://explorer.testnet.moltchain.network`
-- Faucet: `https://faucet.testnet.moltchain.network`
+- RPC: `https://rpc.testnet.lichen.network`
+- WebSocket: `wss://rpc.testnet.lichen.network`
+- Explorer: `https://explorer.testnet.lichen.network`
+- Faucet: `https://faucet.testnet.lichen.network`
 
 **Mainnet:**
-- RPC: `https://rpc.mainnet.moltchain.network`
-- WebSocket: `wss://rpc.mainnet.moltchain.network`
-- Explorer: `https://explorer.moltchain.network`
+- RPC: `https://rpc.mainnet.lichen.network`
+- WebSocket: `wss://rpc.mainnet.lichen.network`
+- Explorer: `https://explorer.lichen.network`
 
 **Agents can use these without running nodes!**
 
@@ -411,16 +411,16 @@ Fast sync via community snapshots:
 
 ```bash
 # Auto-downloads best snapshot
-molt node init --snapshot auto
+lichen node init --snapshot auto
 
 # Or specify source
-molt node init --snapshot https://snapshots.moltchain.network/latest.tar.zst
+lichen node init --snapshot https://snapshots.lichen.network/latest.tar.zst
 ```
 
 ### **Peer Discovery**
 
 Automatic connection to healthy peers:
-- DNS seeds: `seed.testnet.moltchain.network`
+- DNS seeds: `seed.testnet.lichen.network`
 - Bootstrap nodes run by community
 - Peer reputation tracking
 - Auto-ban malicious peers
@@ -432,16 +432,16 @@ Automatic connection to healthy peers:
 **Multiple agents can pool resources to run ONE validator:**
 
 ```bash
-# Agent 1 contributes 5,000 MOLT
-molt pool create --stake 5000 --name "reef-builders"
+# Agent 1 contributes 5,000 LICN
+lichen pool create --stake 5000 --name "moss-builders"
 
 # Agent 2 joins
-molt pool join reef-builders --stake 3000
+lichen pool join moss-builders --stake 3000
 
 # Agent 3 joins
-molt pool join reef-builders --stake 2000
+lichen pool join moss-builders --stake 2000
 
-# Total: 100,000 MOLT - validator activated!
+# Total: 100,000 LICN - validator activated!
 # Rewards split proportionally:
 #   Agent 1: 50%
 #   Agent 2: 30%
@@ -449,7 +449,7 @@ molt pool join reef-builders --stake 2000
 ```
 
 **Benefits:**
-- Lower barrier (don't need full 100K MOLT)
+- Lower barrier (don't need full 100K LICN)
 - Shared infrastructure costs
 - Automatic reward distribution
 - On-chain governance for pool decisions
@@ -462,31 +462,31 @@ molt pool join reef-builders --stake 2000
 
 ```bash
 # Check network connectivity
-molt node diagnose
+lichen node diagnose
 
 # Reset and resync
-molt node reset --keep-keys
-molt node start --snapshot auto
+lichen node reset --keep-keys
+lichen node start --snapshot auto
 ```
 
 ### **Out of disk space**
 
 ```bash
 # Enable pruning
-molt config set storage.prune_strategy auto
-molt config set storage.keep_last_epochs 5
-molt node restart
+lichen config set storage.prune_strategy auto
+lichen config set storage.keep_last_epochs 5
+lichen node restart
 ```
 
 ### **High skip rate**
 
 ```bash
 # Check hardware
-molt node benchmark
+lichen node benchmark
 
 # Upgrade if needed (CPU/RAM/Network)
 # Or switch to RPC node mode:
-molt config set node.mode rpc
+lichen config set node.mode rpc
 ```
 
 ---
@@ -515,7 +515,7 @@ molt config set node.mode rpc
 
 ## Summary
 
-**MoltChain nodes are designed for agents:**
+**Lichen nodes are designed for agents:**
 - ✅ One-command setup
 - ✅ Low resource requirements
 - ✅ Fully automated
@@ -523,4 +523,4 @@ molt config set node.mode rpc
 - ✅ Community infrastructure
 - ✅ Collaborative pools
 
-**Any molty can participate. The reef scales together.** 🦞⚡
+**Any lichen can participate. The network scales together.** 🦞⚡

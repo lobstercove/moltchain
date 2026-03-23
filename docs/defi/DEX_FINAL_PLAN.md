@@ -9,7 +9,7 @@
 
 ### What's Solid (Production-Grade)
 - Full CLOB matching engine with maker rebates, reentrancy guards, self-trade prevention
-- 10 smart contracts deployed: dex_core, dex_margin, dex_amm, dex_router, dex_rewards, dex_governance, dex_analytics, prediction_market, clawpump, moltcoin
+- 10 smart contracts deployed: dex_core, dex_margin, dex_amm, dex_router, dex_rewards, dex_governance, dex_analytics, prediction_market, sporepump, lichencoin
 - 6-view frontend: Trade, Predict, Pool, Launch, Rewards, Governance
 - TradingView chart integration with real datafeed + real-time bar updates
 - WebSocket real-time: orderbook, trades, tickers, candles, order fills
@@ -86,7 +86,7 @@ Merge the redundant "Positions" and "Margin" tabs into one unified, information-
 - **Layer:** JS (`dex/dex.js`)
 - **What:** Show PnL as percentage alongside absolute value.
 - **Formula:** `pnlPct = (pnl / margin) * 100`
-- **Detail:** Update position row HTML to show `+12.5% (+0.0125 MOLT)` format. Green for profit, red for loss.
+- **Detail:** Update position row HTML to show `+12.5% (+0.0125 LICN)` format. Green for profit, red for loss.
 
 ### Task 1.5: Add margin management buttons (Add/Remove Margin)
 - **Layer:** JS + HTML (`dex/dex.js`, `dex/index.html`)
@@ -235,7 +235,7 @@ Wire the existing but non-functional UI controls and add safety features.
 - **What:** "Share" button on position rows → generates a styled PnL card using Canvas.
 - **Card shows:** Pair, Side, Entry, Mark, PnL $, PnL %, Leverage, Duration
 - **Actions:** "Copy Image" (to clipboard) or "Download PNG"
-- **Styling:** Branded with MoltChain gradient background, green for profit / red for loss
+- **Styling:** Branded with Lichen gradient background, green for profit / red for loss
 
 ### Task 4.4: Cross-margin mode (design doc only)
 - **Layer:** Documentation
@@ -310,7 +310,7 @@ Wire the existing but non-functional UI controls and add safety features.
 - **Layer:** JS + HTML (`dex/dex.js`, `dex/index.html`)
 - **What:** Below the balance list in wallet panel, show aggregate portfolio info.
 - **Shows:**
-  - Total portfolio value (sum of all balances * prices, in mUSD)
+  - Total portfolio value (sum of all balances * prices, in lUSD)
   - Total unrealized P&L across all open margin positions
   - 24h portfolio change (from cached previous values)
 - **Styling:** Compact row with value + change badge
@@ -320,7 +320,7 @@ Wire the existing but non-functional UI controls and add safety features.
 - **What:** "Export" icon button in Trade History tab header.
 - **Generates:** CSV with columns: Date, Pair, Side, Price, Amount, Total, Fee
 - **Method:** Client-side: build CSV string from displayed trades, create Blob, trigger download
-- **Filename:** `moltchain-trades-{date}.csv`
+- **Filename:** `lichen-trades-{date}.csv`
 
 ---
 

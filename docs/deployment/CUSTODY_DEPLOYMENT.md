@@ -1,4 +1,4 @@
-# MoltChain Custody Service — Deployment Guide
+# Lichen Custody Service — Deployment Guide
 
 > Everything you need to know to deploy and operate the custody bridge on a VPS.
 
@@ -8,7 +8,7 @@
 
 ## Architecture Overview
 
-The custody service is a standalone Rust binary (`custody`) that bridges assets between external chains (Solana, Ethereum) and MoltChain. It runs on **port 9105** and uses a local RocksDB database.
+The custody service is a standalone Rust binary (`custody`) that bridges assets between external chains (Solana, Ethereum) and Lichen. It runs on **port 9105** and uses a local RocksDB database.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -40,7 +40,7 @@ The custody service is a standalone Rust binary (`custody`) that bridges assets 
 
 ## How It Works
 
-### Deposit Flow (External → MoltChain)
+### Deposit Flow (External → Lichen)
 
 ```
 User deposits SOL/ETH/USDT/USDC to a generated address
@@ -55,18 +55,18 @@ User deposits SOL/ETH/USDT/USDC to a generated address
 4. Sweep worker transitions the job to `signing`, then promotes it as locally signed because deposit sweeps still broadcast with the derived deposit key rather than a threshold signer quorum
 5. Custody broadcasts the sweep tx on the source chain using the locally derived deposit key and records the sweep as locally signed in the audit event stream
 6. After sweep confirmed → CreditJob created
-7. Credit worker mints wrapped tokens (mUSD/wSOL/wETH) on MoltChain
+7. Credit worker mints wrapped tokens (lUSD/wSOL/wETH) on Lichen
 8. Reserve ledger updated for stablecoin deposits
 ```
 
-### Withdrawal Flow (MoltChain → External)
+### Withdrawal Flow (Lichen → External)
 
 ```
-User burns wrapped tokens on MoltChain
+User burns wrapped tokens on Lichen
         │
         ▼
 1. Wallet calls POST /withdrawals (includes burn_tx_signature)
-2. Withdrawal worker verifies burn tx on MoltChain via RPC
+2. Withdrawal worker verifies burn tx on Lichen via RPC
 3. Once burn confirmed → route the outbound treasury spend through the chain-specific signing mode
 4. Solana treasury withdrawals for SOL, USDT, and USDC use the FROST coordinator; EVM treasury withdrawals use Safe-owner signatures over the pinned Safe transaction hash plus a coordinator-submitted executor tx; self-custody mode still signs directly when no signer quorum is configured
 5. Confirm on destination chain
@@ -75,13 +75,13 @@ User burns wrapped tokens on MoltChain
 
 ### Wrapped Token Contracts
 
-| External Asset | MoltChain Wrapped Token | Env Var |
+| External Asset | Lichen Wrapped Token | Env Var |
 |---|---|---|
-| USDT / USDC (Solana or ETH) | mUSD | `CUSTODY_MUSD_TOKEN_ADDR` |
+| USDT / USDC (Solana or ETH) | lUSD | `CUSTODY_LUSD_TOKEN_ADDR` |
 | SOL | wSOL | `CUSTODY_WSOL_TOKEN_ADDR` |
 | ETH | wETH | `CUSTODY_WETH_TOKEN_ADDR` |
 
-These are MoltChain smart contract addresses. The custody service calls `mint()` on them when crediting deposits and expects the wallet to `burn()` them for withdrawals.
+These are Lichen smart contract addresses. The custody service calls `mint()` on them when crediting deposits and expects the wallet to `burn()` them for withdrawals.
 
 ---
 
@@ -92,7 +92,7 @@ These are MoltChain smart contract addresses. The custody service calls `mint()`
 | `solana_watcher_loop` | Polls Solana for deposit confirmations | Every `poll_interval_secs` (default 15s) |
 | `evm_watcher_loop` | Polls Ethereum for deposit confirmations | Every `poll_interval_secs` |
 | `sweep_worker_loop` | Promotes sweeps to the live local-signing path, broadcasts sweep txs, and confirms them | Every `poll_interval_secs` |
-| `credit_worker_loop` | Mints wrapped tokens on MoltChain | Every `poll_interval_secs` |
+| `credit_worker_loop` | Mints wrapped tokens on Lichen | Every `poll_interval_secs` |
 | `withdrawal_worker_loop` | Processes burn → outbound withdrawal | Every `poll_interval_secs` |
 | `rebalance_worker_loop` | Maintains USDT/USDC reserve ratio | Every `poll_interval_secs × 20` (~5 min) |
 | `deposit_cleanup_loop` | Prunes expired unfunded deposit addresses | Every 10 min |
@@ -110,7 +110,7 @@ These are MoltChain smart contract addresses. The custody service calls `mint()`
 | `sweep_jobs` | Sweep pipeline: queued → signing → signed → sweep_submitted → sweep_confirmed |
 | `address_balances` | Native balance cache for deposit addresses |
 | `token_balances` | SPL/ERC20 balance cache for deposit addresses |
-| `credit_jobs` | MoltChain mint pipeline: queued → submitted → confirmed |
+| `credit_jobs` | Lichen mint pipeline: queued → submitted → confirmed |
 | `withdrawal_jobs` | Withdrawal pipeline: pending_burn → burned → signing → broadcasting → confirmed |
 | `audit_events` | Full audit trail of every state transition |
 | `cursors` | Chain polling cursors (last processed slot/block) |
@@ -169,11 +169,11 @@ Override with `CUSTODY_SIGNER_THRESHOLD` env var when you need a threshold diffe
 
 | Variable | Description | Example |
 |---|---|---|
-| `CUSTODY_MOLT_RPC_URL` | MoltChain RPC endpoint | `http://localhost:8899` |
-| `CUSTODY_TREASURY_KEYPAIR` | Path to MoltChain treasury keypair (JSON) | `/etc/moltchain/treasury.json` |
-| `CUSTODY_MUSD_TOKEN_ADDR` | mUSD wrapped token contract on MoltChain | `<base58 address>` |
-| `CUSTODY_WSOL_TOKEN_ADDR` | wSOL wrapped token contract on MoltChain | `<base58 address>` |
-| `CUSTODY_WETH_TOKEN_ADDR` | wETH wrapped token contract on MoltChain | `<base58 address>` |
+| `CUSTODY_LICHEN_RPC_URL` | Lichen RPC endpoint | `http://localhost:8899` |
+| `CUSTODY_TREASURY_KEYPAIR` | Path to Lichen treasury keypair (JSON) | `/etc/lichen/treasury.json` |
+| `CUSTODY_LUSD_TOKEN_ADDR` | lUSD wrapped token contract on Lichen | `<base58 address>` |
+| `CUSTODY_WSOL_TOKEN_ADDR` | wSOL wrapped token contract on Lichen | `<base58 address>` |
+| `CUSTODY_WETH_TOKEN_ADDR` | wETH wrapped token contract on Lichen | `<base58 address>` |
 | `CUSTODY_SIGNER_ENDPOINTS` | Comma-separated signer URLs. Use one endpoint for the single-signer operating model, or a signer quorum when enabling threshold treasury withdrawals. | `http://10.0.0.2:9200` |
 
 ### Solana Bridge
@@ -322,7 +322,7 @@ Rebalancing:
 ```json
 POST /deposits
 {
-  "user_id": "<moltchain-pubkey>",
+  "user_id": "<lichen-pubkey>",
   "chain": "solana",
   "asset": "usdt"
 }
@@ -341,8 +341,8 @@ Response:
 ```json
 POST /withdrawals
 {
-  "user_id": "<moltchain-pubkey>",
-  "asset": "mUSD",
+  "user_id": "<lichen-pubkey>",
+  "asset": "lUSD",
   "amount": 1000000,
   "dest_chain": "solana",
   "dest_address": "<solana-address>",
@@ -361,7 +361,7 @@ Authorization: Bearer <CUSTODY_API_AUTH_TOKEN>
 ```json
 PUT /withdrawals/:job_id/burn
 {
-  "burn_tx_signature": "<moltchain-burn-tx-signature>"
+  "burn_tx_signature": "<lichen-burn-tx-signature>"
 }
 ```
 
@@ -383,7 +383,7 @@ Response:
 {
   "job_id": "<job_id>",
   "status": "pending_burn",
-  "burn_tx_signature": "<moltchain-burn-tx-signature>",
+  "burn_tx_signature": "<lichen-burn-tx-signature>",
   "message": "Burn signature recorded. Verification will proceed automatically."
 }
 ```
@@ -395,19 +395,19 @@ Response:
 ### 1. Build the Binary
 
 ```bash
-cd moltchain
-cargo build --release -p moltchain-custody
-# Binary: target/release/moltchain-custody
+cd lichen
+cargo build --release -p lichen-custody
+# Binary: target/release/lichen-custody
 ```
 
 ### 2. Create Treasury Keypair
 
-This is the MoltChain keypair the custody service uses to sign `mint()` calls on wrapped token contracts.
+This is the Lichen keypair the custody service uses to sign `mint()` calls on wrapped token contracts.
 
 ```bash
-# Generate and fund this on MoltChain
+# Generate and fund this on Lichen
 # Store as JSON: [secret_key_bytes...]
-# Example path: /etc/moltchain/treasury-keypair.json
+# Example path: /etc/lichen/treasury-keypair.json
 ```
 
 ### 3. Create Solana Fee Payer Keypair
@@ -416,14 +416,14 @@ This Solana keypair pays for ATA creation and sweep transaction fees.
 
 ```bash
 # Standard Solana CLI keypair format: [64 bytes as JSON array]
-# Example path: /etc/moltchain/solana-fee-payer.json
+# Example path: /etc/lichen/solana-fee-payer.json
 # Fund with ~1 SOL for gas
 ```
 
-### 4. Deploy Wrapped Token Contracts on MoltChain
+### 4. Deploy Wrapped Token Contracts on Lichen
 
 Before custody can mint, you need the three wrapped token contracts deployed:
-- **mUSD** — unified stablecoin (backs both USDT and USDC deposits)
+- **lUSD** — unified stablecoin (backs both USDT and USDC deposits)
 - **wSOL** — wrapped SOL
 - **wETH** — wrapped ETH
 
@@ -432,37 +432,37 @@ Set their addresses in env vars.
 ### 5. Create the systemd Service
 
 ```ini
-# /etc/systemd/system/moltchain-custody.service
+# /etc/systemd/system/lichen-custody.service
 [Unit]
-Description=MoltChain Custody Bridge
-After=network-online.target moltchain-validator.service
+Description=Lichen Custody Bridge
+After=network-online.target lichen-validator.service
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=moltchain
-Group=moltchain
-WorkingDirectory=/opt/moltchain
-ExecStart=/opt/moltchain/bin/moltchain-custody
+User=lichen
+Group=lichen
+WorkingDirectory=/opt/lichen
+ExecStart=/opt/lichen/bin/lichen-custody
 Restart=always
 RestartSec=5
 
 # === Core ===
-Environment=CUSTODY_DB_PATH=/var/lib/moltchain/custody-db
+Environment=CUSTODY_DB_PATH=/var/lib/lichen/custody-db
 Environment=CUSTODY_POLL_INTERVAL_SECS=15
 Environment=CUSTODY_DEPOSIT_TTL_SECS=86400
 Environment=RUST_LOG=info
 
-# === MoltChain ===
-Environment=CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899
+# === Lichen ===
+Environment=CUSTODY_LICHEN_RPC_URL=http://127.0.0.1:8899
 # CRITICAL: This keypair MUST be the same one that deployed + initialized the
 # wrapped token contracts (the "admin" key). Otherwise mint() returns error 2.
 # After running deploy_dex.py, copy keypairs/deployer.json here:
-Environment=CUSTODY_TREASURY_KEYPAIR=/etc/moltchain/custody-treasury-testnet.json
+Environment=CUSTODY_TREASURY_KEYPAIR=/etc/lichen/custody-treasury-testnet.json
 
 # === Wrapped Token Contracts ===
 # These are auto-discovered from the symbol registry, but can be pinned:
-Environment=CUSTODY_MUSD_TOKEN_ADDR=<deploy-and-fill>
+Environment=CUSTODY_LUSD_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WSOL_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WETH_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WBNB_TOKEN_ADDR=<deploy-and-fill>
@@ -470,7 +470,7 @@ Environment=CUSTODY_WBNB_TOKEN_ADDR=<deploy-and-fill>
 # === Solana Bridge ===
 Environment=CUSTODY_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
 Environment=CUSTODY_TREASURY_SOLANA=<your-solana-treasury-address>
-Environment=CUSTODY_SOLANA_FEE_PAYER=/etc/moltchain/solana-fee-payer.json
+Environment=CUSTODY_SOLANA_FEE_PAYER=/etc/lichen/solana-fee-payer.json
 Environment=CUSTODY_SOLANA_CONFIRMATIONS=1
 
 # === Ethereum Bridge (add when ready) ===
@@ -510,14 +510,14 @@ The custody service reaches the signers via their private network IPs (the `CUST
 ### 7. DNS & Reverse Proxy
 
 ```
-custody.moltchain.network  →  VPS:9105  (HTTPS via nginx/caddy)
+custody.lichen.network  →  VPS:9105  (HTTPS via nginx/caddy)
 ```
 
 The wallet connects to custody via the `CUSTODY_ENDPOINTS` config:
 ```javascript
 const CUSTODY_ENDPOINTS = {
-    'mainnet': 'https://custody.moltchain.network',
-    'testnet': 'https://testnet-custody.moltchain.network',
+    'mainnet': 'https://custody.lichen.network',
+    'testnet': 'https://testnet-custody.lichen.network',
     'local-testnet': 'http://localhost:9105',
 };
 ```
@@ -526,9 +526,9 @@ const CUSTODY_ENDPOINTS = {
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable moltchain-custody
-sudo systemctl start moltchain-custody
-sudo journalctl -u moltchain-custody -f
+sudo systemctl enable lichen-custody
+sudo systemctl start lichen-custody
+sudo journalctl -u lichen-custody -f
 ```
 
 ### 9. Verify
@@ -546,7 +546,7 @@ curl http://localhost:9105/status
 # In threshold-signing mode this currently returns a fail-closed error by design.
 curl -X POST http://localhost:9105/deposits \
   -H "Content-Type: application/json" \
-  -d '{"user_id":"<moltchain-pubkey>","chain":"solana","asset":"usdt"}'
+  -d '{"user_id":"<lichen-pubkey>","chain":"solana","asset":"usdt"}'
 ```
 
 ---
@@ -572,8 +572,8 @@ Things to watch:
 | Signer connectivity | `GET /status` → `signers.configured` should match your validator count |
 | Stuck sweeps | `GET /status` → `sweeps.by_status` — watch for growing "signing" or "queued" counts |
 | Stuck credits | `GET /status` → `credits.by_status` — watch for growing "queued" counts |
-| RocksDB size | `du -sh /var/lib/moltchain/custody-db` |
-| Logs | `journalctl -u moltchain-custody --since "1 hour ago"` — look for `warn` entries |
+| RocksDB size | `du -sh /var/lib/lichen/custody-db` |
+| Logs | `journalctl -u lichen-custody --since "1 hour ago"` — look for `warn` entries |
 
 ---
 
@@ -589,7 +589,7 @@ If Solana/EVM RPC URLs are unset, those watchers simply don't start. You can ena
 
 ## Deposit Address Derivation
 
-Addresses are deterministic: `molt/{chain}/{asset}/{user_id}/{index}`
+Addresses are deterministic: `lichen/{chain}/{asset}/{user_id}/{index}`
 
 - **Solana native (SOL):** Derives an Ed25519 pubkey from the path
 - **Solana SPL tokens (USDT/USDC):** Derives an owner pubkey, then computes the Associated Token Account (ATA). If the ATA doesn't exist, custody creates it using the fee payer.

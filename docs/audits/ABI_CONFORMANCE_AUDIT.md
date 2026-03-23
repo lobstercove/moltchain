@@ -14,12 +14,12 @@
 1. [dex\_margin](#1-dex_margin)
 2. [dex\_rewards](#2-dex_rewards)
 3. [dex\_router](#3-dex_router)
-4. [lobsterlend](#4-lobsterlend)
-5. [moltauction](#5-moltauction)
-6. [moltbridge](#6-moltbridge)
-7. [moltcoin](#7-moltcoin)
-8. [moltdao](#8-moltdao)
-9. [moltmarket](#9-moltmarket)
+4. [thalllend](#4-thalllend)
+5. [lichenauction](#5-lichenauction)
+6. [lichenbridge](#6-lichenbridge)
+7. [lichencoin](#7-lichencoin)
+8. [lichendao](#8-lichendao)
+9. [lichenmarket](#9-lichenmarket)
 10. [Cross-Contract Summary of Issues](#10-cross-contract-summary)
 
 ---
@@ -48,14 +48,14 @@ All logic is dispatched internally through opcode matching on `args[0]`:
 | 7 | `set_max_leverage` | caller\[32\], pair\_id:u64, max\_lev:u64 |
 | 8 | `set_maintenance_margin` | caller\[32\], bps:u64 |
 | 9 | `withdraw_insurance` | caller\[32\], amount:u64, recipient\[32\] |
-| 10 | `set_moltcoin_address` | caller\[32\], addr\[32\] |
+| 10 | `set_lichencoin_address` | caller\[32\], addr\[32\] |
 | 11 | `emergency_pause` | caller\[32\] |
 | 12 | `emergency_unpause` | caller\[32\] |
 | 20-24 | Query functions | Various |
 
 ### B. How Parameters Are Read
 
-All parameters are read from the `args` byte vector returned by `moltchain_sdk::get_args()`:
+All parameters are read from the `args` byte vector returned by `lichen_sdk::get_args()`:
 - 32-byte addresses: `args[offset..offset+32].as_ptr()` → passed to internal function as `*const u8` → `copy_nonoverlapping(ptr, buf, 32)`
 - u64 values: `bytes_to_u64(&args[offset..offset+8])` — 8-byte little-endian
 - u8 values: `args[offset]` — single byte
@@ -189,9 +189,9 @@ Yes — admin functions check `get_caller()`.
 
 ---
 
-## 4. lobsterlend
+## 4. thalllend
 
-**File:** `contracts/lobsterlend/src/lib.rs` (1436 lines)
+**File:** `contracts/thalllend/src/lib.rs` (1436 lines)
 
 ### A. Exported Functions
 
@@ -253,9 +253,9 @@ None.
 
 ---
 
-## 5. moltauction
+## 5. lichenauction
 
-**File:** `contracts/moltauction/src/lib.rs` (1315 lines)
+**File:** `contracts/lichenauction/src/lib.rs` (1315 lines)
 
 ### A. Exported Functions
 
@@ -313,9 +313,9 @@ None.
 
 ---
 
-## 6. moltbridge
+## 6. lichenbridge
 
-**File:** `contracts/moltbridge/src/lib.rs` (2079 lines)
+**File:** `contracts/lichenbridge/src/lib.rs` (2079 lines)
 
 ### A. Exported Functions
 
@@ -337,7 +337,7 @@ None.
 | 14 | `has_confirmed_unlock` | `(validator_ptr, nonce:u64) -> u32` | 0 (result via set\_return\_data) |
 | 15 | `is_source_tx_used` | `(source_tx_ptr) -> u32` | 0 (result via set\_return\_data) |
 | 16 | `is_burn_proof_used` | `(burn_proof_ptr) -> u32` | 0 (result via set\_return\_data) |
-| 17 | `set_moltyid_address` | `(caller_ptr, moltyid_addr_ptr) -> u32` | 0=success |
+| 17 | `set_lichenid_address` | `(caller_ptr, lichenid_addr_ptr) -> u32` | 0=success |
 | 18 | `set_identity_gate` | `(caller_ptr, min_reputation:u64) -> u32` | 0=success |
 | 19 | `mb_pause` | `(caller_ptr) -> u32` | 0=success |
 | 20 | `mb_unpause` | `(caller_ptr) -> u32` | 0=success |
@@ -374,9 +374,9 @@ None.
 
 ---
 
-## 7. moltcoin
+## 7. lichencoin
 
-**File:** `contracts/moltcoin/src/lib.rs` (~250 lines of code)
+**File:** `contracts/lichencoin/src/lib.rs` (~250 lines of code)
 
 ### A. Exported Functions
 
@@ -429,9 +429,9 @@ None.
 
 ---
 
-## 8. moltdao
+## 8. lichendao
 
-**File:** `contracts/moltdao/src/lib.rs` (1381 lines)
+**File:** `contracts/lichendao/src/lib.rs` (1381 lines)
 
 ### A. Exported Functions
 
@@ -533,9 +533,9 @@ The stride-based encoder treats each I32 param independently and does not suppor
 
 ---
 
-## 9. moltmarket
+## 9. lichenmarket
 
-**File:** `contracts/moltmarket/src/lib.rs` (944 lines)
+**File:** `contracts/lichenmarket/src/lib.rs` (944 lines)
 
 ### A. Exported Functions
 
@@ -599,7 +599,7 @@ None.
 
 ### Issue Frequency Matrix
 
-| Issue | dex\_margin | dex\_rewards | dex\_router | lobsterlend | moltauction | moltbridge | moltcoin | moltdao | moltmarket |
+| Issue | dex\_margin | dex\_rewards | dex\_router | thalllend | lichenauction | lichenbridge | lichencoin | lichendao | lichenmarket |
 |-------|:-----------:|:------------:|:-----------:|:-----------:|:-----------:|:----------:|:--------:|:-------:|:----------:|
 | `call()` dispatcher (no named exports) | 🔴 | 🔴 | 🔴 | — | — | — | — | — | — |
 | Inverted return codes (1=success) | — | — | — | — | 🔴 | — | 🔴 | 🔴 | 🔴 |
@@ -613,30 +613,30 @@ None.
 
 ### Critical Issues Ranked by Impact
 
-1. **Inverted Return Codes (4 contracts: moltcoin, moltmarket, moltauction, moltdao):** Return 1 on success instead of 0. Any SDK, CLI tool, or cross-contract caller checking `result == 0` for success will misidentify every successful call as a failure.
+1. **Inverted Return Codes (4 contracts: lichencoin, lichenmarket, lichenauction, lichendao):** Return 1 on success instead of 0. Any SDK, CLI tool, or cross-contract caller checking `result == 0` for success will misidentify every successful call as a failure.
 
 2. **`call()` Dispatcher Pattern (3 contracts: dex\_margin, dex\_rewards, dex\_router):** Do NOT export individual function names. They only export a single `call()` entry point with opcode-based dispatch. The JSON ABI encoder cannot target named functions — it must construct opcode + binary args as a flat byte buffer.
 
-3. **Variable-Length Parameters (2 contracts: moltdao, dex\_router):** Accept variable-length data via (pointer, length) pairs. The stride-based ABI encoder cannot represent (ptr, len) semantics where data must be placed at the pointer's target address.
+3. **Variable-Length Parameters (2 contracts: lichendao, dex\_router):** Accept variable-length data via (pointer, length) pairs. The stride-based ABI encoder cannot represent (ptr, len) semantics where data must be placed at the pointer's target address.
 
-4. **Output Pointers (4 contracts: lobsterlend, moltauction, moltdao, moltmarket):** Functions taking `*mut u8` output pointers. The JSON encoder is input-only — it cannot allocate writable output buffers.
+4. **Output Pointers (4 contracts: thalllend, lichenauction, lichendao, lichenmarket):** Functions taking `*mut u8` output pointers. The JSON encoder is input-only — it cannot allocate writable output buffers.
 
-5. **`void` Return (2 contracts: moltcoin, moltmarket):** `initialize` functions return void. No way for the caller to know if initialization succeeded.
+5. **`void` Return (2 contracts: lichencoin, lichenmarket):** `initialize` functions return void. No way for the caller to know if initialization succeeded.
 
-6. **Compile Error (1 contract: moltdao):** `finalize_proposal` calls `execute_proposal(caller_ptr, proposal_id)` passing 2 arguments to a 4-parameter function. This is a Rust type error and will not compile.
+6. **Compile Error (1 contract: lichendao):** `finalize_proposal` calls `execute_proposal(caller_ptr, proposal_id)` passing 2 arguments to a 4-parameter function. This is a Rust type error and will not compile.
 
-7. **Missing `get_caller()` Auth (2 contracts: moltdao, moltmarket):** Multiple admin/user functions don't verify the transaction signer via `get_caller()`, making them vulnerable to address spoofing through crafted `caller_ptr` values.
+7. **Missing `get_caller()` Auth (2 contracts: lichendao, lichenmarket):** Multiple admin/user functions don't verify the transaction signer via `get_caller()`, making them vulnerable to address spoofing through crafted `caller_ptr` values.
 
 ### Contracts by ABI Safety
 
 | Rating | Contract | Notes |
 |--------|----------|-------|
-| ✅ Safe | **lobsterlend** | Standard named exports, 0=success, get\_caller() everywhere. Only issue: output pointers on query functions. |
-| ✅ Safe | **moltbridge** | Standard named exports, 0=success, get\_caller() everywhere. Minor: sandwiched u64, cancel\_expired has no auth (by design). |
+| ✅ Safe | **thalllend** | Standard named exports, 0=success, get\_caller() everywhere. Only issue: output pointers on query functions. |
+| ✅ Safe | **lichenbridge** | Standard named exports, 0=success, get\_caller() everywhere. Minor: sandwiched u64, cancel\_expired has no auth (by design). |
 | ⚠️ Non-standard | **dex\_margin** | Opcode-based call() dispatcher. Internally sound but requires custom encoding. |
 | ⚠️ Non-standard | **dex\_rewards** | Same call() pattern + duplicate initialize export. |
 | ⚠️ Non-standard | **dex\_router** | Same call() pattern + variable-length path in multi\_hop\_swap. |
-| 🔴 Broken | **moltcoin** | Inverted returns, void initialize. |
-| 🔴 Broken | **moltmarket** | Inverted returns, void initialize, missing get\_caller(). |
-| 🔴 Broken | **moltauction** | Mixed return conventions within same contract. |
-| 🔴 Broken | **moltdao** | Variable-length params, mixed returns, compile error, missing get\_caller(), output pointers. Most issues of any contract. |
+| 🔴 Broken | **lichencoin** | Inverted returns, void initialize. |
+| 🔴 Broken | **lichenmarket** | Inverted returns, void initialize, missing get\_caller(). |
+| 🔴 Broken | **lichenauction** | Mixed return conventions within same contract. |
+| 🔴 Broken | **lichendao** | Variable-length params, mixed returns, compile error, missing get\_caller(), output pointers. Most issues of any contract. |

@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// MoltyDEX Load Test — Concurrent Users Scenario
+// LichenDEX Load Test — Concurrent Users Scenario
 // Tests: concurrent order placement, concurrent reads, mixed read/write
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { MoltDEX } from '@moltchain/dex-sdk';
+import { LichenDEX } from '@lichen/dex-sdk';
 
 interface ScenarioResult {
   name: string;
@@ -46,7 +46,7 @@ export async function concurrentOrderPlacement(
 
   // Create trader clients
   const clients = Array.from({ length: traders }, () =>
-    new MoltDEX({ endpoint: ENDPOINT })
+    new LichenDEX({ endpoint: ENDPOINT })
   );
 
   // Each trader places orders concurrently
@@ -97,7 +97,7 @@ export async function concurrentReadStorm(
   const total = clients * queriesPerClient;
 
   const dexClients = Array.from({ length: clients }, () =>
-    new MoltDEX({ endpoint: ENDPOINT })
+    new LichenDEX({ endpoint: ENDPOINT })
   );
 
   const start = performance.now();
@@ -151,7 +151,7 @@ export async function mixedWorkload(
   const total = clients * opsPerClient;
 
   const dexClients = Array.from({ length: clients }, () =>
-    new MoltDEX({ endpoint: ENDPOINT })
+    new LichenDEX({ endpoint: ENDPOINT })
   );
 
   const start = performance.now();
@@ -202,7 +202,7 @@ export async function mixedWorkload(
 
 if (require.main === module) {
   (async () => {
-    console.log('═══ MoltyDEX Load Test: Concurrent Scenarios ═══\n');
+    console.log('═══ LichenDEX Load Test: Concurrent Scenarios ═══\n');
     console.log(`Endpoint: ${ENDPOINT}\n`);
 
     const scenarios = [

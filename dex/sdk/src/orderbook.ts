@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — Orderbook Module
+// @lichen/dex-sdk — Orderbook Module
 // Direct contract interaction for order placement, cancellation, book queries
 // ═══════════════════════════════════════════════════════════════════════════════
 

@@ -1,10 +1,10 @@
-# MoltChain Production Deployment — Complete Strategy
+# Lichen Production Deployment — Complete Strategy
 
-> Full step-by-step guide for deploying MoltChain across seed + relay infrastructure with 3 to 6 validators using the `moltchain.network` domain. Covers genesis bootstrapping, DNS, seed discovery, RPC/WS rotation, custody bridge, faucet, and how agent-run validators connect.
+> Full step-by-step guide for deploying Lichen across seed + relay infrastructure with 3 to 6 validators using the `lichen.network` domain. Covers genesis bootstrapping, DNS, seed discovery, RPC/WS rotation, custody bridge, faucet, and how agent-run validators connect.
 
-**Release-ready status (Mar 19, 2026):** v0.4.5 validated on a fresh 3-VPS redeploy using repo-local runtime paths, explicit `moltchain-genesis` initialization, and direct validator launches against `~/moltchain/data/state-{testnet,mainnet}`.
+**Release-ready status (Mar 19, 2026):** v0.4.5 validated on a fresh 3-VPS redeploy using repo-local runtime paths, explicit `lichen-genesis` initialization, and direct validator launches against `~/lichen/data/state-{testnet,mainnet}`.
 
-> Canonical v0.4.5 production path: prefer `deploy/setup.sh`, the network-specific `/etc/moltchain/env-*` files it generates, and the clean-slate runbook later in this document. Older examples in this guide that reference `/opt/moltchain`, single-unit `moltchain-validator.service`, or ad hoc setup scripts should be treated as historical context unless they were explicitly updated after Mar 19, 2026.
+> Canonical v0.4.5 production path: prefer `deploy/setup.sh`, the network-specific `/etc/lichen/env-*` files it generates, and the clean-slate runbook later in this document. Older examples in this guide that reference `/opt/lichen`, single-unit `lichen-validator.service`, or ad hoc setup scripts should be treated as historical context unless they were explicitly updated after Mar 19, 2026.
 
 ---
 
@@ -40,16 +40,16 @@
 
 ## Binary Inventory
 
-MoltChain compiles into **4 separate binaries** from the workspace:
+Lichen compiles into **4 separate binaries** from the workspace:
 
 | Binary | Crate | Port | Runs On | Description |
 |---|---|---|---|---|
-| `moltchain-validator` | `validator` | P2P: 7001/8001, RPC: 8899/9899, WS: 8900/9900, Signer: 9201 | Every VPS | Validator + built-in RPC + WebSocket + threshold signer. **This is the main binary.** Ports are testnet/mainnet respectively. |
-| `moltchain-custody` | `custody` | 9105 | Seed VPS only (1 instance) | Bridge service for Solana/Ethereum ↔ MoltChain deposits & withdrawals |
-| `moltchain-faucet` | `faucet` | 9100 | All VPSes (testnet only) | MOLT faucet for testnet. Refuses to run on mainnet. Same keypair copied to each VPS. |
-| `molt` | `cli` | — | Dev machines | CLI tool for sending transactions, querying state. NOT a server. |
+| `lichen-validator` | `validator` | P2P: 7001/8001, RPC: 8899/9899, WS: 8900/9900, Signer: 9201 | Every VPS | Validator + built-in RPC + WebSocket + threshold signer. **This is the main binary.** Ports are testnet/mainnet respectively. |
+| `lichen-custody` | `custody` | 9105 | Seed VPS only (1 instance) | Bridge service for Solana/Ethereum ↔ Lichen deposits & withdrawals |
+| `lichen-faucet` | `faucet` | 9100 | All VPSes (testnet only) | LICN faucet for testnet. Refuses to run on mainnet. Same keypair copied to each VPS. |
+| `lichen` | `cli` | — | Dev machines | CLI tool for sending transactions, querying state. NOT a server. |
 
-**Important:** The `moltchain-validator` binary is a single process that includes:
+**Important:** The `lichen-validator` binary is a single process that includes:
 - The validator consensus engine
 - The P2P QUIC networking layer
 - The JSON-RPC HTTP server
@@ -62,14 +62,14 @@ The RPC and WebSocket are **not** separate binaries — they're spawned as async
 ### Build All Binaries
 
 ```bash
-cd moltchain
+cd lichen
 cargo build --release
 
 # Outputs:
-# target/release/moltchain-validator
-# target/release/moltchain-custody
-# target/release/moltchain-faucet
-# target/release/molt
+# target/release/lichen-validator
+# target/release/lichen-custody
+# target/release/lichen-faucet
+# target/release/licn
 ```
 
 ### VPS Source Staging Rule
@@ -92,7 +92,7 @@ tar -cf - \
   --exclude='logs' \
   --exclude='node_modules' \
   --exclude='dist' \
-  . | ssh <host> 'rm -rf ~/moltchain-build && mkdir -p ~/moltchain-build && tar -xf - -C ~/moltchain-build'
+  . | ssh <host> 'rm -rf ~/lichen-build && mkdir -p ~/lichen-build && tar -xf - -C ~/lichen-build'
 ```
 
 ---
@@ -101,28 +101,28 @@ tar -cf - \
 
 ```
 ┌───────────────────────────────────────────────────────────────────┐
-│                      moltchain.network DNS                        │
+│                      lichen.network DNS                        │
 │                                                                   │
 │  BACKEND (VPS)                                                    │
 │  ──────────────────────────────────────────────────────────       │
-│  rpc.moltchain.network          →  Round-robin to all 3 VPS      │
-│  ws.moltchain.network           →  Round-robin to all 3 VPS      │
-│  seed-eu.moltchain.network      →  EU VPS (direct IP)            │
-│  seed-us.moltchain.network      →  US VPS (direct IP)            │
-│  seed-ap.moltchain.network      →  ASIA VPS (direct IP)          │
-│  custody.moltchain.network      →  US VPS                        │
-│  faucet.moltchain.network       →  Round-robin to all 3 VPS      │
+│  rpc.lichen.network          →  Round-robin to all 3 VPS      │
+│  ws.lichen.network           →  Round-robin to all 3 VPS      │
+│  seed-eu.lichen.network      →  EU VPS (direct IP)            │
+│  seed-us.lichen.network      →  US VPS (direct IP)            │
+│  seed-ap.lichen.network      →  ASIA VPS (direct IP)          │
+│  custody.lichen.network      →  US VPS                        │
+│  faucet.lichen.network       →  Round-robin to all 3 VPS      │
 │                                                                   │
 │  STATIC PORTALS (Cloudflare Pages — global CDN edge)              │
 │  ──────────────────────────────────────────────────────────       │
-│  moltchain.network              →  CF Pages (main website)        │
-│  explorer.moltchain.network     →  CF Pages                      │
-│  wallet.moltchain.network       →  CF Pages                      │
-│  dex.moltchain.network          →  CF Pages                      │
-│  marketplace.moltchain.network  →  CF Pages                      │
-│  programs.moltchain.network     →  CF Pages                      │
-│  developers.moltchain.network   →  CF Pages                      │
-│  monitoring.moltchain.network   →  CF Pages                      │
+│  lichen.network              →  CF Pages (main website)        │
+│  explorer.lichen.network     →  CF Pages                      │
+│  wallet.lichen.network       →  CF Pages                      │
+│  dex.lichen.network          →  CF Pages                      │
+│  marketplace.lichen.network  →  CF Pages                      │
+│  programs.lichen.network     →  CF Pages                      │
+│  developers.lichen.network   →  CF Pages                      │
+│  monitoring.lichen.network   →  CF Pages                      │
 └───────────────────────────────────────────────────────────────────┘
 
 ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
@@ -167,10 +167,10 @@ tar -cf - \
 
         | Role | Count (start → scale) | Purpose | Public surface |
         |---|---:|---|---|
-        | Seed validators | 3 → 6 | Consensus + bootstrap peers | `seed-*.moltchain.network:8001` |
-        | RPC relays | 1 → 2 | Stable HTTPS/WSS front door + upstream rotation | `rpc.moltchain.network`, `ws.moltchain.network` |
-        | Custody host | 1 | Custody service + workers | `custody.moltchain.network` |
-        | Faucet host (testnet) | 3 | Test token distribution (all VPSes) | `faucet.moltchain.network` (round-robin) |
+        | Seed validators | 3 → 6 | Consensus + bootstrap peers | `seed-*.lichen.network:8001` |
+        | RPC relays | 1 → 2 | Stable HTTPS/WSS front door + upstream rotation | `rpc.lichen.network`, `ws.lichen.network` |
+        | Custody host | 1 | Custody service + workers | `custody.lichen.network` |
+        | Faucet host (testnet) | 3 | Test token distribution (all VPSes) | `faucet.lichen.network` (round-robin) |
 
         ### Phased rollout (exact order)
 
@@ -183,7 +183,7 @@ tar -cf - \
         4. **Deploy relay-01**
           - configure Caddy upstream pool to seed validators for `/` (RPC) and WS endpoint rotation
         5. **Switch public client traffic to relay**
-          - set `rpc.moltchain.network` and `ws.moltchain.network` to relay host(s) instead of direct validator round-robin
+          - set `rpc.lichen.network` and `ws.lichen.network` to relay host(s) instead of direct validator round-robin
         6. **Scale to seed-04..seed-06**
           - add new validators, update relay upstream pools, update `seeds.json`
         7. **Add relay-02 for HA**
@@ -193,29 +193,29 @@ tar -cf - \
 
         - validators keep stable consensus ports while relay absorbs public traffic spikes
         - upstream health checks remove unhealthy validator RPC endpoints automatically
-        - clients keep one canonical URL (`rpc.moltchain.network`) while backend rotation changes without client config churn
+        - clients keep one canonical URL (`rpc.lichen.network`) while backend rotation changes without client config churn
 
         ### Seed vs relay traffic policy
 
         - **P2P bootstrap**: always direct to `seed-*` records on port `7001` (testnet) / `8001` (mainnet)
-        - **Wallet/app/agent RPC**: route via relays (`rpc.moltchain.network`)
-        - **WS subscriptions**: route via relays (`ws.moltchain.network`) where possible; client-side fallback list remains recommended
+        - **Wallet/app/agent RPC**: route via relays (`rpc.lichen.network`)
+        - **WS subscriptions**: route via relays (`ws.lichen.network`) where possible; client-side fallback list remains recommended
 
         ### Step-by-step checklist (operator execution)
 
         ```bash
         # 1) Verify all validators are healthy
-        for h in seed-01.moltchain.network seed-02.moltchain.network seed-03.moltchain.network; do
+        for h in seed-01.lichen.network seed-02.lichen.network seed-03.lichen.network; do
           curl -sS -X POST "https://$h" -H 'Content-Type: application/json' \
            -d '{"jsonrpc":"2.0","id":1,"method":"health","params":[]}'
         done
 
         # 2) Verify relay front door health
-        curl -sS -X POST https://rpc.moltchain.network -H 'Content-Type: application/json' \
+        curl -sS -X POST https://rpc.lichen.network -H 'Content-Type: application/json' \
           -d '{"jsonrpc":"2.0","id":1,"method":"health","params":[]}'
 
         # 3) Verify WS endpoint is reachable (handshake check)
-        curl -i https://ws.moltchain.network || true
+        curl -i https://ws.lichen.network || true
         ```
 
         When adding seed-04..seed-06, update all relay upstream pools first, then update DNS and `seeds.json`.
@@ -224,7 +224,7 @@ tar -cf - \
 
 ## DNS & Subdomains
 
-### Cloudflare DNS Records (moltchain.network)
+### Cloudflare DNS Records (lichen.network)
 
 Set these up on your DNS provider. I recommend Cloudflare for geo-based load balancing.
 
@@ -252,11 +252,11 @@ Use stable relay hostnames as the only public RPC entrypoint; keep validator hos
 
 | Record | Example | Purpose |
 |---|---|---|
-| `seed-01..seed-06` (A, DNS only) | `seed-01.moltchain.network` | P2P bootstrap + direct validator diagnostics |
-| `rpc-relay-01` / `rpc-relay-02` (A, proxied) | `rpc-relay-01.moltchain.network` | RPC relay frontends |
-| `ws-relay-01` / `ws-relay-02` (A, DNS only or proxied per plan) | `ws-relay-01.moltchain.network` | WS relay frontends |
-| `rpc` (CNAME/LB) | `rpc.moltchain.network -> rpc-relay-*` | Canonical client RPC URL |
-| `ws` (CNAME/LB) | `ws.moltchain.network -> ws-relay-*` | Canonical client WS URL |
+| `seed-01..seed-06` (A, DNS only) | `seed-01.lichen.network` | P2P bootstrap + direct validator diagnostics |
+| `rpc-relay-01` / `rpc-relay-02` (A, proxied) | `rpc-relay-01.lichen.network` | RPC relay frontends |
+| `ws-relay-01` / `ws-relay-02` (A, DNS only or proxied per plan) | `ws-relay-01.lichen.network` | WS relay frontends |
+| `rpc` (CNAME/LB) | `rpc.lichen.network -> rpc-relay-*` | Canonical client RPC URL |
+| `ws` (CNAME/LB) | `ws.lichen.network -> ws-relay-*` | Canonical client WS URL |
 
 Operational rule: do not point `rpc`/`ws` directly at every validator once relay is in place; keep relays as the control plane for rotation.
 
@@ -266,15 +266,15 @@ All frontend portals are **pure static HTML/CSS/JS** — no server process requi
 
 | Type | Name | Value | Proxy | Notes |
 |---|---|---|---|---|
-| **CNAME** | `@` | `moltchain-website.pages.dev` | Proxied | Main website |
-| **CNAME** | `www` | `moltchain.network` | Proxied | www redirect |
-| **CNAME** | `explorer` | `moltchain-explorer.pages.dev` | Proxied | Block explorer |
-| **CNAME** | `wallet` | `moltchain-wallet.pages.dev` | Proxied | Web wallet |
-| **CNAME** | `dex` | `moltchain-dex.pages.dev` | Proxied | ClawSwap DEX |
-| **CNAME** | `marketplace` | `moltchain-marketplace.pages.dev` | Proxied | NFT / skill marketplace |
-| **CNAME** | `programs` | `moltchain-programs.pages.dev` | Proxied | Programs IDE |
-| **CNAME** | `developers` | `moltchain-developers.pages.dev` | Proxied | Developer portal & docs |
-| **CNAME** | `monitoring` | `moltchain-monitoring.pages.dev` | Proxied | Public network dashboard |
+| **CNAME** | `@` | `lichen-website.pages.dev` | Proxied | Main website |
+| **CNAME** | `www` | `lichen.network` | Proxied | www redirect |
+| **CNAME** | `explorer` | `lichen-explorer.pages.dev` | Proxied | Block explorer |
+| **CNAME** | `wallet` | `lichen-wallet.pages.dev` | Proxied | Web wallet |
+| **CNAME** | `dex` | `lichen-dex.pages.dev` | Proxied | SporeSwap DEX |
+| **CNAME** | `marketplace` | `lichen-marketplace.pages.dev` | Proxied | NFT / skill marketplace |
+| **CNAME** | `programs` | `lichen-programs.pages.dev` | Proxied | Programs IDE |
+| **CNAME** | `developers` | `lichen-developers.pages.dev` | Proxied | Developer portal & docs |
+| **CNAME** | `monitoring` | `lichen-monitoring.pages.dev` | Proxied | Public network dashboard |
 
 > **Why Cloudflare Pages over VPS?**
 > - Free tier, unlimited bandwidth, 500 builds/month
@@ -284,9 +284,9 @@ All frontend portals are **pure static HTML/CSS/JS** — no server process requi
 > - Automatic HTTPS, HTTP/3, Brotli compression
 
 **Key points:**
-- `seed-*.moltchain.network` must be **DNS only** (gray cloud) — P2P QUIC needs direct IP, not Cloudflare proxy
-- `ws.moltchain.network` must be **DNS only** — Cloudflare free plan doesn't support arbitrary WebSocket
-- `rpc.moltchain.network` can be **Proxied** (orange cloud) — standard HTTPS works through CF
+- `seed-*.lichen.network` must be **DNS only** (gray cloud) — P2P QUIC needs direct IP, not Cloudflare proxy
+- `ws.lichen.network` must be **DNS only** — Cloudflare free plan doesn't support arbitrary WebSocket
+- `rpc.lichen.network` can be **Proxied** (orange cloud) — standard HTTPS works through CF
 - All portal CNAMEs point to `*.pages.dev` — Cloudflare auto-provisions SSL for the custom domain
 - Multiple A records for the same subdomain = DNS round-robin load balancing
 
@@ -308,11 +308,11 @@ On the free plan, DNS round-robin works fine — clients get a random IP from th
 | Service | Port | Protocol | Exposed Publicly? |
 |---|---|---|---|
 | P2P (QUIC) | **7001** | UDP/TCP | YES — other validators must reach this |
-| RPC (HTTP) | **8899** | TCP | YES — via Caddy → `rpc.moltchain.network` |
-| WebSocket | **8900** | TCP | YES — via Caddy → `ws.moltchain.network` |
+| RPC (HTTP) | **8899** | TCP | YES — via Caddy → `rpc.lichen.network` |
+| WebSocket | **8900** | TCP | YES — via Caddy → `ws.lichen.network` |
 | Threshold Signer | **9201** | TCP | **NO** — loopback only (inter-signer traffic) |
-| Custody API | **9105** | TCP | YES — via Caddy → `custody.moltchain.network` |
-| Faucet API | **9100** | TCP | YES — via Caddy → `faucet.moltchain.network` |
+| Custody API | **9105** | TCP | YES — via Caddy → `custody.lichen.network` |
+| Faucet API | **9100** | TCP | YES — via Caddy → `faucet.lichen.network` |
 | Caddy (HTTPS) | **443** | TCP | YES |
 | Caddy (HTTP→HTTPS) | **80** | TCP | YES (redirect only) |
 
@@ -321,10 +321,10 @@ On the free plan, DNS round-robin works fine — clients get a random IP from th
 | Service | Port | Protocol | Exposed Publicly? |
 |---|---|---|---|
 | P2P (QUIC) | **8001** | UDP/TCP | YES — other validators must reach this |
-| RPC (HTTP) | **9899** | TCP | YES — via Caddy → `rpc.moltchain.network` |
-| WebSocket | **9900** | TCP | YES — via Caddy → `ws.moltchain.network` |
+| RPC (HTTP) | **9899** | TCP | YES — via Caddy → `rpc.lichen.network` |
+| WebSocket | **9900** | TCP | YES — via Caddy → `ws.lichen.network` |
 | Threshold Signer | **9201** | TCP | **NO** — loopback only (inter-signer traffic) |
-| Custody API | **9105** | TCP | YES — via Caddy → `custody.moltchain.network` |
+| Custody API | **9105** | TCP | YES — via Caddy → `custody.lichen.network` |
 | Faucet API | — | — | Mainnet has no faucet |
 | Caddy (HTTPS) | **443** | TCP | YES |
 | Caddy (HTTP→HTTPS) | **80** | TCP | YES (redirect only) |
@@ -339,30 +339,30 @@ Use this section as your first production worksheet before you own the VPS. Keep
 
 | Role | Hostname | Public DNS | Private DNS (optional) | Example IP placeholder |
 |---|---|---|---|---|
-| Seed validator 1 (genesis) | `seed-01` | `seed-01.moltchain.network` | `seed-01.internal.moltchain.network` | `203.0.113.11` |
-| Seed validator 2 | `seed-02` | `seed-02.moltchain.network` | `seed-02.internal.moltchain.network` | `203.0.113.12` |
-| Seed validator 3 | `seed-03` | `seed-03.moltchain.network` | `seed-03.internal.moltchain.network` | `203.0.113.13` |
-| Seed validator 4 (future) | `seed-04` | `seed-04.moltchain.network` | `seed-04.internal.moltchain.network` | `203.0.113.14` |
-| Seed validator 5 (future) | `seed-05` | `seed-05.moltchain.network` | `seed-05.internal.moltchain.network` | `203.0.113.15` |
-| Seed validator 6 (future) | `seed-06` | `seed-06.moltchain.network` | `seed-06.internal.moltchain.network` | `203.0.113.16` |
-| RPC relay 1 | `relay-01` | `rpc-relay-01.moltchain.network` | `relay-01.internal.moltchain.network` | `198.51.100.21` |
-| RPC relay 2 (HA) | `relay-02` | `rpc-relay-02.moltchain.network` | `relay-02.internal.moltchain.network` | `198.51.100.22` |
-| Custody + faucet host | `custody-01` | `custody.moltchain.network` / `faucet.moltchain.network` | `custody-01.internal.moltchain.network` | `198.51.100.31` |
+| Seed validator 1 (genesis) | `seed-01` | `seed-01.lichen.network` | `seed-01.internal.lichen.network` | `203.0.113.11` |
+| Seed validator 2 | `seed-02` | `seed-02.lichen.network` | `seed-02.internal.lichen.network` | `203.0.113.12` |
+| Seed validator 3 | `seed-03` | `seed-03.lichen.network` | `seed-03.internal.lichen.network` | `203.0.113.13` |
+| Seed validator 4 (future) | `seed-04` | `seed-04.lichen.network` | `seed-04.internal.lichen.network` | `203.0.113.14` |
+| Seed validator 5 (future) | `seed-05` | `seed-05.lichen.network` | `seed-05.internal.lichen.network` | `203.0.113.15` |
+| Seed validator 6 (future) | `seed-06` | `seed-06.lichen.network` | `seed-06.internal.lichen.network` | `203.0.113.16` |
+| RPC relay 1 | `relay-01` | `rpc-relay-01.lichen.network` | `relay-01.internal.lichen.network` | `198.51.100.21` |
+| RPC relay 2 (HA) | `relay-02` | `rpc-relay-02.lichen.network` | `relay-02.internal.lichen.network` | `198.51.100.22` |
+| Custody + faucet host | `custody-01` | `custody.lichen.network` / `faucet.lichen.network` | `custody-01.internal.lichen.network` | `198.51.100.31` |
 
 ### 0.2 Canonical public entrypoints
 
 | Service | Canonical URL | Backing nodes |
 |---|---|---|
-| JSON-RPC | `https://rpc.moltchain.network` | `relay-01`, `relay-02` |
-| WebSocket | `wss://ws.moltchain.network` | `relay-01`, `relay-02` |
-| Custody API | `https://custody.moltchain.network` | `custody-01` |
-| Faucet (testnet) | `https://faucet.moltchain.network` | `custody-01` |
+| JSON-RPC | `https://rpc.lichen.network` | `relay-01`, `relay-02` |
+| WebSocket | `wss://ws.lichen.network` | `relay-01`, `relay-02` |
+| Custody API | `https://custody.lichen.network` | `custody-01` |
+| Faucet (testnet) | `https://faucet.lichen.network` | `custody-01` |
 
 ### 0.3 Variable block (fill once, reuse everywhere)
 
 ```bash
 # Domain
-export DOMAIN="moltchain.network"
+export DOMAIN="lichen.network"
 
 # Seed validators (public IP placeholders)
 export SEED01_IP="203.0.113.11"
@@ -412,8 +412,8 @@ rpc-relay-01  A  198.51.100.21
 rpc-relay-02  A  198.51.100.22
 
 # Canonical client endpoints -> relays
-rpc  CNAME  rpc-relay-01.moltchain.network  (or LB pool relay-01/02)
-ws   CNAME  rpc-relay-01.moltchain.network  (or LB pool relay-01/02)
+rpc  CNAME  rpc-relay-01.lichen.network  (or LB pool relay-01/02)
+ws   CNAME  rpc-relay-01.lichen.network  (or LB pool relay-01/02)
 
 # Custody/faucet
 custody  A  198.51.100.31
@@ -427,20 +427,20 @@ faucet   A  198.51.100.31
 3. run genesis on `seed-01`; snapshot state
 4. restore state on `seed-02` + `seed-03`, regenerate per-node identity/signer keys
 5. bring up relay-01 with upstreams `seed-01..03`
-6. verify `https://rpc.moltchain.network` health
+6. verify `https://rpc.lichen.network` health
 7. deploy custody/faucet on `custody-01`
 8. scale with `seed-04..06` + `relay-02`, then update relay upstream pools
 
 ### 0.6 Day 0 verification commands
 
 ```bash
-curl -sS -X POST "https://rpc.moltchain.network" -H 'Content-Type: application/json' \
+curl -sS -X POST "https://rpc.lichen.network" -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"health","params":[]}'
 
-curl -sS "https://custody.moltchain.network/health"
-curl -sS "https://faucet.moltchain.network/health"
+curl -sS "https://custody.lichen.network/health"
+curl -sS "https://faucet.lichen.network/health"
 
-for host in seed-01.moltchain.network seed-02.moltchain.network seed-03.moltchain.network; do
+for host in seed-01.lichen.network seed-02.lichen.network seed-03.lichen.network; do
   curl -sS -X POST "https://$host" -H 'Content-Type: application/json' \
     -d '{"jsonrpc":"2.0","id":1,"method":"health","params":[]}'
 done
@@ -455,18 +455,18 @@ The simplest approach: generate genesis locally, copy state to VPS.
 ### Step 1: Generate Genesis Locally
 
 ```bash
-cd moltchain
+cd lichen
 cargo build --release
 
 # Start the first validator — it auto-generates genesis
-./target/release/moltchain-validator --network testnet --p2p-port 7001
+./target/release/lichen-validator --network testnet --p2p-port 7001
 ```
 
 On first boot with no existing state, the validator:
 1. Generates a **genesis wallet** with multi-sig (2/3 for testnet, 3/5 for mainnet)
 2. Creates treasury keypairs in `./data/state-7001/genesis-keys/`
 3. Saves `genesis-wallet.json` in the state directory
-4. Creates the canonical 500M MOLT genesis distribution across the configured treasury wallets
+4. Creates the canonical 500M LICN genesis distribution across the configured treasury wallets
 5. Registers itself as the initial validator
 6. **Auto-deploys all 30 genesis contracts** from the `contracts/` directory
 
@@ -474,13 +474,13 @@ Step 6 is important — the validator binary includes a `genesis_auto_deploy` fu
 
 | Category | Contracts deployed |
 |---|---|
-| Core token | MOLT (MoltCoin) |
-| Wrapped tokens | MUSD, WSOL, WETH |
+| Core token | LICN (LichenCoin) |
+| Wrapped tokens | LUSD, WSOL, WETH |
 | DEX | DEX Core, AMM, Router, Margin, Rewards, Governance, Analytics |
-| DeFi | MoltSwap, MoltBridge, LobsterLend |
-| Marketplace | MoltMarket, MoltAuction, MoltOracle, MoltDAO |
-| NFT / Identity | MoltPunks, MoltyID |
-| Infrastructure | ClawPay, ClawPump, ClawVault, BountyBoard, Compute Market, Reef Storage |
+| DeFi | LichenSwap, LichenBridge, ThallLend |
+| Marketplace | LichenMarket, LichenAuction, LichenOracle, LichenDAO |
+| NFT / Identity | LichenPunks, LichenID |
+| Infrastructure | SporePay, SporePump, SporeVault, BountyBoard, Compute Market, Moss Storage |
 
 Contract addresses are derived deterministically: `SHA-256(deployer_pubkey + dir_name + wasm_bytes)`. The deploy is **idempotent** — if contracts already exist in state, they're skipped.
 
@@ -520,7 +520,7 @@ When you extract the state on each VPS:
 
 ```bash
 # On EU/ASIA VPS (after extracting state):
-rm /var/lib/moltchain/state-testnet/signer-keypair.json  # Regenerated on boot
+rm /var/lib/lichen/state-testnet/signer-keypair.json  # Regenerated on boot
 # The validator identity is derived from the --keypair flag or auto-generated
 ```
 
@@ -530,7 +530,7 @@ If you prefer to skip the local step:
 
 ```bash
 # SSH into US VPS, build there, start the validator
-./moltchain-validator --network testnet --listen-addr 0.0.0.0 --p2p-port 7001
+./lichen-validator --network testnet --listen-addr 0.0.0.0 --p2p-port 7001
 # Let it generate genesis
 # Then tar + scp the state to EU/ASIA
 ```
@@ -545,33 +545,33 @@ Run on all 3 VPS (Ubuntu 22.04+):
 
 ```bash
 # 1. Create system user
-sudo groupadd -r moltchain
-sudo useradd -r -g moltchain -d /home/moltchain -m -s /bin/false moltchain
+sudo groupadd -r lichen
+sudo useradd -r -g lichen -d /home/lichen -m -s /bin/false lichen
 
 # 2. Create directories
-sudo mkdir -p /opt/moltchain/bin /var/lib/moltchain /var/log/moltchain /etc/moltchain
-sudo chown moltchain:moltchain /var/lib/moltchain /var/log/moltchain
+sudo mkdir -p /opt/lichen/bin /var/lib/lichen /var/log/lichen /etc/lichen
+sudo chown lichen:lichen /var/lib/lichen /var/log/lichen
 
 # 3. Install Rust & build (or scp pre-built binaries)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
 
 # Clone and build
-git clone <your-repo> /tmp/moltchain-build
-cd /tmp/moltchain-build
+git clone <your-repo> /tmp/lichen-build
+cd /tmp/lichen-build
 cargo build --release
 
 # Copy binaries
-sudo cp target/release/moltchain-validator /opt/moltchain/bin/
-sudo cp target/release/moltchain-custody /opt/moltchain/bin/  # US VPS only
-sudo cp target/release/moltchain-faucet /opt/moltchain/bin/   # All VPSes
-sudo cp target/release/molt /opt/moltchain/bin/               # CLI (optional)
-sudo chmod +x /opt/moltchain/bin/*
+sudo cp target/release/lichen-validator /opt/lichen/bin/
+sudo cp target/release/lichen-custody /opt/lichen/bin/  # US VPS only
+sudo cp target/release/lichen-faucet /opt/lichen/bin/   # All VPSes
+sudo cp target/release/licn /opt/lichen/bin/               # CLI (optional)
+sudo chmod +x /opt/lichen/bin/*
 
 # 4. Extract genesis state
-sudo mkdir -p /var/lib/moltchain/state-testnet
-sudo tar xzf /tmp/genesis-state.tar.gz -C /var/lib/moltchain/state-testnet
-sudo chown -R moltchain:moltchain /var/lib/moltchain
+sudo mkdir -p /var/lib/lichen/state-testnet
+sudo tar xzf /tmp/genesis-state.tar.gz -C /var/lib/lichen/state-testnet
+sudo chown -R lichen:lichen /var/lib/lichen
 ```
 
 ### ZK Verification Keys (Auto-Generated)
@@ -579,19 +579,19 @@ sudo chown -R moltchain:moltchain /var/lib/moltchain
 Starting with v0.2.9, the validator **auto-generates** ZK verification keys on first
 startup if they are not already present. The Groth16 trusted setup for 3 circuits
 (shield, unshield, transfer) completes in ~30 seconds and produces 6 key files cached
-at `~/.moltchain/zk/` (for the user running the validator, typically
-`/var/lib/moltchain/.moltchain/zk/` for the `moltchain` systemd user).
+at `~/.lichen/zk/` (for the user running the validator, typically
+`/var/lib/lichen/.lichen/zk/` for the `lichen` systemd user).
 
 **No manual ZK setup is required.** The validator handles it automatically.
 
 #### Critical: File Ownership
 
-All files under `/var/lib/moltchain/` **must** be owned by `moltchain:moltchain`.
+All files under `/var/lib/lichen/` **must** be owned by `lichen:lichen`.
 If you manually copy ZK keys (e.g. via rsync as the `ubuntu` user), fix ownership
 immediately:
 
 ```bash
-sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/
+sudo chown -R lichen:lichen /var/lib/lichen/.lichen/
 ```
 
 **If ownership is wrong,** the validator cannot read the key files and shielded
@@ -599,8 +599,8 @@ transactions will fail silently with a log warning. Always verify after any manu
 file operation:
 
 ```bash
-ls -la /var/lib/moltchain/.moltchain/zk/
-# All files should show: moltchain moltchain
+ls -la /var/lib/lichen/.lichen/zk/
+# All files should show: lichen lichen
 ```
 
 #### Manual ZK Key Copy (optional, saves ~30s startup)
@@ -611,52 +611,52 @@ pre-generated keys from a working node:
 ```bash
 # From a node that already has keys:
 rsync -avz -e "ssh -p 2222" \
-    /var/lib/moltchain/.moltchain/zk/ \
-    ubuntu@<TARGET_VPS>:/var/lib/moltchain/.moltchain/zk/
+    /var/lib/lichen/.lichen/zk/ \
+    ubuntu@<TARGET_VPS>:/var/lib/lichen/.lichen/zk/
 
 # THEN fix ownership on the target:
 ssh -p 2222 ubuntu@<TARGET_VPS> \
-    "sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/"
+    "sudo chown -R lichen:lichen /var/lib/lichen/.lichen/"
 ```
 
 ### On Each VPS: Validator Service
 
 ```bash
 # Create env file
-sudo tee /etc/moltchain/env-testnet <<'EOF'
-MOLTCHAIN_NETWORK=testnet
-MOLTCHAIN_RPC_PORT=8899
-MOLTCHAIN_WS_PORT=8900
-MOLTCHAIN_P2P_PORT=7001
-MOLTCHAIN_SIGNER_BIND=127.0.0.1:9201
-MOLTCHAIN_SIGNER_AUTH_TOKEN=<shared-signer-token>
+sudo tee /etc/lichen/env-testnet <<'EOF'
+LICHEN_NETWORK=testnet
+LICHEN_RPC_PORT=8899
+LICHEN_WS_PORT=8900
+LICHEN_P2P_PORT=7001
+LICHEN_SIGNER_BIND=127.0.0.1:9201
+LICHEN_SIGNER_AUTH_TOKEN=<shared-signer-token>
 RUST_LOG=info
-# MOLTCHAIN_ADMIN_TOKEN=<generate-with-openssl-rand-hex-32>
+# LICHEN_ADMIN_TOKEN=<generate-with-openssl-rand-hex-32>
 EOF
-sudo chmod 600 /etc/moltchain/env-testnet
+sudo chmod 600 /etc/lichen/env-testnet
 ```
 
 ```bash
 # Create systemd service
-sudo tee /etc/systemd/system/moltchain-validator.service <<'EOF'
+sudo tee /etc/systemd/system/lichen-validator.service <<'EOF'
 [Unit]
-Description=MoltChain Validator Node
+Description=Lichen Validator Node
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=moltchain
-Group=moltchain
+User=lichen
+Group=lichen
 
-ExecStart=/opt/moltchain/bin/moltchain-validator \
+ExecStart=/opt/lichen/bin/lichen-validator \
     --network testnet \
     --listen-addr 0.0.0.0 \
     --rpc-port 8899 \
     --ws-port 8900 \
     --p2p-port 7001 \
-    --db-path /var/lib/moltchain/state-testnet \
-    --bootstrap-peers seed-us.moltchain.network:7001,seed-eu.moltchain.network:7001,seed-ap.moltchain.network:7001
+    --db-path /var/lib/lichen/state-testnet \
+    --bootstrap-peers seed-us.lichen.network:7001,seed-eu.lichen.network:7001,seed-ap.lichen.network:7001
 
 Restart=on-failure
 RestartSec=5
@@ -665,16 +665,16 @@ LimitNOFILE=65536
 # Security
 NoNewPrivileges=true
 ProtectSystem=strict
-ReadWritePaths=/var/lib/moltchain /var/log/moltchain
+ReadWritePaths=/var/lib/lichen /var/log/lichen
 PrivateTmp=true
 
 # Environment
 Environment=RUST_LOG=info
-EnvironmentFile=/etc/moltchain/env-testnet
+EnvironmentFile=/etc/lichen/env-testnet
 
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=moltchain-validator
+SyslogIdentifier=lichen-validator
 
 [Install]
 WantedBy=multi-user.target
@@ -692,11 +692,11 @@ EOF
 ```bash
 # On each VPS:
 sudo systemctl daemon-reload
-sudo systemctl enable moltchain-validator
-sudo systemctl start moltchain-validator
+sudo systemctl enable lichen-validator
+sudo systemctl start lichen-validator
 
 # Watch logs:
-sudo journalctl -u moltchain-validator -f
+sudo journalctl -u lichen-validator -f
 ```
 
 The EU and ASIA validators will:
@@ -722,36 +722,36 @@ See [CUSTODY_DEPLOYMENT.md](./CUSTODY_DEPLOYMENT.md) for the full custody-specif
 ### Deploy on US VPS Only
 
 ```bash
-sudo tee /etc/systemd/system/moltchain-custody.service <<'EOF'
+sudo tee /etc/systemd/system/lichen-custody.service <<'EOF'
 [Unit]
-Description=MoltChain Custody Bridge
-After=moltchain-validator.service
-Wants=moltchain-validator.service
+Description=Lichen Custody Bridge
+After=lichen-validator.service
+Wants=lichen-validator.service
 
 [Service]
 Type=simple
-User=moltchain
-Group=moltchain
-WorkingDirectory=/opt/moltchain
+User=lichen
+Group=lichen
+WorkingDirectory=/opt/lichen
 
-ExecStart=/opt/moltchain/bin/moltchain-custody
+ExecStart=/opt/lichen/bin/lichen-custody
 Restart=always
 RestartSec=5
 
 # Core
-Environment=CUSTODY_DB_PATH=/var/lib/moltchain/custody-db
+Environment=CUSTODY_DB_PATH=/var/lib/lichen/custody-db
 Environment=CUSTODY_POLL_INTERVAL_SECS=15
 Environment=CUSTODY_DEPOSIT_TTL_SECS=86400
 Environment=RUST_LOG=info
 
-# MoltChain connection
+# Lichen connection
 # CRITICAL: This keypair must match the one used to deploy_dex.py (the "admin" key).
 # Copy keypairs/deployer.json to this path after deployment.
-Environment=CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899
-Environment=CUSTODY_TREASURY_KEYPAIR=/etc/moltchain/custody-treasury-testnet.json
+Environment=CUSTODY_LICHEN_RPC_URL=http://127.0.0.1:8899
+Environment=CUSTODY_TREASURY_KEYPAIR=/etc/lichen/custody-treasury-testnet.json
 
 # Wrapped token contracts (auto-discovered from registry, or pin manually)
-Environment=CUSTODY_MUSD_TOKEN_ADDR=<deploy-and-fill>
+Environment=CUSTODY_LUSD_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WSOL_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WETH_TOKEN_ADDR=<deploy-and-fill>
 Environment=CUSTODY_WBNB_TOKEN_ADDR=<deploy-and-fill>
@@ -759,7 +759,7 @@ Environment=CUSTODY_WBNB_TOKEN_ADDR=<deploy-and-fill>
 # Solana bridge
 Environment=CUSTODY_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
 Environment=CUSTODY_TREASURY_SOLANA=<your-solana-address>
-Environment=CUSTODY_SOLANA_FEE_PAYER=/etc/moltchain/solana-fee-payer.json
+Environment=CUSTODY_SOLANA_FEE_PAYER=/etc/lichen/solana-fee-payer.json
 
 # Threshold signers (all 3 VPS)
 Environment=CUSTODY_SIGNER_ENDPOINTS=http://<US_PRIVATE_IP>:9201,http://<EU_PRIVATE_IP>:9201,http://<ASIA_PRIVATE_IP>:9201
@@ -770,8 +770,8 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable moltchain-custody
-sudo systemctl start moltchain-custody
+sudo systemctl enable lichen-custody
+sudo systemctl start lichen-custody
 ```
 
 ### Signer Network
@@ -780,7 +780,7 @@ The custody service calls each validator's threshold signer on port 9201. These 
 - **WireGuard VPN** between the 3 VPS (recommended)
 - **Firewall allow-list** — only allow port 9201 from the other 2 VPS IPs
 - Never expose port 9201 to the public internet
-- Use the same secret in `MOLTCHAIN_SIGNER_AUTH_TOKEN` on validators and `CUSTODY_SIGNER_AUTH_TOKEN` in custody
+- Use the same secret in `LICHEN_SIGNER_AUTH_TOKEN` on validators and `CUSTODY_SIGNER_AUTH_TOKEN` in custody
 
 ---
 
@@ -788,34 +788,34 @@ The custody service calls each validator's threshold signer on port 9201. These 
 
 ### Faucet (all 3 VPSes, testnet only)
 
-The faucet runs as a Rust binary on **all 3 VPSes**. DNS for `faucet.moltchain.network` round-robins to all 3, so every VPS must have the faucet running with the **same keypair**.
+The faucet runs as a Rust binary on **all 3 VPSes**. DNS for `faucet.lichen.network` round-robins to all 3, so every VPS must have the faucet running with the **same keypair**.
 
 #### 1. Copy faucet keypair to all VPSes
 
 Genesis creates the faucet keypair at `state-testnet/genesis-keys/faucet-<chain-id>.json`. Copy it to the expected service path on **each** VPS:
 
 ```bash
-sudo cp /var/lib/moltchain/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
-       /var/lib/moltchain/faucet-keypair-testnet.json
-sudo chown moltchain:moltchain /var/lib/moltchain/faucet-keypair-testnet.json
-sudo chmod 600 /var/lib/moltchain/faucet-keypair-testnet.json
+sudo cp /var/lib/lichen/state-testnet/genesis-keys/faucet-lichen-testnet-1.json \
+       /var/lib/lichen/faucet-keypair-testnet.json
+sudo chown lichen:lichen /var/lib/lichen/faucet-keypair-testnet.json
+sudo chmod 600 /var/lib/lichen/faucet-keypair-testnet.json
 ```
 
 #### 2. Create systemd service (on each VPS)
 
 ```bash
-sudo tee /etc/systemd/system/moltchain-faucet.service <<'EOF'
+sudo tee /etc/systemd/system/lichen-faucet.service <<'EOF'
 [Unit]
-Description=MoltChain Faucet Service
-After=moltchain-validator-testnet.service
-Wants=moltchain-validator-testnet.service
+Description=Lichen Faucet Service
+After=lichen-validator-testnet.service
+Wants=lichen-validator-testnet.service
 
 [Service]
 Type=simple
-User=moltchain
-Group=moltchain
-WorkingDirectory=/var/lib/moltchain
-ExecStart=/usr/local/bin/moltchain-faucet
+User=lichen
+Group=lichen
+WorkingDirectory=/var/lib/lichen
+ExecStart=/usr/local/bin/lichen-faucet
 Restart=always
 RestartSec=5
 
@@ -825,8 +825,8 @@ Environment=NETWORK=testnet
 Environment=MAX_PER_REQUEST=10
 Environment=DAILY_LIMIT_PER_IP=150
 Environment=COOLDOWN_SECONDS=60
-Environment=AIRDROPS_FILE=/var/lib/moltchain/airdrops.json
-Environment=FAUCET_KEYPAIR=/var/lib/moltchain/faucet-keypair-testnet.json
+Environment=AIRDROPS_FILE=/var/lib/lichen/airdrops.json
+Environment=FAUCET_KEYPAIR=/var/lib/lichen/faucet-keypair-testnet.json
 Environment=RUST_LOG=info
 Environment=TRUSTED_PROXY=127.0.0.1,::1
 
@@ -834,31 +834,31 @@ NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
-ReadWritePaths=/var/lib/moltchain
+ReadWritePaths=/var/lib/lichen
 
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=moltchain-faucet
+SyslogIdentifier=lichen-faucet
 
 [Install]
 WantedBy=multi-user.target
 EOF
 sudo systemctl daemon-reload
-sudo systemctl enable moltchain-faucet
-sudo systemctl start moltchain-faucet
+sudo systemctl enable lichen-faucet
+sudo systemctl start lichen-faucet
 ```
 
 #### 3. Copy faucet UI files (Caddy serves them alongside the API)
 
 ```bash
-sudo mkdir -p /opt/moltchain/www/faucet-ui
-rsync -a faucet/ /opt/moltchain/www/faucet-ui/
+sudo mkdir -p /opt/lichen/www/faucet-ui
+rsync -a faucet/ /opt/lichen/www/faucet-ui/
 ```
 
-The faucet frontend is also deployed to **Cloudflare Pages** (`moltchain-faucet` project):
+The faucet frontend is also deployed to **Cloudflare Pages** (`lichen-faucet` project):
 
 ```bash
-npx wrangler pages deploy faucet/ --project-name moltchain-faucet
+npx wrangler pages deploy faucet/ --project-name lichen-faucet
 ```
 
 ---
@@ -884,19 +884,19 @@ In the Cloudflare dashboard → **Workers & Pages** → **Create**:
 
 | Project name | Git repo | Build output directory | Custom domain |
 |---|---|---|---|
-| `moltchain-website` | `MoltChain/moltchain` | `website` | `moltchain.network` |
-| `moltchain-explorer` | `MoltChain/moltchain` | `explorer` | `explorer.moltchain.network` |
-| `moltchain-wallet` | `MoltChain/moltchain` | `wallet` | `wallet.moltchain.network` |
-| `moltchain-dex` | `MoltChain/moltchain` | `dex` | `dex.moltchain.network` |
-| `moltchain-marketplace` | `MoltChain/moltchain` | `marketplace` | `marketplace.moltchain.network` |
-| `moltchain-programs` | `MoltChain/moltchain` | `programs` | `programs.moltchain.network` |
-| `moltchain-developers` | `MoltChain/moltchain` | `developers` | `developers.moltchain.network` |
-| `moltchain-monitoring` | `MoltChain/moltchain` | `monitoring` | `monitoring.moltchain.network` |
-| `moltchain-faucet` | `MoltChain/moltchain` | `faucet` | *(none — VPS Caddy serves frontend; Pages is backup)* |
+| `lichen-website` | `Lichen/lichen` | `website` | `lichen.network` |
+| `lichen-explorer` | `Lichen/lichen` | `explorer` | `explorer.lichen.network` |
+| `lichen-wallet` | `Lichen/lichen` | `wallet` | `wallet.lichen.network` |
+| `lichen-dex` | `Lichen/lichen` | `dex` | `dex.lichen.network` |
+| `lichen-marketplace` | `Lichen/lichen` | `marketplace` | `marketplace.lichen.network` |
+| `lichen-programs` | `Lichen/lichen` | `programs` | `programs.lichen.network` |
+| `lichen-developers` | `Lichen/lichen` | `developers` | `developers.lichen.network` |
+| `lichen-monitoring` | `Lichen/lichen` | `monitoring` | `monitoring.lichen.network` |
+| `lichen-faucet` | `Lichen/lichen` | `faucet` | *(none — VPS Caddy serves frontend; Pages is backup)* |
 
 For each project:
 
-1. **Connect to Git** → Select the `MoltChain/moltchain` repo
+1. **Connect to Git** → Select the `Lichen/lichen` repo
 2. **Framework preset** → `None` (these are plain static files, no build step)
 3. **Build command** → *(leave empty)*
 4. **Build output directory** → Set to the subdirectory (e.g. `wallet`)
@@ -904,7 +904,7 @@ For each project:
 
 ### Step 2: Add Custom Domains
 
-For each Pages project, go to **Custom domains** → **Set up a custom domain** → enter the subdomain (e.g. `wallet.moltchain.network`). Cloudflare automatically:
+For each Pages project, go to **Custom domains** → **Set up a custom domain** → enter the subdomain (e.g. `wallet.lichen.network`). Cloudflare automatically:
 - Creates the CNAME DNS record
 - Provisions an SSL certificate
 - Routes traffic to the Pages deployment
@@ -912,21 +912,21 @@ For each Pages project, go to **Custom domains** → **Set up a custom domain** 
 If you prefer to set DNS manually:
 
 ```
-# In Cloudflare DNS → moltchain.network zone
-CNAME  explorer     moltchain-explorer.pages.dev     (Proxied)
-CNAME  wallet       moltchain-wallet.pages.dev       (Proxied)
-CNAME  dex          moltchain-dex.pages.dev          (Proxied)
-CNAME  marketplace  moltchain-marketplace.pages.dev  (Proxied)
-CNAME  programs     moltchain-programs.pages.dev     (Proxied)
-CNAME  developers   moltchain-developers.pages.dev   (Proxied)
-CNAME  monitoring   moltchain-monitoring.pages.dev   (Proxied)
+# In Cloudflare DNS → lichen.network zone
+CNAME  explorer     lichen-explorer.pages.dev     (Proxied)
+CNAME  wallet       lichen-wallet.pages.dev       (Proxied)
+CNAME  dex          lichen-dex.pages.dev          (Proxied)
+CNAME  marketplace  lichen-marketplace.pages.dev  (Proxied)
+CNAME  programs     lichen-programs.pages.dev     (Proxied)
+CNAME  developers   lichen-developers.pages.dev   (Proxied)
+CNAME  monitoring   lichen-monitoring.pages.dev   (Proxied)
 ```
 
-For the apex domain (`moltchain.network`):
+For the apex domain (`lichen.network`):
 ```
 # Cloudflare supports CNAME flattening at the apex
-CNAME  @            moltchain-website.pages.dev      (Proxied)
-CNAME  www          moltchain.network                (Proxied)
+CNAME  @            lichen-website.pages.dev      (Proxied)
+CNAME  www          lichen.network                (Proxied)
 ```
 
 ### Step 3: Auto-Deploy on Git Push
@@ -943,9 +943,9 @@ npm install -g wrangler
 wrangler login
 
 # Deploy a specific portal
-wrangler pages deploy wallet/ --project-name=moltchain-wallet
-wrangler pages deploy explorer/ --project-name=moltchain-explorer
-wrangler pages deploy website/ --project-name=moltchain-website
+wrangler pages deploy wallet/ --project-name=lichen-wallet
+wrangler pages deploy explorer/ --project-name=lichen-explorer
+wrangler pages deploy website/ --project-name=lichen-website
 # ... etc for each portal
 ```
 
@@ -955,12 +955,12 @@ After deploying, each portal is available at both the `*.pages.dev` URL and the 
 
 ```bash
 # Check Pages URLs (available immediately)
-curl -sI https://moltchain-wallet.pages.dev | head -3
-curl -sI https://moltchain-explorer.pages.dev | head -3
+curl -sI https://lichen-wallet.pages.dev | head -3
+curl -sI https://lichen-explorer.pages.dev | head -3
 
 # Check custom domains (may take a few minutes for DNS + SSL)
-curl -sI https://wallet.moltchain.network | head -3
-curl -sI https://explorer.moltchain.network | head -3
+curl -sI https://wallet.lichen.network | head -3
+curl -sI https://explorer.lichen.network | head -3
 ```
 
 ### Frontend Configuration Checklist
@@ -969,20 +969,20 @@ All portal frontends have RPC/WS endpoint configuration that defaults to `localh
 
 | Portal | Config file | Has multi-network? | Production URLs in config? | Notes |
 |---|---|---|---|---|
-| **wallet** | `wallet/js/wallet.js` | YES | YES (`rpc.moltchain.network`) | Gold standard — also has custody endpoints |
+| **wallet** | `wallet/js/wallet.js` | YES | YES (`rpc.lichen.network`) | Gold standard — also has custody endpoints |
 | **explorer** | `explorer/js/explorer.js` | YES | YES | `transaction.js` L110 has hardcoded faucet URL — needs fix |
 | **marketplace** | `marketplace/js/marketplace-config.js` | YES | YES | Clean — mirrors wallet pattern |
 | **website** | `website/script.js` | YES | YES | Works, minor local-mainnet port mismatch |
 | **monitoring** | `monitoring/js/monitoring.js` | YES | YES (RPC) | `VALIDATOR_RPCS` array is hardcoded to local ports — update for prod |
-| **programs** | `programs/js/moltchain-sdk.js` | YES | YES | `landing.js` only has 2-way auto-detect (local vs testnet) |
-| **dex** | `dex/dex.js` | PARTIAL | NO | Uses `window.MOLTCHAIN_RPC` override — network selector not wired up |
+| **programs** | `programs/js/lichen-sdk.js` | YES | YES | `landing.js` only has 2-way auto-detect (local vs testnet) |
+| **dex** | `dex/dex.js` | PARTIAL | NO | Uses `window.LICHEN_RPC` override — network selector not wired up |
 | **faucet UI** | `faucet/faucet.js` | NO | NO | Hardcoded `localhost:9100` — needs full rewrite for prod |
 | **shared** | `shared/wallet-connect.js` | Delegates | — | Fallback port `9000` should be `8899` |
 
 **Config fixes needed before production:**
 
-1. `faucet/faucet.js` — Change `FAUCET_API` from `http://localhost:9100` to auto-detect (`/faucet` relative path when served by Caddy, or `https://faucet.moltchain.network`)
-2. `dex/dex.js` — Wire up the existing `<select id="networkSelect">` to switch `MOLTCHAIN_RPC`/`MOLTCHAIN_WS`
+1. `faucet/faucet.js` — Change `FAUCET_API` from `http://localhost:9100` to auto-detect (`/faucet` relative path when served by Caddy, or `https://faucet.lichen.network`)
+2. `dex/dex.js` — Wire up the existing `<select id="networkSelect">` to switch `LICHEN_RPC`/`LICHEN_WS`
 3. `monitoring/js/monitoring.js` — Make `VALIDATOR_RPCS` configurable per-network (seed-us/eu/ap for prod)
 4. `explorer/js/transaction.js` L110 — Replace hardcoded `localhost:9100` faucet URL
 5. `programs/js/landing.js` — Add mainnet to the auto-detect (currently only local vs testnet)
@@ -996,17 +996,17 @@ When an agent on a human's machine wants to run a validator:
 
 ### What the Agent Needs
 
-1. The **MoltChain binary** (`moltchain-validator`)
+1. The **Lichen binary** (`lichen-validator`)
 2. The **seeds.json** file (or use `--bootstrap-peers` flag)
-3. Enough MOLT to stake (100,000 MOLT minimum)
+3. Enough LICN to stake (100,000 LICN minimum)
 
 ### Agent Start Command
 
 ```bash
 # The agent runs this on the human's local machine:
-./moltchain-validator \
+./lichen-validator \
     --network testnet \
-    --bootstrap-peers seed-us.moltchain.network:8001,seed-eu.moltchain.network:8001,seed-ap.moltchain.network:8001
+    --bootstrap-peers seed-us.lichen.network:8001,seed-eu.lichen.network:8001,seed-ap.lichen.network:8001
 ```
 
 What happens:
@@ -1056,40 +1056,40 @@ Update `seeds.json` with your real VPS IPs/domains:
 ```json
 {
   "testnet": {
-    "network_id": "moltchain-testnet-1",
-    "chain_id": "moltchain-testnet-1",
+    "network_id": "lichen-testnet-1",
+    "chain_id": "lichen-testnet-1",
     "seeds": [
       {
         "id": "seed-us",
-        "address": "seed-us.moltchain.network:8001",
+        "address": "seed-us.lichen.network:8001",
         "region": "us-east",
-        "operator": "MoltChain Foundation"
+        "operator": "Lichen Foundation"
       },
       {
         "id": "seed-eu",
-        "address": "seed-eu.moltchain.network:8001",
+        "address": "seed-eu.lichen.network:8001",
         "region": "eu-west",
-        "operator": "MoltChain Foundation"
+        "operator": "Lichen Foundation"
       },
       {
         "id": "seed-ap",
-        "address": "seed-ap.moltchain.network:8001",
+        "address": "seed-ap.lichen.network:8001",
         "region": "ap-southeast",
-        "operator": "MoltChain Foundation"
+        "operator": "Lichen Foundation"
       }
     ],
     "bootstrap_peers": [
-      "seed-us.moltchain.network:8001",
-      "seed-eu.moltchain.network:8001",
-      "seed-ap.moltchain.network:8001"
+      "seed-us.lichen.network:8001",
+      "seed-eu.lichen.network:8001",
+      "seed-ap.lichen.network:8001"
     ],
     "rpc_endpoints": [
-      "https://rpc.moltchain.network"
+      "https://rpc.lichen.network"
     ]
   },
   "mainnet": {
-    "network_id": "moltchain-mainnet-1",
-    "chain_id": "moltchain-mainnet-1",
+    "network_id": "lichen-mainnet-1",
+    "chain_id": "lichen-mainnet-1",
     "seeds": [],
     "bootstrap_peers": [],
     "rpc_endpoints": []
@@ -1108,9 +1108,9 @@ Update `seeds.json` with your real VPS IPs/domains:
 Multiple A records for the same subdomain:
 
 ```
-rpc.moltchain.network  A  <US_IP>    TTL=300
-rpc.moltchain.network  A  <EU_IP>    TTL=300
-rpc.moltchain.network  A  <ASIA_IP>  TTL=300
+rpc.lichen.network  A  <US_IP>    TTL=300
+rpc.lichen.network  A  <EU_IP>    TTL=300
+rpc.lichen.network  A  <ASIA_IP>  TTL=300
 ```
 
 DNS returns all 3 IPs in random order. Clients use whichever comes first. This provides:
@@ -1120,7 +1120,7 @@ DNS returns all 3 IPs in random order. Clients use whichever comes first. This p
 
 ### Health-Check Load Balancing (Cloudflare Pro — $20/mo)
 
-Add a Cloudflare Load Balancer on `rpc.moltchain.network` with:
+Add a Cloudflare Load Balancer on `rpc.lichen.network` with:
 - Pool: all 3 VPS IPs
 - Health check: `GET /health` on port 443
 - Steering: Geo (US→US VPS, EU→EU VPS, AP→ASIA VPS)
@@ -1132,7 +1132,7 @@ This is the proper production setup but round-robin works fine to start.
 
 For 3+ validators, use **two-layer rotation**:
 
-1. **Layer 1 (public):** `rpc.moltchain.network` load-balances across `rpc-relay-01` and `rpc-relay-02`
+1. **Layer 1 (public):** `rpc.lichen.network` load-balances across `rpc-relay-01` and `rpc-relay-02`
 2. **Layer 2 (inside relay):** each relay load-balances across validator RPC upstreams (`seed-01..seed-06`)
 
 Benefits:
@@ -1147,10 +1147,10 @@ Even with relay, keep explicit fallback endpoints in clients:
 
 ```bash
 RPC_ENDPOINTS=(
-  "https://rpc.moltchain.network"
-  "https://rpc-relay-01.moltchain.network"
-  "https://rpc-relay-02.moltchain.network"
-  "https://seed-01.moltchain.network"
+  "https://rpc.lichen.network"
+  "https://rpc-relay-01.lichen.network"
+  "https://rpc-relay-02.lichen.network"
+  "https://seed-01.lichen.network"
 )
 
 for rpc in "${RPC_ENDPOINTS[@]}"; do
@@ -1185,22 +1185,22 @@ Since all static portals are served by Cloudflare Pages, the US VPS Caddy only h
 # /etc/caddy/Caddyfile
 
 # RPC
-rpc.moltchain.network {
+rpc.lichen.network {
     reverse_proxy localhost:8899
 }
 
 # WebSocket
-ws.moltchain.network {
+ws.lichen.network {
     reverse_proxy localhost:8900
 }
 
 # Custody Bridge
-custody.moltchain.network {
+custody.lichen.network {
     reverse_proxy localhost:9105
 }
 
 # Faucet API + UI
-faucet.moltchain.network {
+faucet.lichen.network {
     # API routes
     handle /faucet/* {
         reverse_proxy localhost:9100
@@ -1210,7 +1210,7 @@ faucet.moltchain.network {
     }
     # Static UI (faucet is special — served from VPS because it needs its API co-located)
     handle {
-        root * /opt/moltchain/www/faucet-ui
+        root * /opt/lichen/www/faucet-ui
         file_server
     }
 }
@@ -1223,11 +1223,11 @@ faucet.moltchain.network {
 ```
 # /etc/caddy/Caddyfile
 
-rpc.moltchain.network {
+rpc.lichen.network {
     reverse_proxy localhost:8899
 }
 
-ws.moltchain.network {
+ws.lichen.network {
     reverse_proxy localhost:8900
 }
 ```
@@ -1244,7 +1244,7 @@ Deploy this on `rpc-relay-01` and `rpc-relay-02`.
 ```
 # /etc/caddy/Caddyfile
 
-rpc.moltchain.network {
+rpc.lichen.network {
     reverse_proxy \
       http://10.0.10.11:8899 \
       http://10.0.10.12:8899 \
@@ -1259,7 +1259,7 @@ rpc.moltchain.network {
     }
 }
 
-ws.moltchain.network {
+ws.lichen.network {
     reverse_proxy \
       http://10.0.10.11:8900 \
       http://10.0.10.12:8900 \
@@ -1339,30 +1339,30 @@ curl -s http://localhost:8899 -d '{"jsonrpc":"2.0","id":1,"method":"getValidator
 
 ```bash
 #!/bin/bash
-# /opt/moltchain/bin/healthcheck.sh
+# /opt/lichen/bin/healthcheck.sh
 # Run via cron every 5 minutes
 
 RPC="http://localhost:8899"
 HEALTH=$(curl -sf "$RPC" -d '{"jsonrpc":"2.0","id":1,"method":"getHealth"}' 2>&1)
 
 if [ $? -ne 0 ]; then
-    echo "$(date) ALERT: Validator RPC not responding" >> /var/log/moltchain/healthcheck.log
-    sudo systemctl restart moltchain-validator
+    echo "$(date) ALERT: Validator RPC not responding" >> /var/log/lichen/healthcheck.log
+    sudo systemctl restart lichen-validator
 fi
 
 # Check slot is advancing
 SLOT=$(curl -sf "$RPC" -d '{"jsonrpc":"2.0","id":1,"method":"getSlot"}' | jq -r '.result')
-LAST_SLOT=$(cat /tmp/moltchain-last-slot 2>/dev/null || echo "0")
-echo "$SLOT" > /tmp/moltchain-last-slot
+LAST_SLOT=$(cat /tmp/lichen-last-slot 2>/dev/null || echo "0")
+echo "$SLOT" > /tmp/lichen-last-slot
 
 if [ "$SLOT" = "$LAST_SLOT" ]; then
-    echo "$(date) WARN: Slot not advancing (stuck at $SLOT)" >> /var/log/moltchain/healthcheck.log
+    echo "$(date) WARN: Slot not advancing (stuck at $SLOT)" >> /var/log/lichen/healthcheck.log
 fi
 ```
 
 ```bash
 # Add to crontab
-echo "*/5 * * * * /opt/moltchain/bin/healthcheck.sh" | sudo crontab -u moltchain -
+echo "*/5 * * * * /opt/lichen/bin/healthcheck.sh" | sudo crontab -u lichen -
 ```
 
 ---
@@ -1373,11 +1373,11 @@ echo "*/5 * * * * /opt/moltchain/bin/healthcheck.sh" | sudo crontab -u moltchain
 
 | What | Where | Frequency | Critical? |
 |---|---|---|---|
-| Genesis keys | `/var/lib/moltchain/state-testnet/genesis-keys/` | Once (keep offline) | **YES** — controls treasury |
-| Genesis wallet | `/var/lib/moltchain/state-testnet/genesis-wallet.json` | Once | YES |
-| Blockchain state | `/var/lib/moltchain/state-testnet/` | Daily | Medium — can re-sync from peers |
-| Custody DB | `/var/lib/moltchain/custody-db/` | Hourly | YES — deposit/withdrawal state |
-| Airdrops file | `/var/lib/moltchain/airdrops.json` | Daily | Low |
+| Genesis keys | `/var/lib/lichen/state-testnet/genesis-keys/` | Once (keep offline) | **YES** — controls treasury |
+| Genesis wallet | `/var/lib/lichen/state-testnet/genesis-wallet.json` | Once | YES |
+| Blockchain state | `/var/lib/lichen/state-testnet/` | Daily | Medium — can re-sync from peers |
+| Custody DB | `/var/lib/lichen/custody-db/` | Hourly | YES — deposit/withdrawal state |
+| Airdrops file | `/var/lib/lichen/airdrops.json` | Daily | Low |
 
 ### Key Material Retention Policy (online vs offline)
 
@@ -1393,7 +1393,7 @@ Keep this policy strict; do not delete genesis keys after deployment.
 
 Minimum controls:
 
-- file owner `moltchain:moltchain`, mode `600` for private key files
+- file owner `lichen:lichen`, mode `600` for private key files
 - no keys in git, CI artifacts, chat logs, or support tickets
 - encrypted offline backups in at least two independent locations
 
@@ -1415,11 +1415,11 @@ lsblk -f
 sudo cryptsetup status <luks_mapping_name> 2>/dev/null || true
 
 # key file permissions
-find /var/lib/moltchain -type f \( -name "*key*" -o -name "*wallet*.json" \) -exec ls -l {} \;
+find /var/lib/lichen -type f \( -name "*key*" -o -name "*wallet*.json" \) -exec ls -l {} \;
 
 # TLS endpoint check
-curl -I https://rpc.moltchain.network
-curl -I https://custody.moltchain.network
+curl -I https://rpc.lichen.network
+curl -I https://custody.lichen.network
 ```
 
 If any item fails, block production rollout until fixed.
@@ -1428,14 +1428,14 @@ If any item fails, block production rollout until fixed.
 
 ```bash
 #!/bin/bash
-# /opt/moltchain/bin/backup.sh
+# /opt/lichen/bin/backup.sh
 DATE=$(date +%Y%m%d-%H%M)
-BACKUP_DIR="/opt/moltchain/backups"
+BACKUP_DIR="/opt/lichen/backups"
 mkdir -p "$BACKUP_DIR"
 
 # Snapshot RocksDB (safe to copy while running)
-tar czf "$BACKUP_DIR/state-$DATE.tar.gz" -C /var/lib/moltchain/state-testnet .
-tar czf "$BACKUP_DIR/custody-$DATE.tar.gz" -C /var/lib/moltchain/custody-db . 2>/dev/null
+tar czf "$BACKUP_DIR/state-$DATE.tar.gz" -C /var/lib/lichen/state-testnet .
+tar czf "$BACKUP_DIR/custody-$DATE.tar.gz" -C /var/lib/lichen/custody-db . 2>/dev/null
 
 # Keep last 7 days
 find "$BACKUP_DIR" -name "*.tar.gz" -mtime +7 -delete
@@ -1446,7 +1446,7 @@ find "$BACKUP_DIR" -name "*.tar.gz" -mtime +7 -delete
 1. Spin up a new VPS
 2. Install binaries (or build from source)
 3. Either:
-   - **Restore from backup:** Extract state tarball to `/var/lib/moltchain/state-testnet/`
+   - **Restore from backup:** Extract state tarball to `/var/lib/lichen/state-testnet/`
    - **Sync from peers:** Start with empty state + `--bootstrap-peers <other-2-VPS>`
 4. Update DNS to point to new IP
 5. Update `seeds.json` if IP changed
@@ -1459,48 +1459,48 @@ find "$BACKUP_DIR" -name "*.tar.gz" -mtime +7 -delete
 
 **Cause:** ZK verification keys are missing or unreadable. Most common when:
 1. Keys haven't been generated yet (pre-v0.2.9 — now auto-generated)
-2. File ownership is wrong (e.g. files owned by `ubuntu` instead of `moltchain`)
+2. File ownership is wrong (e.g. files owned by `ubuntu` instead of `lichen`)
 
 **Fix:**
 
 ```bash
 # Check the ZK directory exists and has correct ownership
-ls -la /var/lib/moltchain/.moltchain/zk/
+ls -la /var/lib/lichen/.lichen/zk/
 # Expected: 6 files (vk_shield.bin, pk_shield.bin, vk_unshield.bin, pk_unshield.bin,
-#           vk_transfer.bin, pk_transfer.bin), all owned by moltchain:moltchain
+#           vk_transfer.bin, pk_transfer.bin), all owned by lichen:lichen
 
 # If files exist but wrong owner:
-sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/
+sudo chown -R lichen:lichen /var/lib/lichen/.lichen/
 
 # If files are missing, restart the validator — v0.2.9+ auto-generates them:
-sudo systemctl restart moltchain-validator-mainnet
+sudo systemctl restart lichen-validator-mainnet
 ```
 
-**Prevention:** Never rsync/scp files to `/var/lib/moltchain/` as a non-moltchain user
+**Prevention:** Never rsync/scp files to `/var/lib/lichen/` as a non-lichen user
 without fixing ownership afterward. Always run:
 ```bash
-sudo chown -R moltchain:moltchain /var/lib/moltchain/.moltchain/
+sudo chown -R lichen:lichen /var/lib/lichen/.lichen/
 ```
 
 ### "Seed peers found — will sync genesis from the existing network"
 
 **Cause:** The validator sees `bootstrap_peers` in `seeds.json` and enters sync mode instead of creating genesis. This happens when you start a validator on a freshly wiped VPS where no network exists yet.
 
-**Fix:** Use `moltchain-start.sh` instead of `systemctl start`. The start script runs `moltchain-genesis` before starting the validator when it detects an empty state directory.
+**Fix:** Use `lichen-start.sh` instead of `systemctl start`. The start script runs `lichen-genesis` before starting the validator when it detects an empty state directory.
 
 ```bash
 # ✅ Correct — creates genesis first, then starts validator
-bash moltchain-start.sh testnet
+bash lichen-start.sh testnet
 
 # ❌ Wrong — tries to sync from non-existent network
-sudo systemctl start moltchain-validator-testnet
+sudo systemctl start lichen-validator-testnet
 ```
 
 ### "No genesis block found and no seed peers available"
 
 **Cause:** The validator has no state AND no seeds to sync from (seeds.json missing or empty).
 
-**Fix:** Make sure `seeds.json` exists in the working directory, then use `moltchain-start.sh`.
+**Fix:** Make sure `seeds.json` exists in the working directory, then use `lichen-start.sh`.
 
 ### Oracle: "Binance WebSocket connect failed: HTTP error: 451"
 
@@ -1509,9 +1509,9 @@ sudo systemctl start moltchain-validator-testnet
 **Fix:** Set the oracle env vars to use `binance.us` before starting the validator:
 
 ```bash
-export MOLTCHAIN_ORACLE_WS_URL="wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade"
-export MOLTCHAIN_ORACLE_REST_URL="https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D"
-bash moltchain-start.sh testnet
+export LICHEN_ORACLE_WS_URL="wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade"
+export LICHEN_ORACLE_REST_URL="https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D"
+bash lichen-start.sh testnet
 ```
 
 The EU VPS does not need these — it can reach `binance.com` directly.
@@ -1528,7 +1528,7 @@ sudo ss -tlnp | grep 8000
 
 ### TOFU fingerprint violations
 
-**Cause:** MoltChain P2P uses Trust-On-First-Use (TOFU) for TLS peer identity.
+**Cause:** Lichen P2P uses Trust-On-First-Use (TOFU) for TLS peer identity.
 If a VPS regenerates its P2P certificate (e.g. after a state wipe) and other
 nodes have the old fingerprint cached, connections are rejected.
 
@@ -1541,9 +1541,9 @@ delete the cached fingerprints:
 
 ```bash
 # Find and remove the TOFU fingerprint cache
-find ~/.moltchain/ -name "peer_fingerprints.json" -delete
-# Or for the moltchain systemd user:
-sudo find /var/lib/moltchain/.moltchain/ -name "peer_fingerprints.json" -delete
+find ~/.lichen/ -name "peer_fingerprints.json" -delete
+# Or for the lichen systemd user:
+sudo find /var/lib/lichen/.lichen/ -name "peer_fingerprints.json" -delete
 ```
 
 ### Blocks not producing
@@ -1556,7 +1556,7 @@ curl -s localhost:8899 -d '{"jsonrpc":"2.0","id":1,"method":"getValidators"}' | 
 curl -s localhost:8899 -d '{"jsonrpc":"2.0","id":1,"method":"getSlot"}'
 
 # Check logs for errors
-journalctl -u moltchain-validator --since "10 min ago" | grep -i error
+journalctl -u lichen-validator --since "10 min ago" | grep -i error
 ```
 
 ### Different genesis between nodes
@@ -1585,7 +1585,7 @@ curl -s http://<OTHER_VPS_IP>:9201/health
 
 The validator loads the treasury keypair at boot via `load_treasury_keypair()`, which checks two locations in order:
 
-1. **`genesis-wallet.json` → `treasury_keypair_path`** — the path stored in the genesis wallet JSON, resolved **relative to the data directory** (e.g., `data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json`)
+1. **`genesis-wallet.json` → `treasury_keypair_path`** — the path stored in the genesis wallet JSON, resolved **relative to the data directory** (e.g., `data/state-testnet/genesis-keys/treasury-lichen-testnet-1.json`)
 2. **Fallback:** `{data_dir}/genesis-keys/treasury-{chain_id}.json` — direct lookup in the genesis-keys directory
 
 If neither file exists, the validator starts without a treasury keypair and all airdrop requests fail.
@@ -1594,13 +1594,13 @@ If neither file exists, the validator starts without a treasury keypair and all 
 
 ```bash
 # Check if the treasury keypair file exists
-ls -la ~/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json
+ls -la ~/lichen/data/state-testnet/genesis-keys/treasury-lichen-testnet-1.json
 
 # Check if the validator loaded the treasury keypair (should show a pubkey, not null)
 curl -s http://localhost:8899 -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"getTreasuryInfo","params":[]}' | python3 -m json.tool
 
-# Test airdrop directly via RPC (amount is in MOLT, 1-10 range, address is base58)
+# Test airdrop directly via RPC (amount is in LICN, 1-10 range, address is base58)
 curl -s http://localhost:8899 -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"requestAirdrop","params":["<BASE58_ADDRESS>",5]}'
 
@@ -1616,30 +1616,30 @@ curl -s http://localhost:9100/faucet/request -H 'Content-Type: application/json'
 2. **If `getTreasuryInfo` fails or returns no pubkey** — the treasury keypair file is missing or the validator can't find it:
    ```bash
    # Verify the genesis-keys directory exists with the treasury file
-   ls -la ~/moltchain/data/state-testnet/genesis-keys/treasury-*.json
+   ls -la ~/lichen/data/state-testnet/genesis-keys/treasury-*.json
 
    # For joining VPSes (EU/SEA), copy the treasury key from the genesis VPS (US):
-   ssh -p 2222 ubuntu@15.204.229.189 "cat ~/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json" \
-     | ssh -p 2222 ubuntu@<JOINING_VPS> "mkdir -p ~/moltchain/data/state-testnet/genesis-keys && cat > ~/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json"
+   ssh -p 2222 ubuntu@15.204.229.189 "cat ~/lichen/data/state-testnet/genesis-keys/treasury-lichen-testnet-1.json" \
+     | ssh -p 2222 ubuntu@<JOINING_VPS> "mkdir -p ~/lichen/data/state-testnet/genesis-keys && cat > ~/lichen/data/state-testnet/genesis-keys/treasury-lichen-testnet-1.json"
 
    # Restart the validator to reload the treasury keypair
-   # (kill existing process, then re-run moltchain-start.sh)
+   # (kill existing process, then re-run lichen-start.sh)
    ```
 
 3. **If the file exists but the validator still doesn't load it** — check the validator logs for warnings about treasury keypair parsing:
    ```bash
-   grep -i treasury /tmp/moltchain-testnet/validator.log | tail -20
+   grep -i treasury /tmp/lichen-testnet/validator.log | tail -20
    ```
 
 **Key facts:**
-- `requestAirdrop` RPC params are `[base58_address, amount_in_molt]` where amount is 1-10 (whole MOLT, not shells)
+- `requestAirdrop` RPC params are `[base58_address, amount_in_licn]` where amount is 1-10 (whole LICN, not spores)
 - Faucet runs on port 9100 (testnet only — panics if `NETWORK=mainnet`)
-- The faucet keypair (`faucet-moltchain-testnet-1.json`) is used for identity/logging, NOT for signing transactions
+- The faucet keypair (`faucet-lichen-testnet-1.json`) is used for identity/logging, NOT for signing transactions
 - Only the genesis VPS (US) has genesis-keys after initial creation — EU/SEA must have treasury keys copied over before the validator can sign airdrops
 
 ### Faucet: stale manual process blocking port 9100
 
-**Cause:** A previously manually-started faucet process (`nohup ./target/release/moltchain-faucet`) is still running and holds port 9100. Systemd or a new faucet instance can't bind to the port.
+**Cause:** A previously manually-started faucet process (`nohup ./target/release/lichen-faucet`) is still running and holds port 9100. Systemd or a new faucet instance can't bind to the port.
 
 **Diagnosis:**
 
@@ -1648,7 +1648,7 @@ curl -s http://localhost:9100/faucet/request -H 'Content-Type: application/json'
 sudo ss -tlnp | grep 9100
 
 # Check for stale faucet processes
-pgrep -af moltchain-faucet
+pgrep -af lichen-faucet
 ```
 
 **Fix:**
@@ -1658,9 +1658,9 @@ pgrep -af moltchain-faucet
 kill <PID>
 
 # Start fresh using the documented method (not systemd — use nohup with proper env vars)
-cd ~/moltchain
+cd ~/lichen
 PORT=9100 RPC_URL=http://127.0.0.1:8899 NETWORK=testnet \
-  nohup ./target/release/moltchain-faucet > /tmp/moltchain-testnet/faucet.log 2>&1 &
+  nohup ./target/release/lichen-faucet > /tmp/lichen-testnet/faucet.log 2>&1 &
 ```
 
 ---
@@ -1674,7 +1674,7 @@ PORT=9100 RPC_URL=http://127.0.0.1:8899 NETWORK=testnet \
 Every validator instance has exactly ONE data directory, set by `--db-path` (aliases: `--db`, `--data-dir`). All state, keys, logs, and configs live under this directory:
 
 ```
-{data_dir}/                              # e.g., ~/moltchain/data/state-testnet/
+{data_dir}/                              # e.g., ~/lichen/data/state-testnet/
 ├── CURRENT, MANIFEST-*, *.sst           # RocksDB state files
 ├── genesis-wallet.json                  # Genesis wallet config (pubkeys + key paths)
 ├── genesis-keys/                        # All keypairs generated at genesis
@@ -1685,13 +1685,13 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 │   ├── validator_rewards-{chain_id}.json
 │   ├── community_treasury-{chain_id}.json
 │   ├── builder_grants-{chain_id}.json
-│   ├── founding_moltys-{chain_id}.json
+│   ├── founding_symbionts-{chain_id}.json
 │   ├── ecosystem_partnerships-{chain_id}.json
 │   └── reserve_pool-{chain_id}.json
 ├── validator-keypair.json               # This validator's identity keypair
 ├── known-peers.json                     # Cached P2P peer list
 ├── home/                                # Validator runtime home (P2P identity isolation)
-│   └── .moltchain/                      # P2P certs, TOFU fingerprints
+│   └── .lichen/                      # P2P certs, TOFU fingerprints
 ├── logs/                                # Rolling daily log files
 │   └── validator.YYYY-MM-DD.log
 └── seeds.json                           # (optional) Seed peers override
@@ -1699,20 +1699,20 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 
 ### Path Resolution Rules
 
-1. **`genesis-wallet.json` paths** — The `treasury_keypair_path` and `keypair_path` fields are stored as paths relative to the data directory. At load time, the validator resolves them as `{data_dir}/{path}`. Example: `genesis-keys/treasury-moltchain-testnet-1.json` resolves to `{data_dir}/genesis-keys/treasury-moltchain-testnet-1.json`.
+1. **`genesis-wallet.json` paths** — The `treasury_keypair_path` and `keypair_path` fields are stored as paths relative to the data directory. At load time, the validator resolves them as `{data_dir}/{path}`. Example: `genesis-keys/treasury-lichen-testnet-1.json` resolves to `{data_dir}/genesis-keys/treasury-lichen-testnet-1.json`.
 
 2. **Validator identity keypair** — Resolved by `keypair_loader` with a 5-tier search:
    1. Explicit `--keypair` CLI argument
    2. `{data_dir}/validator-keypair.json`
-   3. `$MOLTCHAIN_REAL_HOME/.moltchain/validators/validator-{network}.json`
-   4. Legacy: `$MOLTCHAIN_REAL_HOME/.moltchain/validators/validator-{port}.json`
+   3. `$LICHEN_REAL_HOME/.lichen/validators/validator-{network}.json`
+   4. Legacy: `$LICHEN_REAL_HOME/.lichen/validators/validator-{port}.json`
    5. Auto-generate new keypair (saved to both data_dir and shared HOME)
 
-3. **Seeds** — Searched in order: `{data_dir}/seeds.json`, `/etc/moltchain/seeds.json`, `./seeds.json` (CWD)
+3. **Seeds** — Searched in order: `{data_dir}/seeds.json`, `/etc/lichen/seeds.json`, `./seeds.json` (CWD)
 
 4. **ZK verification keys** — Searched in order:
-   1. `MOLTCHAIN_ZK_*_VK_PATH` env vars (explicit absolute paths)
-   2. `$HOME/.moltchain/zk/vk_*.bin` (HOME-based, set by start script)
+   1. `LICHEN_ZK_*_VK_PATH` env vars (explicit absolute paths)
+   2. `$HOME/.lichen/zk/vk_*.bin` (HOME-based, set by start script)
    3. `{exe_dir}/zk/` or `{exe_dir}/zk-keys/` (bundled with binary)
    4. `./zk-keys/` (CWD fallback)
 
@@ -1722,10 +1722,10 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 
 | Variable | Set By | Purpose |
 |---|---|---|
-| `HOME` | `moltchain-start.sh` | Overridden to `{data_dir}/home` for P2P identity isolation |
-| `MOLTCHAIN_REAL_HOME` | `moltchain-start.sh` | Preserves actual user home for shared keypair lookup |
-| `MOLTCHAIN_HOME` | systemd / scripts | Explicit P2P identity home override |
-| `MOLTCHAIN_ZK_*_VK_PATH` | `moltchain-start.sh` | Absolute paths to ZK verification keys |
+| `HOME` | `lichen-start.sh` | Overridden to `{data_dir}/home` for P2P identity isolation |
+| `LICHEN_REAL_HOME` | `lichen-start.sh` | Preserves actual user home for shared keypair lookup |
+| `LICHEN_HOME` | systemd / scripts | Explicit P2P identity home override |
+| `LICHEN_ZK_*_VK_PATH` | `lichen-start.sh` | Absolute paths to ZK verification keys |
 
 ---
 
@@ -1758,15 +1758,15 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 ### DNS — Portals (CNAME → Cloudflare Pages)
 
 ```
-[ ] 15. CNAME: @            → moltchain-website.pages.dev       (Proxied)
-[ ] 16. CNAME: www          → moltchain.network                 (Proxied)
-[ ] 17. CNAME: explorer     → moltchain-explorer.pages.dev      (Proxied)
-[ ] 18. CNAME: wallet       → moltchain-wallet.pages.dev        (Proxied)
-[ ] 19. CNAME: dex          → moltchain-dex.pages.dev           (Proxied)
-[ ] 20. CNAME: marketplace  → moltchain-marketplace.pages.dev   (Proxied)
-[ ] 21. CNAME: programs     → moltchain-programs.pages.dev      (Proxied)
-[ ] 22. CNAME: developers   → moltchain-developers.pages.dev    (Proxied)
-[ ] 23. CNAME: monitoring   → moltchain-monitoring.pages.dev    (Proxied)
+[ ] 15. CNAME: @            → lichen-website.pages.dev       (Proxied)
+[ ] 16. CNAME: www          → lichen.network                 (Proxied)
+[ ] 17. CNAME: explorer     → lichen-explorer.pages.dev      (Proxied)
+[ ] 18. CNAME: wallet       → lichen-wallet.pages.dev        (Proxied)
+[ ] 19. CNAME: dex          → lichen-dex.pages.dev           (Proxied)
+[ ] 20. CNAME: marketplace  → lichen-marketplace.pages.dev   (Proxied)
+[ ] 21. CNAME: programs     → lichen-programs.pages.dev      (Proxied)
+[ ] 22. CNAME: developers   → lichen-developers.pages.dev    (Proxied)
+[ ] 23. CNAME: monitoring   → lichen-monitoring.pages.dev    (Proxied)
 ```
 
 ### VPS Setup
@@ -1785,7 +1785,7 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 ```
 [ ] 30. Deploy custody service on US VPS
 [ ] 31. Deploy faucet on US VPS (testnet only)
-[ ] 32. Copy faucet UI files to /opt/moltchain/www/faucet-ui/
+[ ] 32. Copy faucet UI files to /opt/lichen/www/faucet-ui/
 [ ] 33. Restart Caddy → verify HTTPS certs for rpc/ws/custody/faucet subdomains
 ```
 
@@ -1793,14 +1793,14 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 
 ```
 [ ] 34. Install Wrangler CLI: npm install -g wrangler && wrangler login
-[ ] 35. Create CF Pages project: moltchain-website     (output dir: website)
-[ ] 36. Create CF Pages project: moltchain-explorer     (output dir: explorer)
-[ ] 37. Create CF Pages project: moltchain-wallet       (output dir: wallet)
-[ ] 38. Create CF Pages project: moltchain-dex          (output dir: dex)
-[ ] 39. Create CF Pages project: moltchain-marketplace  (output dir: marketplace)
-[ ] 40. Create CF Pages project: moltchain-programs     (output dir: programs)
-[ ] 41. Create CF Pages project: moltchain-developers   (output dir: developers)
-[ ] 42. Create CF Pages project: moltchain-monitoring   (output dir: monitoring)
+[ ] 35. Create CF Pages project: lichen-website     (output dir: website)
+[ ] 36. Create CF Pages project: lichen-explorer     (output dir: explorer)
+[ ] 37. Create CF Pages project: lichen-wallet       (output dir: wallet)
+[ ] 38. Create CF Pages project: lichen-dex          (output dir: dex)
+[ ] 39. Create CF Pages project: lichen-marketplace  (output dir: marketplace)
+[ ] 40. Create CF Pages project: lichen-programs     (output dir: programs)
+[ ] 41. Create CF Pages project: lichen-developers   (output dir: developers)
+[ ] 42. Create CF Pages project: lichen-monitoring   (output dir: monitoring)
 [ ] 43. Attach custom domains to each Pages project (auto-creates CNAME records)
 [ ] 44. Deploy all portals: wrangler pages deploy <dir> --project-name=<name>
 ```
@@ -1819,18 +1819,18 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 ### Verify Everything
 
 ```
-[ ] 51. https://moltchain.network            — main website loads (CF Pages)
-[ ] 52. https://rpc.moltchain.network         — RPC responds to getHealth (VPS)
-[ ] 53. https://ws.moltchain.network          — WebSocket connects (VPS)
-[ ] 54. https://explorer.moltchain.network    — block explorer loads (CF Pages)
-[ ] 55. https://wallet.moltchain.network      — wallet loads, network switcher works (CF Pages)
-[ ] 56. https://dex.moltchain.network         — DEX loads (CF Pages)
-[ ] 57. https://marketplace.moltchain.network — marketplace loads (CF Pages)
-[ ] 58. https://programs.moltchain.network    — Programs IDE loads (CF Pages)
-[ ] 59. https://developers.moltchain.network  — dev portal loads (CF Pages)
-[ ] 60. https://monitoring.moltchain.network  — dashboard shows 3 validators (CF Pages)
-[ ] 61. https://faucet.moltchain.network      — faucet UI loads, airdrop works (VPS)
-[ ] 62. https://custody.moltchain.network     — custody /health returns OK (VPS)
+[ ] 51. https://lichen.network            — main website loads (CF Pages)
+[ ] 52. https://rpc.lichen.network         — RPC responds to getHealth (VPS)
+[ ] 53. https://ws.lichen.network          — WebSocket connects (VPS)
+[ ] 54. https://explorer.lichen.network    — block explorer loads (CF Pages)
+[ ] 55. https://wallet.lichen.network      — wallet loads, network switcher works (CF Pages)
+[ ] 56. https://dex.lichen.network         — DEX loads (CF Pages)
+[ ] 57. https://marketplace.lichen.network — marketplace loads (CF Pages)
+[ ] 58. https://programs.lichen.network    — Programs IDE loads (CF Pages)
+[ ] 59. https://developers.lichen.network  — dev portal loads (CF Pages)
+[ ] 60. https://monitoring.lichen.network  — dashboard shows 3 validators (CF Pages)
+[ ] 61. https://faucet.lichen.network      — faucet UI loads, airdrop works (VPS)
+[ ] 62. https://custody.lichen.network     — custody /health returns OK (VPS)
 ```
 
 ### Post-Launch
@@ -1838,7 +1838,7 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 ```
 [ ] 63. Update seeds.json with real IPs/domains
 [ ] 64. Test agent connection from local machine:
-        ./moltchain-validator --bootstrap-peers seed-us.moltchain.network:8001
+        ./lichen-validator --bootstrap-peers seed-us.lichen.network:8001
 [ ] 65. Set up backup cron jobs
 [ ] 66. Set up health check monitoring
 [ ] 67. Copy genesis-keys/ to a secure offline location (USB / vault)
@@ -1850,54 +1850,54 @@ Every validator instance has exactly ONE data directory, set by `--db-path` (ali
 
 ## Clean Slate Deployment Runbook
 
-> **Last validated: March 19, 2026** — This is the exact, battle-tested procedure for wiping all blockchain state and redeploying MoltChain from scratch across all 3 VPS nodes. It reflects the runtime layout actually used on the live hosts during the successful v0.4.5 clean redeploy.
+> **Last validated: March 19, 2026** — This is the exact, battle-tested procedure for wiping all blockchain state and redeploying Lichen from scratch across all 3 VPS nodes. It reflects the runtime layout actually used on the live hosts during the successful v0.4.5 clean redeploy.
 
 ### ⚠️ Critical Knowledge — Read Before Starting
 
 These are hard-won lessons from repeated deployment failures. Understand them before proceeding.
 
-#### 1. Genesis must be created explicitly with `moltchain-genesis`
+#### 1. Genesis must be created explicitly with `lichen-genesis`
 
-On a freshly wiped node, starting `moltchain-validator` directly is not enough to bootstrap a new chain. If seed peers are visible, the validator enters join mode and waits for genesis sync forever. For a clean network boot, create slot 0 first:
+On a freshly wiped node, starting `lichen-validator` directly is not enough to bootstrap a new chain. If seed peers are visible, the validator enters join mode and waits for genesis sync forever. For a clean network boot, create slot 0 first:
 
 ```bash
-./target/release/moltchain-genesis --network testnet --db-path ./data/state-testnet
-./target/release/moltchain-genesis --network mainnet --db-path ./data/state-mainnet
+./target/release/lichen-genesis --network testnet --db-path ./data/state-testnet
+./target/release/lichen-genesis --network mainnet --db-path ./data/state-mainnet
 ```
 
-Only after those commands succeed should you launch `moltchain-validator` against the matching `--db-path`.
+Only after those commands succeed should you launch `lichen-validator` against the matching `--db-path`.
 
 #### 2. Seed peers cause the "join on empty state" trap
 
 The validator checks for existing block state first. If there is no local slot 0 and any seeds are reachable, it assumes this node should join an existing network. Those seeds can come from:
 - `--bootstrap-peers`
-- `/etc/moltchain/seeds.json`
+- `/etc/lichen/seeds.json`
 - embedded/default seed configuration
 
-That means an empty node can sit forever at `tip: 0` unless `moltchain-genesis` has already created the database locally.
+That means an empty node can sit forever at `tip: 0` unless `lichen-genesis` has already created the database locally.
 
 #### 3. The canonical live runtime path is repo-local
 
-The clean v0.4.5 redeploy that restored stable consensus did **not** use the dormant systemd layout under `/var/lib/moltchain`. The live validator layout was:
+The clean v0.4.5 redeploy that restored stable consensus did **not** use the dormant systemd layout under `/var/lib/lichen`. The live validator layout was:
 
 | Item | Path |
 |---|---|
-| Repo root | `~/moltchain/` |
-| Testnet DB | `~/moltchain/data/state-testnet/` |
-| Mainnet DB | `~/moltchain/data/state-mainnet/` |
-| Testnet log | `/tmp/moltchain-testnet/validator.log` |
-| Mainnet log | `/tmp/moltchain-mainnet/validator.log` |
-| Binaries | `~/moltchain/target/release/moltchain-*` |
+| Repo root | `~/lichen/` |
+| Testnet DB | `~/lichen/data/state-testnet/` |
+| Mainnet DB | `~/lichen/data/state-mainnet/` |
+| Testnet log | `/tmp/lichen-testnet/validator.log` |
+| Mainnet log | `/tmp/lichen-mainnet/validator.log` |
+| Binaries | `~/lichen/target/release/lichen-*` |
 
-If you wipe or inspect `/var/lib/moltchain` without touching `~/moltchain/data/state-*`, you are looking at the wrong runtime tree for this deployment path.
+If you wipe or inspect `/var/lib/lichen` without touching `~/lichen/data/state-*`, you are looking at the wrong runtime tree for this deployment path.
 
 #### 4. US VPS requires binance.us oracle URLs (geo-blocking)
 
 The US VPS (15.204.229.189) is geo-blocked from `binance.com` (HTTP 451 "Unavailable For Legal Reasons"). The oracle price feeder must use `binance.us` URLs instead:
 
 ```bash
-export MOLTCHAIN_ORACLE_WS_URL="wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade"
-export MOLTCHAIN_ORACLE_REST_URL="https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D"
+export LICHEN_ORACLE_WS_URL="wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade"
+export LICHEN_ORACLE_REST_URL="https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D"
 ```
 
 The EU VPS (37.59.97.61) can use the default `binance.com` URLs. These env vars must be set **before** starting the validator process. The start script does NOT set them — you must export them in the shell before running it, or set them in the validator's environment.
@@ -1908,12 +1908,12 @@ There is one fresh testnet and one fresh mainnet. The validated order is:
 
 ```bash
 # US VPS
-./target/release/moltchain-genesis --network testnet --db-path ./data/state-testnet
-./target/release/moltchain-genesis --network mainnet --db-path ./data/state-mainnet
+./target/release/lichen-genesis --network testnet --db-path ./data/state-testnet
+./target/release/lichen-genesis --network mainnet --db-path ./data/state-mainnet
 
 # EU / SEA VPS
-./target/release/moltchain-validator --network testnet ... --bootstrap-peers 15.204.229.189:7001
-./target/release/moltchain-validator --network mainnet ... --bootstrap-peers 15.204.229.189:8001
+./target/release/lichen-validator --network testnet ... --bootstrap-peers 15.204.229.189:7001
+./target/release/lichen-validator --network mainnet ... --bootstrap-peers 15.204.229.189:8001
 ```
 
 Do not generate independent genesis on EU or SEA. They must join the US-created chain for both networks.
@@ -1925,26 +1925,26 @@ The `cross` tool (Docker-based cross-compilation) fails because `aws-lc-sys v0.3
 **Solution:** Build natively on VPS or use pre-built binaries from CI. To build on VPS:
 1. Install Rust: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 2. Install cmake: `sudo apt-get install -y cmake`
-3. Build: `cargo build --release --bin moltchain-validator --bin moltchain-genesis --bin moltchain-faucet --bin moltchain-custody`
-4. Strip: `strip target/release/moltchain-{validator,genesis,faucet,custody}`
+3. Build: `cargo build --release --bin lichen-validator --bin lichen-genesis --bin lichen-faucet --bin lichen-custody`
+4. Strip: `strip target/release/lichen-{validator,genesis,faucet,custody}`
 
 To relay pre-built binaries from one VPS to others:
 ```bash
 # Download from source VPS to local
-scp -P 2222 -O ubuntu@<SOURCE_VPS>:/usr/local/bin/moltchain-validator /tmp/moltchain-bins/
+scp -P 2222 -O ubuntu@<SOURCE_VPS>:/usr/local/bin/lichen-validator /tmp/lichen-bins/
 
 # Upload to target VPS
-scp -P 2222 -O /tmp/moltchain-bins/moltchain-validator ubuntu@<TARGET_VPS>:/tmp/
-ssh -p 2222 ubuntu@<TARGET_VPS> "mkdir -p ~/moltchain/target/release && cp /tmp/moltchain-validator ~/moltchain/target/release/ && chmod +x ~/moltchain/target/release/moltchain-validator"
+scp -P 2222 -O /tmp/lichen-bins/lichen-validator ubuntu@<TARGET_VPS>:/tmp/
+ssh -p 2222 ubuntu@<TARGET_VPS> "mkdir -p ~/lichen/target/release && cp /tmp/lichen-validator ~/lichen/target/release/ && chmod +x ~/lichen/target/release/lichen-validator"
 ```
 
-#### 7. CLI binary name is `molt`, NOT `molt-cli`
+#### 7. CLI binary name is `lichen`, NOT `lichen-cli`
 
-The CLI crate is named `molt-cli` in `Cargo.toml`, but the binary target is `molt` (via `[[bin]] name = "molt"` in `cli/Cargo.toml`). When building or referencing the CLI binary:
+The CLI crate is named `lichen-cli` in `Cargo.toml`, but the binary target is `lichen` (via `[[bin]] name = "licn"` in `cli/Cargo.toml`). When building or referencing the CLI binary:
 
 ```bash
-✅  cargo build --release --bin molt
-❌  cargo build --release --bin molt-cli   # ERROR: no bin target named 'molt-cli'
+✅  cargo build --release --bin licn
+❌  cargo build --release --bin lichen-cli   # ERROR: no bin target named 'lichen-cli'
 ```
 
 #### 8. Inter-VPS SSH access
@@ -1956,7 +1956,7 @@ Each VPS has an `ed25519` SSH keypair and the other VPSes' public keys in `autho
 scp -P 2222 /path/to/file ubuntu@37.59.97.61:/path/to/dest
 
 # From EU VPS, check US VPS status:
-ssh -p 2222 ubuntu@15.204.229.189 "pgrep -af moltchain"
+ssh -p 2222 ubuntu@15.204.229.189 "pgrep -af lichen"
 ```
 
 If VPS-to-VPS `scp` fails ("Permission denied"), verify that the source VPS's public key (`~/.ssh/id_ed25519.pub`) is in the target VPS's `~/.ssh/authorized_keys`.
@@ -1967,18 +1967,18 @@ The validator binary has hardcoded bootstrap peers (embedded at compile time fro
 
 This means:
 - Removing `seeds.json` does NOT prevent sync attempts (embedded peers still exist)
-- You MUST use `moltchain-genesis` (or `moltchain-start.sh`) to create the genesis database before starting a new chain
-- Never call `sudo systemctl start moltchain-validator-testnet` on a fresh VPS — it has no genesis
+- You MUST use `lichen-genesis` (or `lichen-start.sh`) to create the genesis database before starting a new chain
+- Never call `sudo systemctl start lichen-validator-testnet` on a fresh VPS — it has no genesis
 
 #### 10. pkill over SSH kills the SSH session
 
-Running `pkill -f moltchain` over SSH kills the SSH session itself (because "moltchain" appears in the process tree of the SSH session when you're cd'd into `~/moltchain`).
+Running `pkill -f lichen` over SSH kills the SSH session itself (because "lichen" appears in the process tree of the SSH session when you're cd'd into `~/lichen`).
 
 **Safe stop pattern:**
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> 'cat > /tmp/stop.sh << "EOF"
 #!/bin/bash
-for proc in moltchain-validator moltchain-faucet moltchain-custody validator-supervisor; do
+for proc in lichen-validator lichen-faucet lichen-custody validator-supervisor; do
   pids=$(pgrep -f "$proc" 2>/dev/null)
   [ -n "$pids" ] && echo "Stopping $proc" && echo "$pids" | xargs kill 2>/dev/null
 done
@@ -1997,10 +1997,10 @@ chmod +x /tmp/stop.sh && bash /tmp/stop.sh'
 | EU VPS | `ubuntu@37.59.97.61` (SSH port 2222) — joins US |
 | SEA VPS | `ubuntu@15.235.142.253` (SSH port 2222) — joins US |
 | SSH command | `ssh -p 2222 ubuntu@<IP>` |
-| Source repo | `lobstercove/moltchain` on GitHub (rsync to VPS — no git on VPS) |
-| Genesis binary | `~/moltchain/target/release/moltchain-genesis` |
-| Validator binary | `~/moltchain/target/release/moltchain-validator` |
-| Data dir | `~/moltchain/data/state-{testnet,mainnet}/` |
+| Source repo | `lobstercove/lichen` on GitHub (rsync to VPS — no git on VPS) |
+| Genesis binary | `~/lichen/target/release/lichen-genesis` |
+| Validator binary | `~/lichen/target/release/lichen-validator` |
+| Data dir | `~/lichen/data/state-{testnet,mainnet}/` |
 | P2P ports | Testnet: **7001**, Mainnet: **8001** |
 | RPC ports | Testnet: **8899**, Mainnet: **9899** |
 | WS ports | Testnet: **8900**, Mainnet: **9900** |
@@ -2011,14 +2011,14 @@ Kill validators and ancillary services on each VPS without using broad `pkill -f
 
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> 'set +H
-for proc in moltchain-validator moltchain-faucet moltchain-custody validator-supervisor; do
+for proc in lichen-validator lichen-faucet lichen-custody validator-supervisor; do
   pids=$(pgrep -f "$proc" 2>/dev/null || true)
   if [ -n "$pids" ]; then
     echo "$pids" | xargs kill 2>/dev/null || true
   fi
 done
 sleep 2
-pgrep -af moltchain || true'
+pgrep -af lichen || true'
 ```
 
 ### Step 1: Wipe Repo-Local State
@@ -2027,16 +2027,16 @@ Remove repo-local chain state, custody state, and transient logs on all three VP
 
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> '
-  rm -rf ~/moltchain/data/state-testnet ~/moltchain/data/state-mainnet
-  rm -rf ~/moltchain/data/custody-testnet ~/moltchain/data/custody-mainnet
-  rm -rf /tmp/moltchain-testnet /tmp/moltchain-mainnet
-  rm -f ~/.moltchain/peer_fingerprints.json
-  mkdir -p ~/moltchain/data
+  rm -rf ~/lichen/data/state-testnet ~/lichen/data/state-mainnet
+  rm -rf ~/lichen/data/custody-testnet ~/lichen/data/custody-mainnet
+  rm -rf /tmp/lichen-testnet /tmp/lichen-mainnet
+  rm -f ~/.lichen/peer_fingerprints.json
+  mkdir -p ~/lichen/data
   echo state wiped
 '
 ```
 
-> **TOFU fingerprint cache:** Each validator stores peer identity fingerprints in `~/.moltchain/peer_fingerprints.json`. After a wipe, validators get new identities. If old fingerprints remain, the P2P layer rejects the new identity ("TOFU verification failed"). Always clear this file when wiping state.
+> **TOFU fingerprint cache:** Each validator stores peer identity fingerprints in `~/.lichen/peer_fingerprints.json`. After a wipe, validators get new identities. If old fingerprints remain, the P2P layer rejects the new identity ("TOFU verification failed"). Always clear this file when wiping state.
 
 ### Step 2: Rsync Fresh Code
 
@@ -2050,7 +2050,7 @@ for VPS_IP in 15.204.229.189 37.59.97.61 15.235.142.253; do
     --exclude 'node_modules/' --exclude 'nohup.out' --exclude 'typescript' \
     --exclude '.venv/' --exclude 'compiler/target/' --exclude 'logs/' \
     -e 'ssh -p 2222' \
-    ./ "ubuntu@${VPS_IP}:~/moltchain/"
+    ./ "ubuntu@${VPS_IP}:~/lichen/"
 done
 ```
 
@@ -2060,40 +2060,40 @@ Build the validator and genesis binaries first. Build faucet and custody if you 
 
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> "
-  cd ~/moltchain && source ~/.cargo/env
-  cargo build --release --bin moltchain-validator --bin moltchain-genesis
+  cd ~/lichen && source ~/.cargo/env
+  cargo build --release --bin lichen-validator --bin lichen-genesis
 "
 ```
 
 Verify:
 ```bash
-ssh -p 2222 ubuntu@<VPS_IP> "ls -la ~/moltchain/target/release/moltchain-{validator,genesis}"
+ssh -p 2222 ubuntu@<VPS_IP> "ls -la ~/lichen/target/release/lichen-{validator,genesis}"
 ```
 
 ### Step 4: Initialize Genesis Databases on US VPS
 
-Run `moltchain-genesis` directly for both networks before starting any validator process.
+Run `lichen-genesis` directly for both networks before starting any validator process.
 
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
-  cd ~/moltchain
-  ./target/release/moltchain-genesis --network testnet --db-path ./data/state-testnet
-  ./target/release/moltchain-genesis --network mainnet --db-path ./data/state-mainnet
+  cd ~/lichen
+  ./target/release/lichen-genesis --network testnet --db-path ./data/state-testnet
+  ./target/release/lichen-genesis --network mainnet --db-path ./data/state-mainnet
 "
 ```
 
-This creates the fresh slot-0 database for both networks, writes the genesis wallet and keys under `~/moltchain/data/state-*`, and avoids the empty-state join trap.
+This creates the fresh slot-0 database for both networks, writes the genesis wallet and keys under `~/lichen/data/state-*`, and avoids the empty-state join trap.
 
 ### Step 5: Start US Validators Against the Genesis DBs
 
-Launch the validators directly, writing logs to `/tmp/moltchain-{network}/validator.log`.
+Launch the validators directly, writing logs to `/tmp/lichen-{network}/validator.log`.
 
 ```bash
 ssh -p 2222 ubuntu@15.204.229.189 "
-  cd ~/moltchain
-  mkdir -p /tmp/moltchain-testnet /tmp/moltchain-mainnet
-  setsid sh -c './target/release/moltchain-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 > /tmp/moltchain-testnet/validator.log 2>&1' >/dev/null 2>&1 &
-  setsid sh -c './target/release/moltchain-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 > /tmp/moltchain-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
+  cd ~/lichen
+  mkdir -p /tmp/lichen-testnet /tmp/lichen-mainnet
+  setsid sh -c './target/release/lichen-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 > /tmp/lichen-testnet/validator.log 2>&1' >/dev/null 2>&1 &
+  setsid sh -c './target/release/lichen-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 > /tmp/lichen-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
 "
 ```
 
@@ -2105,8 +2105,8 @@ ssh -p 2222 ubuntu@15.204.229.189 "
   echo
   curl -s -X POST http://127.0.0.1:9899 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[]}'
   echo
-  tail -n 20 /tmp/moltchain-testnet/validator.log
-  tail -n 20 /tmp/moltchain-mainnet/validator.log
+  tail -n 20 /tmp/lichen-testnet/validator.log
+  tail -n 20 /tmp/lichen-mainnet/validator.log
 "
 ```
 
@@ -2116,17 +2116,17 @@ Start EU and SEA validators against empty local DBs, but with explicit US bootst
 
 ```bash
 ssh -p 2222 ubuntu@37.59.97.61 "
-  cd ~/moltchain
-  mkdir -p /tmp/moltchain-testnet /tmp/moltchain-mainnet
-  setsid sh -c './target/release/moltchain-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:7001 > /tmp/moltchain-testnet/validator.log 2>&1' >/dev/null 2>&1 &
-  setsid sh -c './target/release/moltchain-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:8001 > /tmp/moltchain-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
+  cd ~/lichen
+  mkdir -p /tmp/lichen-testnet /tmp/lichen-mainnet
+  setsid sh -c './target/release/lichen-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:7001 > /tmp/lichen-testnet/validator.log 2>&1' >/dev/null 2>&1 &
+  setsid sh -c './target/release/lichen-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:8001 > /tmp/lichen-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
 "
 
 ssh -p 2222 ubuntu@15.235.142.253 "
-  cd ~/moltchain
-  mkdir -p /tmp/moltchain-testnet /tmp/moltchain-mainnet
-  setsid sh -c './target/release/moltchain-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:7001 > /tmp/moltchain-testnet/validator.log 2>&1' >/dev/null 2>&1 &
-  setsid sh -c './target/release/moltchain-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:8001 > /tmp/moltchain-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
+  cd ~/lichen
+  mkdir -p /tmp/lichen-testnet /tmp/lichen-mainnet
+  setsid sh -c './target/release/lichen-validator --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 --db-path ./data/state-testnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:7001 > /tmp/lichen-testnet/validator.log 2>&1' >/dev/null 2>&1 &
+  setsid sh -c './target/release/lichen-validator --network mainnet --rpc-port 9899 --ws-port 9900 --p2p-port 8001 --db-path ./data/state-mainnet --listen-addr 0.0.0.0 --bootstrap-peers 15.204.229.189:8001 > /tmp/lichen-mainnet/validator.log 2>&1' >/dev/null 2>&1 &
 "
 ```
 
@@ -2142,8 +2142,8 @@ for VPS_IP in 15.204.229.189 37.59.97.61 15.235.142.253; do
     echo
     echo mainnet && curl -s -X POST http://127.0.0.1:9899 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSlot\",\"params\":[]}'
     echo
-    tail -n 20 /tmp/moltchain-testnet/validator.log
-    tail -n 20 /tmp/moltchain-mainnet/validator.log
+    tail -n 20 /tmp/lichen-testnet/validator.log
+    tail -n 20 /tmp/lichen-mainnet/validator.log
   "
 done
 ```
@@ -2165,13 +2165,13 @@ Start the testnet faucet on all 3 VPSes. The faucet keypair is generated during 
 # (pipe through local machine — VPS-to-VPS scp may not work without inter-VPS SSH setup)
 for JOINING_IP in 37.59.97.61 15.235.142.253; do
   echo "=== Copying keys to $JOINING_IP ==="
-  for key in faucet-moltchain-testnet-1.json treasury-moltchain-testnet-1.json; do
-    ssh -p 2222 ubuntu@15.204.229.189 "cat ~/moltchain/data/state-testnet/genesis-keys/$key" \
-      | ssh -p 2222 ubuntu@$JOINING_IP "mkdir -p ~/moltchain/data/state-testnet/genesis-keys && cat > ~/moltchain/data/state-testnet/genesis-keys/$key"
+  for key in faucet-lichen-testnet-1.json treasury-lichen-testnet-1.json; do
+    ssh -p 2222 ubuntu@15.204.229.189 "cat ~/lichen/data/state-testnet/genesis-keys/$key" \
+      | ssh -p 2222 ubuntu@$JOINING_IP "mkdir -p ~/lichen/data/state-testnet/genesis-keys && cat > ~/lichen/data/state-testnet/genesis-keys/$key"
   done
-  for key in faucet-moltchain-mainnet-1.json treasury-moltchain-mainnet-1.json; do
-    ssh -p 2222 ubuntu@15.204.229.189 "cat ~/moltchain/data/state-mainnet/genesis-keys/$key" \
-      | ssh -p 2222 ubuntu@$JOINING_IP "mkdir -p ~/moltchain/data/state-mainnet/genesis-keys && cat > ~/moltchain/data/state-mainnet/genesis-keys/$key"
+  for key in faucet-lichen-mainnet-1.json treasury-lichen-mainnet-1.json; do
+    ssh -p 2222 ubuntu@15.204.229.189 "cat ~/lichen/data/state-mainnet/genesis-keys/$key" \
+      | ssh -p 2222 ubuntu@$JOINING_IP "mkdir -p ~/lichen/data/state-mainnet/genesis-keys && cat > ~/lichen/data/state-mainnet/genesis-keys/$key"
   done
 done
 ```
@@ -2180,53 +2180,53 @@ Start faucet on all 3 VPSes:
 ```bash
 # ── US VPS ──
 ssh -p 2222 ubuntu@15.204.229.189 "
-  cd ~/moltchain
+  cd ~/lichen
   PORT=9100 \
   RPC_URL=http://127.0.0.1:8899 \
   NETWORK=testnet \
   MAX_PER_REQUEST=10 \
   DAILY_LIMIT_PER_IP=150 \
   COOLDOWN_SECONDS=60 \
-  AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
-  FAUCET_KEYPAIR=\$HOME/moltchain/data/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
+  AIRDROPS_FILE=/tmp/lichen-testnet/airdrops.json \
+  FAUCET_KEYPAIR=\$HOME/lichen/data/state-testnet/genesis-keys/faucet-lichen-testnet-1.json \
   RUST_LOG=info \
   TRUSTED_PROXY=127.0.0.1,::1 \
-  nohup ./target/release/moltchain-faucet > /tmp/moltchain-testnet/faucet.log 2>&1 &
-  sleep 2 && pgrep -f moltchain-faucet && echo 'Faucet running'
+  nohup ./target/release/lichen-faucet > /tmp/lichen-testnet/faucet.log 2>&1 &
+  sleep 2 && pgrep -f lichen-faucet && echo 'Faucet running'
 "
 
 # ── EU VPS ──
 ssh -p 2222 ubuntu@37.59.97.61 '
-  cd ~/moltchain
+  cd ~/lichen
   PORT=9100 \
   RPC_URL=http://127.0.0.1:8899 \
   NETWORK=testnet \
   MAX_PER_REQUEST=10 \
   DAILY_LIMIT_PER_IP=150 \
   COOLDOWN_SECONDS=60 \
-  AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
-  FAUCET_KEYPAIR=/home/ubuntu/moltchain/data/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
+  AIRDROPS_FILE=/tmp/lichen-testnet/airdrops.json \
+  FAUCET_KEYPAIR=/home/ubuntu/lichen/data/state-testnet/genesis-keys/faucet-lichen-testnet-1.json \
   RUST_LOG=info \
   TRUSTED_PROXY=127.0.0.1,::1 \
-  nohup ./target/release/moltchain-faucet > /tmp/moltchain-testnet/faucet.log 2>&1 &
-  sleep 2 && pgrep -f moltchain-faucet && echo "Faucet running"
+  nohup ./target/release/lichen-faucet > /tmp/lichen-testnet/faucet.log 2>&1 &
+  sleep 2 && pgrep -f lichen-faucet && echo "Faucet running"
 '
 
 # ── SEA VPS ──
 ssh -p 2222 ubuntu@15.235.142.253 '
-  cd ~/moltchain
+  cd ~/lichen
   PORT=9100 \
   RPC_URL=http://127.0.0.1:8899 \
   NETWORK=testnet \
   MAX_PER_REQUEST=10 \
   DAILY_LIMIT_PER_IP=150 \
   COOLDOWN_SECONDS=60 \
-  AIRDROPS_FILE=/tmp/moltchain-testnet/airdrops.json \
-  FAUCET_KEYPAIR=/home/ubuntu/moltchain/data/state-testnet/genesis-keys/faucet-moltchain-testnet-1.json \
+  AIRDROPS_FILE=/tmp/lichen-testnet/airdrops.json \
+  FAUCET_KEYPAIR=/home/ubuntu/lichen/data/state-testnet/genesis-keys/faucet-lichen-testnet-1.json \
   RUST_LOG=info \
   TRUSTED_PROXY=127.0.0.1,::1 \
-  nohup ./target/release/moltchain-faucet > /tmp/moltchain-testnet/faucet.log 2>&1 &
-  sleep 2 && pgrep -f moltchain-faucet && echo "Faucet running"
+  nohup ./target/release/lichen-faucet > /tmp/lichen-testnet/faucet.log 2>&1 &
+  sleep 2 && pgrep -f lichen-faucet && echo "Faucet running"
 '
 ```
 
@@ -2240,26 +2240,26 @@ Start custody bridge on US VPS for testnet and mainnet. Currently custody runs o
 ```bash
 # ── US VPS — Testnet Custody (port 9105) ──
 ssh -p 2222 ubuntu@15.204.229.189 "
-  cd ~/moltchain && mkdir -p data/custody-testnet
+  cd ~/lichen && mkdir -p data/custody-testnet
   CUSTODY_DB_PATH=./data/custody-testnet \
-  CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899 \
-  CUSTODY_TREASURY_KEYPAIR=\$HOME/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json \
+  CUSTODY_LICHEN_RPC_URL=http://127.0.0.1:8899 \
+  CUSTODY_TREASURY_KEYPAIR=\$HOME/lichen/data/state-testnet/genesis-keys/treasury-lichen-testnet-1.json \
   CUSTODY_ALLOW_INSECURE_SEED=1 \
   CUSTODY_API_AUTH_TOKEN=testnet-custody-token-2026 \
   CUSTODY_SIGNER_AUTH_TOKEN=testnet-signer-token-2026 \
   CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
   CUSTODY_SIGNER_THRESHOLD=2 \
   RUST_LOG=info \
-  nohup ./target/release/moltchain-custody > /tmp/moltchain-testnet/custody.log 2>&1 &
-  sleep 2 && tail -1 /tmp/moltchain-testnet/custody.log
+  nohup ./target/release/lichen-custody > /tmp/lichen-testnet/custody.log 2>&1 &
+  sleep 2 && tail -1 /tmp/lichen-testnet/custody.log
 "
 
 # ── US VPS — Mainnet Custody (port 9106) ──
 ssh -p 2222 ubuntu@15.204.229.189 "
-  cd ~/moltchain && mkdir -p data/custody-mainnet
+  cd ~/lichen && mkdir -p data/custody-mainnet
   CUSTODY_DB_PATH=./data/custody-mainnet \
-  CUSTODY_MOLT_RPC_URL=http://127.0.0.1:9899 \
-  CUSTODY_TREASURY_KEYPAIR=\$HOME/moltchain/data/state-mainnet/genesis-keys/treasury-moltchain-mainnet-1.json \
+  CUSTODY_LICHEN_RPC_URL=http://127.0.0.1:9899 \
+  CUSTODY_TREASURY_KEYPAIR=\$HOME/lichen/data/state-mainnet/genesis-keys/treasury-lichen-mainnet-1.json \
   CUSTODY_ALLOW_INSECURE_SEED=1 \
   CUSTODY_API_AUTH_TOKEN=mainnet-custody-token-2026 \
   CUSTODY_SIGNER_AUTH_TOKEN=mainnet-signer-token-2026 \
@@ -2267,33 +2267,33 @@ ssh -p 2222 ubuntu@15.204.229.189 "
   CUSTODY_SIGNER_THRESHOLD=2 \
   CUSTODY_LISTEN_PORT=9106 \
   RUST_LOG=info \
-  nohup ./target/release/moltchain-custody > /tmp/moltchain-mainnet/custody.log 2>&1 &
-  sleep 2 && tail -1 /tmp/moltchain-mainnet/custody.log
+  nohup ./target/release/lichen-custody > /tmp/lichen-mainnet/custody.log 2>&1 &
+  sleep 2 && tail -1 /tmp/lichen-mainnet/custody.log
 "
 
 # ── EU VPS — Testnet Custody (port 9105) — OPTIONAL, currently not running ──
 # Uncomment these blocks when scaling custody to multiple VPSes
 # ssh -p 2222 ubuntu@37.59.97.61 '
-#   cd ~/moltchain && mkdir -p data/custody-testnet
+#   cd ~/lichen && mkdir -p data/custody-testnet
 #   CUSTODY_DB_PATH=./data/custody-testnet \
-#   CUSTODY_MOLT_RPC_URL=http://127.0.0.1:8899 \
-#   CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/moltchain/data/state-testnet/genesis-keys/treasury-moltchain-testnet-1.json \
+#   CUSTODY_LICHEN_RPC_URL=http://127.0.0.1:8899 \
+#   CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/lichen/data/state-testnet/genesis-keys/treasury-lichen-testnet-1.json \
 #   CUSTODY_ALLOW_INSECURE_SEED=1 \
 #   CUSTODY_API_AUTH_TOKEN=testnet-custody-token-2026 \
 #   CUSTODY_SIGNER_AUTH_TOKEN=testnet-signer-token-2026 \
 #   CUSTODY_SIGNER_ENDPOINTS=http://127.0.0.1:9201,http://127.0.0.1:9202,http://127.0.0.1:9203 \
 #   CUSTODY_SIGNER_THRESHOLD=2 \
 #   RUST_LOG=info \
-#   nohup ./target/release/moltchain-custody > /tmp/moltchain-testnet/custody.log 2>&1 &
-#   sleep 2 && tail -1 /tmp/moltchain-testnet/custody.log
+#   nohup ./target/release/lichen-custody > /tmp/lichen-testnet/custody.log 2>&1 &
+#   sleep 2 && tail -1 /tmp/lichen-testnet/custody.log
 # '
 
 # ── EU VPS — Mainnet Custody (port 9106) — OPTIONAL, currently not running ──
 # ssh -p 2222 ubuntu@37.59.97.61 '
-#   cd ~/moltchain && mkdir -p data/custody-mainnet
+#   cd ~/lichen && mkdir -p data/custody-mainnet
 #   CUSTODY_DB_PATH=./data/custody-mainnet \
-#   CUSTODY_MOLT_RPC_URL=http://127.0.0.1:9899 \
-#   CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/moltchain/data/state-mainnet/genesis-keys/treasury-moltchain-mainnet-1.json \
+#   CUSTODY_LICHEN_RPC_URL=http://127.0.0.1:9899 \
+#   CUSTODY_TREASURY_KEYPAIR=/home/ubuntu/lichen/data/state-mainnet/genesis-keys/treasury-lichen-mainnet-1.json \
 #   CUSTODY_ALLOW_INSECURE_SEED=1 \
 #   CUSTODY_API_AUTH_TOKEN=mainnet-custody-token-2026 \
 #   CUSTODY_SIGNER_AUTH_TOKEN=mainnet-signer-token-2026 \
@@ -2301,8 +2301,8 @@ ssh -p 2222 ubuntu@15.204.229.189 "
 #   CUSTODY_SIGNER_THRESHOLD=2 \
 #   CUSTODY_LISTEN_PORT=9106 \
 #   RUST_LOG=info \
-#   nohup ./target/release/moltchain-custody > /tmp/moltchain-mainnet/custody.log 2>&1 &
-#   sleep 2 && tail -1 /tmp/moltchain-mainnet/custody.log
+#   nohup ./target/release/lichen-custody > /tmp/lichen-mainnet/custody.log 2>&1 &
+#   sleep 2 && tail -1 /tmp/lichen-mainnet/custody.log
 # '
 ```
 
@@ -2314,7 +2314,7 @@ for VPS_IP in 15.204.229.189 37.59.97.61 15.235.142.253; do
   echo "=== $VPS_IP ==="
   ssh -p 2222 "ubuntu@${VPS_IP}" "
     echo 'Processes:'
-    pgrep -af moltchain | grep -v pgrep
+    pgrep -af lichen | grep -v pgrep
 
     echo ''
     echo 'Testnet RPC:'
@@ -2344,7 +2344,7 @@ All VPSes should show advancing slot numbers on both testnet and mainnet RPC.
 Connect your local machine as an additional validator on mainnet:
 
 ```bash
-./target/release/moltchain-validator \
+./target/release/lichen-validator \
   --network mainnet \
   --rpc-port 9899 \
   --ws-port 9900 \
@@ -2367,16 +2367,16 @@ Connect your local machine as an additional validator on mainnet:
 
 ### Validator Log Locations
 
-Logs are written to `/tmp/moltchain-{network}/` (created by `moltchain-start.sh`), **not** `~/moltchain/logs/`.
+Logs are written to `/tmp/lichen-{network}/` (created by `lichen-start.sh`), **not** `~/lichen/logs/`.
 
 | Log | Path |
 |---|---|
-| Testnet validator | `/tmp/moltchain-testnet/validator.log` |
-| Mainnet validator | `/tmp/moltchain-mainnet/validator.log` |
-| Testnet faucet | `/tmp/moltchain-testnet/faucet.log` |
-| Testnet custody | `/tmp/moltchain-testnet/custody.log` |
-| Mainnet custody | `/tmp/moltchain-mainnet/custody.log` |
-| First-boot deploy | `/tmp/moltchain-testnet/first-boot-deploy.log` |
+| Testnet validator | `/tmp/lichen-testnet/validator.log` |
+| Mainnet validator | `/tmp/lichen-mainnet/validator.log` |
+| Testnet faucet | `/tmp/lichen-testnet/faucet.log` |
+| Testnet custody | `/tmp/lichen-testnet/custody.log` |
+| Mainnet custody | `/tmp/lichen-mainnet/custody.log` |
+| First-boot deploy | `/tmp/lichen-testnet/first-boot-deploy.log` |
 
 ### Restarting a Validator (Without Re-creating Genesis)
 
@@ -2385,13 +2385,13 @@ If a validator crashes or you need to restart it, the start script detects exist
 ```bash
 # The start script detects data/state-testnet/CURRENT exists → RESUME mode
 ssh -p 2222 ubuntu@<VPS_IP> "
-  cd ~/moltchain
+  cd ~/lichen
 
   # For US VPS, always set binance.us env vars
-  export MOLTCHAIN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
-  export MOLTCHAIN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
+  export LICHEN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
+  export LICHEN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
 
-  bash moltchain-start.sh testnet
+  bash lichen-start.sh testnet
 "
 ```
 
@@ -2399,13 +2399,13 @@ Or restart directly via the supervisor (skipping the start script):
 
 ```bash
 ssh -p 2222 ubuntu@<VPS_IP> "
-  cd ~/moltchain
+  cd ~/lichen
 
-  export MOLTCHAIN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
-  export MOLTCHAIN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
+  export LICHEN_ORACLE_WS_URL='wss://stream.binance.us:9443/ws/solusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade'
+  export LICHEN_ORACLE_REST_URL='https://api.binance.us/api/v3/ticker/price?symbols=%5B%22SOLUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22%5D'
 
   ./scripts/validator-supervisor.sh testnet-primary-p7001 -- \
-    ./target/release/moltchain-validator \
+    ./target/release/lichen-validator \
     --network testnet --rpc-port 8899 --ws-port 8900 --p2p-port 7001 \
     --db-path ./data/state-7001 \
     --bootstrap-peers '15.204.229.189:7001,37.59.97.61:7001' \
@@ -2416,18 +2416,18 @@ ssh -p 2222 ubuntu@<VPS_IP> "
 
 ### Files Created During Genesis
 
-After a successful genesis boot via `moltchain-start.sh`, these files exist:
+After a successful genesis boot via `lichen-start.sh`, these files exist:
 
 ```
-~/moltchain/
+~/lichen/
 ├── data/
 │   ├── state-testnet/                    # Testnet blockchain state (RocksDB)
 │   │   ├── genesis-keys/                 # Treasury keypairs (CRITICAL — back these up)
-│   │   │   ├── genesis-primary-moltchain-testnet-1.json
-│   │   │   ├── faucet-moltchain-testnet-1.json
-│   │   │   ├── treasury-moltchain-testnet-1.json
-│   │   │   ├── community_treasury-moltchain-testnet-1.json
-│   │   │   ├── builder_grants-moltchain-testnet-1.json
+│   │   │   ├── genesis-primary-lichen-testnet-1.json
+│   │   │   ├── faucet-lichen-testnet-1.json
+│   │   │   ├── treasury-lichen-testnet-1.json
+│   │   │   ├── community_treasury-lichen-testnet-1.json
+│   │   │   ├── builder_grants-lichen-testnet-1.json
 │   │   │   └── ...
 │   │   ├── home/                         # Validator identity (validator-id.json)
 │   │   ├── CURRENT                       # RocksDB marker (presence = state exists)
@@ -2436,19 +2436,19 @@ After a successful genesis boot via `moltchain-start.sh`, these files exist:
 │       ├── genesis-keys/
 │       └── ...
 └── target/release/
-    ├── moltchain-validator               # Main binary
-    ├── moltchain-genesis                 # Genesis creation tool
-    ├── moltchain-faucet                  # Faucet binary
-    └── moltchain-custody                 # Custody bridge binary
+    ├── lichen-validator               # Main binary
+    ├── lichen-genesis                 # Genesis creation tool
+    ├── lichen-faucet                  # Faucet binary
+    └── lichen-custody                 # Custody bridge binary
 
-# Logs (written to /tmp/ by moltchain-start.sh, NOT ~/moltchain/logs/)
+# Logs (written to /tmp/ by lichen-start.sh, NOT ~/lichen/logs/)
 /tmp/
-├── moltchain-testnet/
+├── lichen-testnet/
 │   ├── validator.log                     # Testnet validator log
 │   ├── faucet.log                        # Faucet log
 │   ├── custody.log                       # Testnet custody log
 │   └── first-boot-deploy.log            # Contract deployment log
-└── moltchain-mainnet/
+└── lichen-mainnet/
     ├── validator.log                     # Mainnet validator log
     └── custody.log                       # Mainnet custody log
 ```
@@ -2504,7 +2504,7 @@ cargo test
 cargo build --release
 
 # 2. Tag the release
-git tag -a v0.1.0 -m "MoltChain v0.1.0 - Initial release"
+git tag -a v0.1.0 -m "Lichen v0.1.0 - Initial release"
 git push origin v0.1.0
 ```
 
@@ -2519,7 +2519,7 @@ After CI completes:
 
 ```bash
 # 1. Download SHA256SUMS from the draft release
-curl -LO https://github.com/lobstercove/moltchain/releases/download/v0.1.0/SHA256SUMS
+curl -LO https://github.com/lobstercove/lichen/releases/download/v0.1.0/SHA256SUMS
 
 # 2. Sign it offline with your private key
 ./scripts/sign-release.sh SHA256SUMS /path/to/release-signing-keypair.json
@@ -2539,7 +2539,7 @@ gh release edit v0.1.0 --draft=false
 ```bash
 # 1. Bump version in validator/Cargo.toml
 # 2. Commit and tag
-git tag -a v0.2.0 -m "MoltChain v0.2.0 - <description>"
+git tag -a v0.2.0 -m "Lichen v0.2.0 - <description>"
 git push origin v0.2.0
 
 # 3. Wait for CI to build (~10 min)
@@ -2556,17 +2556,17 @@ cargo build --release
 
 # Create archive
 cd target/release
-tar czf moltchain-validator-darwin-aarch64.tar.gz moltchain-validator
+tar czf lichen-validator-darwin-aarch64.tar.gz lichen-validator
 cd ../..
 
 # Compute SHA256
-sha256sum target/release/moltchain-validator-darwin-aarch64.tar.gz > SHA256SUMS
+sha256sum target/release/lichen-validator-darwin-aarch64.tar.gz > SHA256SUMS
 
 # Sign
 ./scripts/sign-release.sh SHA256SUMS /path/to/release-signing-keypair.json
 
 # Create GitHub release manually and upload:
-#   - moltchain-validator-darwin-aarch64.tar.gz
+#   - lichen-validator-darwin-aarch64.tar.gz
 #   - SHA256SUMS
 #   - SHA256SUMS.sig
 ```
@@ -2596,22 +2596,22 @@ The validator includes a built-in auto-update system that can check for, downloa
 
 ```bash
 # Check-only mode (logs new versions, doesn't download)
-./moltchain-validator \
+./lichen-validator \
   --auto-update check \
   --p2p-port 7001
 
 # Download + verify, but don't apply (manual restart needed)
-./moltchain-validator \
+./lichen-validator \
   --auto-update download \
   --p2p-port 7001
 
 # Full automatic updates (recommended for testnet)
-./moltchain-validator \
+./lichen-validator \
   --auto-update apply \
   --p2p-port 7001
 
 # Customize check interval and channel
-./moltchain-validator \
+./lichen-validator \
   --auto-update apply \
   --update-check-interval 600 \
   --update-channel stable \
@@ -2633,9 +2633,9 @@ The validator logs all update activity:
 INFO  🔄 Auto-updater: enabled (mode=apply, interval=300s, channel=stable)
 INFO  🔄 Up to date (current: v0.1.0, latest: v0.1.0)
 INFO  🆕 New version available: v0.2.0 (current: v0.1.0)
-INFO  📦 Downloading moltchain-validator-linux-x86_64.tar.gz (24MB)...
+INFO  📦 Downloading lichen-validator-linux-x86_64.tar.gz (24MB)...
 INFO  ✅ SHA256SUMS signature verified
-INFO  ✅ SHA256 verified for moltchain-validator-linux-x86_64.tar.gz
+INFO  ✅ SHA256 verified for lichen-validator-linux-x86_64.tar.gz
 INFO  ✅ Binary swapped: v0.1.0 → v0.2.0
 INFO  🔄 Requesting supervisor restart to pick up new binary...
 ```
@@ -2654,7 +2654,7 @@ If an update goes wrong:
 ```bash
 # Manual rollback (if auto-rollback didn't trigger)
 cd /path/to/validator
-cp moltchain-validator.rollback moltchain-validator
+cp lichen-validator.rollback lichen-validator
 # Restart the validator
 ```
 
@@ -2664,7 +2664,7 @@ The auto-rollback triggers automatically if the validator crashes 3 times within
 
 ## Validator CLI Reference
 
-Complete reference for all `moltchain-validator` CLI flags:
+Complete reference for all `lichen-validator` CLI flags:
 
 ### Core Flags
 
@@ -2707,14 +2707,14 @@ Complete reference for all `moltchain-validator` CLI flags:
 ### Example: Production VPS Validator
 
 ```bash
-./moltchain-validator \
+./lichen-validator \
   --p2p-port 7001 \
   --listen-addr 0.0.0.0 \
   --network testnet \
   --genesis genesis-testnet.json \
-  --bootstrap-peers seed-us.moltchain.network:8001,seed-eu.moltchain.network:8001 \
+  --bootstrap-peers seed-us.lichen.network:8001,seed-eu.lichen.network:8001 \
   --auto-update apply \
-  --admin-token "$(cat /etc/moltchain/admin-token)"
+  --admin-token "$(cat /etc/lichen/admin-token)"
 ```
 
 ---
@@ -2786,10 +2786,10 @@ This matrix aligns local/testnet/prod procedures with the tested sequence: build
 | Stage | Local Dev | Testnet (3 validators) | Production/Mainnet |
 |---|---|---|---|
 | Build | `cargo build --release` | `cargo build --release` | `cargo build --release` |
-| Deploy genesis/programs | `./target/release/moltchain-validator --network testnet --p2p-port 7001` (first run) | same + state distribution to seed nodes | mainnet genesis generation + signed distribution artifacts |
-| Configure services | local env defaults | systemd + `/etc/moltchain/env-testnet` + Caddy | systemd + secrets manager + hardened Caddy/firewall |
+| Deploy genesis/programs | `./target/release/lichen-validator --network testnet --p2p-port 7001` (first run) | same + state distribution to seed nodes | mainnet genesis generation + signed distribution artifacts |
+| Configure services | local env defaults | systemd + `/etc/lichen/env-testnet` + Caddy | systemd + secrets manager + hardened Caddy/firewall |
 | Strict gate | `STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh` | `STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh` | pre-launch requirement: same strict gate against prod-like env |
-| Launch / operate | `./moltchain-validator ...` | `systemctl start moltchain-validator` (+ custody/faucet where needed) | staged rollout across seeds/relays with monitored restart windows |
+| Launch / operate | `./lichen-validator ...` | `systemctl start lichen-validator` (+ custody/faucet where needed) | staged rollout across seeds/relays with monitored restart windows |
 
 ### Tested Gate Sequence (Reference)
 

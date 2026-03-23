@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// @moltchain/dex-sdk — Main Entry Point
+// @lichen/dex-sdk — Main Entry Point
 // Re-exports all modules for convenient access
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Client (primary export)
-export { MoltDEX } from './client';
+export { LichenDEX } from './client';
 
 // WebSocket
 export { DexWebSocket } from './websocket';
@@ -105,7 +105,7 @@ export type {
   CreatePoolParams,
   CreateProposalParams,
   // Config
-  MoltDEXConfig,
+  LichenDEXConfig,
   ApiResponse,
   // WebSocket events
   WSOrderBookUpdate,
