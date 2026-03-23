@@ -71,7 +71,7 @@ chown "$USER":"$GROUP" "$DATA_DIR" "$LOG_DIR"
 echo "✅ Directories created"
 
 # ── 3. Copy binaries ──
-for bin in lichen-validator lichen-genesis licn lichen-faucet lichen-custody; do
+for bin in lichen-validator lichen-genesis lichen-faucet lichen-custody; do
     if [ -f "target/release/$bin" ]; then
         cp "target/release/$bin" "$INSTALL_DIR/$bin"
         chmod +x "$INSTALL_DIR/$bin"
@@ -80,6 +80,22 @@ for bin in lichen-validator lichen-genesis licn lichen-faucet lichen-custody; do
         echo "   ⚠  $bin not found in target/release/ (skipping)"
     fi
 done
+
+# Install CLI binary (built as 'lichen', installed as 'lichen-cli')
+if [ -f "target/release/lichen" ]; then
+    cp "target/release/lichen" "$INSTALL_DIR/lichen-cli"
+    chmod +x "$INSTALL_DIR/lichen-cli"
+    echo "   Installed: lichen → $INSTALL_DIR/lichen-cli"
+else
+    echo "   ⚠  lichen CLI not found in target/release/ (skipping)"
+fi
+
+# Install ZK setup binary (for generating ZK keys)
+if [ -f "target/release/zk-setup" ]; then
+    cp "target/release/zk-setup" "$INSTALL_DIR/zk-setup"
+    chmod +x "$INSTALL_DIR/zk-setup"
+    echo "   Installed: zk-setup → $INSTALL_DIR"
+fi
 
 # ── 3b. Copy seeds.json to config dir ──
 if [ -f "seeds.json" ]; then
@@ -279,9 +295,40 @@ for net in "${NETWORKS[@]}"; do
     esac
 done
 echo ""
-echo "⚠  VPS bootstrap: create genesis once with /usr/local/bin/lichen-genesis"
-echo "   (or a validator process that has LICHEN_CONTRACTS_DIR set to"
-echo "   /var/lib/lichen/contracts). Subsequent validators must bootstrap"
-echo "   from the existing network via seeds.json or --bootstrap-peers."
-echo "   Genesis keys (treasury) will be in: $DATA_DIR/state-<network>/genesis-keys/"
+echo "⚠  VPS bootstrap — Genesis Node (run once on the first VPS):"
+echo ""
+echo "   1. Prepare wallet artifacts:"
+echo "      sudo -u lichen HOME=$DATA_DIR LICHEN_HOME=$DATA_DIR LICHEN_CONTRACTS_DIR=$DATA_DIR/contracts \\"
+echo "        lichen-genesis --network <testnet|mainnet> --db-path $DATA_DIR/state-<net> \\"
+echo "        --prepare-wallet --output-dir $DATA_DIR/genesis-keys-<net>"
+echo ""
+echo "   2. Start validator briefly to generate keypair, note publicKeyBase58, then stop and flush state:"
+echo "      sudo systemctl start lichen-validator-<net>"
+echo "      sudo python3 -c \"import json; print(json.load(open('$DATA_DIR/state-<net>/validator-keypair.json'))['publicKeyBase58'])\""
+echo "      sudo systemctl stop lichen-validator-<net>"
+echo "      sudo rm -rf $DATA_DIR/state-<net>"
+echo ""
+echo "   3. Fetch live prices and create genesis:"
+echo "      PRICE_JSON=\$(curl -sf 'https://api.binance.com/api/v3/ticker/price?symbols=[\"SOLUSDT\",\"ETHUSDT\",\"BNBUSDT\"]')"
+echo "      export GENESIS_SOL_USD=\$(echo \$PRICE_JSON | python3 -c \"import sys,json; [print(t['price']) for t in json.load(sys.stdin) if t['symbol']=='SOLUSDT']\")"
+echo "      export GENESIS_ETH_USD=\$(echo \$PRICE_JSON | python3 -c \"import sys,json; [print(t['price']) for t in json.load(sys.stdin) if t['symbol']=='ETHUSDT']\")"
+echo "      export GENESIS_BNB_USD=\$(echo \$PRICE_JSON | python3 -c \"import sys,json; [print(t['price']) for t in json.load(sys.stdin) if t['symbol']=='BNBUSDT']\")"
+echo "      sudo -u lichen HOME=$DATA_DIR LICHEN_HOME=$DATA_DIR LICHEN_CONTRACTS_DIR=$DATA_DIR/contracts \\"
+echo "        GENESIS_SOL_USD=\$GENESIS_SOL_USD GENESIS_ETH_USD=\$GENESIS_ETH_USD GENESIS_BNB_USD=\$GENESIS_BNB_USD \\"
+echo "        lichen-genesis --network <net> --db-path $DATA_DIR/state-<net> \\"
+echo "        --wallet-file $DATA_DIR/genesis-keys-<net>/genesis-wallet.json \\"
+echo "        --initial-validator <PUBKEY_FROM_STEP_2>"
+echo ""
+echo "   4. Start the genesis validator:"
+echo "      sudo systemctl start lichen-validator-<net>"
+echo ""
+echo "   5. On joining VPSes, set bootstrap peers in /etc/lichen/env-<net>:"
+echo "      LICHEN_BOOTSTRAP_PEERS=<genesis-ip>:<p2p-port>"
+echo "      Then start:  sudo systemctl start lichen-validator-<net>"
+echo ""
+echo "   6. Fund faucet (testnet only):"
+echo "      sudo lichen-cli transfer --keypair $DATA_DIR/genesis-keys-testnet/genesis-keys/treasury-lichen-testnet-1.json \\"
+echo "        --rpc-url http://127.0.0.1:8899 <FAUCET_ADDRESS> 1000000"
+echo ""
+echo "   Genesis keys (treasury) will be in: $DATA_DIR/genesis-keys-<net>/genesis-keys/"
 echo "   Keep those keys secure — they control the 1B LICN treasury."

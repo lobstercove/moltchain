@@ -47,7 +47,7 @@ Lichen compiles into **4 separate binaries** from the workspace:
 | `lichen-validator` | `validator` | P2P: 7001/8001, RPC: 8899/9899, WS: 8900/9900, Signer: 9201 | Every VPS | Validator + built-in RPC + WebSocket + threshold signer. **This is the main binary.** Ports are testnet/mainnet respectively. |
 | `lichen-custody` | `custody` | 9105 | Seed VPS only (1 instance) | Bridge service for Solana/Ethereum ↔ Lichen deposits & withdrawals |
 | `lichen-faucet` | `faucet` | 9100 | All VPSes (testnet only) | LICN faucet for testnet. Refuses to run on mainnet. Same keypair copied to each VPS. |
-| `lichen` | `cli` | — | Dev machines | CLI tool for sending transactions, querying state. NOT a server. |
+| `lichen` | `cli` | — | Dev machines + all VPSes | CLI tool for sending transactions, querying state, funding faucet. Installed as `lichen-cli` on VPSes by `setup.sh`. |
 
 **Important:** The `lichen-validator` binary is a single process that includes:
 - The validator consensus engine
@@ -69,7 +69,8 @@ cargo build --release
 # target/release/lichen-validator
 # target/release/lichen-custody
 # target/release/lichen-faucet
-# target/release/licn
+# target/release/lichen          ← CLI binary (installed as lichen-cli)
+# target/release/zk-setup        ← ZK key generator
 ```
 
 ### VPS Source Staging Rule
