@@ -56,20 +56,17 @@ The **reserve_pool** wallet (50M LICN) acts as the initial market maker:
    - This is backed by the 50M LICN in reserve_pool at $0.10 = $5M value (200% collateral ratio)
 
 2. **Place buy-wall and sell-wall orders on the CLOB**
-   - **Sell side** (LICN → lUSD): Place 10M LICN in sell orders across a range:
-     - 2M LICN @ $0.10 (genesis price)
-     - 2M LICN @ $0.11
-     - 2M LICN @ $0.12
-     - 2M LICN @ $0.15
-     - 2M LICN @ $0.20
-   - **Buy side** (lUSD → LICN): Place lUSD buy orders:
-     - 500,000 lUSD @ $0.09
-     - 500,000 lUSD @ $0.08
-     - 500,000 lUSD @ $0.07
-     - 500,000 lUSD @ $0.05
-     - 500,000 lUSD @ $0.03
+   - **Sell side** (LICN → lUSD): Place ~8.6M LICN in sell orders across 25 levels ($0.002 increments):
+     - $0.100–$0.110: 4.2M LICN (dense zone near genesis price, 6 levels)
+     - $0.112–$0.126: 3.2M LICN (mid zone, 7 levels)
+     - $0.128–$0.148: 2.2M LICN (upper zone, 11 levels)
+   - **Buy side** (lUSD → LICN): Place lUSD buy orders across 25 levels ($0.002 decrements):
+     - $0.098–$0.088: 2.15M LICN / ~$195K lUSD (tight support, 6 levels)
+     - $0.086–$0.074: 1.75M LICN / ~$140K lUSD (mid support, 7 levels)
+     - $0.072–$0.050: 1.65M LICN / ~$101K lUSD (deep support, 12 levels)
 
-   This creates visible depth on both sides of the book.
+   This creates realistic order book depth with 25 levels on each side,
+   $0.002 spacing, and graduated volume (heavier near the current price).
 
 3. **Seed AMM concentrated liquidity pool**
    - Deposit 5M LICN + 500,000 lUSD into the LICN/lUSD AMM pool
