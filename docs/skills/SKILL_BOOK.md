@@ -12,7 +12,7 @@
 2. [Architecture](#2-architecture)
 3. [Native Transaction Types](#3-native-transaction-types)
 4. [Contract Call Format](#4-contract-call-format)
-5. [Contract Surface (30 Contracts)](#5-contract-surface-30-contracts)
+5. [Contract Surface (28 Contracts)](#5-contract-surface-30-contracts)
 6. [DEX Contracts — Full Opcode Reference](#6-dex-contracts--full-opcode-reference)
 7. [LichenID Identity System](#7-lichenid-identity-system)
 8. [Achievement System (90+ Achievements)](#8-achievement-system-90-achievements)
@@ -192,12 +192,13 @@ WASM contracts are invoked via the Contract Program (`program_id = [0xFF; 32]`).
 
 ---
 
-## 5. Contract Surface (30 Contracts)
+## 5. Contract Surface (28 Contracts)
+
+### Native Coin
+
+**LICN** — Native coin (like ETH on Ethereum). Not a contract. Transferred via system program. Address sentinel: `[0u8; 32]`. 1 LICN = 1,000,000,000 spores.
 
 ### Token Contracts
-
-**lichencoin** — Native LICN token (SPL-like):
-`initialize`, `balance_of`, `transfer`, `mint`, `burn`, `approve`, `transfer_from`, `total_supply`
 
 **lusd_token** — Stablecoin (lUSD) with reserve attestation:
 `initialize`, `mint`, `burn`, `transfer`, `approve`, `transfer_from`, `attest_reserves`, `balance_of`, `allowance`, `total_supply`, `total_minted`, `total_burned`, `get_reserve_ratio`, `get_last_attestation_slot`, `get_attestation_count`, `get_epoch_remaining`, `get_transfer_count`, `emergency_pause`, `emergency_unpause`, `transfer_admin`

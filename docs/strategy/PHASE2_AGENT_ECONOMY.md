@@ -49,7 +49,7 @@ These 7 contracts form the **economy layer** — they answer: *"Can agents disco
 - Moss Storage → actual content storage backend
 - LichenID → creator verification and reputation
 - SporePay → streaming payments for subscription content
-- LichenCoin → tipping and micropayments
+- LICN (native coin) → tipping and micropayments
 
 **Key functions to implement**:
 - `publish` (content hash + metadata → on-chain record)

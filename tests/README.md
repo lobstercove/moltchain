@@ -311,11 +311,11 @@ node tests/e2e-volume.js
 | File | Tests | Description |
 |------|-------|-------------|
 | `e2e-dex-trading.py` | 157 | DEX trading scenarios (pairs, swaps, liquidity) |
-| `e2e-genesis-wiring.py` | 49 | Genesis block + initial state wiring for all 29 contracts |
+| `e2e-genesis-wiring.py` | 49 | Genesis block + initial state wiring for all 28 contracts |
 | `comprehensive-e2e.py` | 2 | Sequential comprehensive E2E |
 | `comprehensive-e2e-parallel.py` | — | Parallel version with asyncio |
 | `e2e-developer-lifecycle.py` | 9 | Full developer workflow E2E |
-| `contracts-write-e2e.py` | 176 | All 29 contracts — deploy, write, validate |
+| `contracts-write-e2e.py` | 176 | All 28 contracts — deploy, write, validate |
 | `e2e-websocket-upgrade.py` | — | WebSocket upgrade and reconnection |
 | `load-test-5k-traders.py` | — | Load test: 5000 concurrent traders |
 
@@ -415,7 +415,7 @@ const { loadFundedWallets, fundAccount, genKeypair, bs58encode, bs58decode, byte
 
 ## Contract Addresses
 
-All 29 contracts are discovered at runtime via `getAllSymbolRegistry`. Key symbols:
+All 28 contracts are discovered at runtime via `getAllSymbolRegistry`. Key symbols:
 
 | Symbol | Contract | Used By |
 |--------|----------|---------|

@@ -367,7 +367,7 @@ async def test_lichenid_attestations(conn):
 
 
 async def test_contract_deployment(conn):
-    """Verify all 29 contracts are deployed."""
+    """Verify all 28 contracts are deployed."""
     print("\n── Contract Deployment ──")
 
     registry = await rpc_call(conn, "getAllSymbolRegistry")

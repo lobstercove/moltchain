@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Lichen Parallel E2E Test — ALL 29 contracts tested CONCURRENTLY.
+Lichen Parallel E2E Test — ALL 28 contracts tested CONCURRENTLY.
 
 Same coverage as comprehensive-e2e.py but runs all contracts in parallel
 using asyncio.gather(). Each contract's tests still run sequentially
@@ -1223,7 +1223,7 @@ async def run_opcode_contract(
 async def main() -> int:
     t_start = time.time()
     print("\n" + "=" * 70)
-    print("  LICHEN PARALLEL E2E — ALL 29 CONTRACTS, ALL FUNCTIONS")
+    print("  LICHEN PARALLEL E2E — ALL 28 CONTRACTS, ALL FUNCTIONS")
     print(f"  RPC: {RPC_URL}  |  Timeout: {TX_CONFIRM_TIMEOUT}s  |  Concurrency: {MAX_CONCURRENCY}")
     print("=" * 70 + "\n")
 
@@ -1376,7 +1376,7 @@ async def main() -> int:
 
     # Discover contracts
     contracts = await discover_contracts(conn)
-    report("PASS" if len(contracts) == 29 else "FAIL", f"discovered {len(contracts)}/29 contracts")
+    report("PASS" if len(contracts) == 29 else "FAIL", f"discovered {len(contracts)}/28 contracts")
 
     if len(contracts) < 29:
         missing = set(SYMBOL_TO_DIR.values()) - set(contracts.keys())

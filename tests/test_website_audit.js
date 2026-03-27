@@ -297,12 +297,12 @@ assert(/value=["']local-testnet["']/.test(indexHtml), 'local-testnet option exis
 assert(/id=["']stat-block["']/.test(indexHtml), 'stat-block element exists');
 assert(/id=["']stat-validators["']/.test(indexHtml), 'stat-validators element exists');
 
-// All 29 contracts listed
+// All 28 contracts listed
 const contractCards = indexHtml.match(/class=["']contract-card/g) || [];
 assert(contractCards.length === 29, `found ${contractCards.length} contract cards (expected 29)`);
 
 // Ecosystem link
-assert(/Browse All 29 Contracts/.test(indexHtml), '"Browse All 29 Contracts" CTA exists');
+assert(/Browse All 28 Contracts/.test(indexHtml), '"Browse All 28 Contracts" CTA exists');
 
 // Roadmap phases
 assert(/Phase 1:.*Foundation/.test(indexHtml), 'Phase 1 roadmap exists');

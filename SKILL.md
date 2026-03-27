@@ -12,7 +12,7 @@
 2. Architecture
 3. Native Transaction Types
 4. Contract Call Format
-5. Contract Surface (29 Contracts)
+5. Contract Surface (28 Contracts)
 6. DEX Contracts — Full Opcode Reference
 7. LichenID Identity System
 8. Achievement System (90+ Achievements)
@@ -235,12 +235,13 @@ WASM contracts are invoked via the Contract Program (`program_id = [0xFF; 32]`).
 
 ---
 
-## 5. Contract Surface (29 Contracts)
+## 5. Contract Surface (28 Contracts)
+
+### Native Coin
+
+**LICN** — Native coin (like ETH on Ethereum). Not a contract. Transferred via system program's native transfer instruction. Address sentinel: `[0u8; 32]` (zero address). 1 LICN = 1,000,000,000 spores.
 
 ### Token Contracts
-
-**lichencoin** — LichenCoin token (SPL-like):
-`initialize`, `balance_of`, `transfer`, `mint`, `burn`, `approve`, `transfer_from`, `total_supply`
 
 **lusd_token** — Stablecoin (lUSD) with reserve attestation:
 `initialize`, `mint`, `burn`, `transfer`, `approve`, `transfer_from`, `attest_reserves`, `balance_of`, `allowance`, `total_supply`, `total_minted`, `total_burned`, `get_reserve_ratio`, `get_last_attestation_slot`, `get_attestation_count`, `get_epoch_remaining`, `get_transfer_count`, `emergency_pause`, `emergency_unpause`, `transfer_admin`
@@ -813,7 +814,7 @@ Achievements are auto-detected by `detect_and_award_achievements()` in the proce
 | 120 | Token Seller | Sell on SporePump |
 | 121 | Vault Depositor | Deposit to SporeVault |
 | 122 | Vault Withdrawer | Withdraw from SporeVault |
-| 123 | Token Contract User | Interact with LICHENCOIN |
+| 123 | Token Contract User | Interact with a token contract |
 
 ### Compute & Identity
 
@@ -1121,7 +1122,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `getLichenMarketStats` | listing_count, sale_volume |
 | `getLichenAuctionStats` | auction_count, total_volume |
 | `getLichenPunksStats` | total_minted, transfer_count |
-| `getMusdStats` / `getWethStats` / `getWsolStats` | supply, minted, burned |
+| `getLusdStats` / `getWethStats` / `getWsolStats` | supply, minted, burned |
 | `getSporeVaultStats` | total_assets, strategy_count |
 | `getLichenBridgeStats` | validator_count, locked_amount |
 | `getLichenDaoStats` | proposal_count |
@@ -2192,7 +2193,7 @@ lichen call <address> <function_name> [args]
 cargo build --release                                    # Full workspace
 cargo build --release -p lichen-validator              # Single crate
 rustup target add wasm32-unknown-unknown                  # WASM target
-bash scripts/build-all-contracts.sh                       # All 29 contracts
+bash scripts/build-all-contracts.sh                       # All 28 contracts
 ```
 
 ### Test Suites

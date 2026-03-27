@@ -1033,7 +1033,7 @@ Stats for LichenPunks NFT collection contract.
 
 **Params**: None · **Returns**: `{ "total_supply": ..., "minted": ..., "floor_price": ... }`
 
-#### `getMusdStats`
+#### `getLusdStats` (alias: `getMusdStats`)
 Stats for lUSD stablecoin contract.
 
 **Params**: None · **Returns**: `{ "total_supply": ..., "holders": ... }`

@@ -206,7 +206,7 @@ Sections:
 All 16 contracts documented:
 | Contract | Category | Functions |
 |----------|----------|-----------|
-| lichencoin | Token | 9 |
+| lusd_token | Stablecoin | 20 |
 | lichendao | Governance | 6 |
 | lichenswap | DEX | 10 |
 | lichenid | Identity | 34 |
