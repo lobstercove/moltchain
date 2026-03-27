@@ -144,7 +144,13 @@ Instruction {
 |-----------|-------|
 | Total supply | 500,000,000 LICN genesis + inflationary minting (4% initial, 0.15% floor) |
 | Base fee | 0.001 LICN (1,000,000 spores) |
+| Fee exemption | Protocol DEX contracts (dex_core, dex_amm, dex_router, dex_margin, dex_rewards, dex_governance, dex_analytics, lichenswap) are exempt from tx base fees — enables zero-LICN users to trade after bridging |
 | Fee distribution | 40% burn, 30% block producer, 10% voters, 10% treasury, 10% community |
+| DEX taker fee | 5 bps (0.05%) on notional, charged in quote token at fill |
+| DEX maker rebate | −1 bps (0.01%) on notional, accrued and claimable via `claim_rebate` |
+| DEX fee split | 60% protocol treasury, 20% LPs, 20% stakers |
+| AMM swap fee | 1–100 bps per pool (fee tier), deducted from input token |
+| AMM protocol fee | Configurable % of swap fee → protocol treasury (set at genesis via `set_pool_protocol_fee`) |
 | Contract deploy fee | 25 LICN |
 | Contract upgrade fee | 10 LICN |
 | NFT mint fee | 0.5 LICN |
@@ -326,7 +332,7 @@ Note: Shield/unshield/transfer also operate as native instruction types 23/24/25
 
 All 7 DEX contracts use binary opcode dispatch via a single `call(args_ptr, args_len)` WASM export. First byte = opcode.
 
-### dex_core — Central Limit Order Book (31 opcodes)
+### dex_core — Central Limit Order Book (34 opcodes)
 
 Order types: Limit(0), Market(1), StopLimit(2), PostOnly(3). ReduceOnly flag: 0x80.
 Fee defaults: maker −1bps rebate, taker 5bps. Distribution: 60% protocol / 20% LPs / 20% stakers.
@@ -364,8 +370,11 @@ Fee defaults: maker −1bps rebate, taker 5bps. Distribution: 60% protocol / 20%
 | 0x1C | `set_analytics_address` | `[caller 32B][analytics_addr 32B]` |
 | 0x1D | `check_triggers` | `[pair_id 8B][current_price 8B]` |
 | 0x1E | `set_margin_address` | `[caller 32B][margin_addr 32B]` |
+| 0x1F | `get_check_triggers_result` | `[pair_id 8B]` |
+| 0x20 | `set_fee_treasury_address` | `[caller 32B][treasury 32B]` |
+| 0x21 | `claim_rebate` | `[caller 32B][pair_id 8B]` |
 
-### dex_amm — Concentrated Liquidity AMM (20 opcodes)
+### dex_amm — Concentrated Liquidity AMM (22 opcodes)
 
 Uniswap V3-style with Q32.32 fixed-point sqrt prices. Fee tiers: 1bps (tick 1), 5bps (tick 10), 30bps (tick 60), 100bps (tick 200). MAX_TICK: ±443,636.
 
@@ -391,6 +400,8 @@ Uniswap V3-style with Q32.32 fixed-point sqrt prices. Fee tiers: 1bps (tick 1), 
 | 0x11 | `get_swap_count` | `[]` |
 | 0x12 | `get_total_fees_collected` | `[]` |
 | 0x13 | `get_amm_stats` | `[]` |
+| 0x14 | `set_fee_treasury_address` | `[caller 32B][treasury 32B]` |
+| 0x15 | `collect_protocol_fees` | `[caller 32B][pool_id 8B]` |
 
 ### dex_margin — Margin Trading (29 opcodes)
 

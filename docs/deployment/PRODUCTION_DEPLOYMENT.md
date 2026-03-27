@@ -469,19 +469,22 @@ On first boot with no existing state, the validator:
 3. Saves `genesis-wallet.json` in the state directory
 4. Creates the canonical 500M LICN genesis distribution across the configured treasury wallets
 5. Registers itself as the initial validator
-6. **Auto-deploys all 30 genesis contracts** from the `contracts/` directory
+6. **Auto-deploys all 29 genesis contracts** from the `contracts/` directory
+7. **Wires DEX fee treasury** — sets `dex_core` and `dex_amm` fee treasury addresses to the `community_treasury` wallet (auto-discovered from genesis keypairs). No manual intervention needed.
+8. **Registers fee-exempt contracts** — protocol DEX contracts (dex_core, dex_amm, dex_router, dex_margin, dex_rewards, dex_governance, dex_analytics, lichenswap) are registered as fee-exempt so users with zero LICN can place orders after bridging external assets.
 
 Step 6 is important — the validator binary includes a `genesis_auto_deploy` function that reads every compiled `.wasm` from the `contracts/` directory and deploys them into chain state on the first block. This means **no separate deploy script is needed**. The full catalog:
 
 | Category | Contracts deployed |
 |---|---|
 | Core token | LICN (LichenCoin) |
-| Wrapped tokens | LUSD, WSOL, WETH |
+| Wrapped tokens | lUSD, wSOL, wETH, wBNB |
 | DEX | DEX Core, AMM, Router, Margin, Rewards, Governance, Analytics |
 | DeFi | LichenSwap, LichenBridge, ThallLend |
 | Marketplace | LichenMarket, LichenAuction, LichenOracle, LichenDAO |
 | NFT / Identity | LichenPunks, LichenID |
 | Infrastructure | SporePay, SporePump, SporeVault, BountyBoard, Compute Market, Moss Storage |
+| Privacy | Shielded Pool, Prediction Market |
 
 Contract addresses are derived deterministically: `SHA-256(deployer_pubkey + dir_name + wasm_bytes)`. The deploy is **idempotent** — if contracts already exist in state, they're skipped.
 
