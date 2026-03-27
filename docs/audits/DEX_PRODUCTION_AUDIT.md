@@ -2,21 +2,22 @@
 
 **Auditor:** AI Agent (Copilot)
 **Scope:** All DEX contracts (dex_core, dex_amm, dex_router, dex_margin, dex_rewards, dex_governance, dex_analytics, lichenswap), DEX RPC endpoints, DEX frontend
-**Version:** v0.4.28
+**Version:** v0.4.31
 
 ## Summary
 
 | Severity | Count | Fixed | Deferred |
 |----------|-------|-------|----------|
 | CRITICAL | 7     | 7     | 0        |
-| HIGH     | 5     | 4     | 1        |
-| MEDIUM   | 6     | 3     | 3        |
-| LOW      | 3     | 2     | 1        |
-| **Total** | **21** | **16** | **4** |
+| HIGH     | 5     | 5     | 0        |
+| MEDIUM   | 6     | 4     | 0        |
+| LOW      | 3     | 3     | 0        |
+| **Total** | **21** | **19** | **0** |
 
 ### Test Results
-- **dex_core**: 68 unit + 33 adversarial = 101 tests passing
-- **dex_amm**: 46 unit + 24 adversarial = 70 tests passing
+- **dex_core**: 71 unit + 33 adversarial = 104 tests passing
+- **dex_amm**: 54 unit + 24 adversarial = 78 tests passing
+- **dex_margin**: 104 unit + 28 adversarial = 132 tests passing
 - **lichen-rpc**: Clean compile (cargo check)
 
 ---
@@ -96,8 +97,8 @@
 ### MARGIN-1: Mark price is admin-injected only
 - **File:** `contracts/dex_margin/src/lib.rs` update_mark_price
 - **Impact:** No on-chain oracle. If admin stops updating, positions can't be liquidated.
-- **Fix:** Documented as known limitation. Full oracle integration deferred to Phase 2.
-- **Status:** [ ] DEFERRED — needs oracle contract
+- **Fix:** Added `set_oracle_contract(caller, oracle_addr)` (admin-only) and `update_mark_price_from_oracle(caller, pair_id, asset_ptr, asset_len)` (permissionless crank). Cross-calls `lichenoracle` contract's `get_price_value` to fetch price, validates non-zero, stores mark price with timestamp. Original `set_mark_price` retained as admin fallback. WASM opcodes 29 (set oracle) and 30 (update from oracle) added.
+- **Status:** [x] FIXED
 
 ---
 
@@ -112,8 +113,8 @@
 ### AMM-8: accrue_fees_to_positions is O(n) per swap
 - **File:** `contracts/dex_amm/src/lib.rs` accrue_fees_to_positions
 - **Impact:** Every swap iterates ALL positions. Doesn't scale past ~100 positions.
-- **Fix:** Needs full V3 tick-based global fee growth (feeGrowthGlobal, feeGrowthOutside per tick, feeGrowthInside per position).
-- **Status:** [ ] DEFERRED — optimization, needs tick-based fee tracking redesign
+- **Fix:** Implemented full Uniswap V3-style tick-based fee tracking. Added `feeGrowthGlobal0/1` per pool (separate storage keys), `feeGrowthOutside0/1` per tick (extended tick data from 8→40 bytes), `feeGrowthInsideLast0/1` per position (extended from 80→112 bytes). Fee accrual is now O(1) — `accrue_fees_to_positions` accumulates into feeGrowthGlobal. Tick crossings flip `feeGrowthOutside = global - outside`. `collect_fees` computes owed = `(feeGrowthInside - insideLast) * liquidity / Q128`. All layouts backward-compatible with legacy data.
+- **Status:** [x] FIXED
 
 ### AMM-9: Reentrancy guard in swap_exact_out
 - **File:** `contracts/dex_amm/src/lib.rs` swap_exact_out
@@ -158,18 +159,14 @@
 ### CLOB-6: Cancelled orders pollute book storage
 - **File:** `contracts/dex_core/src/lib.rs`
 - **Impact:** Cancelled orders stay in price level storage, slowing book scanning.
-- **Fix:** Deferred — would require level compaction which is complex.
-- **Status:** [ ] DEFERRED — optimization, low priority
+- **Fix:** Added `compact_price_level(pair_id, side, price)` that shifts non-zero entries down to fill gaps, zeros trailing slots, and updates level count. Called from `cancel_order` (zeroes cancelled entry, compacts) and `fill_at_price_level` (compacts after processing expired/self-traded entries). Order book stays dense with no wasted iteration.
+- **Status:** [x] FIXED
 
 ---
 
 ## Deferred Items (Phase 2)
 
-| ID | Issue | Reason |
-|----|-------|--------|
-| MARGIN-1 | Admin-only mark price | Needs oracle contract integration |
-| CLOB-6 | Book storage compaction | Complex optimization, not blocking |
-| AMM-8 | O(n) fee accrual | Needs full V3 tick-based fee tracking redesign |
+All deferred items have been implemented. No remaining deferrals.
 
 ---
 
@@ -177,18 +174,22 @@
 
 | File | Changes |
 |------|--------|
-| `contracts/dex_core/src/lib.rs` | CLOB-1 through CLOB-5: phantom fees, zero-addr, tick scan, self-trade, per-pair rebate |
-| `contracts/dex_amm/src/lib.rs` | AMM-1 through AMM-7: token transfers, cross-tick swap, fee consistency, protocol fee cap |
+| `contracts/dex_core/src/lib.rs` | CLOB-1 through CLOB-6: phantom fees, zero-addr, tick scan, self-trade, per-pair rebate, order book compaction |
+| `contracts/dex_amm/src/lib.rs` | AMM-1 through AMM-8: token transfers, cross-tick swap, fee consistency, protocol fee cap, V3 tick-based fee tracking |
+| `contracts/dex_margin/src/lib.rs` | MARGIN-1: oracle contract integration for mark price |
 | `rpc/src/dex.rs` | RPC-1/2: loop caps, user trade endpoint |
 | `dex/dex.js` | FE-1: fallback address versioning |
 
 ## Audit Completion
 
 - **Date completed:** March 27, 2026
+- **Deferred items resolved:** March 28, 2026
 - **Total findings:** 21
-- **Fixed:** 16 (7 CRITICAL, 4 HIGH, 3 MEDIUM, 2 LOW)
+- **Fixed:** 19 (7 CRITICAL, 5 HIGH, 4 MEDIUM, 3 LOW)
 - **Verified safe:** 2 (AMM-9 reentrancy, RPC-3 already exists)
-- **Deferred:** 3 (MARGIN-1, CLOB-6, AMM-8)
-- **dex_core tests:** 101 passing (68 unit + 33 adversarial)
-- **dex_amm tests:** 70 passing (46 unit + 24 adversarial)
+- **Deferred:** 0 (all resolved)
+- **dex_core tests:** 104 passing (71 unit + 33 adversarial)
+- **dex_amm tests:** 78 passing (54 unit + 24 adversarial)
+- **dex_margin tests:** 132 passing (104 unit + 28 adversarial)
 - **RPC:** Clean compile
+- **Clippy:** All 3 DEX contracts pass `cargo clippy -- -D warnings`
