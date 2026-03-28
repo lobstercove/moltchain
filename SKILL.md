@@ -595,7 +595,7 @@ LichenID is the decentralized identity layer. 51 WASM exports covering identity,
 | 9 | General |
 | 10 | Personal |
 
-### .LICN Name System
+### .lichen Name System
 
 | Name Length | Cost | Mechanism |
 |-------------|------|-----------|
