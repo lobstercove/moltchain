@@ -1,9 +1,19 @@
 #!/bin/bash
 # Comprehensive RPC Endpoint Test
-# Tests all 24+ RPC methods against live validator
+# Prefer the full JavaScript inventory suite when Node is available, and keep
+# the legacy shell smoke path as a fallback for minimal environments.
 
-set -e
-RPC_URL="http://localhost:8899"
+set -eu
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+if command -v node >/dev/null 2>&1; then
+    exec node "$ROOT_DIR/tests/e2e-rpc-coverage.js"
+fi
+
+set +o pipefail
+
+RPC_URL="${RPC_URL:-http://localhost:8899}"
 VALIDATOR_ADDR="B21dUmYNBTHCBgdemEXYRu6voEsECC4fD77D94ienMcN"
 GENESIS_ADDR="GKopYobrUh7L9mDGBVMCEFgah3q8u5YFBHyFN5Qv9x2t"
 RESULTS_FILE="/tmp/rpc-test-results.txt"
@@ -19,19 +29,22 @@ test_rpc() {
     local name="$1"
     local method="$2"
     local params="$3"
+    local result preview
     
     echo -n "Testing: $name... "
-    local result=$(curl -s -X POST $RPC_URL \
+    result=$(curl -s -X POST "$RPC_URL" \
         -H "Content-Type: application/json" \
         -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"$method\",\"params\":$params}")
     
     if echo "$result" | jq -e '.result' > /dev/null 2>&1; then
+        preview="$(printf '%s' "$result" | jq -c '.result' | cut -c1-100 || true)"
         echo "✅ PASS" | tee -a $RESULTS_FILE
-        echo "   Response: $(echo $result | jq -c '.result' | head -c 100)" | tee -a $RESULTS_FILE
+        echo "   Response: $preview" | tee -a $RESULTS_FILE
         PASS=$((PASS + 1))
     elif echo "$result" | jq -e '.error' > /dev/null 2>&1; then
         echo "⚠️  ERROR" | tee -a $RESULTS_FILE
-        echo "   Error: $(echo $result | jq -c '.error.message')" | tee -a $RESULTS_FILE
+        preview="$(printf '%s' "$result" | jq -c '.error.message' || true)"
+        echo "   Error: $preview" | tee -a $RESULTS_FILE
         FAIL=$((FAIL + 1))
     else
         echo "❌ FAIL - Invalid response" | tee -a $RESULTS_FILE

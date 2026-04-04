@@ -168,19 +168,19 @@ else
 
     # ── Start validators ─────────────────────────────────────────
     info "Starting V1 (leader) on ports 9100/10099..."
-    HOME="$HOME_V1" LICHEN_SIGNER_BIND=0.0.0.0:9301 RUST_LOG=warn "$BIN" --network testnet --dev-mode --p2p-port 9100 --rpc-port 10099 --ws-port 10199 \
+    HOME="$HOME_V1" LICHEN_SIGNER_BIND=127.0.0.1:9301 RUST_LOG=warn "$BIN" --network testnet --dev-mode --p2p-port 9100 --rpc-port 10099 --ws-port 10199 \
         --db-path "$DB_V1" --no-watchdog > "$LOG_V1" 2>&1 &
     V1PID=$!
     sleep 8
 
     info "Starting V2 on ports 9102/10101..."
-    HOME="$HOME_V2" LICHEN_SIGNER_BIND=0.0.0.0:9302 RUST_LOG=warn "$BIN" --network testnet --dev-mode --p2p-port 9102 --rpc-port 10101 --ws-port 10201 \
+    HOME="$HOME_V2" LICHEN_SIGNER_BIND=127.0.0.1:9302 RUST_LOG=warn "$BIN" --network testnet --dev-mode --p2p-port 9102 --rpc-port 10101 --ws-port 10201 \
         --db-path "$DB_V2" --bootstrap-peers 127.0.0.1:9100 --no-watchdog > "$LOG_V2" 2>&1 &
     V2PID=$!
     sleep 6
 
     info "Starting V3 on ports 9104/10103..."
-    HOME="$HOME_V3" LICHEN_SIGNER_BIND=0.0.0.0:9303 RUST_LOG=warn "$BIN" --network testnet --dev-mode --p2p-port 9104 --rpc-port 10103 --ws-port 10203 \
+    HOME="$HOME_V3" LICHEN_SIGNER_BIND=127.0.0.1:9303 RUST_LOG=warn "$BIN" --network testnet --dev-mode --p2p-port 9104 --rpc-port 10103 --ws-port 10203 \
         --db-path "$DB_V3" --bootstrap-peers 127.0.0.1:9100 --no-watchdog > "$LOG_V3" 2>&1 &
     V3PID=$!
     sleep 6

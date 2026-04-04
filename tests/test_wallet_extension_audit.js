@@ -35,6 +35,8 @@ const homeSrc = fs.readFileSync(path.join(extRoot, 'pages', 'home.js'), 'utf8');
 const homeHtmlSrc = fs.readFileSync(path.join(extRoot, 'pages', 'home.html'), 'utf8');
 const txServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'tx-service.js'), 'utf8');
 const bridgeServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'bridge-service.js'), 'utf8');
+const identityServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'identity-service.js'), 'utf8');
+const rpcServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'rpc-service.js'), 'utf8');
 const providerRouterSrc = fs.readFileSync(path.join(extRoot, 'core', 'provider-router.js'), 'utf8');
 const wsServiceSrc = fs.readFileSync(path.join(extRoot, 'core', 'ws-service.js'), 'utf8');
 const serviceWorkerSrc = fs.readFileSync(path.join(extRoot, 'background', 'service-worker.js'), 'utf8');
@@ -375,6 +377,45 @@ test('E-9.2 full.js creates Load More button with addEventListener', () => {
 test('E-9.3 full.js creates Load More button via DOM API', () => {
   assert.ok(fullSrc.includes("document.createElement('button')") || fullSrc.includes('document.createElement("button")'),
     'createElement not used for Load More button');
+});
+
+// ── E-10: Trusted RPC split for critical extension flows ──
+console.log('\n── E-10: Trusted RPC Split For Critical Flows ──');
+
+test('E-10.1 rpc-service exposes getTrustedRpcEndpoint', () => {
+  assert.ok(rpcServiceSrc.includes('export function getTrustedRpcEndpoint('), 'getTrustedRpcEndpoint helper not found');
+  assert.ok(rpcServiceSrc.includes('return getTrustedRpcEndpoint(network);'), 'getRpcEndpoint should fall back through getTrustedRpcEndpoint');
+});
+
+test('E-10.2 bridge-service pins bridge control-plane RPC to trusted endpoints', () => {
+  assert.ok(bridgeServiceSrc.includes('function getTrustedBridgeRpc(network)'), 'bridge-service should define getTrustedBridgeRpc');
+  assert.ok(bridgeServiceSrc.includes("new LichenRPC(getTrustedRpcEndpoint(network))"), 'bridge-service should build bridge RPC from trusted endpoint');
+  assert.ok(!bridgeServiceSrc.includes('await getConfiguredRpcEndpoint(network)'), 'bridge-service should not use configured custom RPC for bridge control-plane calls');
+  assert.ok(bridgeServiceSrc.includes('buildBridgeAccessMessage('), 'bridge-service should build a signed bridge access message');
+  assert.ok(bridgeServiceSrc.includes('Wallet password required for bridge authorization'), 'bridge-service should require a wallet password before signing bridge access');
+  assert.ok(bridgeServiceSrc.includes('BRIDGE_CACHE_KEY'), 'bridge-service should maintain a local bridge deposit cache');
+  assert.ok(!bridgeServiceSrc.includes("getBridgeDepositsByRecipient"), 'bridge-service should not rely on public recipient-history bridge RPC');
+});
+
+test('E-10.3 identity-service pins LichenID resolution to trusted metadata RPC', () => {
+  assert.ok(identityServiceSrc.includes('getTrustedRpcEndpoint(network)'), 'identity-service should use trusted RPC endpoint');
+  assert.ok(identityServiceSrc.includes("trustedRpc.call('getSymbolRegistry'"), 'identity-service should resolve symbol registry over trusted RPC');
+  assert.ok(identityServiceSrc.includes("trustedRpc.call('getAllContracts'"), 'identity-service should fall back to trusted contract list lookup');
+});
+
+test('E-10.4 popup bridge flow uses authenticated bridge-service helpers', () => {
+  assert.ok(popupSrc.includes('hasBridgeAccessAuth(wallet)'), 'popup bridge flow should check for existing bridge auth');
+  assert.ok(popupSrc.includes('requestBridgeDepositAddress({'), 'popup bridge flow should request deposits through bridge-service');
+  assert.ok(popupSrc.includes('getBridgeDepositStatus({'), 'popup bridge status polling should use bridge-service');
+  assert.ok(popupSrc.includes('Wallet password (for bridge authorization):'), 'popup bridge flow should prompt for wallet password before bridge auth');
+  assert.ok(!popupSrc.includes("rpc.call('createBridgeDeposit'"), 'popup should not call createBridgeDeposit directly');
+  assert.ok(!popupSrc.includes("rpc.call('getBridgeDeposit'"), 'popup should not call getBridgeDeposit directly');
+});
+
+test('E-10.5 extension settings surfaces explain the trusted RPC split', () => {
+  assert.ok(settingsSrc.includes('trusted endpoints'), 'settings page status should mention trusted endpoints');
+  assert.ok(fullSrc.includes('trusted endpoints'), 'full-page settings save should mention trusted endpoints');
+  assert.ok(popupSrc.includes('trusted endpoints'), 'popup settings save should mention trusted endpoints');
 });
 
 // ── Additional cross-cutting tests ──

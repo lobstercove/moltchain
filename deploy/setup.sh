@@ -27,11 +27,178 @@ set -euo pipefail
 
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="/etc/lichen"
+SECRETS_DIR="$CONFIG_DIR/secrets"
+KEY_HIERARCHY_FILE="$CONFIG_DIR/key-hierarchy.md"
+DRILL_REGISTER_FILE="$CONFIG_DIR/drill-register.md"
 DATA_DIR="/var/lib/lichen"
 LOG_DIR="/var/log/lichen"
 SHARE_DIR="/usr/local/share/lichen"
 USER="lichen"
 GROUP="lichen"
+
+read_env_value() {
+    local env_file="$1"
+    local key="$2"
+
+    if [ ! -f "$env_file" ]; then
+        return 1
+    fi
+
+    grep "^${key}=" "$env_file" | tail -1 | cut -d= -f2- || true
+}
+
+upsert_env_value() {
+    local env_file="$1"
+    local key="$2"
+    local value="$3"
+
+    if grep -q "^${key}=" "$env_file"; then
+        sed -i "s|^${key}=.*|${key}=${value}|" "$env_file"
+    else
+        printf '%s=%s\n' "$key" "$value" >> "$env_file"
+    fi
+}
+
+delete_env_value() {
+    local env_file="$1"
+    local key="$2"
+    sed -i "/^${key}=/d" "$env_file"
+}
+
+migrate_inline_secret_to_file() {
+    local env_file="$1"
+    local inline_key="$2"
+    local file_key="$3"
+    local secret_path="$4"
+    local inline_value=""
+
+    inline_value="$(read_env_value "$env_file" "$inline_key" || true)"
+    if [ -n "$inline_value" ] && [ ! -f "$secret_path" ]; then
+        printf '%s\n' "$inline_value" > "$secret_path"
+        chmod 600 "$secret_path"
+        chown root:root "$secret_path"
+        echo "   ✅ Migrated $inline_key into $secret_path"
+    fi
+
+    if [ -n "$inline_value" ]; then
+        delete_env_value "$env_file" "$inline_key"
+    fi
+    upsert_env_value "$env_file" "$file_key" "$secret_path"
+}
+
+write_key_hierarchy_template() {
+    if [ -f "$KEY_HIERARCHY_FILE" ]; then
+        return 0
+    fi
+
+    cat > "$KEY_HIERARCHY_FILE" <<EOF
+# Lichen key hierarchy inventory
+
+Complete this file before production cutover. Update it whenever ownership,
+storage, rotation cadence, revocation procedure, or verification evidence changes.
+
+Production rules:
+
+- release signing stays offline and never lands on CI, VPS hosts, or browser-exposed machines
+- contract governance, treasury execution, validator identity, bridge committee,
+  oracle committee, and operator admin actions stay on separate roots
+- treasury-grade authorities should use hardware-backed, HSM-backed, MPC, or
+  governed-threshold custody rather than inline env secrets
+
+| Role | Implementation / storage | Owner | Backup location | Rotation cadence | Revocation path | Last verification date |
+| --- | --- | --- | --- | --- | --- | --- |
+| Release signing | Offline ML-DSA key used for SHA256SUMS.sig | <owner> | <backup location> | <cadence> | Update trusted signer in validator/src/updater.rs and rotate offline key | <yyyy-mm-dd> |
+| Contract governance | Governed signer set / hardware-backed threshold custody | <owner> | <backup location> | <cadence> | Rotate governance signer set through proposal flow | <yyyy-mm-dd> |
+| Treasury execution | $SECRETS_DIR/custody-master-seed-<net>.txt or threshold executor | <owner> | <backup location> | <cadence> | Sweep treasury authority and revoke prior custody root | <yyyy-mm-dd> |
+| Deposit derivation / sweeps | $SECRETS_DIR/custody-deposit-seed-<net>.txt on a distinct root | <owner> | <backup location> | <cadence> | Re-derive deposit path and revoke compromised derivation root | <yyyy-mm-dd> |
+| Validator identity | /var/lib/lichen/state-<net>/home validator identity | <owner> | <backup location> | <cadence> | Replace validator identity and remove old validator from active set | <yyyy-mm-dd> |
+| Bridge committee membership | Dedicated bridge operator key, separate from treasury and validator identity | <owner> | <backup location> | <cadence> | Remove bridge operator via governance flow and rotate committee secret | <yyyy-mm-dd> |
+| Oracle committee membership | Dedicated feeder / attester key, separate from governance and treasury | <owner> | <backup location> | <cadence> | Remove oracle operator via governance flow and rotate oracle secret | <yyyy-mm-dd> |
+| Operator admin actions | Per-environment admin token / control-plane credential | <owner> | <backup location> | <cadence> | Rotate admin secret and invalidate dashboards / scripts | <yyyy-mm-dd> |
+EOF
+
+    chmod 600 "$KEY_HIERARCHY_FILE"
+    chown root:root "$KEY_HIERARCHY_FILE"
+    echo "✅ Created key hierarchy inventory template → $KEY_HIERARCHY_FILE"
+}
+
+write_drill_register_template() {
+    if [ -f "$DRILL_REGISTER_FILE" ]; then
+        return 0
+    fi
+
+    cat > "$DRILL_REGISTER_FILE" <<EOF
+# Lichen rotation and restore drill register
+
+Complete this file before production cutover and update it after every exercise.
+
+| Drill | Frequency | Owner | Preconditions | Evidence required | Pass criteria | Last run | Next due |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Custody root rotation drill | Quarterly | <owner> | Replacement custody root or threshold executor ready | rotation log + health checks | new custody root active, old root revoked | <yyyy-mm-dd> | <yyyy-mm-dd> |
+| Validator key rotation drill | Quarterly | <owner> | Replacement validator identity prepared | validator replacement log | new validator identity active, old one removed | <yyyy-mm-dd> | <yyyy-mm-dd> |
+| Admin token rotation drill | Monthly | <owner> | admin clients inventoried | invalidation proof + updated token record | old token rejected everywhere | <yyyy-mm-dd> | <yyyy-mm-dd> |
+| Offline backup restore drill | Quarterly | <owner> | clean restore host + backup media available | restore transcript + checksums | backup restores without missing files | <yyyy-mm-dd> | <yyyy-mm-dd> |
+| Contract-governance key recovery drill | Semi-annual | <owner> | signer replacement plan approved | proposal IDs + signer recovery proof | governance survives signer loss | <yyyy-mm-dd> | <yyyy-mm-dd> |
+| Incident tabletop: signer compromise | Quarterly | <owner> | incident contacts + revocation plan current | timeline + containment notes | containment path works without ad hoc steps | <yyyy-mm-dd> | <yyyy-mm-dd> |
+| Incident tabletop: frontend compromise | Quarterly | <owner> | frontend purge + status comms plan current | timeline + purge notes | compromised frontend can be isolated quickly | <yyyy-mm-dd> | <yyyy-mm-dd> |
+EOF
+
+    chmod 600 "$DRILL_REGISTER_FILE"
+    chown root:root "$DRILL_REGISTER_FILE"
+    echo "✅ Created drill register template → $DRILL_REGISTER_FILE"
+}
+
+write_incident_status_template() {
+        local status_file="$1"
+        local network="$2"
+
+        if [ -f "$status_file" ]; then
+                chmod 640 "$status_file"
+                chown root:"$GROUP" "$status_file"
+                echo "   ✅ Incident status manifest already exists → $status_file"
+                return 0
+        fi
+
+        cat > "$status_file" <<EOF
+{
+    "schema_version": 1,
+    "source": "operator",
+    "network": "$network",
+    "updated_at": null,
+    "active_since": null,
+    "mode": "normal",
+    "severity": "info",
+    "banner_enabled": false,
+    "headline": "All systems operational",
+    "summary": "No incident response mode is active.",
+    "customer_message": "Deposits, bridge access, and wallet usage are operating normally.",
+    "status_page_url": null,
+    "actions": [],
+    "components": {
+        "bridge": {
+            "status": "operational",
+            "message": "Bridge deposits and mints are operating normally."
+        },
+        "contracts": {
+            "status": "operational",
+            "message": "No contract circuit breakers are active."
+        },
+        "deposits": {
+            "status": "operational",
+            "message": "Deposits and withdrawals are operating normally."
+        },
+        "wallet": {
+            "status": "operational",
+            "message": "Local wallet access remains available."
+        }
+    }
+}
+EOF
+
+        chmod 640 "$status_file"
+        chown root:"$GROUP" "$status_file"
+        echo "   ✅ Created incident status manifest → $status_file"
+}
 
 # Parse network(s)
 NETWORKS=()
@@ -66,8 +233,12 @@ else
 fi
 
 # ── 2. Create directories ──
-mkdir -p "$CONFIG_DIR" "$DATA_DIR" "$LOG_DIR" "$SHARE_DIR"
+mkdir -p "$CONFIG_DIR" "$SECRETS_DIR" "$DATA_DIR" "$LOG_DIR" "$SHARE_DIR"
 chown "$USER":"$GROUP" "$DATA_DIR" "$LOG_DIR"
+chmod 700 "$SECRETS_DIR"
+chown root:root "$SECRETS_DIR"
+write_key_hierarchy_template
+write_drill_register_template
 echo "✅ Directories created"
 
 # ── 3. Copy binaries ──
@@ -126,11 +297,21 @@ for net in "${NETWORKS[@]}"; do
 
     ENV_FILE="$CONFIG_DIR/env-${net}"
     SIGNER_AUTH_TOKEN=""
+    INCIDENT_STATUS_FILE=""
+    SIGNED_METADATA_MANIFEST_FILE=""
     if [ -f "$ENV_FILE" ]; then
-        SIGNER_AUTH_TOKEN=$(grep '^LICHEN_SIGNER_AUTH_TOKEN=' "$ENV_FILE" | tail -1 | cut -d= -f2-)
+        SIGNER_AUTH_TOKEN="$(read_env_value "$ENV_FILE" "LICHEN_SIGNER_AUTH_TOKEN")"
+        INCIDENT_STATUS_FILE="$(read_env_value "$ENV_FILE" "LICHEN_INCIDENT_STATUS_FILE")"
+        SIGNED_METADATA_MANIFEST_FILE="$(read_env_value "$ENV_FILE" "LICHEN_SIGNED_METADATA_MANIFEST_FILE")"
     fi
     if [ -z "$SIGNER_AUTH_TOKEN" ]; then
         SIGNER_AUTH_TOKEN=$(openssl rand -hex 32 2>/dev/null || head -c 64 /dev/urandom | xxd -p -c 64)
+    fi
+    if [ -z "$INCIDENT_STATUS_FILE" ]; then
+        INCIDENT_STATUS_FILE="$CONFIG_DIR/incident-status-${net}.json"
+    fi
+    if [ -z "$SIGNED_METADATA_MANIFEST_FILE" ]; then
+        SIGNED_METADATA_MANIFEST_FILE="$CONFIG_DIR/signed-metadata-manifest-${net}.json"
     fi
     cat > "$ENV_FILE" <<EOF
 # Lichen $net environment — auto-generated by deploy/setup.sh
@@ -148,12 +329,18 @@ RUST_LOG=info
 # Set to comma-separated host:port pairs for joining (non-genesis) nodes.
 # Leave empty on the genesis-producing node.
 LICHEN_BOOTSTRAP_PEERS=
-# Extra CLI args passed to the validator (legacy — prefer LICHEN_BOOTSTRAP_PEERS)
-LICHEN_EXTRA_ARGS=
+LICHEN_INCIDENT_STATUS_FILE=$INCIDENT_STATUS_FILE
+LICHEN_SIGNED_METADATA_MANIFEST_FILE=$SIGNED_METADATA_MANIFEST_FILE
+# Extra CLI args passed to the validator (legacy — prefer LICHEN_BOOTSTRAP_PEERS).
+# Production default stays fail-closed with auto-update disabled until signed
+# canary rollout is proven.
+LICHEN_EXTRA_ARGS=--auto-update=off
 # LICHEN_ADMIN_TOKEN=your-secret-token-here
 EOF
     chmod 600 "$ENV_FILE"
     echo "   ✅ Created $ENV_FILE"
+
+    write_incident_status_template "$INCIDENT_STATUS_FILE" "$net"
 
     # Create network-specific state dir
     mkdir -p "$DATA_DIR/state-${net}"
@@ -203,25 +390,32 @@ EOF
     CUSTODY_RPC_URL="http://127.0.0.1:$RPC_PORT"
     CUSTODY_PORT=9105
     [ "$net" = "mainnet" ] && CUSTODY_ENV_NAME="custody-env-mainnet" && CUSTODY_PORT=9106
+    MASTER_SEED_FILE="$SECRETS_DIR/custody-master-seed-$net.txt"
+    DEPOSIT_SEED_FILE="$SECRETS_DIR/custody-deposit-seed-$net.txt"
     if [ ! -f "$CONFIG_DIR/$CUSTODY_ENV_NAME" ]; then
         CUSTODY_AUTH_TOKEN=$(openssl rand -hex 32 2>/dev/null || head -c 64 /dev/urandom | xxd -p -c 64)
-        CUSTODY_SEED=$(openssl rand -hex 32 2>/dev/null || head -c 64 /dev/urandom | xxd -p -c 64)
         cat > "$CONFIG_DIR/$CUSTODY_ENV_NAME" <<CUSTEOF
 # Lichen Custody Service — $net (auto-generated by deploy/setup.sh)
+# Provision the file-backed seed paths below out-of-band from offline or
+# hardware-backed custody before starting the service. Do not inline production
+# treasury-grade seeds in this env file.
 CUSTODY_DB_PATH=$DATA_DIR/$CUSTODY_DB_NAME
 CUSTODY_API_AUTH_TOKEN=$CUSTODY_AUTH_TOKEN
-CUSTODY_MASTER_SEED=$CUSTODY_SEED
+CUSTODY_MASTER_SEED_FILE=$MASTER_SEED_FILE
+CUSTODY_DEPOSIT_MASTER_SEED_FILE=$DEPOSIT_SEED_FILE
 CUSTODY_LICHEN_RPC_URL=$CUSTODY_RPC_URL
 CUSTODY_POLL_INTERVAL_SECS=15
 CUSTODY_DEPOSIT_TTL_SECS=86400
 CUSTODY_LISTEN_PORT=$CUSTODY_PORT
 CUSTODY_SIGNER_AUTH_TOKEN=$SIGNER_AUTH_TOKEN
+LICHEN_INCIDENT_STATUS_FILE=$INCIDENT_STATUS_FILE
 RUST_LOG=info
 CUSTODY_TREASURY_KEYPAIR=$CONFIG_DIR/custody-treasury-$net.json
 CUSTEOF
         chmod 600 "$CONFIG_DIR/$CUSTODY_ENV_NAME"
         chown root:root "$CONFIG_DIR/$CUSTODY_ENV_NAME"
         echo "   ✅ Generated $CONFIG_DIR/$CUSTODY_ENV_NAME"
+        echo "   ⚠  Provision $MASTER_SEED_FILE and $DEPOSIT_SEED_FILE before starting custody"
     else
         TREASURY_PATH="$CONFIG_DIR/custody-treasury-$net.json"
         if grep -q '^CUSTODY_TREASURY_KEYPAIR=' "$CONFIG_DIR/$CUSTODY_ENV_NAME"; then
@@ -234,9 +428,22 @@ CUSTEOF
         else
             echo "CUSTODY_SIGNER_AUTH_TOKEN=$SIGNER_AUTH_TOKEN" >> "$CONFIG_DIR/$CUSTODY_ENV_NAME"
         fi
+        if grep -q '^LICHEN_INCIDENT_STATUS_FILE=' "$CONFIG_DIR/$CUSTODY_ENV_NAME"; then
+            sed -i "s|^LICHEN_INCIDENT_STATUS_FILE=.*|LICHEN_INCIDENT_STATUS_FILE=$INCIDENT_STATUS_FILE|" "$CONFIG_DIR/$CUSTODY_ENV_NAME"
+        else
+            echo "LICHEN_INCIDENT_STATUS_FILE=$INCIDENT_STATUS_FILE" >> "$CONFIG_DIR/$CUSTODY_ENV_NAME"
+        fi
+        migrate_inline_secret_to_file "$CONFIG_DIR/$CUSTODY_ENV_NAME" \
+            "CUSTODY_MASTER_SEED" \
+            "CUSTODY_MASTER_SEED_FILE" \
+            "$MASTER_SEED_FILE"
+        migrate_inline_secret_to_file "$CONFIG_DIR/$CUSTODY_ENV_NAME" \
+            "CUSTODY_DEPOSIT_MASTER_SEED" \
+            "CUSTODY_DEPOSIT_MASTER_SEED_FILE" \
+            "$DEPOSIT_SEED_FILE"
         chmod 600 "$CONFIG_DIR/$CUSTODY_ENV_NAME"
         chown root:root "$CONFIG_DIR/$CUSTODY_ENV_NAME"
-        echo "   ✅ $CONFIG_DIR/$CUSTODY_ENV_NAME already exists (updated treasury key path and signer auth token)"
+        echo "   ✅ $CONFIG_DIR/$CUSTODY_ENV_NAME already exists (updated treasury key path, signer auth token, incident manifest path, and file-backed seed paths)"
     fi
 
     systemctl daemon-reload
@@ -248,8 +455,8 @@ echo ""
 echo "Quick reference:"
 for net in "${NETWORKS[@]}"; do
     case $net in
-        testnet) echo "  $net → RPC :8899  WS :8900  P2P :7001" ;;
-        mainnet) echo "  $net → RPC :9899  WS :9900  P2P :8001" ;;
+        testnet) echo "  $net → RPC :8899  WS :8900  P2P :7001  STATUS $CONFIG_DIR/incident-status-testnet.json  METADATA $CONFIG_DIR/signed-metadata-manifest-testnet.json" ;;
+        mainnet) echo "  $net → RPC :9899  WS :9900  P2P :8001  STATUS $CONFIG_DIR/incident-status-mainnet.json  METADATA $CONFIG_DIR/signed-metadata-manifest-mainnet.json" ;;
     esac
 done
 echo ""

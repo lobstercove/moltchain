@@ -1,6 +1,6 @@
 # Production E2E Gate
 
-`tests/production-e2e-gate.sh` is the launch-gate runner for end-to-end verification across wallet, RPC, WebSocket, contracts, CLI, and LichenID read-path behavior.
+`tests/production-e2e-gate.sh` is the launch-gate runner for end-to-end verification across wallet, RPC, WebSocket, services, contracts, CLI, and portal runtime behavior.
 
 ## What it does
 
@@ -16,6 +16,9 @@
    - `tests/test-websocket.sh`
    - `tests/live-e2e-test.sh`
    - `tests/services-deep-e2e.sh`
+   - `tests/e2e-user-services.py`
+   - `tests/e2e-custody-withdrawal.py` (when custody is enabled and fixtures resolve)
+   - `tests/e2e-portal-interactions.js`
    - `tests/contracts-write-e2e.py`
    - `tests/test-contract-deployment.sh`
    - `tests/test-cli-comprehensive.sh`
@@ -39,6 +42,7 @@ bash tests/production-e2e-gate.sh
 - `STRICT_NO_SKIPS` (default `1`)
 - `RUN_SDK_SUITE` (default `0`)
 - `RUN_DEEP_SERVICES_SUITE` (default `1`)
+- `RUN_CUSTODY_WITHDRAWAL_E2E` (default `1`)
 - `RUN_CONTRACT_WRITE_SUITE` (default `1`)
 - `AGENT_WALLET_NAME` / `HUMAN_WALLET_NAME`
 - `REQUIRE_DEX_API` (default `1`)
@@ -67,6 +71,8 @@ bash tests/production-e2e-gate.sh
 - `DEX_API_URL` (default `${RPC_URL}/api/v1`)
 - `FAUCET_URL` (default `http://localhost:9100`)
 - `CUSTODY_URL` (default `http://localhost:9105`)
+- `GENESIS_KEYS_DIR` (optional override for custody withdrawal fixtures)
+- `CUSTODY_API_AUTH_TOKEN` (optional override; otherwise auto-discovered from the running custody process)
 
 Example (single-validator local dev):
 
@@ -78,6 +84,7 @@ REQUIRE_MULTI_VALIDATOR=0 STRICT_NO_SKIPS=0 bash tests/production-e2e-gate.sh
 
 - This gate validates real actor lifecycle for wallet + treasury funding + transfer.
 - Deep services coverage now includes token lifecycle writes, launchpad contract discoverability/stats checks, DEX API, faucet, custody, contract/program event surfaces.
+- User services coverage now includes faucet, explorer, bridge deposit, marketplace browse, custody withdrawal burn verification, and explorer/developers/programs portal runtime flows.
 - Contract-by-contract enforcement is enabled: every contract directory under `contracts/` must be discoverable in deployed contract inventory and pass generic program/contract endpoint checks.
 - DEX bootstrap pair assertion is included (`LICN/lUSD` by default, configurable via env vars).
 - Contract write-scenario coverage is included via `tests/contracts-write-e2e.py` for real state-changing actions across protocol contracts, including DEX modules and non-DEX domains (`lichenid`, `bountyboard`, `lichenpunks`, `lichenoracle`, `lichenswap`, `lusd_token`, `weth_token`, `wsol_token`).

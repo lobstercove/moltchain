@@ -227,8 +227,10 @@ test('rejects 63-char hex string', () => {
 
 test('wallet.js has hex validation regex in importWalletPrivateKey', () => {
     assert(walletSrc.includes('/^[0-9a-fA-F]+$/'), 'Must validate private key characters as hex');
-    assert(walletSrc.includes('Invalid private key length (must be 64 or 128 hex characters)'),
-        'Must enforce accepted private key length constraints');
+    assert(walletSrc.includes('normalizedKey.length !== 64'),
+        'Must enforce 64-hex-character private key imports only');
+    assert(walletSrc.includes('Invalid private key length (must be 64 hex characters)'),
+        'Must explain the 64-hex-character private key requirement');
 });
 
 // ---- W-4: Auto-lock "Never" bug ----
@@ -290,8 +292,8 @@ console.log('\nW-10: Shield / Unshield wallet flow wiring');
 
 test('wallet shield tab exposes shield and unshield actions', () => {
     assert(walletHtml.includes('data-tab="shield"'), 'Wallet must include Shield tab');
-    assert(walletHtml.includes('onclick="openShieldModal()"'), 'Wallet must wire openShieldModal from UI');
-    assert(walletHtml.includes('onclick="openUnshieldModal()"'), 'Wallet must wire openUnshieldModal from UI');
+    assert(walletHtml.includes('data-wallet-action="openShieldModal"'), 'Wallet must wire openShieldModal from UI');
+    assert(walletHtml.includes('data-wallet-action="openUnshieldModal"'), 'Wallet must wire openUnshieldModal from UI');
     assert(walletHtml.includes('id="shieldModal"'), 'Wallet must include shield modal');
     assert(walletHtml.includes('id="unshieldModal"'), 'Wallet must include unshield modal');
 });
@@ -786,6 +788,44 @@ test('shielded.js stores encrypted shielded-note payload in localStorage', () =>
         'shielded storage payload should be versioned for future migrations');
     assert(shieldedSrc.includes('Legacy migration path: previous plaintext object format.'),
         'shielded storage loader should migrate legacy plaintext data to encrypted format');
+});
+
+console.log('\nW-23: Trusted RPC split for critical wallet flows');
+
+test('wallet.js defines trusted RPC helpers for control-plane reads', () => {
+    assert(walletSrc.includes('function getTrustedRpcEndpoint('), 'wallet.js should define getTrustedRpcEndpoint');
+    assert(walletSrc.includes('async function trustedRpcCall('), 'wallet.js should define trustedRpcCall');
+});
+
+test('wallet.js loads token registry data from the signed metadata path', () => {
+    assert(walletSrc.includes("trustedRpcCall('getAllSymbolRegistry', [{ limit: 2000 }])"),
+        'loadTokenRegistry should use trustedRpcCall for the signed symbol registry snapshot');
+    assert(!walletSrc.includes('deploy-manifest.json'),
+        'loadTokenRegistry should not fetch the unsigned deploy-manifest JSON');
+});
+
+test('wallet.js pins bridge control-plane methods to trusted RPC', () => {
+    assert(walletSrc.includes("trustedRpcCall('createBridgeDeposit'"),
+        'bridge deposit creation should use trustedRpcCall');
+    assert(walletSrc.includes("trustedRpcCall('getBridgeDeposit'"),
+        'bridge deposit polling should use trustedRpcCall');
+});
+
+test('identity.js pins LichenID resolution to trusted metadata RPC', () => {
+    assert(identitySrc.includes('window.resetIdentityNetworkCaches = resetIdentityNetworkCaches;'),
+        'identity.js should expose a network cache reset hook');
+    assert(identitySrc.includes("trustedRpcCall('getSymbolRegistry'"),
+        'identity.js should use trustedRpcCall for symbol registry resolution');
+    assert(identitySrc.includes("trustedRpcCall('getAllContracts'"),
+        'identity.js should use trustedRpcCall for contract list fallback');
+});
+
+test('wallet settings explain that critical metadata stays pinned to trusted endpoints', () => {
+    const normalizedWalletHtml = walletHtml.replace(/\s+/g, ' ');
+    assert(normalizedWalletHtml.includes('Token contracts and contract resolution are verified against signed metadata manifests, while bridge routing stays pinned to trusted network endpoints.'),
+        'wallet settings should explain the signed metadata and trusted transport split');
+    assert(normalizedWalletHtml.includes('Leave a field blank to use the official endpoint.'),
+        'wallet settings should explain how to clear custom RPC overrides');
 });
 
 // ============================================================================

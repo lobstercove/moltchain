@@ -204,6 +204,7 @@ echo -e "${YELLOW}[5b/7] Cleaning logs and deploy manifest...${NC}"
 if [ "$NETWORK" = "all" ] || [ "$NETWORK" = "testnet" ]; then
 	rm -f "$REPO_ROOT"/logs/v*.log 2>/dev/null && echo "  removed logs/v*.log" || true
 	rm -f "$REPO_ROOT/deploy-manifest.json" 2>/dev/null && echo "  removed deploy-manifest.json" || true
+	rm -f "$REPO_ROOT"/signed-metadata-manifest-*.json 2>/dev/null && echo "  removed signed-metadata-manifest-*.json" || true
 	rm -f "$REPO_ROOT/faucet-keypair.json" 2>/dev/null || true
 	rm -f "$REPO_ROOT"/artifacts/*.json 2>/dev/null && echo "  removed artifacts/*.json" || true
 fi
@@ -354,6 +355,8 @@ if [ "$RESTART" = true ]; then
 			echo -e "${RED}Launcher not found: $LAUNCHER${NC}"
 			exit 1
 		fi
+
+		export LICHEN_LOCAL_DEV=1
 
 		echo "   Starting V1 (primary - creates genesis)..."
 		nohup "$LAUNCHER" "$NETWORK" 1 $EXTRA_FLAGS > /tmp/lichen-v1.log 2>&1 &

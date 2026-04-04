@@ -44,6 +44,8 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WARMUP_SLOTS=500
 
+export LICHEN_LOCAL_DEV=1
+
 # Parse arguments
 if [[ "${1:-}" == "seeds" ]]; then
     SEED_COUNT=3

@@ -1175,9 +1175,8 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 | Method | Params | Returns |
 |--------|--------|---------|
-| `createBridgeDeposit` | `[{user_id, chain, asset}]` (chains: solana/ethereum/bnb/bsc; assets: sol/eth/bnb/usdc/usdt) | Deposit object (address, status) |
-| `getBridgeDeposit` | `[deposit_id]` (UUID) | Deposit object |
-| `getBridgeDepositsByRecipient` | `[address, {limit?}]` (max 100) | Deposits array |
+| `createBridgeDeposit` | `[{user_id, chain, asset, auth}]` where `auth={issued_at, expires_at, signature}` and the signature covers the bridge access message for `user_id` | Deposit object (address, status) |
+| `getBridgeDeposit` | `[{deposit_id, user_id, auth}]` or `[deposit_id, {user_id, auth}]` | Deposit object scoped to the authenticated `user_id` |
 
 ### Solana-Format JSON-RPC (`POST /solana-compat`)
 
@@ -1448,6 +1447,12 @@ Instruction: [programId 32B][u64 acct_count][acct₁ 32B]...[u64 data_len][data.
 3. First 32 bytes → ML-DSA-65 seed → keypair
 4. Private key encrypted with AES-256-GCM via Web Crypto API
 
+### Trust Boundaries
+
+- Generic chain reads and transaction submission use the active RPC transport.
+- Token registry, symbol resolution, and other browser control-plane metadata must go through `signedMetadataRpcCall()` / `getSignedMetadataManifest` and be verified against the pinned release signer in `monitoring/shared/utils.js` before the UI trusts them.
+- Bridge control-plane reads stay pinned to trusted network endpoints and require wallet-signed bridge access proofs; they do not follow arbitrary custom RPC overrides.
+
 ### Transaction Building Flow
 
 ```
@@ -1482,7 +1487,7 @@ Auto-derives 20-byte address via `Keccak256(pubkey)[12:32]` and sends type 12 tx
 
 ### Bridge Deposits (via Custody)
 
-1. `POST /deposits` → deposit address
+1. `POST /deposits` on the trusted custody endpoint with a wallet-signed bridge access payload → deposit address
 2. Poll `GET /deposits/:id` every 5s
 3. Status: `issued → pending → confirmed → swept → credited`
 4. Supported: Solana (SOL, USDC, USDT), Ethereum (ETH, USDC, USDT), BSC (BNB)

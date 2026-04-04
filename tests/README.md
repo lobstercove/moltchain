@@ -64,7 +64,7 @@ make test
 # Full production gate (requires running 3-validator cluster)
 STRICT_NO_SKIPS=1 bash scripts/launch-verification.sh
 
-# Full 43-suite matrix
+# Full matrix (dynamic total; adds custody withdrawal when the sidecar is healthy)
 bash tests/run-full-matrix-feb24.sh
 
 # Quick smoke check
@@ -76,6 +76,7 @@ python3 tests/quick-check.py
 ```bash
 node tests/e2e-production.js
 node tests/e2e-rpc-coverage.js
+node tests/e2e-portal-interactions.js
 node tests/e2e-wallet-flows.js
 node tests/e2e-prediction.js
 node tests/e2e-prediction-multi.js
@@ -89,6 +90,8 @@ node tests/e2e-volume.js
 
 ```bash
 python3 tests/e2e-dex-trading.py
+python3 tests/e2e-user-services.py
+python3 tests/e2e-custody-withdrawal.py
 python3 tests/e2e-genesis-wiring.py
 python3 tests/comprehensive-e2e.py
 python3 tests/e2e-developer-lifecycle.py
@@ -188,6 +191,42 @@ node tests/e2e-wallet-flows.js
 ```
 
 **Flows:** Keypair generation, airdrop funding, balance checking, LICN transfers, transaction history, LichenID registration, token creation & transfers, NFT minting, shielded pool (deposit/withdraw), EVM address registry, symbol registry queries, multi-wallet management.
+
+---
+
+#### `e2e-user-services.py` — Faucet, Explorer, Bridge, and Marketplace Service Flows (24 baseline checks + 4 custody checks when enabled)
+
+Exercises real user-facing service interactions that sit outside the heavier protocol suites.
+
+```bash
+python3 tests/e2e-user-services.py
+```
+
+**Flows:** Faucet config/status/request/history/cooldown behavior, fresh transfer creation followed by explorer-style transaction/address/block browsing, validator/contracts/program listings, authenticated bridge deposit address creation and status lookup when custody is enabled, and marketplace browse RPC surfaces for listings, offers, auctions, and stats.
+
+---
+
+#### `e2e-custody-withdrawal.py` — Custody Withdrawal Burn Verification (14 checks)
+
+Exercises the local custody withdrawal slice that the current dev stack can honestly prove end-to-end.
+
+```bash
+python3 tests/e2e-custody-withdrawal.py
+```
+
+**Flows:** Discovers the active genesis key directory, funds the wrapped-token admin if needed, mints wrapped tokens to a fresh user, creates a custody withdrawal job, burns the wrapped asset on-chain, submits the burn signature to custody, and polls audit events until `withdrawal.burn_confirmed` is observed.
+
+---
+
+#### `e2e-portal-interactions.js` — Explorer, Developers, and Programs Portal Runtime Flows
+
+Verifies the runtime handoff between the public read-only portals and the Programs IDE without requiring a live browser harness.
+
+```bash
+node tests/e2e-portal-interactions.js
+```
+
+**Flows:** Explorer cross-app links are rewritten to the developer portal, the embedded Developers playground rewrites its fullscreen link and iframe to the Programs origin, and the Programs landing page copy/view-code controls drive clipboard writes and IDE navigation at runtime.
 
 ---
 
@@ -323,7 +362,7 @@ Top-level scripts that launch clusters and run multiple test suites:
 | File | Description |
 |------|-------------|
 | `production-e2e-gate.sh` | **Production gate** — the canonical pass/fail gate |
-| `run-full-matrix-feb24.sh` | **Full matrix** — runs all 43 test suites with reporting |
+| `run-full-matrix-feb24.sh` | **Full matrix** — runs the full automated suite set with reporting |
 | `matrix-test-3val.sh` | 7-phase standalone matrix (RPC, CLI, WS, contracts, DEX, SDK, security) |
 | `matrix-sdk-cluster.sh` | SDK cluster manager (start/stop/restart validators for matrix) |
 | `multi-validator-e2e.sh` | Multi-validator consensus E2E |

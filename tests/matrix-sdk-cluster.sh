@@ -6,6 +6,8 @@ ROOT="$PWD"
 BIN="$ROOT/target/release/lichen-validator"
 LAUNCHER="$ROOT/run-validator.sh"
 
+export LICHEN_LOCAL_DEV=1
+
 FORCE_MANAGED_MATRIX_CLUSTER="${FORCE_MANAGED_MATRIX_CLUSTER:-0}"
 RESET_MATRIX_STATE="${RESET_MATRIX_STATE:-0}"
 MATRIX_BUILD_FIRST="${MATRIX_BUILD_FIRST:-0}"
@@ -229,17 +231,17 @@ start_cluster() {
   fi
 
   echo "[matrix-sdk-cluster] starting V1 (production path: run-validator.sh testnet 1)"
-  LICHEN_SIGNER_BIND=0.0.0.0:9301 RUST_LOG=${MATRIX_RUST_LOG:-warn} "$LAUNCHER" testnet 1 --dev-mode >"$LOG1" 2>&1 &
+  LICHEN_SIGNER_BIND=127.0.0.1:9301 RUST_LOG=${MATRIX_RUST_LOG:-warn} "$LAUNCHER" testnet 1 --dev-mode >"$LOG1" 2>&1 &
   V1PID=$!
   sleep "$MATRIX_STAGGER_SECS"
 
   echo "[matrix-sdk-cluster] starting V2 (production path: run-validator.sh testnet 2)"
-  LICHEN_SIGNER_BIND=0.0.0.0:9302 RUST_LOG=warn "$LAUNCHER" testnet 2 --dev-mode >"$LOG2" 2>&1 &
+  LICHEN_SIGNER_BIND=127.0.0.1:9302 RUST_LOG=warn "$LAUNCHER" testnet 2 --dev-mode >"$LOG2" 2>&1 &
   V2PID=$!
   sleep "$MATRIX_STAGGER_SECS"
 
   echo "[matrix-sdk-cluster] starting V3 (production path: run-validator.sh testnet 3)"
-  LICHEN_SIGNER_BIND=0.0.0.0:9303 RUST_LOG=warn "$LAUNCHER" testnet 3 --dev-mode >"$LOG3" 2>&1 &
+  LICHEN_SIGNER_BIND=127.0.0.1:9303 RUST_LOG=warn "$LAUNCHER" testnet 3 --dev-mode >"$LOG3" 2>&1 &
   V3PID=$!
 
   echo "$V1PID $V2PID $V3PID" > "$PID_FILE"

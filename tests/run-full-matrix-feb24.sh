@@ -12,6 +12,8 @@ CLUSTER_BUILD_FIRST="${MATRIX_BUILD_FIRST:-1}"
 CLUSTER_STAGGER_SECS="${MATRIX_STAGGER_SECS:-15}"
 CLUSTER_MIN_VALIDATORS="${MATRIX_MIN_VALIDATORS:-3}"
 MATRIX_REUSE_HEALTHY_CLUSTER="${MATRIX_REUSE_HEALTHY_CLUSTER:-0}"
+MATRIX_CUSTODY_URL="${CUSTODY_URL:-http://127.0.0.1:9105}"
+MATRIX_RUN_CUSTODY_WITHDRAWAL_E2E="${MATRIX_RUN_CUSTODY_WITHDRAWAL_E2E:-1}"
 
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   echo "[full-matrix] another matrix run is already active (lock: $LOCK_DIR)" >&2
@@ -90,7 +92,7 @@ command_needs_cluster() {
 
 max_attempts_for_command() {
   local cmd="$1"
-  if [[ "$cmd" == *"live-e2e-test.sh"* || "$cmd" == *"contracts-write-e2e.py"* || "$cmd" == *"e2e-dex.js"* || "$cmd" == *"e2e-dex-trading.py"* || "$cmd" == *"e2e-volume.js"* || "$cmd" == *"comprehensive-e2e.py"* || "$cmd" == *"comprehensive-e2e-parallel.py"* || "$cmd" == *"e2e-websocket-upgrade.py"* || "$cmd" == *"load-test-5k-traders.py"* || "$cmd" == *"test-rpc-comprehensive.sh"* ]]; then
+  if [[ "$cmd" == *"live-e2e-test.sh"* || "$cmd" == *"contracts-write-e2e.py"* || "$cmd" == *"e2e-dex.js"* || "$cmd" == *"e2e-dex-trading.py"* || "$cmd" == *"e2e-user-services.py"* || "$cmd" == *"e2e-developer-lifecycle.py"* || "$cmd" == *"e2e-volume.js"* || "$cmd" == *"comprehensive-e2e.py"* || "$cmd" == *"comprehensive-e2e-parallel.py"* || "$cmd" == *"e2e-websocket-upgrade.py"* || "$cmd" == *"load-test-5k-traders.py"* || "$cmd" == *"test-rpc-comprehensive.sh"* ]]; then
     if [[ "$cmd" == *"live-e2e-test.sh"* || "$cmd" == *"comprehensive-e2e.py"* || "$cmd" == *"comprehensive-e2e-parallel.py"* ]]; then
       echo 3
       return
@@ -182,9 +184,37 @@ ensure_funded_signers() {
   return 0
 }
 
+matrix_custody_healthy() {
+  curl -sf --connect-timeout 1 --max-time 2 "${MATRIX_CUSTODY_URL}/health" >/dev/null 2>&1
+}
+
+resolve_custody_withdrawal_fixtures() {
+  local json
+  json="$(RPC_URL='http://127.0.0.1:8899' python3 tests/resolve-custody-withdrawal-fixtures.py 2>/dev/null || echo '{}')"
+
+  MATRIX_CUSTODY_WITHDRAWAL_AUTH_TOKEN="$(printf '%s' "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("custody_api_auth_token", ""))' 2>/dev/null || true)"
+  MATRIX_CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR="$(printf '%s' "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("genesis_keys_dir", ""))' 2>/dev/null || true)"
+  MATRIX_CUSTODY_WITHDRAWAL_TOKEN_SOURCE="$(printf '%s' "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("custody_api_auth_token_source", "unresolved"))' 2>/dev/null || true)"
+  MATRIX_CUSTODY_WITHDRAWAL_GENESIS_SOURCE="$(printf '%s' "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("genesis_keys_source", "unresolved"))' 2>/dev/null || true)"
+
+  if [[ -n "$MATRIX_CUSTODY_WITHDRAWAL_AUTH_TOKEN" && -n "$MATRIX_CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR" ]]; then
+    echo "[full-matrix] custody withdrawal fixtures resolved token_source=${MATRIX_CUSTODY_WITHDRAWAL_TOKEN_SOURCE} genesis_source=${MATRIX_CUSTODY_WITHDRAWAL_GENESIS_SOURCE}" | tee -a "$LOG"
+    MATRIX_CUSTODY_FIXTURES_READY=1
+    return 0
+  fi
+
+  MATRIX_CUSTODY_FIXTURES_READY=0
+  return 1
+}
+
 MATRIX_AGENT_KEYPAIR="$PWD/keypairs/deployer.json"
 MATRIX_HUMAN_KEYPAIR="$MATRIX_AGENT_KEYPAIR"
 MATRIX_SIGNER_COUNT=0
+MATRIX_CUSTODY_WITHDRAWAL_AUTH_TOKEN=""
+MATRIX_CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR=""
+MATRIX_CUSTODY_WITHDRAWAL_TOKEN_SOURCE="unresolved"
+MATRIX_CUSTODY_WITHDRAWAL_GENESIS_SOURCE="unresolved"
+MATRIX_CUSTODY_FIXTURES_READY=0
 
 : > "$LOG"
 : > "$REPORT"
@@ -256,12 +286,26 @@ if ! ensure_funded_signers; then
   fi
 fi
 
+if [[ "$MATRIX_RUN_CUSTODY_WITHDRAWAL_E2E" == "1" ]] && matrix_custody_healthy; then
+  if ! resolve_custody_withdrawal_fixtures; then
+    echo "[full-matrix] ERROR: custody withdrawal fixtures unresolved (token_source=${MATRIX_CUSTODY_WITHDRAWAL_TOKEN_SOURCE} genesis_source=${MATRIX_CUSTODY_WITHDRAWAL_GENESIS_SOURCE})" | tee -a "$LOG"
+    echo "TOTAL=0 PASS=0 FAIL=1" | tee -a "$REPORT"
+    echo "LOG=$LOG" | tee -a "$REPORT"
+    release_lock
+    exit 1
+  fi
+fi
+
 commands=(
   "bash tests/test-rpc-comprehensive.sh"
   "bash tests/test-websocket.sh"
   "bash tests/test-cli-comprehensive.sh"
   "bash tests/live-e2e-test.sh"
   "REQUIRE_ALL_CONTRACTS=0 bash tests/services-deep-e2e.sh"
+  "AGENT_KEYPAIR='$MATRIX_AGENT_KEYPAIR' REQUIRE_FAUCET=1 python3 tests/e2e-user-services.py"
+  "node tests/e2e-portal-interactions.js"
+  "node tests/e2e-wallet-flows.js"
+  "AGENT_KEYPAIR='$MATRIX_AGENT_KEYPAIR' python3 tests/e2e-developer-lifecycle.py"
   "AGENT_KEYPAIR='$MATRIX_AGENT_KEYPAIR' HUMAN_KEYPAIR='$MATRIX_HUMAN_KEYPAIR' REQUIRE_FULL_WRITE_ACTIVITY=0 STRICT_WRITE_ASSERTIONS=0 ENFORCE_DOMAIN_ASSERTIONS=0 MIN_CONTRACT_ACTIVITY_DELTA=0 python3 tests/contracts-write-e2e.py"
   "bash tests/test-contract-deployment.sh"
   "bash scripts/test-all-sdks.sh"
@@ -299,8 +343,13 @@ commands=(
   "node sdk/js/test_cross_sdk_compat.js"
   "node sdk/js/test-subscriptions.js"
   "cargo run --manifest-path sdk/rust/Cargo.toml --example test_transactions"
-  "bash tests/matrix-sdk-cluster.sh stop"
 )
+
+if [[ "$MATRIX_CUSTODY_FIXTURES_READY" == "1" ]]; then
+  commands+=("RPC_URL='http://127.0.0.1:8899' CUSTODY_URL='$MATRIX_CUSTODY_URL' CUSTODY_API_AUTH_TOKEN='$MATRIX_CUSTODY_WITHDRAWAL_AUTH_TOKEN' GENESIS_KEYS_DIR='$MATRIX_CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR' python3 tests/e2e-custody-withdrawal.py")
+fi
+
+commands+=("bash tests/matrix-sdk-cluster.sh stop")
 
 echo "[full-matrix] signer_count=$MATRIX_SIGNER_COUNT agent=$MATRIX_AGENT_KEYPAIR human=$MATRIX_HUMAN_KEYPAIR" | tee -a "$LOG"
 

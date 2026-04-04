@@ -3,7 +3,6 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
-
 LICHEN_BIN="${LICHEN_BIN:-$ROOT_DIR/target/release/lichen}"
 RPC_URL="${RPC_URL:-http://localhost:8899}"
 WS_URL="${WS_URL:-ws://localhost:8900}"
@@ -16,6 +15,7 @@ REQUIRE_MULTI_VALIDATOR="${REQUIRE_MULTI_VALIDATOR:-1}"
 STRICT_NO_SKIPS="${STRICT_NO_SKIPS:-1}"
 RUN_SDK_SUITE="${RUN_SDK_SUITE:-1}"
 RUN_DEEP_SERVICES_SUITE="${RUN_DEEP_SERVICES_SUITE:-1}"
+RUN_CUSTODY_WITHDRAWAL_E2E="${RUN_CUSTODY_WITHDRAWAL_E2E:-1}"
 RUN_CONTRACT_WRITE_SUITE="${RUN_CONTRACT_WRITE_SUITE:-1}"
 REQUIRE_DEX_API="${REQUIRE_DEX_API:-1}"
 # Auto-detect faucet and custody availability if not explicitly set
@@ -59,11 +59,14 @@ DEX_API_URL="${DEX_API_URL:-${RPC_URL}/api/v1}"
 FAUCET_URL="${FAUCET_URL:-http://localhost:9100}"
 CUSTODY_URL="${CUSTODY_URL:-http://localhost:9105}"
 PYTHON_BIN="${PYTHON_BIN:-$ROOT_DIR/.venv/bin/python}"
+CUSTODY_WITHDRAWAL_FIXTURE_RESOLVER="${CUSTODY_WITHDRAWAL_FIXTURE_RESOLVER:-$ROOT_DIR/tests/resolve-custody-withdrawal-fixtures.py}"
 
 AGENT_WALLET_NAME="${AGENT_WALLET_NAME:-e2e-agent}"
 HUMAN_WALLET_NAME="${HUMAN_WALLET_NAME:-e2e-human}"
 TREASURY_FUND_LICN="${TREASURY_FUND_LICN:-1000}"
 SIGNER_KEYPAIR="${SIGNER_KEYPAIR:-$HOME/.lichen/keypairs/id.json}"
+CUSTODY_WITHDRAWAL_AUTH_TOKEN=""
+CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR=""
 
 PASS=0
 FAIL=0
@@ -144,7 +147,7 @@ ensure_secondary_validator() {
   fi
 
   log "Secondary validator on :$rpc_port not healthy; attempting launch (validator $validator_num)"
-  nohup "$ROOT_DIR/run-validator.sh" testnet "$validator_num" >/tmp/e2e-validator-${validator_num}.log 2>&1 &
+  nohup env LICHEN_LOCAL_DEV=1 "$ROOT_DIR/run-validator.sh" testnet "$validator_num" >/tmp/e2e-validator-${validator_num}.log 2>&1 &
   sleep 2
 
   if wait_for_rpc_health "$rpc_url" 30; then
@@ -403,32 +406,127 @@ assert_balance_positive() {
   fi
 }
 
+resolve_custody_withdrawal_fixtures() {
+  if [[ "$RUN_CUSTODY_WITHDRAWAL_E2E" != "1" || "$REQUIRE_CUSTODY" != "1" ]]; then
+    return 0
+  fi
+
+  local fixture_json
+  fixture_json="$("$PYTHON_BIN" "$CUSTODY_WITHDRAWAL_FIXTURE_RESOLVER" 2>/dev/null || echo '{}')"
+
+  CUSTODY_WITHDRAWAL_AUTH_TOKEN="$(echo "$fixture_json" | jq -r '.custody_api_auth_token // empty')"
+  CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR="$(echo "$fixture_json" | jq -r '.genesis_keys_dir // empty')"
+
+  local token_source genesis_source
+  token_source="$(echo "$fixture_json" | jq -r '.custody_api_auth_token_source // "unresolved"')"
+  genesis_source="$(echo "$fixture_json" | jq -r '.genesis_keys_source // "unresolved"')"
+
+  if [[ -n "$CUSTODY_WITHDRAWAL_AUTH_TOKEN" && -n "$CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR" ]]; then
+    pass "Custody withdrawal fixtures resolved"
+    log "Custody withdrawal fixtures: token_source=$token_source genesis_source=$genesis_source"
+    return 0
+  fi
+
+  fail "Custody withdrawal fixtures unresolved (token_source=$token_source genesis_source=$genesis_source)"
+  return 1
+}
+
+stage_has_internal_failures() {
+  local out_file="$1"
+  grep -Eqi '(^[[:space:]]*❌[[:space:]]*FAIL([[:space:]]|$)|^[[:space:]]*✗[[:space:]]|❌[[:space:]]*FAILED:[[:space:]]*[1-9]|FAILED:[[:space:]]*[1-9]|[[:space:]][1-9][0-9]* failed([[:space:]]|,))' "$out_file"
+}
+
+stage_has_skip_failures() {
+  local out_file="$1"
+  grep -Eqi '(^[[:space:]]*SKIP[[:space:]]|^[[:space:]]*⊘[[:space:]]|⏭️|SKIPPED:[[:space:]]*[1-9]|[[:space:]][1-9][0-9]* skipped([[:space:]]|,))' "$out_file"
+}
+
+stage_has_transient_rpc_failures() {
+  local out_file="$1"
+  grep -Eqi '(all connection attempts failed|rpc transport error|validator unreachable|cannot reach validator|fetch failed|connection refused|connection reset|timed out|timeout|server disconnected|failed to connect)' "$out_file"
+}
+
 run_script_stage() {
   local name="$1"
   local cmd="$2"
-  local out_file
+  local out_file=""
   local allow_relaxed_skips=0
-  out_file="$(mktemp)"
+  local attempt=1
+  local max_attempts=2
+  local stage_exit=0
+  local has_internal_failures=1
+  local has_skip_failures=1
+  local has_transient_failures=1
 
   if [[ "$name" == "Contract write scenarios" && "$STRICT_WRITE_ASSERTIONS" != "1" && "$REQUIRE_FULL_WRITE_ACTIVITY" != "1" ]]; then
     allow_relaxed_skips=1
   fi
 
-  log "Running stage: $name"
-  if bash -lc "$cmd" | tee "$out_file"; then
+  if [[ "$name" == "Launchpad user flows" ]]; then
+    allow_relaxed_skips=1
+  fi
+
+  while (( attempt <= max_attempts )); do
+    out_file="$(mktemp)"
+
+    if ! wait_for_rpc_health "$RPC_URL" 45; then
+      log "RPC not healthy before stage attempt $attempt: $name"
+    fi
+
+    if (( attempt > 1 )); then
+      log "Running stage: $name (retry $attempt/$max_attempts)"
+    else
+      log "Running stage: $name"
+    fi
+
+    if bash -lc "$cmd" 2>&1 | tee "$out_file"; then
+      stage_exit=0
+    else
+      stage_exit=$?
+    fi
+
+    if stage_has_internal_failures "$out_file"; then
+      has_internal_failures=0
+    else
+      has_internal_failures=1
+    fi
+
+    has_skip_failures=1
+    if [[ "$STRICT_NO_SKIPS" == "1" && "$allow_relaxed_skips" != "1" ]]; then
+      if stage_has_skip_failures "$out_file"; then
+        has_skip_failures=0
+      fi
+    fi
+
+    if stage_has_transient_rpc_failures "$out_file"; then
+      has_transient_failures=0
+    else
+      has_transient_failures=1
+    fi
+
+    if (( attempt < max_attempts )) && [[ $has_transient_failures -eq 0 ]] && { [[ $stage_exit -ne 0 ]] || [[ $has_internal_failures -eq 0 ]]; }; then
+      log "Transient RPC failure detected in stage '$name'; waiting for recovery before retry"
+      wait_for_rpc_health "$RPC_URL" 60 || true
+      rm -f "$out_file"
+      attempt=$((attempt + 1))
+      continue
+    fi
+
+    break
+  done
+
+  if [[ $stage_exit -eq 0 ]]; then
     pass "Stage passed: $name"
   else
     fail "Stage failed: $name"
   fi
 
-  if grep -Eq '(^[[:space:]]*❌[[:space:]]*FAIL([[:space:]]|$)|❌[[:space:]]*FAILED:[[:space:]]*[1-9]|FAILED:[[:space:]]*[1-9])' "$out_file"; then
+  if [[ $has_internal_failures -eq 0 ]]; then
     fail "Stage reported internal failures: $name"
   fi
 
-  if [[ "$STRICT_NO_SKIPS" == "1" && "$allow_relaxed_skips" != "1" ]]; then
-    if grep -Eq '(^[[:space:]]*SKIP[[:space:]]|⏭️|SKIPPED:[[:space:]]*[1-9])' "$out_file"; then
-      fail "Stage contains skips in strict mode: $name"
-    fi
+  if [[ "$STRICT_NO_SKIPS" == "1" && "$allow_relaxed_skips" != "1" && $has_skip_failures -eq 0 ]]; then
+    fail "Stage contains skips in strict mode: $name"
   fi
 
   rm -f "$out_file"
@@ -509,6 +607,12 @@ if ! python_can_import_modules "$PYTHON_BIN"; then
     pass "Installed Python deps for write scenarios"
   else
     fail "Python runtime missing required modules (httpx/base58/websockets): $PYTHON_BIN"
+  fi
+fi
+
+if [[ "$REQUIRE_CUSTODY" == "1" && "$RUN_CUSTODY_WITHDRAWAL_E2E" == "1" ]]; then
+  if ! resolve_custody_withdrawal_fixtures; then
+    RUN_CUSTODY_WITHDRAWAL_E2E=0
   fi
 fi
 
@@ -605,6 +709,14 @@ if [[ "$RUN_DEEP_SERVICES_SUITE" == "1" ]]; then
 else
   skip "Deep services E2E disabled (set RUN_DEEP_SERVICES_SUITE=1 to enable)"
 fi
+run_script_stage "User services E2E" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' CUSTODY_URL='$CUSTODY_URL' AGENT_KEYPAIR='$AGENT_KEYPAIR' REQUIRE_FAUCET='$REQUIRE_FAUCET' REQUIRE_CUSTODY='$REQUIRE_CUSTODY' STRICT_NO_SKIPS='$STRICT_NO_SKIPS' '$PYTHON_BIN' tests/e2e-user-services.py"
+if [[ "$RUN_CUSTODY_WITHDRAWAL_E2E" == "1" && "$REQUIRE_CUSTODY" == "1" ]]; then
+  run_script_stage "Custody withdrawal E2E" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' CUSTODY_URL='$CUSTODY_URL' CUSTODY_API_AUTH_TOKEN='$CUSTODY_WITHDRAWAL_AUTH_TOKEN' GENESIS_KEYS_DIR='$CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR' '$PYTHON_BIN' tests/e2e-custody-withdrawal.py"
+fi
+run_script_stage "Portal interaction flows" "cd '$ROOT_DIR' && node tests/e2e-portal-interactions.js"
+run_script_stage "Wallet user flows" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' node tests/e2e-wallet-flows.js"
+run_script_stage "Developer lifecycle" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' AGENT_KEYPAIR='$AGENT_KEYPAIR' '$PYTHON_BIN' tests/e2e-developer-lifecycle.py"
+run_script_stage "Launchpad user flows" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' node tests/e2e-launchpad.js"
 if [[ "$RUN_CONTRACT_WRITE_SUITE" == "1" ]]; then
   run_script_stage "Contract write scenarios" "cd '$ROOT_DIR' && PYTHONPATH='$ROOT_DIR/sdk/python' RPC_URL='$RPC_URL' AGENT_KEYPAIR='$CONTRACT_WRITE_SIGNER' HUMAN_KEYPAIR='$HUMAN_KEYPAIR' REQUIRE_ALL_SCENARIOS='$REQUIRE_ALL_SCENARIOS' STRICT_WRITE_ASSERTIONS='$STRICT_WRITE_ASSERTIONS' TX_CONFIRM_TIMEOUT_SECS='$TX_CONFIRM_TIMEOUT_SECS' REQUIRE_FULL_WRITE_ACTIVITY='$REQUIRE_FULL_WRITE_ACTIVITY' MIN_CONTRACT_ACTIVITY_DELTA='$MIN_CONTRACT_ACTIVITY_DELTA' CONTRACT_ACTIVITY_OVERRIDES='$CONTRACT_ACTIVITY_OVERRIDES' ENFORCE_DOMAIN_ASSERTIONS='$ENFORCE_DOMAIN_ASSERTIONS' ENABLE_NEGATIVE_ASSERTIONS='$ENABLE_NEGATIVE_ASSERTIONS' REQUIRE_NEGATIVE_REASON_MATCH='$REQUIRE_NEGATIVE_REASON_MATCH' REQUIRE_NEGATIVE_CODE_MATCH='$REQUIRE_NEGATIVE_CODE_MATCH' REQUIRE_SCENARIO_FOR_DISCOVERED='$REQUIRE_SCENARIO_FOR_DISCOVERED' MIN_NEGATIVE_ASSERTIONS_EXECUTED='$MIN_NEGATIVE_ASSERTIONS_EXECUTED' REQUIRE_EXPECTED_CONTRACT_SET='$REQUIRE_EXPECTED_CONTRACT_SET' EXPECTED_CONTRACTS_FILE='$EXPECTED_CONTRACTS_FILE' WRITE_E2E_REPORT_PATH='$WRITE_E2E_REPORT_PATH' '$PYTHON_BIN' tests/contracts-write-e2e.py"
 else

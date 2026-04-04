@@ -12,11 +12,17 @@ This matrix is used with `tests/production-e2e-gate.sh` to track launch-blocking
 - Core services
   - RPC comprehensive suite
   - WebSocket suite
+  - user services suite (`tests/e2e-user-services.py`)
+  - custody withdrawal burn-verification suite (`tests/e2e-custody-withdrawal.py`)
+  - portal interaction runtime suite (`tests/e2e-portal-interactions.js`)
   - deep services suite (`tests/services-deep-e2e.sh`)
   - contract write scenarios (`tests/contracts-write-e2e.py`)
   - contract deployment pipeline smoke
   - CLI comprehensive suite
 - Deep service domains
+  - faucet config/status/request/history coverage plus explorer-style readback, bridge deposit status lookup, and marketplace browse paths
+  - custody withdrawal creation + wrapped-token burn + custody burn confirmation on the local stack
+  - explorer → developers → programs portal handoff runtime coverage (cross-app URL rewrite, embedded IDE rewrite, copy/view-code controls)
   - token lifecycle write-path (`token create` + registry + mint)
   - launchpad contract discoverability + stats/event query checks
   - contract-by-contract inventory enforcement for all `contracts/*`
@@ -58,8 +64,8 @@ This matrix is used with `tests/production-e2e-gate.sh` to track launch-blocking
   - bridge lock/mint/burn/redeem
   - marketplace list/buy/cancel
 - Per-contract action completeness is still in progress for non-DEX domains and advanced edge paths (failure-path assertions, liquidation stress, proposal execution timing, multi-hop/router swap settlement).
-- Custody and faucet production-path scenarios
-- Explorer + Wallet UI click-path automation (headless browser) tied to chain assertions
+- Custody production-path scenarios beyond local burn verification (real outbound Solana/EVM settlement confirmation, multi-signer payout completion, and failure-path handling)
+- Wallet extension + fully rendered UI click-path automation tied to chain assertions
 - Negative/adversarial state-changing cases per major contract
 
 ## Exit criteria

@@ -2,8 +2,11 @@
 # Comprehensive CLI Integration Test
 # Tests all 50+ CLI commands against live validator
 
-set -e
+set -eu
+set +o pipefail
 LICHEN="./target/release/lichen"
+RPC_URL="${RPC_URL:-http://localhost:8899}"
+MAX_RPC_RETRIES="${MAX_RPC_RETRIES:-3}"
 VALIDATOR_ADDR="BPGuTrbex5vNWis71p9PkQnZbPa9qC3u4ziJ6caAhSX7"
 GENESIS_ADDR="GKopYobrUh7L9mDGBVMCEFgah3q8u5YFBHyFN5Qv9x2t"
 TEST_DIR="/tmp/lichen-cli-test"
@@ -18,15 +21,54 @@ PASS=0
 FAIL=0
 LAST_TX_HASH=""
 
+is_transient_rpc_failure() {
+    local output="$1"
+    printf '%s' "$output" | grep -qiE 'RPC transport error|All connection attempts failed|fetch failed|connection refused|validator unreachable|timed out|deadline exceeded|network is unreachable|temporarily unavailable'
+}
+
+run_eval_with_retry() {
+    local cmd="$1"
+    local attempt=1
+    local output=""
+    local status=0
+
+    while (( attempt <= MAX_RPC_RETRIES )); do
+        set +e
+        output="$(eval "$cmd" 2>&1)"
+        status=$?
+        set -e
+
+        if [[ $status -eq 0 ]]; then
+            printf '%s' "$output"
+            return 0
+        fi
+
+        if ! is_transient_rpc_failure "$output"; then
+            printf '%s' "$output"
+            return "$status"
+        fi
+
+        sleep "$attempt"
+        attempt=$((attempt + 1))
+    done
+
+    printf '%s' "$output"
+    return "$status"
+}
+
 test_command() {
     local name="$1"
     local cmd="$2"
+    local output=""
     echo -n "Testing: $name... "
-    if eval "$cmd" > /dev/null 2>&1; then
+    if output="$(run_eval_with_retry "$cmd")"; then
         echo "✅ PASS" | tee -a $RESULTS_FILE
         PASS=$((PASS + 1))
     else
         echo "❌ FAIL" | tee -a $RESULTS_FILE
+        if [[ -n "$output" ]]; then
+            printf '%s\n' "$output" >> $RESULTS_FILE
+        fi
         FAIL=$((FAIL + 1))
     fi
 }
@@ -34,12 +76,18 @@ test_command() {
 test_expect_error() {
     local name="$1"
     local cmd="$2"
+    local output=""
     echo -n "Testing: $name (expected error)... "
-    if eval "$cmd" > /tmp/cli-expected-error.log 2>&1; then
+    if output="$(run_eval_with_retry "$cmd")"; then
         echo "❌ FAIL (unexpected success)" | tee -a $RESULTS_FILE
+        FAIL=$((FAIL + 1))
+    elif is_transient_rpc_failure "$output"; then
+        echo "❌ FAIL (transient RPC failure)" | tee -a $RESULTS_FILE
+        printf '%s\n' "$output" > /tmp/cli-expected-error.log
         FAIL=$((FAIL + 1))
     else
         echo "✅ PASS" | tee -a $RESULTS_FILE
+        printf '%s\n' "$output" > /tmp/cli-expected-error.log
         PASS=$((PASS + 1))
     fi
 }
@@ -211,7 +259,7 @@ echo ""
 
 # Transaction lookup by hash through RPC method
 if [[ -n "$LAST_TX_HASH" ]]; then
-    test_command "rpc getTransaction (last transfer)" "curl -sS -X POST http://localhost:8899 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$LAST_TX_HASH\"]}' | jq -e '.result or .error' >/dev/null"
+    test_command "rpc getTransaction (last transfer)" "curl -sS -X POST $RPC_URL -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$LAST_TX_HASH\"]}' | jq -e '.result or .error' >/dev/null"
 else
     echo "✅ PASS (environment-limited transfer produced no tx hash)" | tee -a $RESULTS_FILE
     PASS=$((PASS + 1))

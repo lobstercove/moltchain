@@ -2,7 +2,8 @@
 # Contract Deployment Integration Test
 # Tests WASM contract deployment and execution
 
-set -e
+set -eu
+set +o pipefail
 
 echo "🦞 Contract Deployment Test"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -21,6 +22,26 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 PASS=0
 FAIL=0
+
+rpc_post() {
+    local payload="$1"
+    local attempt=1
+    local max_attempts=4
+    local response=""
+
+    while (( attempt <= max_attempts )); do
+        if response=$(curl -sS --connect-timeout 3 --max-time 10 -X POST "$RPC_URL" \
+            -H "Content-Type: application/json" \
+            -d "$payload" 2>/dev/null); then
+            printf '%s' "$response"
+            return 0
+        fi
+        sleep "$attempt"
+        attempt=$((attempt + 1))
+    done
+
+    return 1
+}
 
 test_contract() {
     local name="$1"
@@ -83,13 +104,11 @@ echo ""
 MOCK_CONTRACT="11111111111111111111111111111111"
 
 echo "Testing: getContractInfo RPC..."
-CONTRACT_INFO=$(curl -s -X POST $RPC_URL \
-  -H "Content-Type: application/json" \
-  -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getContractInfo\",\"params\":[\"$MOCK_CONTRACT\"]}")
+CONTRACT_INFO="$(rpc_post "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getContractInfo\",\"params\":[\"$MOCK_CONTRACT\"]}" || true)"
 
 if echo "$CONTRACT_INFO" | jq -e '.result' > /dev/null 2>&1 || echo "$CONTRACT_INFO" | jq -e '.error' > /dev/null 2>&1; then
     test_contract "getContractInfo RPC endpoint" "PASS"
-    echo "   Response: $(echo $CONTRACT_INFO | jq -c '.' | head -c 100)"
+    echo "   Response: $(printf '%s' "$CONTRACT_INFO" | jq -c '.' | cut -c1-100)"
 else
     test_contract "getContractInfo RPC endpoint" "FAIL"
 fi
@@ -101,11 +120,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 echo "Testing: Contract counting (executable accounts)..."
-METRICS=$(curl -s -X POST $RPC_URL \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"getMetrics","params":[]}')
+METRICS="$(rpc_post '{"jsonrpc":"2.0","id":1,"method":"getMetrics","params":[]}' || true)"
 
-CONTRACT_COUNT=$(echo $METRICS | jq -r '.result.total_contracts')
+CONTRACT_COUNT="$(printf '%s' "$METRICS" | jq -r '.result.total_contracts // empty' 2>/dev/null || true)"
 
 if [ ! -z "$CONTRACT_COUNT" ]; then
     test_contract "Contract counting working" "PASS"

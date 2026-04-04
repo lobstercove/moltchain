@@ -253,8 +253,13 @@ async function runTests() {
     await tryRpc('getLichenOracleStats', [], 'getLichenOracleStats');
 
     // Bridge deposit-specific
-    await tryRpc('getBridgeDeposit', ['test-deposit-id'], 'getBridgeDeposit');
-    await tryRpc('getBridgeDepositsByRecipient', [testAddr], 'getBridgeDepositsByRecipient');
+    const bridgeAuth = {
+        issued_at: 1700000000,
+        expires_at: 1700003600,
+        signature: {}
+    };
+    await tryRpc('createBridgeDeposit', [{ user_id: testAddr, chain: 'ethereum', asset: 'eth', auth: bridgeAuth }], 'createBridgeDeposit');
+    await tryRpc('getBridgeDeposit', [{ deposit_id: '00000000-0000-0000-0000-000000000000', user_id: testAddr, auth: bridgeAuth }], 'getBridgeDeposit');
 
     // ══════════════════════════════════════════════════════════════════════
     // C14: Wallet-Specific RPCs

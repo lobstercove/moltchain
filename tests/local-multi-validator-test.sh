@@ -13,6 +13,8 @@
 #
 # Usage: bash tests/local-multi-validator-test.sh [max_validators]
 #   Default: 3 validators.
+# Reuse mode: set LICHEN_REUSE_EXISTING_CLUSTER=1 to validate a healthy
+# already-running local cluster without flushing state or killing validators.
 # ═══════════════════════════════════════════════════════════════
 set -euo pipefail
 
@@ -24,6 +26,10 @@ export LESS='-FRX'
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MAX_VALIDATORS="${1:-3}"
 WARMUP_SLOTS=100  # Must match ACTIVATION_WARMUP in validator/src/main.rs
+REUSE_EXISTING_CLUSTER="${LICHEN_REUSE_EXISTING_CLUSTER:-0}"
+USING_EXISTING_CLUSTER=false
+
+export LICHEN_LOCAL_DEV=1
 
 # Colors
 RED='\033[0;31m'
@@ -44,6 +50,11 @@ db_path()   { echo "$REPO_ROOT/data/state-$(p2p_port $1)"; }
 log_path()  { echo "/tmp/lichen-testnet/v${1}.log"; }
 
 cleanup() {
+    if [[ "$USING_EXISTING_CLUSTER" == "true" ]]; then
+        log "Reused existing cluster — skipping cleanup"
+        return
+    fi
+
     log "Cleaning up..."
     for n in $(seq 1 "$MAX_VALIDATORS"); do
         pidfile="$(db_path $n)/validator.pid"
@@ -89,6 +100,70 @@ except: print(0)
 " 2>/dev/null || echo 0
 }
 
+existing_cluster_healthy() {
+    local primary_rpc
+    primary_rpc="$(rpc_port 1)"
+
+    for n in $(seq 1 "$MAX_VALIDATORS"); do
+        local rpc health
+        rpc="$(rpc_port "$n")"
+        health="$(rpc_query "$rpc" "getHealth")"
+        echo "$health" | python3 -c "
+import json,sys
+try:
+    result=json.load(sys.stdin).get('result', {})
+    status=result.get('status') if isinstance(result, dict) else result
+    raise SystemExit(0 if status == 'ok' else 1)
+except Exception:
+    raise SystemExit(1)
+" >/dev/null 2>&1 || return 1
+    done
+
+    [[ "$(get_staked_validator_count "$primary_rpc")" -ge "$MAX_VALIDATORS" ]]
+}
+
+load_existing_cluster_pubkeys() {
+    local primary_rpc=$1
+
+    ALL_PUBKEYS=()
+    while IFS= read -r pubkey; do
+        [[ -n "$pubkey" ]] && ALL_PUBKEYS+=("$pubkey")
+    done < <(rpc_query "$primary_rpc" "getValidators" | python3 -c '
+import json
+import sys
+
+limit = int(sys.argv[1])
+result = json.load(sys.stdin).get("result", {})
+validators = result.get("validators", []) if isinstance(result, dict) else []
+staked = [validator for validator in validators if validator.get("stake", 0) > 0][:limit]
+for validator in staked:
+    pubkey = validator.get("pubkey")
+    if pubkey:
+        print(pubkey)
+' "$MAX_VALIDATORS")
+
+    [[ "${#ALL_PUBKEYS[@]}" -ge "$MAX_VALIDATORS" ]]
+}
+
+validator_activity_lines() {
+    local primary_rpc=$1
+
+    rpc_query "$primary_rpc" "getValidators" | python3 -c '
+import json
+import sys
+
+limit = int(sys.argv[1])
+result = json.load(sys.stdin).get("result", {})
+validators = result.get("validators", []) if isinstance(result, dict) else []
+staked = [validator for validator in validators if validator.get("stake", 0) > 0][:limit]
+for validator in staked:
+    produced = validator.get("blocks_proposed", validator.get("_blocks_produced", 0))
+    votes = validator.get("votes_cast", 0)
+    last_active = validator.get("last_active_slot", 0)
+    print("{}|{}|{}|{}".format(validator.get("pubkey", ""), produced, votes, last_active))
+' "$MAX_VALIDATORS"
+}
+
 verify_chain_producing() {
     local label=$1 rpc=$2 seconds=${3:-10}
     log "Verifying chain produces blocks ($label)..."
@@ -107,6 +182,64 @@ verify_chain_producing() {
     fi
     ok "Chain alive ($label): $diff blocks in ${seconds}s (slot $s1 → $s2)"
 }
+
+report_reused_cluster() {
+    local primary_rpc
+    primary_rpc="$(rpc_port 1)"
+    local pass=true
+    local activity_lines_found=0
+
+    log "Reusing existing local cluster on RPC ports $(rpc_port 1), $(rpc_port 2), $(rpc_port 3)"
+
+    if ! load_existing_cluster_pubkeys "$primary_rpc"; then
+        fail "Could not load $MAX_VALIDATORS staked validator pubkeys from the running cluster"
+    fi
+
+    for n in $(seq 1 "$MAX_VALIDATORS"); do
+        verify_chain_producing "existing cluster V${n}" "$(rpc_port "$n")" 5
+    done
+
+    while IFS='|' read -r pubkey produced votes last_active; do
+        [[ -n "$pubkey" ]] || continue
+        activity_lines_found=$((activity_lines_found + 1))
+        if [[ "$produced" -gt 0 || "$votes" -gt 0 || "$last_active" -gt 0 ]]; then
+            ok "Validator $pubkey active: proposed=$produced votes=$votes last_active=$last_active"
+        else
+            warn "Validator $pubkey has no observed activity on the running cluster"
+            pass=false
+        fi
+    done < <(validator_activity_lines "$primary_rpc")
+
+    if [[ "$activity_lines_found" -lt "$MAX_VALIDATORS" ]]; then
+        fail "Could not load activity stats for all $MAX_VALIDATORS validators from the running cluster"
+    fi
+
+    echo ""
+    log "═══════════════════════════════════════════════════════════"
+    local final_slot final_vcnt
+    final_slot=$(get_slot "$primary_rpc")
+    final_vcnt=$(get_validator_count "$primary_rpc")
+    ok "Slot: $final_slot"
+    ok "Validators: $final_vcnt"
+    for v_num in $(seq 1 "$MAX_VALIDATORS"); do
+        ok "  V${v_num}: ${ALL_PUBKEYS[$((v_num - 1))]}"
+    done
+    echo ""
+    if $pass; then
+        ok "═══════════════════════════════════════════════════════════"
+        ok "ALL TESTS PASSED: reused running $MAX_VALIDATORS-validator cluster"
+        ok "═══════════════════════════════════════════════════════════"
+    else
+        fail "TEST FAILED: Running cluster does not show activity for every validator"
+    fi
+}
+
+if [[ "$REUSE_EXISTING_CLUSTER" == "1" ]] && existing_cluster_healthy; then
+    USING_EXISTING_CLUSTER=true
+    declare -a ALL_PUBKEYS=()
+    report_reused_cluster
+    exit 0
+fi
 
 # ═══════════════════════════════════════════════════════════════
 # FLUSH: Clean all local state
