@@ -503,9 +503,11 @@ test('CC-9 popup shield panel uses canonical getShieldedPoolState with fallback'
   assert.ok(popupSrc.includes("rpc.call('getShieldedPoolStats'"), 'popup shield panel should keep getShieldedPoolStats fallback');
 });
 
-test('CC-10 popup shield panel has deterministic seed init (no placeholder-only path)', () => {
-  assert.ok(popupSrc.includes('deriveShieldedSeedFromWallet(wallet)'), 'popup should derive seed from wallet context');
-  assert.ok(popupSrc.includes('await initShieldedPopup(seed);'), 'popup should initialize shielded state when seed is derived');
+test('CC-10 popup shield panel uses password-gated shield initialization', () => {
+  assert.ok(popupSrc.includes('initializeShieldedPopupForActiveWallet'), 'popup missing shield initialization flow');
+  assert.ok(popupSrc.includes("securePasswordPrompt('Enter your wallet password to initialize shielded privacy.')"), 'popup shield init should prompt for the wallet password');
+  assert.ok(popupSrc.includes('deriveShieldedSeedFromWallet(wallet, password)'), 'popup shield init should derive the shield seed from decrypted wallet material');
+  assert.ok(!popupSrc.includes('shielded-popup:v1'), 'popup should not derive shielded state from the public wallet address placeholder path');
 });
 
 test('CC-11 popup delete flow wipes encrypted key material', () => {
