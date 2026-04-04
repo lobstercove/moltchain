@@ -15,6 +15,8 @@
 #   1. Copies genesis primary keypair → /etc/lichen/custody-treasury-<network>.json
 #      (so custody signs mint() calls with the matching contract admin key)
 #   2. Copies faucet keypair → /var/lib/lichen/faucet-keypair-<network>.json
+#      (falls back to the genesis treasury keypair when no dedicated faucet
+#       keypair was emitted by genesis)
 #   3. Optionally restarts custody + faucet systemd services
 #
 # Usage:
@@ -69,13 +71,30 @@ echo -e "${CYAN}═════════════════════�
 echo ""
 
 # ── 1. Genesis primary keypair → custody treasury ──
+read_keypair_pubkey() {
+	local key_file="$1"
+
+	sudo python3 - "$key_file" <<'PY' 2>/dev/null || echo '?'
+import json
+import sys
+
+data = json.load(open(sys.argv[1], encoding='utf-8'))
+for key in ('publicKeyBase58', 'pubkey', 'address'):
+    value = data.get(key)
+    if isinstance(value, str) and value.strip():
+        print(value.strip())
+        raise SystemExit(0)
+print('?')
+PY
+}
+
 GENESIS_KEY=$(sudo find "$GENESIS_KEYS_DIR" -name "genesis-primary-*.json" -type f 2>/dev/null | head -1)
 if [ -n "$GENESIS_KEY" ]; then
 	sudo cp "$GENESIS_KEY" "$CUSTODY_KEY_TARGET"
 	sudo chmod 600 "$CUSTODY_KEY_TARGET"
 	sudo chown lichen:lichen "$CUSTODY_KEY_TARGET"
 
-	PUBKEY=$(sudo python3 -c "import json; d=json.load(open('$GENESIS_KEY')); print(d.get('pubkey','?'))" 2>/dev/null || echo '?')
+	PUBKEY=$(read_keypair_pubkey "$GENESIS_KEY")
 	echo -e "  ${GREEN}✓${NC} Custody treasury = genesis admin: $PUBKEY"
 	echo -e "    $GENESIS_KEY → $CUSTODY_KEY_TARGET"
 else
@@ -84,13 +103,18 @@ fi
 
 # ── 2. Faucet keypair ──
 FAUCET_KEY=$(sudo find "$GENESIS_KEYS_DIR" -name "faucet-*.json" -type f 2>/dev/null | head -1)
+FAUCET_SOURCE_LABEL="faucet keypair"
+if [ -z "$FAUCET_KEY" ]; then
+	FAUCET_KEY=$(sudo find "$GENESIS_KEYS_DIR" -name "treasury-*.json" -type f 2>/dev/null | head -1)
+	FAUCET_SOURCE_LABEL="treasury fallback"
+fi
 if [ -n "$FAUCET_KEY" ]; then
 	sudo cp "$FAUCET_KEY" "$FAUCET_KEY_TARGET"
 	sudo chmod 600 "$FAUCET_KEY_TARGET"
 	sudo chown lichen:lichen "$FAUCET_KEY_TARGET"
 
-	FAUCET_PK=$(sudo python3 -c "import json; d=json.load(open('$FAUCET_KEY')); print(d.get('pubkey','?'))" 2>/dev/null || echo '?')
-	echo -e "  ${GREEN}✓${NC} Faucet keypair: $FAUCET_PK"
+	FAUCET_PK=$(read_keypair_pubkey "$FAUCET_KEY")
+	echo -e "  ${GREEN}✓${NC} Faucet keypair ($FAUCET_SOURCE_LABEL): $FAUCET_PK"
 	echo -e "    $FAUCET_KEY → $FAUCET_KEY_TARGET"
 else
 	echo -e "  ${YELLOW}⚠${NC} Faucet keypair not found (faucet may not work)"

@@ -65,6 +65,26 @@ delete_env_value() {
     sed -i "/^${key}=/d" "$env_file"
 }
 
+ufw_is_active() {
+    if ! command -v ufw >/dev/null 2>&1; then
+        return 1
+    fi
+
+    [ "$(ufw status 2>/dev/null | head -n 1)" = "Status: active" ]
+}
+
+ensure_ufw_allow_rule() {
+    local rule="$1"
+    local comment="$2"
+
+    if ! ufw_is_active; then
+        return 0
+    fi
+
+    ufw allow "$rule" comment "$comment" >/dev/null
+    echo "   ✅ Ensured ufw allows $rule ($comment)"
+}
+
 hash_contract_bundle() {
     local contracts_root="$1"
     local hash_tool=""
@@ -332,9 +352,11 @@ for net in "${NETWORKS[@]}"; do
 
     case $net in
         testnet)
+            NETWORK_LABEL="Testnet"
             RPC_PORT=8899; WS_PORT=8900; P2P_PORT=7001; SIGNER_PORT=9201
             ;;
         mainnet)
+            NETWORK_LABEL="Mainnet"
             RPC_PORT=9899; WS_PORT=9900; P2P_PORT=8001; SIGNER_PORT=9201
             ;;
     esac
@@ -490,6 +512,14 @@ CUSTEOF
         echo "   ✅ $CONFIG_DIR/$CUSTODY_ENV_NAME already exists (updated treasury key path, signer auth token, incident manifest path, and file-backed seed paths)"
     fi
 
+    ensure_ufw_allow_rule "${RPC_PORT}/tcp" "${NETWORK_LABEL} RPC"
+    ensure_ufw_allow_rule "${WS_PORT}/tcp" "${NETWORK_LABEL} WebSocket"
+    ensure_ufw_allow_rule "${P2P_PORT}/tcp" "${NETWORK_LABEL} P2P"
+    ensure_ufw_allow_rule "${P2P_PORT}/udp" "${NETWORK_LABEL} P2P QUIC"
+    if [ "$net" = "testnet" ]; then
+        ensure_ufw_allow_rule "9100/tcp" "Testnet Faucet"
+    fi
+
     systemctl daemon-reload
 done
 
@@ -504,11 +534,22 @@ for net in "${NETWORKS[@]}"; do
     esac
 done
 echo ""
-echo "Firewall (if using ufw):"
+echo "Firewall (auto-opened when ufw is active; otherwise allow manually):"
 for net in "${NETWORKS[@]}"; do
     case $net in
-        testnet) echo "  sudo ufw allow 7001/tcp  # testnet P2P" ;;
-        mainnet) echo "  sudo ufw allow 8001/tcp  # mainnet P2P" ;;
+        testnet)
+            echo "  sudo ufw allow 8899/tcp  # testnet RPC"
+            echo "  sudo ufw allow 8900/tcp  # testnet WebSocket"
+            echo "  sudo ufw allow 7001/tcp  # testnet P2P"
+            echo "  sudo ufw allow 7001/udp  # testnet P2P QUIC"
+            echo "  sudo ufw allow 9100/tcp  # testnet faucet"
+            ;;
+        mainnet)
+            echo "  sudo ufw allow 9899/tcp  # mainnet RPC"
+            echo "  sudo ufw allow 9900/tcp  # mainnet WebSocket"
+            echo "  sudo ufw allow 8001/tcp  # mainnet P2P"
+            echo "  sudo ufw allow 8001/udp  # mainnet P2P QUIC"
+            ;;
     esac
 done
 echo ""

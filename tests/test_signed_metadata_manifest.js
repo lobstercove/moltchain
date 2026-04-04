@@ -11,7 +11,6 @@ const {
   stableJsonStringify,
   verifySignedMetadataEnvelope,
 } = require('../monitoring/shared/utils.js');
-const { publicKeyToAddress, verifySignature } = require('../monitoring/shared/pq.js');
 
 let passed = 0;
 let failed = 0;
@@ -30,6 +29,10 @@ function test(name, fn) {
 async function main() {
   console.log('\n🔐 Signed Metadata Manifest Tests');
   console.log('='.repeat(60));
+
+  const pqModuleSource = fs.readFileSync(path.join(__dirname, '..', 'monitoring', 'shared', 'pq.js'), 'utf8');
+  const pqModuleUrl = `data:text/javascript;base64,${Buffer.from(pqModuleSource, 'utf8').toString('base64')}`;
+  const { publicKeyToAddress, verifySignature } = await import(pqModuleUrl);
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'signed-metadata-manifest-'));
   const keypairPath = path.join(tmpDir, 'metadata-keypair.json');
