@@ -101,6 +101,10 @@ assert(dexHtml.includes('integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c
 assert(dexHeaders.includes('/index.html'), 'P4-2 DEX has a page-specific CSP header rule');
 assert(dexHeaders.includes("script-src 'self'"), 'P4-2 DEX CSP restricts script sources to self');
 assert(!dexHeaders.includes("script-src 'self' 'unsafe-inline'"), 'P4-2 DEX CSP does not allow inline scripts');
+assert(dexHeaders.includes("https://static.cloudflareinsights.com"), 'P4-2 DEX CSP allows the hosted Cloudflare Insights script instead of blocking it at runtime');
+assert(dexHeaders.includes("'sha256-Imv8rgvxn2GP4QJH/s+T5I8tEtsRwclyX3+LH36ke+U='"), 'P4-2 DEX CSP whitelists the first TradingView inline bootstrap script by hash');
+assert(dexHeaders.includes("'sha256-pVP3wiRK6EgotPvbJ2R65xpjHaVawiUq7xpvmES7HRA='"), 'P4-2 DEX CSP whitelists the second TradingView inline bootstrap script by hash');
+assert(dexHeaders.includes("'sha256-0Ql1J31jzC6EHJM2MUoUyEgmRntzyhoDq7h/gZw/BuQ='"), 'P4-2 DEX CSP whitelists the third TradingView inline bootstrap script by hash');
 assert(dexHeaders.includes("frame-src 'self' blob:"), 'P4-2 DEX CSP allows blob-backed chart frames required by the hosted TradingView bundle');
 assert(dexHeaders.includes("worker-src 'self' blob:"), 'P4-2 DEX CSP allows blob-backed chart workers required by the hosted TradingView bundle');
 
@@ -134,7 +138,7 @@ assert(!playgroundJs.includes('window.copyProgramId = () =>'), 'P4-2 Programs pl
 assert(playgroundHtml.includes('integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="'), 'P4-2 Programs playground pins Font Awesome with SRI');
 assert(playgroundHtml.includes('integrity="sha512-ZG31AN9z/CQD1YDDAK4RUAvogwbJHv6bHrumrnMLzdCrVu4HeAqrUX7Jsal/cbUwXGfaMUNmQU04tQ8XXl5Znw=="'), 'P4-2 Programs playground pins the Monaco loader with SRI');
 assert(programsHeaders.includes('/playground.html'), 'P4-2 Programs playground has a page-specific CSP header rule');
-assert(programsHeaders.includes("script-src 'self' https://cdnjs.cloudflare.com"), 'P4-2 Programs playground CSP pins scripts to self and cdnjs');
+assert(programsHeaders.includes("script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"), 'P4-2 Programs playground CSP pins scripts to self, Cloudflare Insights, and cdnjs');
 assert(!programsHeaders.includes("script-src 'self' 'unsafe-inline'"), 'P4-2 Programs playground CSP does not allow inline scripts');
 
 console.log('\n── Programs Landing Trust Boundary ──');
@@ -315,7 +319,7 @@ assert(walletIdentityJs.includes('data-wallet-action="showRegisterIdentityModal"
 assert(walletBase58Js.includes('var bs58 = window.bs58 ='), 'P4-2 Wallet externalizes Base58 support into a standalone script');
 assert(walletBootstrapJs.includes("navigator.serviceWorker.register('./sw.js')"), 'P4-2 Wallet keeps service-worker bootstrap in an external script');
 assert(walletHeaders.includes('/index.html'), 'P4-2 Wallet has a page-specific CSP header rule');
-assert(walletHeaders.includes("script-src 'self' https://cdnjs.cloudflare.com"), 'P4-2 Wallet CSP pins scripts to self and cdnjs');
+assert(walletHeaders.includes("script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"), 'P4-2 Wallet CSP pins scripts to self, Cloudflare Insights, and cdnjs');
 assert(walletHeaders.includes("worker-src 'self'"), 'P4-2 Wallet CSP restricts worker sources to self');
 assert(!walletHeaders.includes("script-src 'self' 'unsafe-inline'"), 'P4-2 Wallet CSP does not allow inline scripts');
 
@@ -331,7 +335,7 @@ assert(explorerAddressJs.includes("document.getElementById('copyAddressBase58Btn
 assert(explorerAddressJs.includes("document.getElementById('addressTxPrevBtn')?.addEventListener('click', prevTxPage);"), 'P4-2 Explorer address binds pagination controls in JavaScript');
 assert(!explorerAddressJs.includes('onclick="'), 'P4-2 Explorer address runtime no longer emits inline onclick handlers');
 assert(explorerHeaders.includes('/address.html'), 'P4-2 Explorer address has a page-specific CSP header rule');
-assert(explorerHeaders.includes("script-src 'self' https://cdn.jsdelivr.net"), 'P4-2 Explorer address CSP pins scripts to self and jsDelivr');
+assert(explorerHeaders.includes("script-src 'self' https://static.cloudflareinsights.com https://cdn.jsdelivr.net"), 'P4-2 Explorer address CSP pins scripts to self, Cloudflare Insights, and jsDelivr');
 assert(!explorerHeaders.includes("script-src 'self' 'unsafe-inline'"), 'P4-2 Explorer address CSP does not allow inline scripts');
 
 console.log('\n── Explorer Transaction Trust Boundary ──');
