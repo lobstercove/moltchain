@@ -630,7 +630,8 @@ for V_NUM in $(seq 1 "$TOTAL_VALIDATORS"); do
     V_RPC=$(rpc_port $V_NUM)
 
     # Method 1: Check own logs for "Produced block"
-    PRODUCED=$(grep -c "Produced block" "$V_LOG" 2>/dev/null || echo 0)
+    PRODUCED=$(grep -c "Produced block" "$V_LOG" 2>/dev/null || true)
+    PRODUCED="${PRODUCED:-0}"
 
     # Method 2: Check V1 logs for this validator as proposer
     PROPOSED=$(grep "proposer=${V_PUBKEY}" "$(log_path 1)" 2>/dev/null | wc -l | tr -d ' ')

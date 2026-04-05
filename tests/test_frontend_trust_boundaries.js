@@ -84,12 +84,14 @@ const explorerBlockJs = fs.readFileSync(path.join(root, 'explorer', 'js', 'block
 const explorerPrivacyHtml = fs.readFileSync(path.join(root, 'explorer', 'privacy.html'), 'utf8');
 const explorerPrivacyJs = fs.readFileSync(path.join(root, 'explorer', 'js', 'privacy.js'), 'utf8');
 const explorerHeaders = fs.readFileSync(path.join(root, 'explorer', '_headers'), 'utf8');
+const faucetHtml = fs.readFileSync(path.join(root, 'faucet', 'index.html'), 'utf8');
 const walletHtml = fs.readFileSync(path.join(root, 'wallet', 'index.html'), 'utf8');
 const walletJs = fs.readFileSync(path.join(root, 'wallet', 'js', 'wallet.js'), 'utf8');
 const walletIdentityJs = fs.readFileSync(path.join(root, 'wallet', 'js', 'identity.js'), 'utf8');
 const walletBase58Js = fs.readFileSync(path.join(root, 'wallet', 'js', 'base58.js'), 'utf8');
 const walletBootstrapJs = fs.readFileSync(path.join(root, 'wallet', 'js', 'wallet-bootstrap.js'), 'utf8');
 const walletHeaders = fs.readFileSync(path.join(root, 'wallet', '_headers'), 'utf8');
+const faucetSharedConfig = fs.readFileSync(path.join(root, 'faucet', 'shared-config.js'), 'utf8');
 
 console.log('\n── DEX Trust Boundary ──');
 
@@ -140,6 +142,8 @@ assert(playgroundHtml.includes('integrity="sha512-ZG31AN9z/CQD1YDDAK4RUAvogwbJHv
 assert(programsHeaders.includes('/playground.html'), 'P4-2 Programs playground has a page-specific CSP header rule');
 assert(programsHeaders.includes("script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"), 'P4-2 Programs playground CSP pins scripts to self, Cloudflare Insights, and cdnjs');
 assert(!programsHeaders.includes("script-src 'self' 'unsafe-inline'"), 'P4-2 Programs playground CSP does not allow inline scripts');
+assert(!programsHeaders.includes('X-Frame-Options: DENY'), 'P4-2 Programs no longer sends a blanket X-Frame-Options deny header that blocks intended embedding');
+assert(programsHeaders.includes("/playground.html\n  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self' https://developers.lichen.network http://localhost:3010;"), 'P4-2 Programs playground only allows the Developers docs origins to embed the IDE');
 
 console.log('\n── Programs Landing Trust Boundary ──');
 
@@ -306,6 +310,8 @@ assert(walletHtml.includes('data-wallet-action="showCreateWallet"'), 'P4-2 Walle
 assert(walletHtml.includes('data-wallet-trigger="importJsonFile"'), 'P4-2 Wallet keystore upload uses a dedicated JS trigger');
 assert(walletHtml.includes('data-wallet-action="closeModal" data-wallet-arg="sendModal"'), 'P4-2 Wallet modals expose close actions via data attributes');
 assert(walletHtml.includes('src="js/base58.js?v=20260403"'), 'P4-2 Wallet loads Base58 support from an external script');
+assert(walletHtml.includes('src="shared/pq.js?v=20260405"'), 'P4-2 Wallet loads the browser PQ bundle as a classic script before wallet runtime code');
+assert(!walletHtml.includes('type="module" src="shared/pq.js'), 'P4-2 Wallet does not defer the browser PQ bundle behind module script ordering');
 assert(walletHtml.includes('src="js/wallet-bootstrap.js?v=20260403"'), 'P4-2 Wallet loads carousel and service-worker bootstrap from an external script');
 assert(walletHtml.includes('integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="'), 'P4-2 Wallet pins Font Awesome with SRI');
 assert(walletHtml.includes('integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="'), 'P4-2 Wallet pins QRCode.js with SRI');
@@ -322,6 +328,13 @@ assert(walletHeaders.includes('/index.html'), 'P4-2 Wallet has a page-specific C
 assert(walletHeaders.includes("script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"), 'P4-2 Wallet CSP pins scripts to self, Cloudflare Insights, and cdnjs');
 assert(walletHeaders.includes("worker-src 'self'"), 'P4-2 Wallet CSP restricts worker sources to self');
 assert(!walletHeaders.includes("script-src 'self' 'unsafe-inline'"), 'P4-2 Wallet CSP does not allow inline scripts');
+
+console.log('\n── Faucet Trust Boundary ──');
+
+assert(faucetHtml.includes('src="shared/pq.js?v=20260405"'), 'P4-2 Faucet requests the browser PQ bundle through a cache-busting asset URL');
+assert(faucetHtml.includes('src="shared-config.js?v=20260405"'), 'P4-2 Faucet requests the testnet-first shared config through a cache-busting asset URL');
+assert(faucetSharedConfig.includes("const defaultNetwork = isProduction ? 'testnet' : 'local-testnet';"), 'P4-2 Faucet defaults production traffic to testnet endpoints');
+assert(faucetSharedConfig.includes("return currentNetwork('lichen_faucet_network');"), 'P4-2 Faucet incident banner ignores other portal network selections in production');
 
 console.log('\n── Explorer Address Trust Boundary ──');
 

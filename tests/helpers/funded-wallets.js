@@ -52,15 +52,17 @@ function loadKeysFromDir(keysDir, wallets, seen, limit) {
     .filter((f) => f.endsWith('.json'))
     .sort((a, b) => {
       const priority = (name) => {
-        if (name.startsWith('genesis-primary')) return 0;
-        if (name.startsWith('treasury')) return 1;
-        if (name.startsWith('builder_grants')) return 2;
-        if (name.startsWith('community_treasury')) return 3;
-        if (name.startsWith('ecosystem_partnerships')) return 4;
-        if (name.startsWith('reserve_pool')) return 5;
-        if (name.startsWith('validator_rewards')) return 6;
-        if (name.startsWith('genesis-signer')) return 7;
-        if (name.startsWith('founding_symbionts')) return 8;
+        // Prefer spendable grant/community fixtures before validator/bootstrap
+        // identities, which may carry stake but no spendable balance.
+        if (name.startsWith('builder_grants')) return 0;
+        if (name.startsWith('community_treasury')) return 1;
+        if (name.startsWith('ecosystem_partnerships')) return 2;
+        if (name.startsWith('reserve_pool')) return 3;
+        if (name.startsWith('validator_rewards')) return 4;
+        if (name.startsWith('founding_symbionts')) return 5;
+        if (name.startsWith('treasury')) return 6;
+        if (name.startsWith('genesis-primary')) return 7;
+        if (name.startsWith('genesis-signer')) return 8;
         return 9;
       };
       return priority(a) - priority(b) || a.localeCompare(b);

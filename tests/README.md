@@ -108,6 +108,8 @@ node tests/test_ws_reconnect_stress.js
 ### Run Frontend Audit Tests (no running node needed)
 
 ```bash
+node tests/test_frontend_asset_integrity.js
+node tests/test_frontend_trust_boundaries.js
 node tests/test_wallet_audit.js
 node tests/test_wallet_extension_audit.js
 node tests/test_wallet_modal_parity.js

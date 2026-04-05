@@ -30,7 +30,7 @@ async function main() {
   console.log('\n🔐 Signed Metadata Manifest Tests');
   console.log('='.repeat(60));
 
-  const pqModuleSource = fs.readFileSync(path.join(__dirname, '..', 'monitoring', 'shared', 'pq.js'), 'utf8');
+  const pqModuleSource = fs.readFileSync(path.join(__dirname, '..', 'monitoring', 'shared', 'pq.mjs'), 'utf8');
   const pqModuleUrl = `data:text/javascript;base64,${Buffer.from(pqModuleSource, 'utf8').toString('base64')}`;
   const { publicKeyToAddress, verifySignature } = await import(pqModuleUrl);
 

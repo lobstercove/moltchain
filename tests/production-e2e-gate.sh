@@ -714,6 +714,9 @@ if [[ "$RUN_CUSTODY_WITHDRAWAL_E2E" == "1" && "$REQUIRE_CUSTODY" == "1" ]]; then
   run_script_stage "Custody withdrawal E2E" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' CUSTODY_URL='$CUSTODY_URL' CUSTODY_API_AUTH_TOKEN='$CUSTODY_WITHDRAWAL_AUTH_TOKEN' GENESIS_KEYS_DIR='$CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR' '$PYTHON_BIN' tests/e2e-custody-withdrawal.py"
 fi
 run_script_stage "Portal interaction flows" "cd '$ROOT_DIR' && node tests/e2e-portal-interactions.js"
+run_script_stage "Frontend asset integrity" "cd '$ROOT_DIR' && node tests/test_frontend_asset_integrity.js"
+run_script_stage "Frontend trust boundaries" "cd '$ROOT_DIR' && node tests/test_frontend_trust_boundaries.js"
+run_script_stage "Explorer regression suite" "cd '$ROOT_DIR' && node explorer/explorer.test.js"
 run_script_stage "Wallet user flows" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' node tests/e2e-wallet-flows.js"
 run_script_stage "Developer lifecycle" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' AGENT_KEYPAIR='$AGENT_KEYPAIR' '$PYTHON_BIN' tests/e2e-developer-lifecycle.py"
 run_script_stage "Launchpad user flows" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' node tests/e2e-launchpad.js"
