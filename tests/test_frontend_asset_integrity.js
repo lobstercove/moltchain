@@ -1,25 +1,35 @@
 #!/usr/bin/env node
 'use strict';
 
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.join(__dirname, '..');
 
+function definePortal(name, excludedRoots = [], requiredStagePaths = []) {
+    return {
+        name,
+        excludedRoots: new Set(excludedRoots),
+        requiredStagePaths: new Set(requiredStagePaths),
+    };
+}
+
 const portals = [
-    { name: 'website', excludedRoots: new Set() },
-    { name: 'explorer', excludedRoots: new Set() },
-    { name: 'wallet', excludedRoots: new Set(['extension']) },
-    { name: 'dex', excludedRoots: new Set(['loadtest', 'market-maker', 'sdk']) },
-    { name: 'marketplace', excludedRoots: new Set() },
-    { name: 'programs', excludedRoots: new Set() },
-    { name: 'developers', excludedRoots: new Set() },
-    { name: 'monitoring', excludedRoots: new Set() },
-    { name: 'faucet', excludedRoots: new Set(['src']) },
+    definePortal('website'),
+    definePortal('explorer'),
+    definePortal('wallet', ['extension']),
+    definePortal('dex', ['loadtest', 'market-maker', 'sdk'], ['charting_library/']),
+    definePortal('marketplace'),
+    definePortal('programs'),
+    definePortal('developers'),
+    definePortal('monitoring'),
+    definePortal('faucet', ['src']),
 ];
 
 let passed = 0;
 let failed = 0;
+const gitIgnoreCache = new Map();
 
 function assert(condition, label) {
     if (condition) {
@@ -33,6 +43,25 @@ function assert(condition, label) {
 
 function toPosix(value) {
     return value.split(path.sep).join('/');
+}
+
+function isGitIgnored(absolutePath) {
+    const relative = toPosix(path.relative(repoRoot, absolutePath));
+    if (!relative || relative.startsWith('..')) {
+        return false;
+    }
+
+    if (gitIgnoreCache.has(relative)) {
+        return gitIgnoreCache.get(relative);
+    }
+
+    const result = spawnSync('git', ['check-ignore', relative], {
+        cwd: repoRoot,
+        encoding: 'utf8',
+    });
+    const ignored = result.status === 0;
+    gitIgnoreCache.set(relative, ignored);
+    return ignored;
 }
 
 function stripQueryAndHash(ref) {
@@ -130,6 +159,41 @@ function getPortalRelativeAssetPath(portalRoot, absolutePath) {
     return toPosix(relative);
 }
 
+function isCoveredByRequiredStagePath(portal, relativeAsset) {
+    for (const stagePath of portal.requiredStagePaths) {
+        const normalized = toPosix(stagePath);
+        if (normalized.endsWith('/')) {
+            if (relativeAsset.startsWith(normalized)) {
+                return true;
+            }
+            continue;
+        }
+
+        if (relativeAsset === normalized || relativeAsset.startsWith(`${normalized}/`)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function validateRequiredStagePaths(portal) {
+    if (portal.requiredStagePaths.size === 0) {
+        return;
+    }
+
+    const portalRoot = path.join(repoRoot, portal.name);
+    const missing = [];
+
+    for (const requiredPath of portal.requiredStagePaths) {
+        if (!fs.existsSync(path.join(portalRoot, requiredPath))) {
+            missing.push(requiredPath);
+        }
+    }
+
+    assert(missing.length === 0, `${portal.name} staged Pages assets exist locally`);
+}
+
 function analyzeAssetRefs(portal, pagePath, refs, kind) {
     const portalRoot = path.join(repoRoot, portal.name);
     const pageDir = path.dirname(pagePath);
@@ -138,6 +202,7 @@ function analyzeAssetRefs(portal, pagePath, refs, kind) {
     const seen = new Map();
     const duplicates = [];
     const invalidAssets = [];
+    const uncoveredIgnoredAssets = [];
 
     for (const { ref, tag } of localRefs) {
         const normalizedRef = toPosix(stripQueryAndHash(ref));
@@ -152,9 +217,14 @@ function analyzeAssetRefs(portal, pagePath, refs, kind) {
         const topLevel = relativeAsset.split('/')[0];
         const staysInsidePortal = relativeAsset !== '' && !relativeAsset.startsWith('..');
         const pointsToDeployableRoot = staysInsidePortal && !portal.excludedRoots.has(topLevel);
+        const assetExists = fs.existsSync(resolved);
 
-        if (!pointsToDeployableRoot || !fs.existsSync(resolved)) {
+        if (!pointsToDeployableRoot || !assetExists) {
             invalidAssets.push(ref);
+        }
+
+        if (pointsToDeployableRoot && assetExists && isGitIgnored(resolved) && !isCoveredByRequiredStagePath(portal, relativeAsset)) {
+            uncoveredIgnoredAssets.push(relativeAsset);
         }
 
         if (normalizedRef.endsWith('shared/pq.js')) {
@@ -174,6 +244,7 @@ function analyzeAssetRefs(portal, pagePath, refs, kind) {
 
     assert(duplicates.length === 0, `${relativePage} has no duplicate local ${kind} references`);
     assert(invalidAssets.length === 0, `${relativePage} local ${kind} references resolve to deployable assets`);
+    assert(uncoveredIgnoredAssets.length === 0, `${relativePage} has no undeclared gitignored local ${kind} refs`);
 }
 
 console.log('\n── Frontend Asset Integrity ──');
@@ -181,6 +252,7 @@ console.log('\n── Frontend Asset Integrity ──');
 for (const portal of portals) {
     const htmlFiles = getPortalHtmlFiles(portal);
     assert(htmlFiles.length > 0, `${portal.name} contributes deployed HTML pages to the asset scan`);
+    validateRequiredStagePaths(portal);
 
     for (const pagePath of htmlFiles) {
         const html = fs.readFileSync(pagePath, 'utf8');

@@ -5,7 +5,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-STAGING="/tmp/lichen-cf-staging"
+STAGING="$(mktemp -d "${TMPDIR:-/tmp}/lichen-cf-staging.XXXXXX")"
 
 # Colors
 RED='\033[0;31m'
@@ -30,6 +30,16 @@ PROJECTS=(
   "faucet:lichen-network-faucet"
 )
 
+run_predeploy_checks() {
+  info "Running frontend asset integrity audit"
+  (
+    cd "$REPO_ROOT"
+    node tests/test_frontend_asset_integrity.js
+  )
+  ok "Frontend asset integrity audit passed"
+  echo ""
+}
+
 get_cf_name() {
   for entry in "${PROJECTS[@]}"; do
     local key="${entry%%:*}"
@@ -50,6 +60,33 @@ get_extra_excludes() {
     faucet)   echo "src faucet.test.js" ;;
     *)        echo "" ;;
   esac
+}
+
+get_required_stage_assets() {
+  case "$1" in
+    dex) echo "charting_library/charting_library.standalone.js charting_library/bundles" ;;
+    *)   echo "" ;;
+  esac
+}
+
+verify_stage_assets() {
+  local name="$1"
+  local stage_dir="$2"
+  local required_assets=""
+  local asset=""
+
+  required_assets="$(get_required_stage_assets "$name")"
+  if [[ -z "$required_assets" ]]; then
+    return 0
+  fi
+
+  for asset in $required_assets; do
+    if [[ ! -e "$stage_dir/$asset" ]]; then
+      fail "Staged deploy for $name is missing required asset: $asset"
+    fi
+  done
+
+  ok "$name staged assets verified"
 }
 
 deploy_project() {
@@ -80,9 +117,15 @@ deploy_project() {
   rm -rf "$stage_dir"
   mkdir -p "$stage_dir"
   rsync -a "${excludes[@]}" "${src_dir}/" "${stage_dir}/"
+  verify_stage_assets "$name" "$stage_dir"
 
   # Deploy
-  wrangler pages deploy "$stage_dir" --project-name "$cf_name" --branch main --commit-message "Deploy $(date +%Y-%m-%d)"
+  npx wrangler pages deploy . \
+    --cwd "$stage_dir" \
+    --project-name "$cf_name" \
+    --branch main \
+    --commit-message "Deploy $(date +%Y-%m-%d)" \
+    --commit-dirty=true
 
   ok "${name} deployed to ${cf_name}"
   echo ""
@@ -99,6 +142,8 @@ for entry in "${PROJECTS[@]}"; do
 done
 
 # Main
+run_predeploy_checks
+
 if [[ $# -gt 0 ]]; then
   # Deploy single project
   deploy_project "$1"
