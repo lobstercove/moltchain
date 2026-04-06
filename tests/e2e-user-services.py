@@ -437,7 +437,11 @@ async def main() -> int:
 
     print("\n-- Bridge Deposit User Flow --")
     custody_ok, custody_detail = custody_healthcheck()
-    if REQUIRE_CUSTODY:
+    effective_require_custody = REQUIRE_CUSTODY or (STRICT_NO_SKIPS and custody_ok)
+    if effective_require_custody and not REQUIRE_CUSTODY and custody_ok:
+        print("  INFO  STRICT_NO_SKIPS=1 and custody is healthy; enabling bridge deposit coverage")
+
+    if effective_require_custody:
         if not custody_ok:
             report("FAIL", "Custody health", custody_detail)
         else:

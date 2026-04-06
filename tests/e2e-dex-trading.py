@@ -2033,6 +2033,7 @@ async def test_amm(conn: Connection, deployer: Keypair, trader_a: Keypair):
             "upper_tick": -13860,
             "amount_a": 10_000_000_000,
             "amount_b": 1_000_000_000,
+            "deadline": 9_999_999_999,
             "__value": 10_000_000_000,
         })
         report("PASS", "AMM add_liquidity")

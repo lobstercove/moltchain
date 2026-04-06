@@ -540,12 +540,13 @@ function buildGetPredictionStats() {
 
 // ── dex_amm builders ──
 
-// add_liquidity: opcode 3, 65 bytes
-function buildAddLiquidity(provider, poolId, lowerTick, upperTick, amountA, amountB) {
-    const buf = new ArrayBuffer(65); const v = new DataView(buf); const a = new Uint8Array(buf);
+// add_liquidity: opcode 3, 73 bytes
+function buildAddLiquidity(provider, poolId, lowerTick, upperTick, amountA, amountB, deadline = 1_000_000_000) {
+    const buf = new ArrayBuffer(73); const v = new DataView(buf); const a = new Uint8Array(buf);
     writeU8(a, 0, 3); writePubkey(a, 1, provider); writeU64LE(v, 33, poolId);
     v.setInt32(41, lowerTick, true); v.setInt32(45, upperTick, true);
     writeU64LE(v, 49, amountA); writeU64LE(v, 57, amountB);
+    writeU64LE(v, 65, deadline);
     return a;
 }
 
@@ -588,10 +589,10 @@ function buildLiquidatePosition(liquidator, posId) {
     return a;
 }
 
-// remove_liquidity: opcode 4, 49 bytes — provider[32] + pool_id[8] + liquidity_amount[8]
-function buildRemoveLiquidity(provider, poolId, amount) {
-    const buf = new ArrayBuffer(49); const v = new DataView(buf); const a = new Uint8Array(buf);
-    writeU8(a, 0, 4); writePubkey(a, 1, provider); writeU64LE(v, 33, poolId); writeU64LE(v, 41, amount);
+// remove_liquidity: opcode 4, 57 bytes — provider[32] + pool_id[8] + liquidity_amount[8] + deadline[8]
+function buildRemoveLiquidity(provider, poolId, amount, deadline = 1_000_000_000) {
+    const buf = new ArrayBuffer(57); const v = new DataView(buf); const a = new Uint8Array(buf);
+    writeU8(a, 0, 4); writePubkey(a, 1, provider); writeU64LE(v, 33, poolId); writeU64LE(v, 41, amount); writeU64LE(v, 49, deadline);
     return a;
 }
 

@@ -67,7 +67,8 @@ services:
       - MM_PAIR_ID=0
       - MM_STRATEGY=spread
       - MM_HALF_SPREAD_BPS=15
-      - MM_DRY_RUN=${MM_DRY_RUN:-false}
+      # Safe default: explicit opt-in is required before live orders are enabled.
+      - MM_DRY_RUN=${MM_DRY_RUN:-true}
     depends_on:
       lichen:
         condition: service_healthy

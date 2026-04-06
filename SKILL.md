@@ -1159,7 +1159,7 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 | `getBlockCommit` | `[slot]` | `{slot, block_hash, commit_signatures[], commit_validator_count, bft_timestamp}` |
 | `getAccountProof` | `[pubkey]` | `{pubkey, account, proof: {leaf_hash, siblings, path}, state_root}` |
 | `estimateTransactionFee` | `[base64_tx]` | `{fee_spores, fee_licn, compute_units}` |
-| `getAccountAtSlot` | `[pubkey, slot]` | Account state at historical slot (archive mode) |
+| `getAccountAtSlot` | `[pubkey, slot]` | Account state at historical slot (validator `--archive-mode`; pair with `--cold-store` for bounded retention) |
 | `getOraclePrices` | none | `{prices: [{asset, price, confidence, slot, attestations}]}` |
 
 #### EVM & Symbol Registry
@@ -1175,8 +1175,8 @@ Note decryption: XOR cipher with viewing key, 104-byte notes.
 
 | Method | Params | Returns |
 |--------|--------|---------|
-| `createBridgeDeposit` | `[{user_id, chain, asset, auth}]` where `auth={issued_at, expires_at, signature}` and the signature covers the bridge access message for `user_id` | Deposit object (address, status) |
-| `getBridgeDeposit` | `[{deposit_id, user_id, auth}]` or `[deposit_id, {user_id, auth}]` | Deposit object scoped to the authenticated `user_id` |
+| `createBridgeDeposit` | `[{user_id, chain, asset, auth}]` where `auth={issued_at, expires_at, signature}` and the signature covers the bridge access message for `user_id`; sign a fresh auth for each new deposit request | Deposit object (address, status) |
+| `getBridgeDeposit` | `[{deposit_id, user_id, auth}]` or `[deposit_id, {user_id, auth}]`; the current unexpired bridge auth can be reused for status lookups | Deposit object scoped to the authenticated `user_id` |
 
 ### Solana-Format JSON-RPC (`POST /solana-compat`)
 
@@ -1487,7 +1487,7 @@ Auto-derives 20-byte address via `Keccak256(pubkey)[12:32]` and sends type 12 tx
 
 ### Bridge Deposits (via Custody)
 
-1. `POST /deposits` on the trusted custody endpoint with a wallet-signed bridge access payload → deposit address
+1. `POST /deposits` on the trusted custody endpoint with a freshly signed bridge access payload → deposit address
 2. Poll `GET /deposits/:id` every 5s
 3. Status: `issued → pending → confirmed → swept → credited`
 4. Supported: Solana (SOL, USDC, USDT), Ethereum (ETH, USDC, USDT), BSC (BNB)

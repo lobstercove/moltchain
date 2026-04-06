@@ -31,7 +31,9 @@ from lichen import Connection, Keypair, PublicKey, Instruction, TransactionBuild
 
 RPC_URL = os.getenv("RPC_URL", "http://127.0.0.1:8899")
 WS_URL = os.getenv("WS_URL", "ws://127.0.0.1:8900")
-ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "test-admin-token")
+# Test fixture fallback only. Real deployments must provide ADMIN_TOKEN via env.
+DEFAULT_TEST_ADMIN_TOKEN = "test-admin-token"
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", DEFAULT_TEST_ADMIN_TOKEN)
 DEPLOYER_PATH = os.getenv("AGENT_KEYPAIR") or str(ROOT / "keypairs" / "deployer.json")
 CONTRACT_PROGRAM = PublicKey(b"\xff" * 32)
 

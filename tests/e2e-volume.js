@@ -228,19 +228,20 @@ function buildCancelOrder(trader, orderId) {
     return a;
 }
 
-// add_liquidity: opcode 3, 65 bytes
-function buildAddLiquidity(provider, poolId, lowerTick, upperTick, amountA, amountB) {
-    const buf = new ArrayBuffer(65); const v = new DataView(buf); const a = new Uint8Array(buf);
+// add_liquidity: opcode 3, 73 bytes
+function buildAddLiquidity(provider, poolId, lowerTick, upperTick, amountA, amountB, deadline = 1_000_000_000) {
+    const buf = new ArrayBuffer(73); const v = new DataView(buf); const a = new Uint8Array(buf);
     writeU8(a, 0, 3); writePubkey(a, 1, provider); writeU64LE(v, 33, poolId);
     v.setInt32(41, lowerTick, true); v.setInt32(45, upperTick, true);
     writeU64LE(v, 49, amountA); writeU64LE(v, 57, amountB);
+    writeU64LE(v, 65, deadline);
     return a;
 }
 
-// remove_liquidity: opcode 4, 49 bytes
-function buildRemoveLiquidity(provider, posId, amount) {
-    const buf = new ArrayBuffer(49); const v = new DataView(buf); const a = new Uint8Array(buf);
-    writeU8(a, 0, 4); writePubkey(a, 1, provider); writeU64LE(v, 33, posId); writeU64LE(v, 41, amount);
+// remove_liquidity: opcode 4, 57 bytes
+function buildRemoveLiquidity(provider, posId, amount, deadline = 1_000_000_000) {
+    const buf = new ArrayBuffer(57); const v = new DataView(buf); const a = new Uint8Array(buf);
+    writeU8(a, 0, 4); writePubkey(a, 1, provider); writeU64LE(v, 33, posId); writeU64LE(v, 41, amount); writeU64LE(v, 49, deadline);
     return a;
 }
 

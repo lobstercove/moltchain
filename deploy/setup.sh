@@ -568,6 +568,7 @@ for net in "${NETWORKS[@]}"; do
     SERVICE_FLEET_CONFIG_FILE=""
     SERVICE_FLEET_UPSTREAM_RPC_URL=""
     SERVICE_FLEET_STATUS_FILE=""
+    BOOTSTRAP_PEERS=""
     CURRENT_HOST_IPV4="$(primary_ipv4)"
     if [ -f "$ENV_FILE" ]; then
         SIGNER_AUTH_TOKEN="$(read_env_value "$ENV_FILE" "LICHEN_SIGNER_AUTH_TOKEN")"
@@ -577,6 +578,7 @@ for net in "${NETWORKS[@]}"; do
         SERVICE_FLEET_CONFIG_FILE="$(read_env_value "$ENV_FILE" "LICHEN_SERVICE_FLEET_CONFIG_FILE")"
         SERVICE_FLEET_UPSTREAM_RPC_URL="$(read_env_value "$ENV_FILE" "LICHEN_SERVICE_FLEET_UPSTREAM_RPC_URL")"
         SERVICE_FLEET_STATUS_FILE="$(read_env_value "$ENV_FILE" "LICHEN_SERVICE_FLEET_STATUS_FILE")"
+        BOOTSTRAP_PEERS="$(read_env_value "$ENV_FILE" "LICHEN_BOOTSTRAP_PEERS")"
     fi
     if [ -z "$SIGNER_AUTH_TOKEN" ]; then
         SIGNER_AUTH_TOKEN=$(openssl rand -hex 32 2>/dev/null || head -c 64 /dev/urandom | xxd -p -c 64)
@@ -596,6 +598,9 @@ for net in "${NETWORKS[@]}"; do
     if [ -z "$SERVICE_FLEET_STATUS_FILE" ]; then
         SERVICE_FLEET_STATUS_FILE="$DATA_DIR/service-fleet-status-${net}.json"
     fi
+    if [ -z "$BOOTSTRAP_PEERS" ] && [ "$CURRENT_HOST_IPV4" != "15.204.229.189" ]; then
+        BOOTSTRAP_PEERS="15.204.229.189:${P2P_PORT}"
+    fi
     if [ -z "$SERVICE_FLEET_UPSTREAM_RPC_URL" ] && [ "$net" = "testnet" ] && [ "$CURRENT_HOST_IPV4" != "15.204.229.189" ]; then
         SERVICE_FLEET_UPSTREAM_RPC_URL="http://15.204.229.189:8899"
     fi
@@ -614,7 +619,7 @@ RUST_LOG=info
 # This avoids systemd word-splitting issues with LICHEN_EXTRA_ARGS.
 # Set to comma-separated host:port pairs for joining (non-genesis) nodes.
 # Leave empty on the genesis-producing node.
-LICHEN_BOOTSTRAP_PEERS=
+LICHEN_BOOTSTRAP_PEERS=$BOOTSTRAP_PEERS
 LICHEN_INCIDENT_STATUS_FILE=$INCIDENT_STATUS_FILE
 LICHEN_SIGNED_METADATA_MANIFEST_FILE=$SIGNED_METADATA_MANIFEST_FILE
 LICHEN_SIGNED_METADATA_KEYPAIR_FILE=$SIGNED_METADATA_KEYPAIR_FILE

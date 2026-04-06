@@ -884,8 +884,8 @@ def build_opcode_scenarios(
         # Op0:  initialize(admin[32])
         # Op1:  create_pool(caller[32]+token_a[32]+token_b[32]+fee_tier(1)+sqrt_price(u64))
         # Op2:  set_pool_protocol_fee(caller[32]+pool_id(u64)+fee_percent(1))
-        # Op3:  add_liquidity(provider[32]+pool_id(u64)+lower_tick(i32)+upper_tick(i32)+amount_a(u64)+amount_b(u64))
-        # Op4:  remove_liquidity(provider[32]+position_id(u64)+liquidity_amount(u64))
+        # Op3:  add_liquidity(provider[32]+pool_id(u64)+lower_tick(i32)+upper_tick(i32)+amount_a(u64)+amount_b(u64)+deadline(u64))
+        # Op4:  remove_liquidity(provider[32]+position_id(u64)+liquidity_amount(u64)+deadline(u64))
         # Op5:  collect_fees(provider[32]+position_id(u64))
         # Op6:  swap_exact_in(trader[32]+pool_id(u64)+is_token_a_in(1)+amount_in(u64)+min_out(u64)+deadline(u64))
         # Op7:  swap_exact_out(trader[32]+pool_id(u64)+is_token_a_out(1)+amount_out(u64)+max_in(u64)+deadline(u64))
@@ -903,7 +903,7 @@ def build_opcode_scenarios(
             {"label": "dex_amm.create_pool",        "args": bytes([1]) + admin + licn + weth + bytes([1]) + u64le(1 << 32)},
             {"label": "dex_amm.set_protocol_fee",   "args": bytes([2]) + admin + u64le(1) + bytes([10])},
             # --- liquidity operations (fee_tier=1 → tick_spacing=10) ---
-            {"label": "dex_amm.add_liquidity",      "args": bytes([3]) + admin + u64le(1) + i32le(-100) + i32le(100) + u64le(1_000_000) + u64le(1_000_000)},
+            {"label": "dex_amm.add_liquidity",      "args": bytes([3]) + admin + u64le(1) + i32le(-100) + i32le(100) + u64le(1_000_000) + u64le(1_000_000) + u64le(9_999_999_999)},
             # --- queries after liquidity is in place ---
             {"label": "dex_amm.get_pool_info",      "args": bytes([10]) + u64le(1)},
             {"label": "dex_amm.get_position",       "args": bytes([11]) + u64le(1)},
@@ -916,7 +916,7 @@ def build_opcode_scenarios(
             {"label": "dex_amm.swap_exact_out",     "args": bytes([7]) + admin + u64le(1) + bytes([1]) + u64le(100) + u64le(50_000) + u64le(0)},
             # --- fee collection & position management ---
             {"label": "dex_amm.collect_fees",       "args": bytes([5]) + admin + u64le(1)},
-            {"label": "dex_amm.remove_liquidity",   "args": bytes([4]) + admin + u64le(1) + u64le(500)},
+            {"label": "dex_amm.remove_liquidity",   "args": bytes([4]) + admin + u64le(1) + u64le(500) + u64le(9_999_999_999)},
             # --- emergency pause/unpause ---
             {"label": "dex_amm.emergency_pause",    "args": bytes([8]) + admin},
             {"label": "dex_amm.emergency_unpause",  "args": bytes([9]) + admin},

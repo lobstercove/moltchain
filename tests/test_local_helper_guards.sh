@@ -84,7 +84,20 @@ setup_fake_curl() {
     local fixture_root="$1"
     write_file_from_stdin "$fixture_root/bin/curl" <<'EOF'
 #!/usr/bin/env bash
-printf '%s\n' '{"jsonrpc":"2.0","result":{"status":"ok"}}'
+payload=""
+for ((i = 1; i <= $#; i++)); do
+    if [ "${!i}" = "-d" ] && [ $((i + 1)) -le $# ]; then
+        next_index=$((i + 1))
+        payload="${!next_index}"
+        break
+    fi
+done
+
+if printf '%s' "$payload" | grep -Fq '"method":"getValidators"'; then
+    printf '%s\n' '{"jsonrpc":"2.0","result":{"validators":[{"stake":1},{"stake":1},{"stake":1}]}}'
+else
+    printf '%s\n' '{"jsonrpc":"2.0","result":{"status":"ok"}}'
+fi
 EOF
     chmod +x "$fixture_root/bin/curl"
 }

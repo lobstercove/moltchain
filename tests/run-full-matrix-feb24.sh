@@ -231,6 +231,7 @@ resolve_custody_withdrawal_fixtures() {
 MATRIX_AGENT_KEYPAIR="$PWD/keypairs/deployer.json"
 MATRIX_HUMAN_KEYPAIR="$MATRIX_AGENT_KEYPAIR"
 MATRIX_SIGNER_COUNT=0
+MATRIX_REQUIRE_CUSTODY=0
 MATRIX_CUSTODY_WITHDRAWAL_AUTH_TOKEN=""
 MATRIX_CUSTODY_WITHDRAWAL_GENESIS_KEYS_DIR=""
 MATRIX_CUSTODY_WITHDRAWAL_TOKEN_SOURCE="unresolved"
@@ -308,6 +309,7 @@ if ! ensure_funded_signers; then
 fi
 
 if [[ "$MATRIX_RUN_CUSTODY_WITHDRAWAL_E2E" == "1" ]] && matrix_custody_healthy; then
+  MATRIX_REQUIRE_CUSTODY=1
   if ! resolve_custody_withdrawal_fixtures; then
     echo "[full-matrix] ERROR: custody withdrawal fixtures unresolved (token_source=${MATRIX_CUSTODY_WITHDRAWAL_TOKEN_SOURCE} genesis_source=${MATRIX_CUSTODY_WITHDRAWAL_GENESIS_SOURCE})" | tee -a "$LOG"
     echo "TOTAL=0 PASS=0 FAIL=1" | tee -a "$REPORT"
@@ -323,7 +325,7 @@ commands=(
   "bash tests/test-cli-comprehensive.sh"
   "bash tests/live-e2e-test.sh"
   "REQUIRE_ALL_CONTRACTS=0 bash tests/services-deep-e2e.sh"
-  "AGENT_KEYPAIR='$MATRIX_AGENT_KEYPAIR' REQUIRE_FAUCET=1 python3 tests/e2e-user-services.py"
+  "AGENT_KEYPAIR='$MATRIX_AGENT_KEYPAIR' CUSTODY_URL='$MATRIX_CUSTODY_URL' REQUIRE_FAUCET=1 REQUIRE_CUSTODY='$MATRIX_REQUIRE_CUSTODY' STRICT_NO_SKIPS='${STRICT_NO_SKIPS:-0}' python3 tests/e2e-user-services.py"
   "node tests/e2e-portal-interactions.js"
   "node tests/e2e-wallet-flows.js"
   "AGENT_KEYPAIR='$MATRIX_AGENT_KEYPAIR' python3 tests/e2e-developer-lifecycle.py"

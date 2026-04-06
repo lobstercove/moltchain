@@ -26,6 +26,7 @@ import subprocess
 import struct
 import sys
 import time
+import uuid
 from pathlib import Path
 from typing import Any, Optional, Tuple
 from urllib.error import HTTPError, URLError
@@ -48,6 +49,7 @@ WITHDRAWAL_DEST_CHAIN = os.getenv("WITHDRAWAL_DEST_CHAIN", "solana")
 WITHDRAWAL_AMOUNT_SPORES = int(os.getenv("WITHDRAWAL_AMOUNT_SPORES", "1000000000"))
 ADMIN_FEE_FUNDING_SPORES = int(os.getenv("ADMIN_FEE_FUNDING_SPORES", "2000000000"))
 USER_FEE_FUNDING_SPORES = int(os.getenv("USER_FEE_FUNDING_SPORES", "1000000000"))
+WITHDRAWAL_AUTH_TTL_SECS = 24 * 60 * 60
 
 PASS = 0
 FAIL = 0
@@ -164,6 +166,63 @@ def _authorization_headers() -> dict[str, str]:
     if not CUSTODY_API_AUTH_TOKEN:
         raise RuntimeError("CUSTODY_API_AUTH_TOKEN is required for custody withdrawal E2E")
     return {"Authorization": f"Bearer {CUSTODY_API_AUTH_TOKEN}"}
+
+
+def build_withdrawal_access_message(
+    user_id: str,
+    asset: str,
+    amount: int,
+    dest_chain: str,
+    dest_address: str,
+    preferred_stablecoin: str,
+    issued_at: int,
+    expires_at: int,
+    nonce: str,
+) -> str:
+    return (
+        "LICHEN_WITHDRAWAL_ACCESS_V1\n"
+        f"user_id={user_id}\n"
+        f"asset={asset.strip().lower()}\n"
+        f"amount={amount}\n"
+        f"dest_chain={dest_chain.strip().lower()}\n"
+        f"dest_address={dest_address.strip()}\n"
+        f"preferred_stablecoin={preferred_stablecoin.strip().lower()}\n"
+        f"issued_at={issued_at}\n"
+        f"expires_at={expires_at}\n"
+        f"nonce={nonce}\n"
+    )
+
+
+def create_withdrawal_access_auth(
+    wallet: Keypair,
+    *,
+    asset: str,
+    amount: int,
+    dest_chain: str,
+    dest_address: str,
+    preferred_stablecoin: str = "usdt",
+) -> dict[str, Any]:
+    issued_at = int(time.time())
+    expires_at = issued_at + WITHDRAWAL_AUTH_TTL_SECS
+    nonce = uuid.uuid4().hex
+    message = build_withdrawal_access_message(
+        wallet.address().to_base58(),
+        asset,
+        amount,
+        dest_chain,
+        dest_address,
+        preferred_stablecoin,
+        issued_at,
+        expires_at,
+        nonce,
+    )
+    signature = wallet.sign(message.encode("utf-8"))
+    return {
+        "issued_at": issued_at,
+        "expires_at": expires_at,
+        "nonce": nonce,
+        "signature": signature.to_json(),
+    }
 
 
 def _find_role_keypair_path(role: str) -> Path:
@@ -422,6 +481,13 @@ async def main() -> int:
                 "amount": WITHDRAWAL_AMOUNT_SPORES,
                 "dest_chain": WITHDRAWAL_DEST_CHAIN,
                 "dest_address": withdrawal_user.address().to_base58(),
+                "auth": create_withdrawal_access_auth(
+                    withdrawal_user,
+                    asset=WITHDRAWAL_ASSET,
+                    amount=WITHDRAWAL_AMOUNT_SPORES,
+                    dest_chain=WITHDRAWAL_DEST_CHAIN,
+                    dest_address=withdrawal_user.address().to_base58(),
+                ),
             },
         )
         if create_status != 200 or not isinstance(create_payload, dict):

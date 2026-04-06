@@ -22,6 +22,23 @@ This runbook intentionally prefers the scripts that are verified in the current 
 
 `deploy/setup.sh` is now responsible for the public edge as well: it installs the checked-in Caddy config from `deploy/Caddyfile.*`, enables the `caddy` service, uses internal TLS for Cloudflare-origin traffic, and keeps raw RPC, WebSocket, faucet, and custody ports off the public firewall surface.
 
+## TLS termination model
+
+Production RPC and WebSocket listeners do not terminate TLS inside the Rust services.
+The supported production shape is:
+
+- Cloudflare or another trusted edge in front of the node
+- Caddy on the origin host terminating HTTPS and WSS with the checked-in `deploy/Caddyfile.*` configs
+- local origin proxying from Caddy to the raw app listeners on `127.0.0.1`
+- firewall rules that keep raw RPC and WS ports off the public internet
+
+Current checked-in origin mappings are:
+
+- mainnet: `rpc.lichen.network -> 127.0.0.1:9899`, `ws.lichen.network -> 127.0.0.1:9900`
+- testnet: `testnet-rpc.lichen.network -> 127.0.0.1:8899`, `testnet-ws.lichen.network -> 127.0.0.1:8900`
+
+Operational rule: direct exposure of the raw RPC or WebSocket listeners is unsupported for production. If Caddy or the firewall posture is missing, the node is not in a production-ready network shape even if the Rust services are running.
+
 ## Supporting scripts
 
 | Task | Supporting script |
@@ -550,6 +567,150 @@ Firewall minimums:
 - mainnet P2P: `8001/tcp`
 
 Expose RPC, WS, faucet, and custody only through the reverse proxy layout you actually operate. The supported repo-managed layout lives in `deploy/Caddyfile.common`, `deploy/Caddyfile.testnet`, `deploy/Caddyfile.testnet-us`, `deploy/Caddyfile.mainnet`, and `deploy/Caddyfile.mainnet-us`, uses internal TLS at the VPS edge for Cloudflare-origin traffic, and is installed by `deploy/setup.sh`.
+
+### Step 10: backup, restore, and disaster recovery
+
+Do not use `reset-blockchain.sh` on VPS hosts. That script is intentionally limited to local and developer reset flows and is not the supported production restore path.
+
+The authoritative backup set for a VPS validator is:
+
+- `/etc/lichen/env-<net>`
+- `/etc/lichen/custody-env` on testnet or `/etc/lichen/custody-env-mainnet` on mainnet
+- `/etc/lichen/secrets/`
+- `/etc/lichen/custody-treasury-<net>.json`
+- `/etc/lichen/signed-metadata-manifest-<net>.json`
+- `/etc/lichen/incident-status-<net>.json`
+- `/etc/lichen/service-fleet-<net>.json`
+- `/etc/lichen/key-hierarchy.md`
+- `/etc/lichen/drill-register.md`
+- `/var/lib/lichen/state-<net>`
+- `/var/lib/lichen/.lichen`
+- `/var/lib/lichen/service-fleet-status-<net>.json`
+- `/var/lib/lichen/custody-db` on testnet or `/var/lib/lichen/custody-db-mainnet` on mainnet
+- testnet only: `/var/lib/lichen/faucet-keypair-testnet.json` and `/var/lib/lichen/airdrops.json`
+
+Identity-critical files live inside that set. In particular, do not lose `/var/lib/lichen/state-<net>/validator-keypair.json` or `/var/lib/lichen/.lichen/node_identity.json`, or the node will come back with a different validator or P2P identity.
+
+`deploy/setup.sh` can recreate `/var/lib/lichen/contracts` and the checked-in systemd units from the correct repo release, but include them in the backup if you want a faster single-archive restore and an easier offline drill.
+
+Create an offline snapshot with services stopped. Start from the repo release that is actually running on the host.
+
+```bash
+NET=testnet
+STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+BACKUP_DIR=/var/backups/lichen/$NET-$STAMP
+VALIDATOR_SERVICE=lichen-validator-$NET
+CUSTODY_SERVICE=lichen-custody
+CUSTODY_ENV=/etc/lichen/custody-env
+CUSTODY_DB=/var/lib/lichen/custody-db
+OPTIONAL_SERVICE=lichen-faucet
+OPTIONAL_PATHS=(
+  /var/lib/lichen/faucet-keypair-testnet.json
+  /var/lib/lichen/airdrops.json
+)
+
+if [ "$NET" = "mainnet" ]; then
+  CUSTODY_SERVICE=lichen-custody-mainnet
+  CUSTODY_ENV=/etc/lichen/custody-env-mainnet
+  CUSTODY_DB=/var/lib/lichen/custody-db-mainnet
+  OPTIONAL_SERVICE=
+  OPTIONAL_PATHS=()
+fi
+
+sudo install -d -m 750 -o root -g root "$BACKUP_DIR"
+if [ -n "$OPTIONAL_SERVICE" ]; then
+  sudo systemctl stop "$OPTIONAL_SERVICE"
+fi
+sudo systemctl stop "$CUSTODY_SERVICE"
+sudo systemctl stop "$VALIDATOR_SERVICE"
+
+sudo tar --xattrs --acls --numeric-owner -cpf "$BACKUP_DIR/lichen-$NET.tar" \
+  /etc/lichen/env-$NET \
+  "$CUSTODY_ENV" \
+  /etc/lichen/secrets \
+  /etc/lichen/custody-treasury-$NET.json \
+  /etc/lichen/signed-metadata-manifest-$NET.json \
+  /etc/lichen/incident-status-$NET.json \
+  /etc/lichen/service-fleet-$NET.json \
+  /etc/lichen/key-hierarchy.md \
+  /etc/lichen/drill-register.md \
+  /var/lib/lichen/state-$NET \
+  /var/lib/lichen/.lichen \
+  /var/lib/lichen/service-fleet-status-$NET.json \
+  "$CUSTODY_DB" \
+  /var/lib/lichen/contracts \
+  "${OPTIONAL_PATHS[@]}"
+
+(cd "$BACKUP_DIR" && sha256sum "lichen-$NET.tar" > SHA256SUMS)
+
+sudo systemctl start "$VALIDATOR_SERVICE"
+sudo systemctl start "$CUSTODY_SERVICE"
+if [ -n "$OPTIONAL_SERVICE" ]; then
+  sudo systemctl start "$OPTIONAL_SERVICE"
+fi
+```
+
+Record the archive path, `SHA256SUMS`, the repo revision used to create the backup, and the contract bundle hash from Step 2 in the deployed `/etc/lichen/drill-register.md` before moving the archive to offline storage.
+
+Restore onto a clean or rebuilt VPS by re-establishing the supported filesystem layout first, then extracting the preserved state back in place. A restore is not a genesis rebuild. Do not wipe the recovered state and do not rerun `lichen-genesis` when you are restoring an existing validator.
+
+```bash
+NET=testnet
+BACKUP_DIR=/var/backups/lichen/testnet-20260406T120000Z
+VALIDATOR_SERVICE=lichen-validator-$NET
+CUSTODY_SERVICE=lichen-custody
+RPC_PORT=8899
+OPTIONAL_SERVICE=lichen-faucet
+
+if [ "$NET" = "mainnet" ]; then
+  CUSTODY_SERVICE=lichen-custody-mainnet
+  RPC_PORT=9899
+  OPTIONAL_SERVICE=
+fi
+
+cd ~/lichen
+sudo bash deploy/setup.sh "$NET"
+
+if [ -n "$OPTIONAL_SERVICE" ]; then
+  sudo systemctl stop "$OPTIONAL_SERVICE"
+fi
+sudo systemctl stop "$CUSTODY_SERVICE"
+sudo systemctl stop "$VALIDATOR_SERVICE"
+
+(cd "$BACKUP_DIR" && sha256sum -c SHA256SUMS)
+sudo tar --xattrs --acls --numeric-owner -xpf "$BACKUP_DIR/lichen-$NET.tar" -C /
+
+sudo chown -R lichen:lichen /var/lib/lichen
+sudo chown root:lichen /etc/lichen/secrets
+sudo chmod 750 /etc/lichen/secrets
+sudo find /etc/lichen/secrets -type f -exec chown root:lichen {} \;
+sudo find /etc/lichen/secrets -type f -exec chmod 640 {} \;
+
+sudo systemctl daemon-reload
+sudo systemctl start "$VALIDATOR_SERVICE"
+sudo systemctl start "$CUSTODY_SERVICE"
+if [ -n "$OPTIONAL_SERVICE" ]; then
+  sudo systemctl start "$OPTIONAL_SERVICE"
+fi
+
+curl -s http://127.0.0.1:$RPC_PORT -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getHealth","params":[]}'
+
+curl -s http://127.0.0.1:$RPC_PORT -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getIncidentStatus","params":[]}'
+
+curl -s http://127.0.0.1:$RPC_PORT -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getSignedMetadataManifest","params":[]}'
+```
+
+If the restore archive did not include `/etc/lichen/custody-treasury-<net>.json` or the faucet keypair, but `/var/lib/lichen/state-<net>/genesis-keys` was restored, repopulate those service-facing files before restarting custody or faucet:
+
+```bash
+cd ~/lichen
+sudo bash scripts/vps-post-genesis.sh "$NET" --no-restart
+```
+
+After the node is healthy, run the same public smoke tests from Step 8 and update the deployed `/etc/lichen/drill-register.md` with the restore transcript, checksum verification, recovered file inventory, and owner signoff. The quarterly offline backup restore drill in `docs/deployment/ROTATION_AND_RESTORE_DRILLS.md` should use this exact sequence.
 
 ## Manual single-node debugging
 

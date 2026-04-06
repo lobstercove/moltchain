@@ -27,6 +27,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MAX_VALIDATORS="${1:-3}"
 WARMUP_SLOTS=100  # Must match ACTIVATION_WARMUP in validator/src/main.rs
 REUSE_EXISTING_CLUSTER="${LICHEN_REUSE_EXISTING_CLUSTER:-0}"
+REUSE_HEALTH_TIMEOUT_SECS="${LICHEN_REUSE_HEALTH_TIMEOUT_SECS:-120}"
 USING_EXISTING_CLUSTER=false
 
 export LICHEN_LOCAL_DEV=1
@@ -43,6 +44,20 @@ ok()  { echo -e "${GREEN}[OK]${NC} $*"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
 fail() { echo -e "${RED}[FAIL]${NC} $*"; exit 1; }
 
+stop_local_processes() {
+    if [[ -x "$REPO_ROOT/scripts/stop-local-stack.sh" ]]; then
+        "$REPO_ROOT/scripts/stop-local-stack.sh" testnet >/dev/null 2>&1 || true
+    fi
+
+    pkill -f "validator-supervisor.sh" 2>/dev/null || true
+    pkill -f "run-validator.sh testnet" 2>/dev/null || true
+    pkill -f "lichen-validator" 2>/dev/null || true
+    pkill -f "lichen-custody" 2>/dev/null || true
+    pkill -f "lichen-faucet" 2>/dev/null || true
+    pkill -f "first-boot-deploy.sh" 2>/dev/null || true
+    sleep 2
+}
+
 # Port calculations (must match run-validator.sh)
 p2p_port()  { echo $((7000 + $1)); }
 rpc_port()  { echo $((8899 + 2 * ($1 - 1))); }
@@ -56,14 +71,7 @@ cleanup() {
     fi
 
     log "Cleaning up..."
-    for n in $(seq 1 "$MAX_VALIDATORS"); do
-        pidfile="$(db_path $n)/validator.pid"
-        if [[ -f "$pidfile" ]]; then
-            kill "$(cat "$pidfile")" 2>/dev/null || true
-        fi
-    done
-    pkill -f "lichen-validator.*dev-mode" 2>/dev/null || true
-    sleep 2
+    stop_local_processes
     log "Cleanup done"
 }
 trap cleanup EXIT
@@ -98,6 +106,66 @@ try:
     print(len([v for v in vs if v.get('stake',0) > 0]))
 except: print(0)
 " 2>/dev/null || echo 0
+}
+
+cluster_log_path() {
+    local validator_num=$1
+    local local_stack_log="/tmp/lichen-local-testnet/validator-${validator_num}.log"
+    local harness_log
+    harness_log="$(log_path "$validator_num")"
+    if [[ -f "$local_stack_log" ]]; then
+        echo "$local_stack_log"
+    else
+        echo "$harness_log"
+    fi
+}
+
+existing_cluster_status_line() {
+    local primary_rpc
+    primary_rpc="$(rpc_port 1)"
+    local statuses=()
+
+    for n in $(seq 1 "$MAX_VALIDATORS"); do
+        local rpc health status
+        rpc="$(rpc_port "$n")"
+        health="$(rpc_query "$rpc" "getHealth")"
+        status="$(echo "$health" | python3 -c '
+import json
+import sys
+
+try:
+    result = json.load(sys.stdin).get("result", {})
+    if isinstance(result, dict):
+        print(result.get("status", "unknown"))
+    else:
+        print(result)
+except Exception:
+    print("unreachable")
+')"
+        statuses+=("V${n}=${status:-unreachable}")
+    done
+
+    local staked
+    staked="$(get_staked_validator_count "$primary_rpc")"
+    echo "${statuses[*]} staked=${staked}/${MAX_VALIDATORS}"
+}
+
+wait_for_existing_cluster_healthy() {
+    local timeout_seconds=${1:-$REUSE_HEALTH_TIMEOUT_SECS}
+
+    for second in $(seq 1 "$timeout_seconds"); do
+        if existing_cluster_healthy; then
+            return 0
+        fi
+
+        if [[ $((second % 5)) -eq 0 ]]; then
+            log "Waiting for existing-cluster readiness: $(existing_cluster_status_line)"
+        fi
+
+        sleep 1
+    done
+
+    return 1
 }
 
 existing_cluster_healthy() {
@@ -234,19 +302,30 @@ report_reused_cluster() {
     fi
 }
 
-if [[ "$REUSE_EXISTING_CLUSTER" == "1" ]] && existing_cluster_healthy; then
-    USING_EXISTING_CLUSTER=true
-    declare -a ALL_PUBKEYS=()
-    report_reused_cluster
-    exit 0
+if [[ "$REUSE_EXISTING_CLUSTER" == "1" ]]; then
+    if wait_for_existing_cluster_healthy "$REUSE_HEALTH_TIMEOUT_SECS"; then
+        USING_EXISTING_CLUSTER=true
+        declare -a ALL_PUBKEYS=()
+        report_reused_cluster
+        exit 0
+    fi
+
+    warn "Existing-cluster reuse never became healthy: $(existing_cluster_status_line)"
+    for n in $(seq 1 "$MAX_VALIDATORS"); do
+        local_log="$(cluster_log_path "$n")"
+        if [[ -f "$local_log" ]]; then
+            warn "V${n} log tail (${local_log}):"
+            tail -20 "$local_log"
+        fi
+    done
+    fail "Requested existing-cluster reuse, but the local stack did not become healthy within ${REUSE_HEALTH_TIMEOUT_SECS}s"
 fi
 
 # ═══════════════════════════════════════════════════════════════
 # FLUSH: Clean all local state
 # ═══════════════════════════════════════════════════════════════
 log "Flushing local state..."
-pkill -f "lichen-validator" 2>/dev/null || true
-sleep 2
+stop_local_processes
 for n in $(seq 1 "$MAX_VALIDATORS"); do
     local_db="$(db_path $n)"
     if [[ -d "$local_db" ]]; then
@@ -437,7 +516,8 @@ for V_NUM in $(seq 1 "$MAX_VALIDATORS"); do
     V_PUBKEY="${ALL_PUBKEYS[$((V_NUM - 1))]}"
     V_LOG="$(log_path $V_NUM)"
 
-    PRODUCED=$(/usr/bin/grep -c "Produced block" "$V_LOG" 2>/dev/null || echo 0)
+    PRODUCED=$(/usr/bin/grep -c "Produced block" "$V_LOG" 2>/dev/null || true)
+    PRODUCED="${PRODUCED:-0}"
 
     if [[ "$PRODUCED" -gt 0 ]]; then
         ok "V${V_NUM} ($V_PUBKEY): produced=$PRODUCED blocks"
