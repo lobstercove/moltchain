@@ -160,6 +160,11 @@ printf '%s' "${SIGNED_METADATA_KEYPAIR:-}" > "$PWD/bootstrap-keypair-path.txt"
 exit 0
 EOF
     chmod +x "$fixture_root/scripts/first-boot-deploy.sh"
+    write_file_from_stdin "$fixture_root/scripts/start-local-3validators.sh" <<'EOF'
+#!/usr/bin/env bash
+exit 0
+EOF
+    chmod +x "$fixture_root/scripts/start-local-3validators.sh"
     write_file_from_stdin "$fixture_root/target/release/lichen-validator" <<'EOF'
 #!/usr/bin/env bash
 exit 0
@@ -203,6 +208,14 @@ assert_start_local_3validators_clears_peer_trust_state() {
 exit 0
 EOF
     chmod +x "$fixture_root/run-validator.sh"
+    mkdir -p "$fixture_root/target/release"
+    for bin_name in lichen lichen-genesis lichen-validator; do
+        write_file_from_stdin "$fixture_root/target/release/$bin_name" <<'EOF'
+#!/usr/bin/env bash
+exit 0
+EOF
+        chmod +x "$fixture_root/target/release/$bin_name"
+    done
     write_file_from_stdin "$fixture_root/bin/node" <<'EOF'
 #!/usr/bin/env bash
 out=""
