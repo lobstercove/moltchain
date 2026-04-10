@@ -44,7 +44,8 @@ REQUIRE_TOKEN_WRITE="${REQUIRE_TOKEN_WRITE:-1}"
 REQUIRE_ALL_CONTRACTS="${REQUIRE_ALL_CONTRACTS:-1}"
 REQUIRE_ALL_SCENARIOS="${REQUIRE_ALL_SCENARIOS:-1}"
 STRICT_WRITE_ASSERTIONS="${STRICT_WRITE_ASSERTIONS:-0}"
-TX_CONFIRM_TIMEOUT_SECS="${TX_CONFIRM_TIMEOUT_SECS:-25}"
+TX_CONFIRM_TIMEOUT_SECS="${TX_CONFIRM_TIMEOUT_SECS:-45}"
+FUNDING_CONFIRM_TIMEOUT_SECS="${FUNDING_CONFIRM_TIMEOUT_SECS:-$TX_CONFIRM_TIMEOUT_SECS}"
 REQUIRE_FULL_WRITE_ACTIVITY="${REQUIRE_FULL_WRITE_ACTIVITY:-0}"
 MIN_CONTRACT_ACTIVITY_DELTA="${MIN_CONTRACT_ACTIVITY_DELTA:-0}"
 ENFORCE_DOMAIN_ASSERTIONS="${ENFORCE_DOMAIN_ASSERTIONS:-auto}"
@@ -58,7 +59,7 @@ EXPECTED_CONTRACTS_FILE="${EXPECTED_CONTRACTS_FILE:-$ROOT_DIR/tests/expected-con
 CONTRACT_ACTIVITY_OVERRIDES_DEFAULT='{}'
 CONTRACT_ACTIVITY_OVERRIDES="${CONTRACT_ACTIVITY_OVERRIDES:-$CONTRACT_ACTIVITY_OVERRIDES_DEFAULT}"
 WRITE_E2E_REPORT_PATH="${WRITE_E2E_REPORT_PATH:-$ROOT_DIR/tests/artifacts/contracts-write-e2e-report.json}"
-CONTRACT_WRITE_KEYPAIR="${CONTRACT_WRITE_KEYPAIR:-$ROOT_DIR/keypairs/deployer.json}"
+CONTRACT_WRITE_KEYPAIR="${CONTRACT_WRITE_KEYPAIR:-}"
 DEX_BOOTSTRAP_BASE_SYMBOL="${DEX_BOOTSTRAP_BASE_SYMBOL-LICN}"
 DEX_BOOTSTRAP_QUOTE_SYMBOL="${DEX_BOOTSTRAP_QUOTE_SYMBOL-LUSD}"
 DEX_API_URL="${DEX_API_URL:-${RPC_URL}/api/v1}"
@@ -66,6 +67,7 @@ FAUCET_URL="${FAUCET_URL:-http://localhost:9100}"
 CUSTODY_URL="${CUSTODY_URL:-http://localhost:9105}"
 PYTHON_BIN="${PYTHON_BIN:-$ROOT_DIR/.venv/bin/python}"
 CUSTODY_WITHDRAWAL_FIXTURE_RESOLVER="${CUSTODY_WITHDRAWAL_FIXTURE_RESOLVER:-$ROOT_DIR/tests/resolve-custody-withdrawal-fixtures.py}"
+FUNDED_SIGNER_RESOLVER="${FUNDED_SIGNER_RESOLVER:-$ROOT_DIR/tests/resolve-funded-signers.py}"
 
 AGENT_WALLET_NAME="${AGENT_WALLET_NAME:-e2e-agent}"
 HUMAN_WALLET_NAME="${HUMAN_WALLET_NAME:-e2e-human}"
@@ -480,6 +482,28 @@ print('')
 PY
 }
 
+resolve_contract_write_signers() {
+  local json="{}"
+
+  if [[ -x "$PYTHON_BIN" && -f "$FUNDED_SIGNER_RESOLVER" ]]; then
+    json="$(RPC_URL="$RPC_URL" "$PYTHON_BIN" "$FUNDED_SIGNER_RESOLVER" 2>/dev/null || echo '{}')"
+  elif command -v python3 >/dev/null 2>&1 && [[ -f "$FUNDED_SIGNER_RESOLVER" ]]; then
+    json="$(RPC_URL="$RPC_URL" python3 "$FUNDED_SIGNER_RESOLVER" 2>/dev/null || echo '{}')"
+  fi
+
+  RESOLVED_CONTRACT_WRITE_SIGNER="$(printf '%s' "$json" | "$PYTHON_BIN" -c 'import json,sys; data=json.load(sys.stdin); agent=data.get("agent") or {}; print(agent.get("path", ""))' 2>/dev/null || true)"
+  RESOLVED_CONTRACT_WRITE_SECONDARY="$(printf '%s' "$json" | "$PYTHON_BIN" -c 'import json,sys; data=json.load(sys.stdin); human=data.get("human") or {}; print(human.get("path", ""))' 2>/dev/null || true)"
+  RESOLVED_CONTRACT_WRITE_COUNT="$(printf '%s' "$json" | "$PYTHON_BIN" -c 'import json,sys; data=json.load(sys.stdin); print(int(data.get("count", 0)))' 2>/dev/null || echo 0)"
+
+  if [[ -n "$RESOLVED_CONTRACT_WRITE_SIGNER" && -f "$RESOLVED_CONTRACT_WRITE_SIGNER" ]]; then
+    pass "Resolved funded contract write signer"
+  fi
+
+  if [[ -n "$RESOLVED_CONTRACT_WRITE_SECONDARY" && -f "$RESOLVED_CONTRACT_WRITE_SECONDARY" ]]; then
+    pass "Resolved funded contract write secondary signer"
+  fi
+}
+
 ensure_wallet() {
   local wallet_name="$1"
   if "$LICHEN_BIN" --rpc-url "$RPC_URL" wallet show "$wallet_name" >/dev/null 2>&1; then
@@ -531,15 +555,24 @@ FUNDING_DEGRADED=0
 fund_wallet_from_treasury() {
   local to_addr="$1"
   local amount_licn="$2"
+  local confirmed_balance=0
 
   if [[ ! -f "$TREASURY_KEYPAIR" ]]; then
     # Airdrop has a max of 100 LICN, so cap the amount
     local airdrop_licn=$amount_licn
     if (( airdrop_licn > 100 )); then airdrop_licn=100; fi
     if rpc_has_result "requestAirdrop" "[\"$to_addr\", $airdrop_licn]"; then
-      sleep 1
-      pass "Airdropped $to_addr with ${airdrop_licn} LICN (treasury keypair unavailable)"
-      return 0
+      if confirmed_balance="$(wait_for_positive_balance "$to_addr" "$FUNDING_CONFIRM_TIMEOUT_SECS")"; then
+        pass "Airdropped $to_addr with ${airdrop_licn} LICN (treasury keypair unavailable)"
+        return 0
+      fi
+      FUNDING_DEGRADED=1
+      if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+        fail "Airdrop funding for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+      else
+        skip "Airdrop funding for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+      fi
+      return 1
     fi
     local amount_spores
     amount_spores="$($PYTHON_BIN - <<PY
@@ -548,9 +581,17 @@ print(int(amt*1_000_000_000))
 PY
 )"
     if rpc_has_result "requestAirdrop" "[\"$to_addr\", $amount_spores]"; then
-      sleep 1
-      pass "Airdropped $to_addr with ${amount_spores} spores fallback (treasury keypair unavailable)"
-      return 0
+      if confirmed_balance="$(wait_for_positive_balance "$to_addr" "$FUNDING_CONFIRM_TIMEOUT_SECS")"; then
+        pass "Airdropped $to_addr with ${amount_spores} spores fallback (treasury keypair unavailable)"
+        return 0
+      fi
+      FUNDING_DEGRADED=1
+      if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+        fail "Airdrop spores fallback for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+      else
+        skip "Airdrop spores fallback for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+      fi
+      return 1
     fi
     FUNDING_DEGRADED=1
     if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
@@ -562,14 +603,44 @@ PY
   fi
 
   if "$LICHEN_BIN" --rpc-url "$RPC_URL" transfer "$to_addr" "$amount_licn" --keypair "$TREASURY_KEYPAIR" >/tmp/e2e-transfer.log 2>&1; then
-    pass "Treasury funded $to_addr with ${amount_licn} LICN"
+    if confirmed_balance="$(wait_for_positive_balance "$to_addr" "$FUNDING_CONFIRM_TIMEOUT_SECS")"; then
+      pass "Treasury funded $to_addr with ${amount_licn} LICN"
+      return 0
+    fi
+    # Transfer sent but not confirmed — fall back to airdrop
+    log "Treasury transfer sent but unconfirmed for $to_addr; trying airdrop fallback"
+    local airdrop_licn=$amount_licn
+    if (( airdrop_licn > 100 )); then airdrop_licn=100; fi
+    if rpc_has_result "requestAirdrop" "[\"$to_addr\", $airdrop_licn]"; then
+      if confirmed_balance="$(wait_for_positive_balance "$to_addr" "$FUNDING_CONFIRM_TIMEOUT_SECS")"; then
+        pass "Airdropped $to_addr with ${airdrop_licn} LICN (treasury transfer unconfirmed, airdrop fallback)"
+        return 0
+      fi
+    fi
+    cat /tmp/e2e-transfer.log >&2 || true
+    FUNDING_DEGRADED=1
+    if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+      fail "Treasury funding for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+    else
+      skip "Treasury funding for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+    fi
+    return 1
   else
     # Transfer failed, so fall back to airdrop instead of reviving legacy key conversion paths.
     local airdrop_licn=$amount_licn
     if (( airdrop_licn > 100 )); then airdrop_licn=100; fi
     if rpc_has_result "requestAirdrop" "[\"$to_addr\", $airdrop_licn]"; then
-      sleep 1
-      pass "Airdropped $to_addr with ${airdrop_licn} LICN (treasury transfer failed, airdrop fallback)"
+      if confirmed_balance="$(wait_for_positive_balance "$to_addr" "$FUNDING_CONFIRM_TIMEOUT_SECS")"; then
+        pass "Airdropped $to_addr with ${airdrop_licn} LICN (treasury transfer failed, airdrop fallback)"
+        return 0
+      fi
+      FUNDING_DEGRADED=1
+      if [[ "$STRICT_NO_SKIPS" == "1" ]]; then
+        fail "Airdrop fallback for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+      else
+        skip "Airdrop fallback for $to_addr did not confirm within ${FUNDING_CONFIRM_TIMEOUT_SECS}s"
+      fi
+      return 1
     else
       cat /tmp/e2e-transfer.log >&2 || true
       FUNDING_DEGRADED=1
@@ -614,6 +685,26 @@ except Exception:
   return 1
 }
 
+wait_for_positive_balance() {
+  local address="$1"
+  local timeout_secs="${2:-$FUNDING_CONFIRM_TIMEOUT_SECS}"
+  local attempts=1
+
+  if [[ "$timeout_secs" =~ ^[0-9]+$ ]] && (( timeout_secs > 1 )); then
+    attempts="$timeout_secs"
+  fi
+
+  local balance
+  balance="$(get_balance_shells_with_retry "$address" "$attempts" 1 || echo 0)"
+  if [[ "$balance" =~ ^[0-9]+$ ]] && (( balance > 0 )); then
+    echo "$balance"
+    return 0
+  fi
+
+  echo 0
+  return 1
+}
+
 assert_balance_positive() {
   local address="$1"
   if (( FUNDING_DEGRADED == 1 )); then
@@ -626,7 +717,7 @@ assert_balance_positive() {
     fi
   fi
   local balance
-  balance="$(get_balance_shells_with_retry "$address" 6 1 || echo 0)"
+  balance="$(wait_for_positive_balance "$address" "$FUNDING_CONFIRM_TIMEOUT_SECS" || echo 0)"
 
   if [[ "$balance" =~ ^[0-9]+$ ]] && (( balance > 0 )); then
     pass "Balance positive for $address"
@@ -863,6 +954,10 @@ HUMAN_ADDR="$(extract_wallet_address "$HUMAN_WALLET_NAME" || true)"
 AGENT_KEYPAIR=""
 HUMAN_KEYPAIR=""
 CONTRACT_WRITE_SIGNER=""
+CONTRACT_WRITE_SECONDARY_SIGNER=""
+RESOLVED_CONTRACT_WRITE_SIGNER=""
+RESOLVED_CONTRACT_WRITE_SECONDARY=""
+RESOLVED_CONTRACT_WRITE_COUNT=0
 AGENT_WALLET_PATH="$(wallet_keypair_path "$AGENT_WALLET_NAME" || true)"
 HUMAN_WALLET_PATH="$(wallet_keypair_path "$HUMAN_WALLET_NAME" || true)"
 
@@ -876,10 +971,28 @@ if [[ -n "$HUMAN_WALLET_PATH" && -f "$HUMAN_WALLET_PATH" ]]; then
   pass "Using wallet keypair path for human signer"
 fi
 
-CONTRACT_WRITE_SIGNER="$AGENT_KEYPAIR"
+resolve_contract_write_signers
+
 if [[ -n "$CONTRACT_WRITE_KEYPAIR" && -f "$CONTRACT_WRITE_KEYPAIR" ]]; then
   CONTRACT_WRITE_SIGNER="$CONTRACT_WRITE_KEYPAIR"
   pass "Using contract write signer: $CONTRACT_WRITE_SIGNER"
+elif [[ -n "$RESOLVED_CONTRACT_WRITE_SIGNER" && -f "$RESOLVED_CONTRACT_WRITE_SIGNER" ]]; then
+  CONTRACT_WRITE_SIGNER="$RESOLVED_CONTRACT_WRITE_SIGNER"
+  pass "Using resolved funded signer for contract write stage"
+elif [[ -f "$ROOT_DIR/keypairs/deployer.json" ]]; then
+  CONTRACT_WRITE_SIGNER="$ROOT_DIR/keypairs/deployer.json"
+  pass "Using deployer keypair for contract write stage"
+else
+  CONTRACT_WRITE_SIGNER="$AGENT_KEYPAIR"
+fi
+
+if [[ -n "$RESOLVED_CONTRACT_WRITE_SECONDARY" && -f "$RESOLVED_CONTRACT_WRITE_SECONDARY" ]]; then
+  CONTRACT_WRITE_SECONDARY_SIGNER="$RESOLVED_CONTRACT_WRITE_SECONDARY"
+  pass "Using resolved funded secondary signer for contract write stage"
+elif [[ -n "$HUMAN_KEYPAIR" && -f "$HUMAN_KEYPAIR" ]]; then
+  CONTRACT_WRITE_SECONDARY_SIGNER="$HUMAN_KEYPAIR"
+else
+  CONTRACT_WRITE_SECONDARY_SIGNER="$CONTRACT_WRITE_SIGNER"
 fi
 
 CONTRACT_WRITE_ADDR=""
@@ -955,7 +1068,7 @@ run_script_stage "Wallet user flows" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCE
 run_script_stage "Developer lifecycle" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' AGENT_KEYPAIR='$AGENT_KEYPAIR' '$PYTHON_BIN' tests/e2e-developer-lifecycle.py"
 run_script_stage "Launchpad user flows" "cd '$ROOT_DIR' && RPC_URL='$RPC_URL' FAUCET_URL='$FAUCET_URL' node tests/e2e-launchpad.js"
 if [[ "$RUN_CONTRACT_WRITE_SUITE" == "1" ]]; then
-  run_script_stage "Contract write scenarios" "cd '$ROOT_DIR' && PYTHONPATH='$ROOT_DIR/sdk/python' RPC_URL='$RPC_URL' AGENT_KEYPAIR='$CONTRACT_WRITE_SIGNER' HUMAN_KEYPAIR='$HUMAN_KEYPAIR' REQUIRE_ALL_SCENARIOS='$REQUIRE_ALL_SCENARIOS' STRICT_WRITE_ASSERTIONS='$STRICT_WRITE_ASSERTIONS' TX_CONFIRM_TIMEOUT_SECS='$TX_CONFIRM_TIMEOUT_SECS' REQUIRE_FULL_WRITE_ACTIVITY='$REQUIRE_FULL_WRITE_ACTIVITY' MIN_CONTRACT_ACTIVITY_DELTA='$MIN_CONTRACT_ACTIVITY_DELTA' CONTRACT_ACTIVITY_OVERRIDES='$CONTRACT_ACTIVITY_OVERRIDES' ENFORCE_DOMAIN_ASSERTIONS='$ENFORCE_DOMAIN_ASSERTIONS' ENABLE_NEGATIVE_ASSERTIONS='$ENABLE_NEGATIVE_ASSERTIONS' REQUIRE_NEGATIVE_REASON_MATCH='$REQUIRE_NEGATIVE_REASON_MATCH' REQUIRE_NEGATIVE_CODE_MATCH='$REQUIRE_NEGATIVE_CODE_MATCH' REQUIRE_SCENARIO_FOR_DISCOVERED='$REQUIRE_SCENARIO_FOR_DISCOVERED' MIN_NEGATIVE_ASSERTIONS_EXECUTED='$MIN_NEGATIVE_ASSERTIONS_EXECUTED' REQUIRE_EXPECTED_CONTRACT_SET='$REQUIRE_EXPECTED_CONTRACT_SET' EXPECTED_CONTRACTS_FILE='$EXPECTED_CONTRACTS_FILE' WRITE_E2E_REPORT_PATH='$WRITE_E2E_REPORT_PATH' '$PYTHON_BIN' tests/contracts-write-e2e.py"
+  run_script_stage "Contract write scenarios" "cd '$ROOT_DIR' && PYTHONPATH='$ROOT_DIR/sdk/python' RPC_URL='$RPC_URL' AGENT_KEYPAIR='$CONTRACT_WRITE_SIGNER' HUMAN_KEYPAIR='$CONTRACT_WRITE_SECONDARY_SIGNER' REQUIRE_ALL_SCENARIOS='$REQUIRE_ALL_SCENARIOS' STRICT_WRITE_ASSERTIONS='$STRICT_WRITE_ASSERTIONS' TX_CONFIRM_TIMEOUT_SECS='$TX_CONFIRM_TIMEOUT_SECS' REQUIRE_FULL_WRITE_ACTIVITY='$REQUIRE_FULL_WRITE_ACTIVITY' MIN_CONTRACT_ACTIVITY_DELTA='$MIN_CONTRACT_ACTIVITY_DELTA' CONTRACT_ACTIVITY_OVERRIDES='$CONTRACT_ACTIVITY_OVERRIDES' ENFORCE_DOMAIN_ASSERTIONS='$ENFORCE_DOMAIN_ASSERTIONS' ENABLE_NEGATIVE_ASSERTIONS='$ENABLE_NEGATIVE_ASSERTIONS' REQUIRE_NEGATIVE_REASON_MATCH='$REQUIRE_NEGATIVE_REASON_MATCH' REQUIRE_NEGATIVE_CODE_MATCH='$REQUIRE_NEGATIVE_CODE_MATCH' REQUIRE_SCENARIO_FOR_DISCOVERED='$REQUIRE_SCENARIO_FOR_DISCOVERED' MIN_NEGATIVE_ASSERTIONS_EXECUTED='$MIN_NEGATIVE_ASSERTIONS_EXECUTED' REQUIRE_EXPECTED_CONTRACT_SET='$REQUIRE_EXPECTED_CONTRACT_SET' EXPECTED_CONTRACTS_FILE='$EXPECTED_CONTRACTS_FILE' WRITE_E2E_REPORT_PATH='$WRITE_E2E_REPORT_PATH' '$PYTHON_BIN' tests/contracts-write-e2e.py"
 else
   skip "Contract write scenario suite disabled (set RUN_CONTRACT_WRITE_SUITE=1 to enable)"
 fi

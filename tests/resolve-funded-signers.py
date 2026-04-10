@@ -41,21 +41,21 @@ def get_balance_spores(pubkey: str) -> int:
 
 def priority(path):
     name = os.path.basename(path)
-    if name.startswith("builder_grants"):
-        return 0
     if name.startswith("community_treasury"):
-        return 1
-    if name.startswith("ecosystem_partnerships"):
-        return 2
-    if name.startswith("reserve_pool"):
-        return 3
-    if name.startswith("validator_rewards"):
-        return 4
-    if name.startswith("founding_symbionts"):
-        return 5
-    if name.startswith("treasury"):
-        return 6
+        return 0
     if name.startswith("genesis-primary"):
+        return 1
+    if name.startswith("builder_grants"):
+        return 2
+    if name.startswith("ecosystem_partnerships"):
+        return 3
+    if name.startswith("reserve_pool"):
+        return 4
+    if name.startswith("validator_rewards"):
+        return 5
+    if name.startswith("founding_symbionts"):
+        return 6
+    if name.startswith("treasury"):
         return 7
     if name.startswith("genesis-signer"):
         return 8
@@ -89,6 +89,7 @@ def main():
         key=lambda p: (priority(p), p),
     )
     candidates = []
+    all_candidates = []
     seen = set()
 
     for path in files:
@@ -103,18 +104,29 @@ def main():
             continue
         seen.add(pubkey)
         spores = get_balance_spores(pubkey)
+        candidate = {"path": path, "pubkey": pubkey, "spores": spores}
+        all_candidates.append(candidate)
         if spores >= MIN_SPORES:
-            candidates.append({"path": path, "pubkey": pubkey, "spores": spores})
+            candidates.append(candidate)
 
     candidates.sort(key=lambda c: (priority(c["path"]), -c["spores"], c["path"]))
+    all_candidates.sort(key=lambda c: (priority(c["path"]), -c["spores"], c["path"]))
     agent = candidates[0] if candidates else None
-    human = candidates[1] if len(candidates) > 1 else agent
+    human = None
+    if agent is not None:
+        for candidate in all_candidates:
+            if candidate["pubkey"] != agent["pubkey"]:
+                human = candidate
+                break
+    if human is None:
+        human = candidates[1] if len(candidates) > 1 else agent
 
     print(json.dumps({
         "rpc": RPC_URL,
         "rpc_endpoints": RPC_ENDPOINTS,
         "min_spores": MIN_SPORES,
         "count": len(candidates),
+        "all_count": len(all_candidates),
         "agent": agent,
         "human": human,
     }))
