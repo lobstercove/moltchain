@@ -1315,18 +1315,27 @@ ssh -p 2222 ubuntu@15.204.229.189 '
 '
 ```
 
-### Phase 9: Copy state and secrets to joining VPSes
+### Phase 9: Distribute secrets to joining VPSes
+
+Joining validators sync the blockchain from the genesis seed node via P2P — **do NOT copy state**.
+Each joining validator starts with an empty `state-testnet/` directory and catches up by
+requesting blocks from the seed node(s) listed in `seeds.json`. This is the production-correct
+flow because future agent-operated validators will join the same way.
+
+Only secrets and the signed metadata manifest need to be distributed:
 
 ```bash
-# Copy genesis state from US to EU and SEA
 for VPS in 37.59.97.61 15.235.142.253; do
-  echo "=== Copying state to $VPS ==="
+  echo "=== Distributing secrets to $VPS ==="
 
-  # Copy state DB
-  ssh -p 2222 ubuntu@15.204.229.189 "sudo tar -cf - /var/lib/lichen/state-testnet" \
-    | ssh -p 2222 ubuntu@$VPS "sudo tar -xf - -C /"
+  # Ensure the state directory exists but is empty (validator creates its own keypair on first start)
+  ssh -p 2222 ubuntu@$VPS '
+    sudo rm -rf /var/lib/lichen/state-testnet
+    sudo mkdir -p /var/lib/lichen/state-testnet
+    sudo chown -R lichen:lichen /var/lib/lichen/state-testnet
+  '
 
-  # Copy secrets
+  # Copy custody secrets
   ssh -p 2222 ubuntu@15.204.229.189 "sudo cat /etc/lichen/secrets/custody-master-seed-testnet.txt" \
     | ssh -p 2222 ubuntu@$VPS "sudo bash -c 'cat > /etc/lichen/secrets/custody-master-seed-testnet.txt && chown root:lichen /etc/lichen/secrets/custody-master-seed-testnet.txt && chmod 640 /etc/lichen/secrets/custody-master-seed-testnet.txt'"
 
@@ -1345,11 +1354,7 @@ for VPS in 37.59.97.61 15.235.142.253; do
   ssh -p 2222 ubuntu@15.204.229.189 "sudo cat /var/lib/lichen/faucet-keypair-testnet.json" \
     | ssh -p 2222 ubuntu@$VPS "sudo bash -c 'cat > /var/lib/lichen/faucet-keypair-testnet.json && chown lichen:lichen /var/lib/lichen/faucet-keypair-testnet.json && chmod 600 /var/lib/lichen/faucet-keypair-testnet.json'"
 
-  # Remove the genesis validator keypair from copied state — each joining validator needs its own
-  ssh -p 2222 ubuntu@$VPS '
-    sudo rm -f /var/lib/lichen/state-testnet/validator-keypair.json
-    sudo chown -R lichen:lichen /var/lib/lichen/state-testnet
-  '
+  echo "Done: $VPS"
 done
 ```
 
@@ -1490,3 +1495,203 @@ This section documents actual deployment failures and their root causes, so they
 ```bash
 command find /var/lib/lichen/contracts -maxdepth 2 -name '*.wasm' | sort | xargs shasum -a 256 | shasum -a 256
 ```
+
+### Pitfall 9: TOFU identity prevents rejoining after state wipe
+
+**Symptom**: Wiped validator responds on RPC but stays at slot 0. P2P connections from other validators close immediately: `Failed to accept stream: closed by peer: 0`.
+
+**Root cause**: The wiped validator generates a new keypair and P2P identity. Other validators have the old identity cached in their TOFU (Trust On First Use) store at `data/state-<port>/home/.lichen/peer_identities.json`. The TOFU check rejects the new identity as an impostor.
+
+Also, the wiped validator's new pubkey registers as a separate entry in the validator set. With N+1 validators and only N-1 online (original minus the ghost), BFT quorum (2/3+) may be unreachable.
+
+**Fix for local dev**: Remove the wiped validator's entry from all other validators' TOFU stores, then restart all validators from scratch:
+
+```bash
+# Remove stale TOFU entries (example: V2 on port 7002 was wiped)
+python3 -c "
+import json
+for v in ['state-7001', 'state-7003']:
+    path = f'data/{v}/home/.lichen/peer_identities.json'
+    with open(path) as f:
+        d = json.load(f)
+    if '127.0.0.1:7002' in d:
+        del d['127.0.0.1:7002']
+        with open(path, 'w') as f:
+            json.dump(d, f, indent=2)
+```
+
+**Prevention**: If you must wipe a single validator, preserve its `validator-keypair.json` and `home/.lichen/node_identity.json` first and restore them after the wipe. Or wipe all validators and create a fresh genesis.
+
+---
+
+## Nuclear reset procedure
+
+Use this when the validators have diverged beyond recovery (e.g. state root mismatch, stuck consensus, validator identity conflicts).
+
+### Local nuclear reset
+
+```bash
+# 1. Stop everything
+./lichen-stop.sh all
+# Kill any lingering supervisors
+pkill -9 -f validator-supervisor
+pkill -9 -f lichen-validator
+
+# 2. Wipe all state
+rm -rf data/state-7001 data/state-7002 data/state-7003
+mkdir -p data/state-7001 data/state-7002 data/state-7003
+
+# 3. Start fresh — V1 creates genesis, then V2 and V3 sync
+LICHEN_LOCAL_DEV=1 ./run-validator.sh testnet 1 --dev-mode &
+sleep 15  # wait for genesis creation + first blocks
+LICHEN_LOCAL_DEV=1 ./run-validator.sh testnet 2 --dev-mode &
+LICHEN_LOCAL_DEV=1 ./run-validator.sh testnet 3 --dev-mode &
+
+# 4. Verify all 3 are healthy and at the same slot
+sleep 10
+for port in 8899 8901 8903; do
+  echo "Port $port:"
+  curl -s http://localhost:$port -X POST -H 'Content-Type: application/json' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"getHealth","params":[]}'
+  echo ""
+done
+```
+
+### VPS nuclear reset (all validators)
+
+```bash
+# 1. Stop services on ALL VPSes
+for HOST in seed-01 seed-02 seed-03; do
+  ssh -p 2222 ubuntu@$HOST.lichen.network \
+    'sudo systemctl stop lichen-validator-testnet lichen-custody lichen-faucet'
+done
+
+# 2. Wipe state on ALL VPSes (preserve keypairs!)
+for HOST in seed-01 seed-02 seed-03; do
+  ssh -p 2222 ubuntu@$HOST.lichen.network '
+    sudo cp /var/lib/lichen/state-testnet/validator-keypair.json /tmp/vk-backup.json
+    sudo rm -rf /var/lib/lichen/state-testnet
+    sudo rm -rf /var/lib/lichen/.lichen
+    sudo install -d -m 750 -o lichen -g lichen /var/lib/lichen/state-testnet
+    sudo install -m 600 -o lichen -g lichen /tmp/vk-backup.json \
+      /var/lib/lichen/state-testnet/validator-keypair.json
+    sudo rm /tmp/vk-backup.json
+  '
+done
+
+# 3. Recreate genesis on the primary (US) VPS — follow Step 4 from VPS Runbook above
+
+# 4. Run post-genesis deploy on the genesis VPS — follow Step 5
+
+# 5. Copy signed metadata manifest to joining VPSes — follow Step 6
+
+# 6. Start validators on ALL VPSes
+for HOST in seed-01 seed-02 seed-03; do
+  ssh -p 2222 ubuntu@$HOST.lichen.network \
+    'sudo systemctl start lichen-validator-testnet'
+done
+
+# 7. Start custody and faucet on genesis VPS
+ssh -p 2222 ubuntu@seed-01.lichen.network \
+  'sudo systemctl start lichen-custody && sudo systemctl start lichen-faucet'
+
+# 8. Verify all 3 are healthy
+for HOST in seed-01 seed-02 seed-03; do
+  echo "=== $HOST ==="
+  ssh -p 2222 ubuntu@$HOST.lichen.network \
+    'curl -s http://127.0.0.1:8899 -X POST -H "Content-Type: application/json" \
+       -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getHealth\",\"params\":[]}"'
+  echo ""
+done
+```
+
+Critical: always preserve `validator-keypair.json` during a nuclear reset. If you lose it, the genesis validator pubkey changes and a completely new genesis is required.
+
+---
+
+## Cloudflare Pages deployment
+
+All frontend portals are deployed as static sites to Cloudflare Pages via Wrangler.
+
+### Projects
+
+| Portal | Pages project | Directory | Custom domain |
+|--------|--------------|-----------|---------------|
+| DEX | `lichen-network-dex` | `dex/` | `dex.lichen.network` |
+| Wallet | `lichen-network-wallet` | `wallet/` | `wallet.lichen.network` |
+| Explorer | `lichen-network-explorer` | `explorer/` | `explorer.lichen.network` |
+| Faucet | `lichen-network-faucet` | `faucet/` | `faucet.lichen.network` |
+| Marketplace | `lichen-network-marketplace` | `marketplace/` | `marketplace.lichen.network` |
+| Developers | `lichen-network-developers` | `developers/` | `developers.lichen.network` |
+| Programs | `lichen-network-programs` | `programs/` | `programs.lichen.network` |
+| Monitoring | `lichen-network-monitoring` | `monitoring/` | `monitoring.lichen.network` |
+| Website | `lichen-network-website` | `website/` | `lichen.network` |
+
+### Deploy all frontends
+
+```bash
+for portal in dex wallet explorer faucet marketplace developers programs monitoring website; do
+  echo "=== Deploying $portal ==="
+  wrangler pages deploy "$portal/" \
+    --project-name "lichen-network-$portal" \
+    --branch main \
+    --commit-dirty=true
+  echo ""
+done
+```
+
+### Deploy a single frontend
+
+```bash
+wrangler pages deploy dex/ --project-name lichen-network-dex --branch main --commit-dirty=true
+```
+
+### Shared configuration
+
+All portals share `shared-config.js` which defines RPC endpoints, WebSocket URLs, and cross-portal links. When updating this file:
+
+1. Edit the canonical copy in `dex/shared-config.js`
+2. Copy to all other portals:
+
+```bash
+for dir in wallet explorer faucet marketplace developers programs monitoring website; do
+  cp dex/shared-config.js "$dir/shared-config.js"
+done
+```
+
+3. Verify all copies are identical:
+
+```bash
+shasum dex/shared-config.js wallet/shared-config.js explorer/shared-config.js \
+  faucet/shared-config.js marketplace/shared-config.js developers/shared-config.js \
+  programs/shared-config.js monitoring/shared-config.js website/shared-config.js
+```
+
+4. Redeploy all portals via the deploy loop above.
+
+### Custom domains
+
+Custom domains are managed in the Cloudflare Dashboard, not via Wrangler:
+
+1. Go to Pages > project > Custom domains
+2. Add the domain (e.g. `dex.lichen.network`)
+3. Cloudflare auto-creates a CNAME record if DNS is managed by Cloudflare
+
+### Faucet architecture
+
+The faucet has two separate components served on different domains:
+
+- **`lichen-network-faucet.pages.dev`** (Cloudflare Pages): Static faucet portal (HTML/JS/CSS). This is the user-facing page.
+- **`faucet.lichen.network`** (Cloudflare → Caddy → VPS port 9100): Faucet Rust/axum API service. This is the backend that dispenses LICN.
+
+The static portal calls the API at `https://faucet.lichen.network/faucet/request`. This works because:
+
+1. `shared-config.js` sets `faucet: 'https://faucet.lichen.network'` in production
+2. `faucet.js` reads `LICHEN_CONFIG.faucet` as `FAUCET_API`
+3. DNS for `faucet.lichen.network` routes through Cloudflare to the US VPS
+4. Caddy (`Caddyfile.testnet-us`) reverse proxies all traffic to `127.0.0.1:9100`
+5. The faucet-service CORS layer allows `https://faucet.lichen.network` and all portal origins
+
+The faucet service only serves API endpoints (`/health`, `/faucet/config`, `/faucet/status`, `/faucet/airdrops`, `/faucet/request`). It does NOT serve static HTML — that comes from Cloudflare Pages.
+
+Do NOT confuse the `faucet` key in `shared-config.js` with a portal URL — it is the API endpoint. The faucet portal is accessed via the Pages `.pages.dev` domain or a custom domain added to the Pages project.
