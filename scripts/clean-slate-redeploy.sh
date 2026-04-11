@@ -195,151 +195,160 @@ phase_done
 # Phase 4: Genesis on seed-01
 # ============================================================================
 phase "Create genesis on $GENESIS_VPS"
-ssh_run "$GENESIS_VPS" '
-  cd ~/lichen && source ~/.cargo/env
-  NET='"$NETWORK"'
-  STATE='"$VPS_DATA/$STATE_DIR"'
 
-  KP_PASS=$(sudo grep LICHEN_KEYPAIR_PASSWORD /etc/lichen/env-'"$NETWORK"' | cut -d= -f2-)
+# Build the remote script with local variables expanded via heredoc
+# Remote variables use \$ to prevent local expansion
+GENESIS_SCRIPT=$(cat <<GENESIS_EOF
+cd ~/lichen && source ~/.cargo/env
+NET=$NETWORK
+STATE=$VPS_DATA/$STATE_DIR
 
-  # 1. Generate validator keypair
-  echo "  Generating validator keypair..."
-  sudo -u lichen env LICHEN_KEYPAIR_PASSWORD="$KP_PASS" \
-    ./target/release/lichen init --output "$STATE/validator-keypair.json"
+KP_PASS=\$(sudo grep LICHEN_KEYPAIR_PASSWORD /etc/lichen/env-$NETWORK | cut -d= -f2-)
 
-  PUBKEY=$(sudo python3 -c "import json; print(json.load(open('"'"''"$STATE"'/validator-keypair.json'"'"'))['publicKeyBase58'])")
-  echo "  Validator pubkey: $PUBKEY"
+# 1. Generate validator keypair
+echo "  Generating validator keypair..."
+sudo -u lichen env LICHEN_KEYPAIR_PASSWORD="\$KP_PASS" \
+  ./target/release/lichen init --output "\$STATE/validator-keypair.json"
 
-  # 2. Prepare wallet
-  echo "  Preparing wallet..."
-  sudo -u lichen env HOME='"$VPS_DATA"' LICHEN_HOME='"$VPS_DATA"' \
-    LICHEN_CONTRACTS_DIR=$HOME/lichen/contracts \
-    LICHEN_KEYPAIR_PASSWORD="$KP_PASS" \
-    ./target/release/lichen-genesis --prepare-wallet --network "$NET" --output-dir "$STATE"
+PUBKEY=\$(sudo python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['publicKeyBase58'])" "\$STATE/validator-keypair.json")
+echo "  Validator pubkey: \$PUBKEY"
 
-  # 3. Fetch live prices
-  echo "  Fetching prices..."
-  PRICE_JSON=$(curl -sf "https://api.binance.com/api/v3/ticker/price?symbols=[\"SOLUSDT\",\"ETHUSDT\",\"BNBUSDT\"]" 2>/dev/null || echo "[]")
-  SOL=145.0; ETH=2600.0; BNB=620.0
-  if [ "$PRICE_JSON" != "[]" ] && command -v python3 &>/dev/null; then
-    eval "$(python3 -c "
+# 2. Prepare wallet
+echo "  Preparing wallet..."
+sudo -u lichen env HOME=$VPS_DATA LICHEN_HOME=$VPS_DATA \
+  LICHEN_CONTRACTS_DIR=\$HOME/lichen/contracts \
+  LICHEN_KEYPAIR_PASSWORD="\$KP_PASS" \
+  ./target/release/lichen-genesis --prepare-wallet --network "\$NET" --output-dir "\$STATE"
+
+# 3. Fetch live prices
+echo "  Fetching prices..."
+SOL=145.0; ETH=2600.0; BNB=620.0
+PRICE_JSON=\$(curl -sf 'https://api.binance.com/api/v3/ticker/price?symbols=["SOLUSDT","ETHUSDT","BNBUSDT"]' 2>/dev/null || echo '[]')
+if [ "\$PRICE_JSON" != "[]" ] && command -v python3 &>/dev/null; then
+  eval "\$(python3 -c "
 import json
 try:
-    data = json.loads('"'"'$PRICE_JSON'"'"')
-    m = {d['"'"'symbol'"'"']: float(d['"'"'price'"'"']) for d in data}
-    print(f'"'"'SOL={m.get(\"SOLUSDT\", 145.0):.2f}'"'"')
-    print(f'"'"'ETH={m.get(\"ETHUSDT\", 2600.0):.2f}'"'"')
-    print(f'"'"'BNB={m.get(\"BNBUSDT\", 620.0):.2f}'"'"')
+    data = json.loads('\$PRICE_JSON')
+    m = {d['symbol']: float(d['price']) for d in data}
+    print(f'SOL={m.get(\"SOLUSDT\", 145.0):.2f}')
+    print(f'ETH={m.get(\"ETHUSDT\", 2600.0):.2f}')
+    print(f'BNB={m.get(\"BNBUSDT\", 620.0):.2f}')
 except: pass
 " 2>/dev/null)" || true
-  fi
-  echo "  Prices: SOL=$SOL ETH=$ETH BNB=$BNB"
+fi
+echo "  Prices: SOL=\$SOL ETH=\$ETH BNB=\$BNB"
 
-  # 4. Create genesis
-  echo "  Creating genesis block..."
-  sudo -u lichen env HOME='"$VPS_DATA"' LICHEN_HOME='"$VPS_DATA"' \
-    LICHEN_CONTRACTS_DIR=$HOME/lichen/contracts \
-    LICHEN_KEYPAIR_PASSWORD="$KP_PASS" \
-    GENESIS_SOL_USD="$SOL" GENESIS_ETH_USD="$ETH" GENESIS_BNB_USD="$BNB" \
-    ./target/release/lichen-genesis \
-      --network "$NET" \
-      --db-path "$STATE" \
-      --wallet-file "$STATE/genesis-wallet.json" \
-      --initial-validator "$PUBKEY"
-  echo "  Genesis created!"
+# 4. Create genesis
+echo "  Creating genesis block..."
+sudo -u lichen env HOME=$VPS_DATA LICHEN_HOME=$VPS_DATA \
+  LICHEN_CONTRACTS_DIR=\$HOME/lichen/contracts \
+  LICHEN_KEYPAIR_PASSWORD="\$KP_PASS" \
+  GENESIS_SOL_USD="\$SOL" GENESIS_ETH_USD="\$ETH" GENESIS_BNB_USD="\$BNB" \
+  ./target/release/lichen-genesis \
+    --network "\$NET" \
+    --db-path "\$STATE" \
+    --wallet-file "\$STATE/genesis-wallet.json" \
+    --initial-validator "\$PUBKEY"
+echo "  Genesis created!"
 
-  # 5. Install seeds.json
-  sudo install -m 644 -o lichen -g lichen ~/lichen/seeds.json "$STATE/seeds.json"
+# 5. Install seeds.json
+sudo install -m 644 -o lichen -g lichen ~/lichen/seeds.json "\$STATE/seeds.json"
 
-  # 6. Start genesis validator
-  echo "  Starting genesis validator..."
-  sudo systemctl start '"$SERVICE"'
-  sleep 8
+# 6. Start genesis validator
+echo "  Starting genesis validator..."
+sudo systemctl start $SERVICE
+sleep 8
 
-  # 7. Verify block production
-  SLOT=$(curl -sf http://127.0.0.1:'"$RPC_PORT"' -X POST -H "Content-Type: application/json" \
-    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSlot\",\"params\":[]}" \
-    | python3 -c "import sys,json; print(json.load(sys.stdin)[\"result\"])" 2>/dev/null || echo "FAIL")
-  echo "  Slot: $SLOT"
-  if [ "$SLOT" = "FAIL" ] || [ "$SLOT" -lt 1 ] 2>/dev/null; then
-    echo "FATAL: Genesis validator not producing blocks!"
-    exit 1
-  fi
-'
+# 7. Verify block production
+SLOT=\$(curl -sf http://127.0.0.1:$RPC_PORT -X POST -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[]}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['result'])" 2>/dev/null || echo "FAIL")
+echo "  Slot: \$SLOT"
+if [ "\$SLOT" = "FAIL" ] || [ "\$SLOT" -lt 1 ] 2>/dev/null; then
+  echo "FATAL: Genesis validator not producing blocks!"
+  exit 1
+fi
+GENESIS_EOF
+)
+
+ssh_run "$GENESIS_VPS" "$GENESIS_SCRIPT"
 phase_done
 
 # ============================================================================
 # Phase 5: Post-genesis + first-boot-deploy on seed-01
 # ============================================================================
 phase "Post-genesis on $GENESIS_VPS"
-ssh_run "$GENESIS_VPS" '
-  cd ~/lichen && source ~/.cargo/env
-  NET='"$NETWORK"'
-  KP_PASS=$(sudo grep LICHEN_KEYPAIR_PASSWORD /etc/lichen/env-'"$NETWORK"' | cut -d= -f2-)
 
-  # 1. Post-genesis keypair setup (copies treasury → custody, faucet keypair)
-  echo "  Running vps-post-genesis..."
-  sudo bash scripts/vps-post-genesis.sh '"$NETWORK"' --no-restart 2>&1 | grep -E "✓|✗|⚠|genesis-keys" || true
+POSTGENESIS_SCRIPT=$(cat <<POSTGENESIS_EOF
+cd ~/lichen && source ~/.cargo/env
+KP_PASS=\$(sudo grep LICHEN_KEYPAIR_PASSWORD /etc/lichen/env-$NETWORK | cut -d= -f2-)
 
-  # 2. Install release signing key
-  echo "  Installing release signing key..."
+# 1. Post-genesis keypair setup (copies treasury -> custody, faucet keypair)
+echo "  Running vps-post-genesis..."
+sudo bash scripts/vps-post-genesis.sh $NETWORK --no-restart 2>&1 | grep -E "✓|✗|⚠|genesis-keys" || true
+
+# 2. Install release signing key
+echo "  Installing release signing key..."
+sudo install -m 640 -o root -g lichen \
+  ~/lichen/keypairs/release-signing-key.json \
+  /etc/lichen/secrets/release-signing-keypair-$NETWORK.json
+
+# 3. Run first-boot-deploy (deploys 28 contracts, creates manifest)
+echo "  Running first-boot-deploy..."
+sudo cp /etc/lichen/secrets/release-signing-keypair-$NETWORK.json ~/release-signing-keypair-$NETWORK.json
+sudo chown \$(whoami):\$(whoami) ~/release-signing-keypair-$NETWORK.json
+chmod 600 ~/release-signing-keypair-$NETWORK.json
+
+SIGNED_METADATA_KEYPAIR=\$HOME/release-signing-keypair-$NETWORK.json \
+  DEPLOY_NETWORK=$NETWORK \
+  LICHEN_KEYPAIR_PASSWORD="\$KP_PASS" \
+  ./scripts/first-boot-deploy.sh --rpc http://127.0.0.1:$RPC_PORT --skip-build 2>&1 | tail -10
+
+rm -f ~/release-signing-keypair-$NETWORK.json
+
+# 4. Install signed metadata manifest
+echo "  Installing signed metadata manifest..."
+if [ -f ~/lichen/signed-metadata-manifest-$NETWORK.json ]; then
   sudo install -m 640 -o root -g lichen \
-    ~/lichen/keypairs/release-signing-key.json \
-    /etc/lichen/secrets/release-signing-keypair-'"$NETWORK"'.json
+    ~/lichen/signed-metadata-manifest-$NETWORK.json \
+    /etc/lichen/signed-metadata-manifest-$NETWORK.json
+fi
 
-  # 3. Run first-boot-deploy (deploys 28 contracts, creates manifest)
-  echo "  Running first-boot-deploy..."
-  sudo cp /etc/lichen/secrets/release-signing-keypair-'"$NETWORK"'.json ~/release-signing-keypair-'"$NETWORK"'.json
-  sudo chown $(whoami):$(whoami) ~/release-signing-keypair-'"$NETWORK"'.json
-  chmod 600 ~/release-signing-keypair-'"$NETWORK"'.json
+# 5. Restart validator to pick up manifest
+sudo systemctl restart $SERVICE
+sleep 5
 
-  SIGNED_METADATA_KEYPAIR=$HOME/release-signing-keypair-'"$NETWORK"'.json \
-    DEPLOY_NETWORK='"$NETWORK"' \
-    LICHEN_KEYPAIR_PASSWORD="$KP_PASS" \
-    ./scripts/first-boot-deploy.sh --rpc http://127.0.0.1:'"$RPC_PORT"' --skip-build 2>&1 | tail -10
+# 6. Provision custody seeds
+echo "  Provisioning custody seeds..."
+sudo bash -c "openssl rand -hex 32 > /etc/lichen/secrets/custody-master-seed-$NETWORK.txt"
+sudo bash -c "openssl rand -hex 32 > /etc/lichen/secrets/custody-deposit-seed-$NETWORK.txt"
+sudo chown root:lichen /etc/lichen/secrets/custody-*-seed-$NETWORK.txt
+sudo chmod 640 /etc/lichen/secrets/custody-*-seed-$NETWORK.txt
 
-  rm -f ~/release-signing-keypair-'"$NETWORK"'.json
+# 7. Start custody and faucet
+echo "  Starting custody and faucet..."
+sudo systemctl start lichen-custody
+sudo systemctl start lichen-faucet
+sleep 3
 
-  # 4. Install signed metadata manifest
-  echo "  Installing signed metadata manifest..."
-  if [ -f ~/lichen/signed-metadata-manifest-'"$NETWORK"'.json ]; then
-    sudo install -m 640 -o root -g lichen \
-      ~/lichen/signed-metadata-manifest-'"$NETWORK"'.json \
-      /etc/lichen/signed-metadata-manifest-'"$NETWORK"'.json
-  fi
+# 8. Quick verify
+echo "  Verifying genesis VPS..."
+curl -sf http://127.0.0.1:$RPC_PORT -X POST -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getHealth","params":[]}' || echo "HEALTH FAIL"
+echo ""
 
-  # 5. Restart validator to pick up manifest
-  sudo systemctl restart '"$SERVICE"'
-  sleep 5
+AIRDROP=\$(curl -sf http://127.0.0.1:$RPC_PORT -X POST -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"requestAirdrop","params":["11111111111111111111111111111111", 1000000000]}' 2>/dev/null || echo "FAIL")
+if echo "\$AIRDROP" | grep -q "Treasury keypair not configured"; then
+  echo "  FATAL: Treasury NOT loaded on genesis VPS!"
+  exit 1
+fi
+echo "  Treasury: OK"
+echo "  Genesis VPS fully operational!"
+POSTGENESIS_EOF
+)
 
-  # 6. Provision custody seeds
-  echo "  Provisioning custody seeds..."
-  sudo bash -c "openssl rand -hex 32 > /etc/lichen/secrets/custody-master-seed-'"$NETWORK"'.txt"
-  sudo bash -c "openssl rand -hex 32 > /etc/lichen/secrets/custody-deposit-seed-'"$NETWORK"'.txt"
-  sudo chown root:lichen /etc/lichen/secrets/custody-*-seed-'"$NETWORK"'.txt
-  sudo chmod 640 /etc/lichen/secrets/custody-*-seed-'"$NETWORK"'.txt
-
-  # 7. Start custody and faucet
-  echo "  Starting custody and faucet..."
-  sudo systemctl start lichen-custody
-  sudo systemctl start lichen-faucet
-  sleep 3
-
-  # 8. Quick verify
-  echo "  Verifying genesis VPS..."
-  curl -sf http://127.0.0.1:'"$RPC_PORT"' -X POST -H "Content-Type: application/json" \
-    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getHealth\",\"params\":[]}" || echo "HEALTH FAIL"
-  echo ""
-
-  AIRDROP=$(curl -sf http://127.0.0.1:'"$RPC_PORT"' -X POST -H "Content-Type: application/json" \
-    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"requestAirdrop\",\"params\":[\"11111111111111111111111111111111\", 1000000000]}" 2>/dev/null || echo "FAIL")
-  if echo "$AIRDROP" | grep -q "Treasury keypair not configured"; then
-    echo "  FATAL: Treasury NOT loaded on genesis VPS!"
-    exit 1
-  fi
-  echo "  Treasury: OK"
-  echo "  Genesis VPS fully operational!"
-'
+ssh_run "$GENESIS_VPS" "$POSTGENESIS_SCRIPT"
 phase_done
 
 # ============================================================================
