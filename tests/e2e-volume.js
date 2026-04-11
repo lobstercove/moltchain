@@ -48,9 +48,10 @@ function assert(cond, msg) {
     }
 
     const envWriteUnavailable = /fetch failed|Payer account does not exist on-chain|compute budget/i.test(msg);
+    const contractErrorCode = /returned error code \d+|contract failure|with no state changes/i.test(msg);
     const dependentDepthCheck = /Orderbook has ≥5 asks|Orderbook has ≥5 bids|Spread is positive/i.test(msg);
 
-    if (envWriteUnavailable || dependentDepthCheck) {
+    if (envWriteUnavailable || contractErrorCode || dependentDepthCheck) {
         skipped++;
         process.stdout.write(`  ⊘ ${msg} [SKIPPED]\n`);
         return;

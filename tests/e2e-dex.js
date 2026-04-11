@@ -885,6 +885,11 @@ async function runTests() {
         }
     }
 
+    // Aliases for sections 16-18 (use Alice's wallet for edge-case testing)
+    const traderKp = alice;
+    const traderAddr = alice.address;
+    const dexCoreAddr = CONTRACTS.dex_core;
+
     // ══════════════════════════════════════════════════════════════════════
     // E2E 16: Edge Case — Invalid Order Parameters
     // ══════════════════════════════════════════════════════════════════════
@@ -894,18 +899,18 @@ async function runTests() {
         try {
             const badOrder = buildPlaceOrder(traderAddr, 1, 0, 0, 100000000, 0);
             await sendTx(traderKp, [contractIx(traderAddr, dexCoreAddr, badOrder)]);
-            pass('Zero-qty order submitted (chain decides validity)');
+            assert(true, 'Zero-qty order submitted (chain decides validity)');
         } catch (e) {
-            pass(`Zero-qty order rejected: ${e.message.slice(0, 60)}`);
+            assert(true, `Zero-qty order rejected: ${e.message.slice(0, 60)}`);
         }
 
         // Negative price encoded as very large u64 should be handled
         try {
             const bigPriceOrder = buildPlaceOrder(traderAddr, 1, 0, 0, Number.MAX_SAFE_INTEGER, 1000000);
             await sendTx(traderKp, [contractIx(traderAddr, dexCoreAddr, bigPriceOrder)]);
-            pass('Max-price order submitted');
+            assert(true, 'Max-price order submitted');
         } catch (e) {
-            pass(`Max-price order rejected: ${e.message.slice(0, 60)}`);
+            assert(true, `Max-price order rejected: ${e.message.slice(0, 60)}`);
         }
     }
 
@@ -917,25 +922,25 @@ async function runTests() {
         // Non-existent pair
         try {
             const bad = await rest('/pairs/99999');
-            pass(`Non-existent pair returns: ${typeof bad === 'object' ? 'object' : 'null'}`);
+            assert(true, `Non-existent pair returns: ${typeof bad === 'object' ? 'object' : 'null'}`);
         } catch (e) {
-            pass(`Non-existent pair error handled: ${e.message.slice(0, 60)}`);
+            assert(true, `Non-existent pair error handled: ${e.message.slice(0, 60)}`);
         }
 
         // Invalid candle interval
         try {
             const candles = await rest('/candles?pair_id=1&interval=INVALID&limit=10');
-            pass(`Invalid candle interval handled gracefully`);
+            assert(true, `Invalid candle interval handled gracefully`);
         } catch (e) {
-            pass(`Invalid candle interval error: ${e.message.slice(0, 60)}`);
+            assert(true, `Invalid candle interval error: ${e.message.slice(0, 60)}`);
         }
 
         // Empty orderbook for non-existent pair
         try {
             const ob = await rest('/orderbook?pair_id=99999');
-            pass(`Empty orderbook for non-existent pair: ${JSON.stringify(ob).slice(0, 80)}`);
+            assert(true, `Empty orderbook for non-existent pair: ${JSON.stringify(ob).slice(0, 80)}`);
         } catch (e) {
-            pass(`Non-existent pair orderbook error: ${e.message.slice(0, 60)}`);
+            assert(true, `Non-existent pair orderbook error: ${e.message.slice(0, 60)}`);
         }
     }
 
@@ -958,7 +963,7 @@ async function runTests() {
         }
         const results = await Promise.all(promises);
         const okCount = results.filter(r => r.status === 'ok').length;
-        pass(`Concurrent orders: ${okCount}/${concurrentOrders} submitted`);
+        assert(true, `Concurrent orders: ${okCount}/${concurrentOrders} submitted`);
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -969,12 +974,9 @@ async function runTests() {
         const pools = await rest('/pools');
         if (pools?.data && pools.data.length > 0) {
             const pool = pools.data[0];
-            assert(pool.reserveA >= 0, `Pool reserve A non-negative: ${pool.reserveA}`);
-            assert(pool.reserveB >= 0, `Pool reserve B non-negative: ${pool.reserveB}`);
-            if (pool.totalLiquidity !== undefined) {
-                assert(pool.totalLiquidity >= 0, `Total liquidity non-negative: ${pool.totalLiquidity}`);
-            }
-            pass(`AMM pool ${pool.id || 0} state consistent`);
+            assert(pool.liquidity >= 0, `Pool liquidity non-negative: ${pool.liquidity}`);
+            assert(pool.price >= 0, `Pool price non-negative: ${pool.price}`);
+            assert(true, `AMM pool ${pool.poolId || 0} state consistent (${pool.tokenASymbol}/${pool.tokenBSymbol})`);
         } else {
             skip('No AMM pools to verify');
         }
@@ -993,7 +995,7 @@ async function runTests() {
             if (stats.data.totalTrades !== undefined) {
                 assert(stats.data.totalTrades >= 0, `Total trades non-negative: ${stats.data.totalTrades}`);
             }
-            pass('Analytics stats data integrity verified');
+            assert(true, 'Analytics stats data integrity verified');
         }
 
         // Verify 24h candles return valid OHLC
@@ -1006,12 +1008,12 @@ async function runTests() {
                 assert(c.high >= c.close, `OHLC high >= close`);
                 assert(c.low <= c.open, `OHLC low <= open`);
                 assert(c.low <= c.close, `OHLC low <= close`);
-                pass(`OHLC candle integrity verified (${candles.data.length} candles)`);
+                assert(true, `OHLC candle integrity verified (${candles.data.length} candles)`);
             } else {
-                pass('No candle data yet (expected on fresh chain)');
+                assert(true, 'No candle data yet (expected on fresh chain)');
             }
         } catch (e) {
-            pass(`Candle query handled: ${e.message.slice(0, 60)}`);
+            assert(true, `Candle query handled: ${e.message.slice(0, 60)}`);
         }
     }
 
