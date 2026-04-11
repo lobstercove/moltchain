@@ -379,14 +379,17 @@ for VPS in "${JOINING_VPSES[@]}"; do
   # Single pipe: genesis → tar → joining VPS → extract + fix perms
   ssh_pipe "$GENESIS_VPS" "$VPS" \
     "cat /tmp/lichen-secrets-bundle.tar.gz" \
-    "sudo tar xzf - -C / && \
+    "sudo mkdir -p $VPS_DATA/$STATE_DIR/genesis-keys $VPS_CONFIG/secrets && \
+     sudo tar xzf - -C / && \
      sudo chown -R lichen:lichen $VPS_DATA/$STATE_DIR/ && \
      sudo chmod 640 $VPS_DATA/$STATE_DIR/genesis-wallet.json && \
      sudo find $VPS_DATA/$STATE_DIR/genesis-keys -type f -exec chmod 640 {} + && \
      sudo chown lichen:lichen $VPS_DATA/faucet-keypair-${NETWORK}.json && \
      sudo chmod 600 $VPS_DATA/faucet-keypair-${NETWORK}.json && \
-     sudo chown root:lichen $VPS_CONFIG/secrets/custody-*-seed-${NETWORK}.txt && \
-     sudo chmod 640 $VPS_CONFIG/secrets/custody-*-seed-${NETWORK}.txt && \
+     sudo chown root:lichen $VPS_CONFIG/secrets/custody-master-seed-${NETWORK}.txt && \
+     sudo chmod 640 $VPS_CONFIG/secrets/custody-master-seed-${NETWORK}.txt && \
+     sudo chown root:lichen $VPS_CONFIG/secrets/custody-deposit-seed-${NETWORK}.txt && \
+     sudo chmod 640 $VPS_CONFIG/secrets/custody-deposit-seed-${NETWORK}.txt && \
      sudo chown root:lichen $VPS_CONFIG/signed-metadata-manifest-${NETWORK}.json && \
      sudo chmod 640 $VPS_CONFIG/signed-metadata-manifest-${NETWORK}.json && \
      sudo chown lichen:lichen $VPS_CONFIG/custody-treasury-${NETWORK}.json && \
