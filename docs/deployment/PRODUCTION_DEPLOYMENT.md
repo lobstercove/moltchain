@@ -17,8 +17,9 @@ This runbook intentionally prefers the scripts that are verified in the current 
 
 | Workflow | Supported entrypoint |
 | --- | --- |
+| **VPS clean-slate redeploy** | `scripts/clean-slate-redeploy.sh testnet` |
 | Local validator development | `scripts/start-local-3validators.sh` |
-| VPS validator deployment | `deploy/setup.sh` |
+| VPS initial provisioning | `deploy/setup.sh` |
 
 `deploy/setup.sh` is now responsible for the public edge as well: it installs the checked-in Caddy config from `deploy/Caddyfile.*`, enables the `caddy` service, uses internal TLS for Cloudflare-origin traffic, and keeps raw RPC, WebSocket, faucet, and custody ports off the public firewall surface.
 
@@ -43,6 +44,7 @@ Operational rule: direct exposure of the raw RPC or WebSocket listeners is unsup
 
 | Task | Supporting script |
 | --- | --- |
+| **Full automated VPS redeploy** | `scripts/clean-slate-redeploy.sh` |
 | Local full stack extension | `scripts/start-local-stack.sh` |
 | Local full-stack stop/status | `scripts/stop-local-stack.sh`, `scripts/status-local-stack.sh` |
 | Genesis wallet + DB creation | `scripts/generate-genesis.sh` |
@@ -51,6 +53,8 @@ Operational rule: direct exposure of the raw RPC or WebSocket listeners is unsup
 | Manual single-node debugging | `lichen-start.sh` |
 | Release signing | `scripts/generate-release-keys.sh`, `scripts/sign-release.sh` |
 | Signed metadata manifest | `scripts/generate-signed-metadata-manifest.js` |
+| Health check | `scripts/health-check.sh` |
+| Cloudflare Pages deploy | `scripts/deploy-cloudflare-pages.sh` |
 | ZK proof generation | `target/release/zk-prove` |
 
 Important distinctions:
@@ -1151,9 +1155,31 @@ This is the full step-by-step procedure for stopping everything, flushing all st
 bash scripts/clean-slate-redeploy.sh testnet    # or: mainnet
 ```
 
-This script performs ALL phases below automatically: stops services, flushes state, pulls+builds, creates genesis, runs post-genesis + first-boot-deploy, distributes all secrets via atomic tarball transfer, starts joining VPSes, and verifies everything. Typical time: 5-8 minutes with cached builds.
+This is the canonical way to redeploy. It performs ALL phases automatically in ~3 minutes:
 
-Secrets are distributed as a single tarball per joining VPS (no partial copies). SSH operations have automatic retry with exponential backoff.
+| Phase | What it does | Typical time |
+|-------|-------------|-------------|
+| 1. Stop | Stops all services on all 3 VPSes, opens UFW port for cross-VPS RPC | ~9s |
+| 2. Flush | Removes all state, custody DB, manifests | ~7s |
+| 3. Sync + Build | Rsyncs code to all VPSes, builds binaries + WASM contracts on genesis VPS, distributes WASM to joiners | ~37s |
+| 4. Genesis | Generates validator keypair, prepares wallet, fetches live prices, creates genesis block, starts genesis validator | ~14s |
+| 5. Post-genesis | Runs `vps-post-genesis.sh`, installs signing key, deploys 28 contracts via `first-boot-deploy.sh`, provisions custody seeds | ~13s |
+| 6. State snapshot | Stops genesis validator briefly, snapshots full RocksDB state + all secrets into tarball, distributes to joining VPSes, restarts genesis | ~37s |
+| 7. Start joiners | Generates keypairs on joining VPSes, starts validators, waits for sync (instant from state snapshot), starts custody + faucet | ~16s |
+| 8. Verify | Checks health/slot/treasury/manifest on all 3 nodes + Cloudflare endpoint | ~37s |
+
+Key design decisions:
+- **State snapshot distribution**: Genesis state reconstruction is non-deterministic (different Merkle roots each time). The script snapshots the actual RocksDB state from the genesis VPS and distributes it to joiners, ensuring identical state roots.
+- **WASM distribution**: WASM contracts are built only on the genesis VPS and distributed via tarball — not compiled independently on each VPS.
+- **Atomic secrets**: All secrets (treasury, genesis-keys, custody seeds, manifest, signing key) are bundled into a single tarball per joining VPS — no partial copies.
+- **SSH retry**: All SSH operations retry 3 times with exponential backoff (3s, 6s, 12s).
+- **Code delivery**: Uses `rsync` (not `git pull`) since VPSes don't have `.git`.
+
+Prerequisites:
+- SSH access to all 3 VPSes (port 2222, user `ubuntu`, key-based auth)
+- `deploy/setup.sh` already run on all VPSes (systemd units, users, dirs exist)
+- `keypairs/release-signing-key.json` present in repo
+- Code committed and pushed to main
 
 ### Manual phase-by-phase procedure (for debugging)
 

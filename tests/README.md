@@ -26,7 +26,7 @@ curl -s http://127.0.0.1:8899 \
 	-d '{"jsonrpc":"2.0","id":1,"method":"getHealth","params":[]}' | jq
 
 # 4. Optional strict launch gate
-STRICT_NO_SKIPS=1 bash scripts/launch-verification.sh
+STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh
 ```
 
 If you intentionally omit `LICHEN_KEYPAIR_PASSWORD`, the local launcher still works in explicit local-dev compatibility mode. That is useful for throwaway debugging, but it does not exercise the production encrypted-key path that the testnet and mainnet runbooks now require.
@@ -65,7 +65,7 @@ pip install aiohttp requests nacl   # for Python tests
 make test
 
 # Full production gate (requires running 3-validator cluster)
-STRICT_NO_SKIPS=1 bash scripts/launch-verification.sh
+STRICT_NO_SKIPS=1 bash tests/production-e2e-gate.sh
 
 # Full matrix (dynamic total; adds custody withdrawal when the sidecar is healthy)
 bash tests/run-full-matrix-feb24.sh
