@@ -535,18 +535,9 @@ def is_write_function(function_name: str) -> bool:
 
 
 async def wait_for_transaction(conn: Connection, signature: str, timeout_secs: int) -> Dict[str, Any]:
-    started = time.time()
-    last_error: Optional[Exception] = None
-    while time.time() - started <= timeout_secs:
-        try:
-            tx = await conn.get_transaction(signature)
-            if tx:
-                return tx
-        except Exception as exc:
-            last_error = exc
-        await asyncio.sleep(0.2)
-    if last_error is not None:
-        raise Exception(f"transaction not confirmed within {timeout_secs}s (last error: {last_error})")
+    result = await conn.confirm_transaction(signature, timeout=float(timeout_secs))
+    if result:
+        return result
     raise Exception(f"transaction not confirmed within {timeout_secs}s")
 
 

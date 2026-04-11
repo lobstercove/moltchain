@@ -242,32 +242,11 @@ async def wait_for_transaction(
     signature: str,
     timeout_secs: float = 20.0,
 ) -> dict[str, Any]:
-    last_response: Any = None
-    deadline = time.monotonic() + timeout_secs
-    while time.monotonic() < deadline:
-        try:
-            response = await conn._rpc("confirmTransaction", [signature])
-            last_response = response
-            value = response.get("value") if isinstance(response, dict) else None
-            if isinstance(value, dict):
-                try:
-                    info = await conn.get_transaction(signature)
-                    if info:
-                        return info
-                except Exception:
-                    pass
-                return {
-                    "signature": signature,
-                    "confirmation_status": value.get("confirmation_status"),
-                    "slot": value.get("slot"),
-                    "confirmations": value.get("confirmations"),
-                    "error": value.get("err"),
-                }
-        except Exception:
-            pass
-        await asyncio.sleep(0.5)
+    result = await conn.confirm_transaction(signature, timeout=timeout_secs)
+    if result:
+        return result
     raise TimeoutError(
-        f"Transaction {signature} was not confirmed before timeout: {last_response}"
+        f"Transaction {signature} was not confirmed before timeout"
     )
 
 

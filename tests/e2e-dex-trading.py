@@ -788,18 +788,7 @@ async def wait_for_transaction_confirmation(
     signature: str,
     timeout_secs: float = 6.0,
 ) -> Optional[Dict[str, Any]]:
-    deadline = time.monotonic() + timeout_secs
-    while time.monotonic() < deadline:
-        try:
-            response = await rpc_call(conn, "confirmTransaction", [signature])
-        except Exception:
-            response = None
-        value = response.get("value") if isinstance(response, dict) else None
-        if isinstance(value, dict):
-            if value.get("confirmation_status") or value.get("err") is not None or value.get("slot") is not None:
-                return value
-        await asyncio.sleep(0.2)
-    return None
+    return await conn.confirm_transaction(signature, timeout=timeout_secs)
 
 
 async def wait_for_open_order_count(

@@ -162,18 +162,9 @@ async def wait_for_transaction(
     signature: str,
     timeout_secs: float = 20.0,
 ) -> Dict[str, Any]:
-    deadline = time.monotonic() + timeout_secs
-    while time.monotonic() < deadline:
-        try:
-            info = await conn.get_transaction(signature)
-        except Exception as exc:
-            if "Transaction not found" in str(exc):
-                await asyncio.sleep(0.5)
-                continue
-            raise
-        if info:
-            return info
-        await asyncio.sleep(0.5)
+    result = await conn.confirm_transaction(signature, timeout=timeout_secs)
+    if result:
+        return result
     raise TimeoutError(f"Transaction {signature} was not indexed before timeout")
 
 

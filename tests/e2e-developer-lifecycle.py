@@ -140,33 +140,12 @@ async def wait_for_balance(conn: Connection, pubkey: PublicKey, min_spores: int,
 
 async def wait_for_transaction(conn: Connection, signature: str,
                                timeout: float = 45.0) -> dict:
-    """Poll until a transaction is confirmed in a block."""
-    deadline = time.monotonic() + timeout
-    last_response = None
-    while time.monotonic() < deadline:
-        try:
-            response = await conn._rpc("confirmTransaction", [signature])
-            last_response = response
-            value = response.get("value") if isinstance(response, dict) else None
-            if isinstance(value, dict):
-                try:
-                    info = await conn.get_transaction(signature)
-                    if info:
-                        return info
-                except Exception:
-                    pass
-                return {
-                    "signature": signature,
-                    "confirmation_status": value.get("confirmation_status"),
-                    "slot": value.get("slot"),
-                    "confirmations": value.get("confirmations"),
-                    "error": value.get("err"),
-                }
-        except Exception:
-            pass
-        await asyncio.sleep(0.5)
+    """Wait for a transaction to be confirmed via WebSocket (or RPC fallback)."""
+    result = await conn.confirm_transaction(signature, timeout=timeout)
+    if result:
+        return result
     raise TimeoutError(
-        f"Transaction {signature} not confirmed within {timeout}s: {last_response}"
+        f"Transaction {signature} not confirmed within {timeout}s"
     )
 
 
@@ -447,8 +426,13 @@ async def call_contract_rpc(conn: Connection, contract: PublicKey,
 async def call_contract_tx(conn: Connection, caller: Keypair,
                            contract: PublicKey, func: str,
                            args: dict | None = None) -> str:
-    """Write contract call via signed transaction, return signature."""
-    args_bytes = json.dumps(args or {}).encode()
+    """Write contract call via signed transaction, return signature.
+
+    Args are encoded as a JSON array (ordered values) for the WASM runtime's
+    auto-encoding pipeline.  Dict keys are dropped — callers must ensure
+    values are in the correct ABI parameter order.
+    """
+    args_bytes = json.dumps(list((args or {}).values())).encode()
     payload = json.dumps({
         "Call": {"function": func, "args": list(args_bytes), "value": 0}
     })
