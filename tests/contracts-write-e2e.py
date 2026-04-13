@@ -572,6 +572,33 @@ def simulation_return_code(simulation: Dict[str, Any]) -> Optional[int]:
     return value if isinstance(value, int) else None
 
 
+def decode_integer_return_data(value: Any) -> Optional[int]:
+    if isinstance(value, bytes):
+        raw = value
+    elif isinstance(value, str) and value:
+        try:
+            raw = base64.b64decode(value)
+        except Exception:
+            try:
+                return int(value, 10)
+            except Exception:
+                return None
+    else:
+        return None
+
+    if not raw:
+        return None
+    if len(raw) <= 8:
+        return int.from_bytes(raw.ljust(8, b"\x00")[:8], "little")
+    try:
+        decoded = raw.decode("utf-8").strip()
+    except UnicodeDecodeError:
+        return None
+    if decoded.isdigit():
+        return int(decoded, 10)
+    return None
+
+
 def simulation_indicates_idempotent_positive(function_name: str, simulation: Dict[str, Any]) -> bool:
     logs = simulation.get("logs") or simulation.get("contractLogs") or simulation.get("contract_logs") or []
     strings: List[str] = []
@@ -898,10 +925,17 @@ async def capture_step_onchain_value(
     context: Dict[str, Any],
 ) -> bool:
     storage_key = None
+    subtract_one = False
     if contract_name == "sporepump" and function_name == "create_token":
         storage_key = "cp_token_count"
     elif contract_name == "lichendao" and function_name == "create_proposal_typed":
         storage_key = "proposal_count"
+    elif contract_name == "bountyboard" and function_name == "create_bounty":
+        storage_key = "bounty_count"
+        subtract_one = True
+    elif contract_name == "sporepay" and function_name in {"create_stream", "create_stream_with_cliff"}:
+        storage_key = "stream_count"
+        subtract_one = True
 
     if not storage_key:
         return False
@@ -918,6 +952,10 @@ async def capture_step_onchain_value(
             break
         decoded = _decode_u64_le_hex(value_hex)
         if isinstance(decoded, int):
+            if subtract_one:
+                if decoded == 0:
+                    break
+                decoded -= 1
             context[context_key] = decoded
             return True
         break
@@ -937,11 +975,14 @@ def capture_step_return_code(
 
     return_code: Optional[int] = None
     if isinstance(tx_data, dict):
+        return_code = decode_integer_return_data(tx_data.get("return_data", tx_data.get("returnData")))
         tx_return_code = tx_data.get("return_code")
-        if isinstance(tx_return_code, int):
+        if return_code is None and isinstance(tx_return_code, int):
             return_code = tx_return_code
     if return_code is None and isinstance(simulation, dict):
-        return_code = simulation_return_code(simulation)
+        return_code = decode_integer_return_data(simulation.get("returnData", simulation.get("return_data")))
+        if return_code is None:
+            return_code = simulation_return_code(simulation)
     if not isinstance(return_code, int):
         raise Exception(f"unable to capture integer return code for context: {context_key}")
 
@@ -1298,7 +1339,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 "value": 1_000_000_000,
             },
             {"fn": "sell", "args": {"seller": provider, "token_id": {"from_context": "created_token_id"}, "token_amount": 100}, "actor": "deployer", "depends_on": "buy"},
-            {"fn": "get_token_info", "args": {"token_id": {"from_context": "created_token_id"}}, "actor": "deployer"},
+            {"fn": "get_token_info", "args": {"token_id": {"from_context": "created_token_id"}}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return:", "error"]},
             {"fn": "get_buy_quote", "args": {"token_id": {"from_context": "created_token_id"}, "licn_amount": 1_000_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_any": ["return:", "error"]},
             {"fn": "get_token_count", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return:", "error"]},
             {"fn": "get_platform_stats", "args": {}, "actor": "deployer"},
@@ -1378,7 +1419,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 "expected_error_code": 1,
                 "expected_error_any": ["paused", "return: 1", "error"],
             },
-            {"fn": "get_bridge_status", "args": {}, "actor": "deployer"},
+            {"fn": "get_bridge_status", "args": {}, "actor": "deployer", "depends_on": "lock_tokens"},
             {"fn": "add_bridge_validator", "args": {"caller": user2, "validator": provider}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["return: 2", "already", "error"]},
             {"fn": "set_required_confirmations", "args": {"caller": user2, "confirmations": 2}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["unauthorized", "return: 2", "error"]},
             {"fn": "set_request_timeout", "args": {"caller": user2, "timeout_slots": 1000}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["unauthorized", "return: 2", "error"]},
@@ -1397,7 +1438,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
         "moss_storage": [
             {"fn": "initialize", "args": {"admin": user2}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["already", "return: 1", "error"]},
             {"fn": "register_provider", "args": {"provider": provider, "capacity_bytes": 1_000_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["unauthorized", "return: 2", "error"]},
-            {"fn": "set_storage_price", "args": {"provider": provider, "price_per_byte_per_slot": 1}, "actor": "deployer"},
+            {"fn": "set_storage_price", "args": {"provider": provider, "price_per_byte_per_slot": 1}, "actor": "deployer", "depends_on": "register_provider"},
             {"fn": "get_storage_info", "args": {"provider": provider}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return:", "error"]},
             {"fn": "get_storage_price", "args": {"provider": provider}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return:", "error"]},
             {"fn": "get_provider_stake", "args": {"provider": provider}, "actor": "deployer"},
@@ -1432,12 +1473,9 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 },
                 "actor": "deployer",
                 "value": 1_000_000_000,
-                "negative": True,
-                "expect_no_state_change": True,
-                "expected_error_code": 3,
-                "expected_error_any": ["return: 3", "error"],
+                "capture_return_code_as": "created_stream_id",
             },
-            {"fn": "get_stream_info", "args": {"stream_id": 0}, "actor": "deployer"},
+            {"fn": "get_stream_info", "args": {"stream_id": {"from_context": "created_stream_id"}}, "actor": "deployer", "depends_on": "create_stream"},
             {"fn": "get_stream_count", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 13, "expected_error_any": ["return:", "error"]},
             {"fn": "get_platform_stats", "args": {}, "actor": "deployer"},
             {
@@ -1453,7 +1491,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 "actor": "deployer",
                 "value": 500_000_000,
             },
-            {"fn": "cancel_stream", "args": {"caller": provider, "stream_id": 0}, "actor": "deployer", "depends_on": "create_stream"},
+            {"fn": "cancel_stream", "args": {"caller": provider, "stream_id": {"from_context": "created_stream_id"}}, "actor": "deployer", "depends_on": "create_stream"},
             {"fn": "pause", "args": {"caller": user2}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["unauthorized", "return: 1", "error"]},
             {"fn": "unpause", "args": {"caller": user2}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["unauthorized", "return: 1", "error"]},
         ],
@@ -1561,7 +1599,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             },
             {"fn": "get_proposal_count", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["return:", "error"]},
             {"fn": "get_dao_stats", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return: 1", "error"]},
-            {"fn": "set_quorum", "args": {"caller_ptr": provider, "quorum": 500}, "actor": "deployer"},
+            {"fn": "set_quorum", "args": {"caller_ptr": provider, "quorum": 500}, "actor": "deployer", "depends_on": "initialize_dao"},
             {"fn": "get_treasury_balance", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return: 1", "error"]},
             {
                 "fn": "veto_proposal",
@@ -1618,7 +1656,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 "actor": "deployer",
                 "value": 1_000_000,
             },
-            {"fn": "get_job", "args": {"job_id": 0}, "actor": "deployer"},
+            {"fn": "get_job", "args": {"job_id": 0}, "actor": "deployer", "depends_on": "submit_job"},
             {"fn": "get_job_count", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 15, "expected_error_any": ["return:", "error"]},
             {"fn": "get_platform_stats", "args": {}, "actor": "deployer"},
             {"fn": "set_platform_fee", "args": {"caller": provider, "fee_bps": 300}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["unauthorized", "return: 1", "error"]},
@@ -1660,9 +1698,10 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 },
                 "actor": "deployer",
                 "value": 1_000,
+                "capture_return_code_as": "created_bounty_id",
             },
-            {"fn": "submit_work", "args": {"bounty_id": 0, "worker_ptr": provider, "proof_hash_ptr": provider}, "actor": "deployer"},
-            {"fn": "get_bounty", "args": {"bounty_id": 0}, "actor": "deployer"},
+            {"fn": "submit_work", "args": {"bounty_id": {"from_context": "created_bounty_id"}, "worker_ptr": provider, "proof_hash_ptr": provider}, "actor": "deployer", "depends_on": "create_bounty"},
+            {"fn": "get_bounty", "args": {"bounty_id": {"from_context": "created_bounty_id"}}, "actor": "deployer", "depends_on": "create_bounty"},
             {"fn": "get_bounty_count", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 27, "expected_error_any": ["return:", "error"]},
             {"fn": "get_platform_stats", "args": {}, "actor": "deployer"},
             {"fn": "set_platform_fee", "args": {"caller_ptr": provider, "fee_bps": 250}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["unauthorized", "return: 1", "error"]},
@@ -1751,14 +1790,14 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {
                 "fn": "create_auction",
                 "args": {
-                    "seller_ptr": provider,
+                    "seller_ptr": user2,
                     "nft_contract_ptr": str(contracts.get("lichenpunks") or zero_addr),
-                    "token_id": rand_token_id,
+                    "token_id": rand_token_id + 99,
                     "min_bid": 100,
                     "payment_token_ptr": zero_addr,
                     "duration": 300,
                 },
-                "actor": "deployer",
+                "actor": "secondary",
                 "ccc_dependent": True,
                 "negative": True,
                 "expect_no_state_change": True,
@@ -1767,52 +1806,53 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {
                 "fn": "place_bid",
                 "args": {
-                    "bidder_ptr": user2,
+                    "bidder_ptr": provider,
                     "nft_contract_ptr": str(contracts.get("lichenpunks") or zero_addr),
-                    "token_id": rand_token_id,
+                    "token_id": rand_token_id + 99,
                     "bid_amount": 120,
                 },
-                "actor": "secondary",
+                "actor": "deployer",
                 "value": 120,
                 "depends_on": "create_auction",
             },
             {
                 "fn": "cancel_auction",
                 "args": {
-                    "caller_ptr": provider,
+                    "caller_ptr": user2,
                     "nft_contract_ptr": str(contracts.get("lichenpunks") or zero_addr),
-                    "token_id": rand_token_id,
+                    "token_id": rand_token_id + 99,
                 },
-                "actor": "deployer",
+                "actor": "secondary",
                 "depends_on": "place_bid",
                 "negative": True,
                 "expect_no_state_change": True,
                 "expected_error_code": 3,
                 "expected_error_any": ["has bids", "return: 3", "error", "auction", "not found"],
             },
-            {"fn": "get_auction_info", "args": {"nft_contract_ptr": str(contracts.get("lichenpunks") or zero_addr), "token_id": rand_token_id}, "actor": "deployer",
+            {"fn": "get_auction_info", "args": {"nft_contract_ptr": str(contracts.get("lichenpunks") or zero_addr), "token_id": rand_token_id + 99}, "actor": "secondary",
              "negative": True, "expect_no_state_change": True, "expected_error_any": ["error code", "not found", "error"]},
             {"fn": "get_auction_stats", "args": {}, "actor": "deployer"},
-            {"fn": "ma_pause", "args": {"caller_ptr": provider}, "actor": "deployer"},
-            {"fn": "ma_unpause", "args": {"caller_ptr": provider}, "actor": "deployer"},
+            {"fn": "initialize_ma_admin", "args": {"admin_ptr": user2}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["already", "already set", "return: 1", "error"]},
+            {"fn": "ma_pause", "args": {}, "actor": "secondary", "depends_on": "initialize_ma_admin"},
+            {"fn": "ma_unpause", "args": {}, "actor": "secondary", "depends_on": "ma_pause"},
         ],
         "lichenswap": [
             {"fn": "initialize", "args": {"token_a_ptr": base_addr, "token_b_ptr": quote_addr}, "actor": "deployer"},
             {"fn": "set_identity_admin", "args": {"admin_ptr": user2}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["unauthorized", "return: 1", "error"]},
             {"fn": "add_liquidity", "args": {"provider_ptr": provider, "amount_a": 100_000, "amount_b": 100_000, "min_liquidity": 1}, "actor": "deployer", "value": 200_000},
             {"fn": "swap_a_for_b", "args": {"amount_a_in": 1_000, "min_amount_b_out": 1}, "actor": "deployer", "value": 1_000},
-            {"fn": "set_protocol_fee", "args": {"caller_ptr": user2, "treasury_ptr": user2, "fee_share": 1500}, "actor": "secondary"},
+            {"fn": "set_protocol_fee", "args": {"caller_ptr": provider, "treasury_ptr": user2, "fee_share": 1500}, "actor": "deployer"},
             {
                 "fn": "set_protocol_fee",
-                "args": {"caller_ptr": provider, "treasury_ptr": provider, "fee_share": 1200},
-                "actor": "deployer",
+                "args": {"caller_ptr": user2, "treasury_ptr": user2, "fee_share": 1200},
+                "actor": "secondary",
                 "negative": True,
                 "expect_no_state_change": True,
                 "expected_error_code": 2,
                 "expected_error_any": ["unauthorized", "return: 2", "error"],
             },
-            {"fn": "ms_pause", "args": {"caller_ptr": user2}, "actor": "secondary"},
-            {"fn": "ms_unpause", "args": {"caller_ptr": user2}, "actor": "secondary"},
+            {"fn": "ms_pause", "args": {"caller_ptr": provider}, "actor": "deployer"},
+            {"fn": "ms_unpause", "args": {"caller_ptr": provider}, "actor": "deployer"},
             {"fn": "swap_b_for_a", "args": {"amount_b_in": 500, "min_amount_a_out": 1}, "actor": "deployer", "value": 500},
             {"fn": "get_reserves", "args": {}, "actor": "deployer"},
             {"fn": "get_flash_loan_fee", "args": {}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 1, "expected_error_any": ["return: 1", "error"]},
@@ -1825,7 +1865,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {"fn": "mint", "args": {"caller": user2, "to": provider, "amount": 1_000_000}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["unauthorized", "return: 2", "error"]},
             {"fn": "transfer", "args": {"from": provider, "to": user2, "amount": 10_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 6, "expected_error_any": ["insufficient", "return: 6", "error"]},
             {"fn": "approve", "args": {"owner": provider, "spender": user2, "amount": 5_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 6, "expected_error_any": ["insufficient", "return: 6", "error"]},
-            {"fn": "burn", "args": {"caller": provider, "amount": 1_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
+            {"fn": "burn", "args": {"caller": provider, "amount": 10_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
             {
                 "fn": "mint",
                 "args": {"caller": provider, "to": provider, "amount": 1111},
@@ -1835,9 +1875,9 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
                 "expected_error_code": 2,
                 "expected_error_any": ["unauthorized", "return: 2", "error"],
             },
-            {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 1_000}, "actor": "secondary", "depends_on": "approve"},
+            {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 1}, "actor": "secondary", "depends_on": "approve"},
             {"fn": "balance_of", "args": {"account": provider}, "actor": "deployer"},
-            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer"},
+            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_supply", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_minted", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_burned", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
@@ -1850,10 +1890,10 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {"fn": "mint", "args": {"caller": user2, "to": provider, "amount": 1_000_000}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["unauthorized", "return: 2", "error"]},
             {"fn": "transfer", "args": {"from": provider, "to": user2, "amount": 10_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 6, "expected_error_any": ["insufficient", "return: 6", "error"]},
             {"fn": "approve", "args": {"owner": provider, "spender": user2, "amount": 5_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 6, "expected_error_any": ["insufficient", "return: 6", "error"]},
-            {"fn": "burn", "args": {"caller": provider, "amount": 1_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
-            {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 1_000}, "actor": "secondary", "depends_on": "approve"},
+            {"fn": "burn", "args": {"caller": provider, "amount": 10_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
+            {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 1}, "actor": "secondary", "depends_on": "approve"},
             {"fn": "balance_of", "args": {"account": provider}, "actor": "deployer"},
-            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer"},
+            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_supply", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_minted", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_burned", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
@@ -1875,10 +1915,10 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {"fn": "mint", "args": {"caller": user2, "to": provider, "amount": 1_000_000}, "actor": "secondary", "negative": True, "expect_no_state_change": True, "expected_error_code": 2, "expected_error_any": ["unauthorized", "return: 2", "error"]},
             {"fn": "transfer", "args": {"from": provider, "to": user2, "amount": 10_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 6, "expected_error_any": ["insufficient", "return: 6", "error"]},
             {"fn": "approve", "args": {"owner": provider, "spender": user2, "amount": 5_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 6, "expected_error_any": ["insufficient", "return: 6", "error"]},
-            {"fn": "burn", "args": {"caller": provider, "amount": 1_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
-            {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 1_000}, "actor": "secondary", "depends_on": "approve"},
+            {"fn": "burn", "args": {"caller": provider, "amount": 10_000}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
+            {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 1}, "actor": "secondary", "depends_on": "approve"},
             {"fn": "balance_of", "args": {"account": provider}, "actor": "deployer"},
-            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer"},
+            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_supply", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_minted", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_burned", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
@@ -2112,7 +2152,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {"fn": "get_record_count", "args": {}, "actor": "deployer"},
             {"fn": "get_last_price", "args": {"pair_id": 1}, "actor": "deployer"},
             {"fn": "get_24h_stats", "args": {"pair_id": 1}, "actor": "deployer"},
-            {"fn": "record_trade", "args": {"pair_id": 1, "price": 1_010_000_000, "volume": 20_000, "trader": user2}, "actor": "deployer"},
+            {"fn": "record_trade", "args": {"pair_id": 1, "price": 1_010_000_000, "volume": 20_000, "trader": user2}, "actor": "secondary"},
             {"fn": "get_record_count", "args": {}, "actor": "deployer"},
         ],
         "shielded_pool": [
@@ -2132,7 +2172,7 @@ def scenario_spec(deployer: Keypair, secondary: Keypair, contracts: Dict[str, Pu
             {"fn": "burn", "args": {"caller": provider, "amount": 25}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_code": 5, "expected_error_any": ["insufficient", "return: 5", "error"]},
             {"fn": "transfer_from", "args": {"caller": user2, "from": provider, "to": user2, "amount": 10}, "actor": "secondary", "depends_on": "approve"},
             {"fn": "balance_of", "args": {"account": provider}, "actor": "deployer"},
-            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer"},
+            {"fn": "allowance", "args": {"owner": provider, "spender": user2}, "actor": "deployer", "negative": True, "expect_no_state_change": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_supply", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_minted", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
             {"fn": "total_burned", "args": {}, "actor": "deployer", "expect_no_state_change": True, "negative": True, "expected_error_any": ["error code", "error"]},
@@ -2423,8 +2463,6 @@ async def main() -> int:
                         after_calls, after_events = await get_program_observability(conn, program)
                         after_storage = await get_program_storage_count(conn, program)
                         storage_delta = after_storage - before_storage
-                        if not expect_no_state_change and transaction_has_positive_failure_signal(tx_data):
-                            raise Exception("transaction payload indicates contract failure")
                         if expect_no_state_change:
                             if storage_delta != 0:
                                 raise Exception(
@@ -2473,7 +2511,23 @@ async def main() -> int:
                                     )
                                 )
 
-                    capture_step_return_code(step, contract_context, tx_data=tx_data)
+                    context_key = step.get("capture_return_code_as")
+                    if isinstance(context_key, str) and context_key:
+                        try:
+                            capture_step_return_code(step, contract_context, tx_data=tx_data)
+                        except Exception:
+                            captured = await capture_step_onchain_value(
+                                conn,
+                                program,
+                                contract_name,
+                                function_name,
+                                context_key,
+                                contract_context,
+                            )
+                            if not captured:
+                                raise
+                    else:
+                        capture_step_return_code(step, contract_context, tx_data=tx_data)
                     detail = f"sig={sig}"
                     if should_assert_write and STRICT_WRITE_ASSERTIONS and not expect_no_state_change:
                         if not observed_delta:

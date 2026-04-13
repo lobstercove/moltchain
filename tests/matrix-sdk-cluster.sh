@@ -4,7 +4,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$PWD"
 BIN="$ROOT/target/release/lichen-validator"
+FAUCET_BIN="$ROOT/target/release/lichen-faucet"
 LAUNCHER="$ROOT/run-validator.sh"
+FIRST_BOOT_DEPLOY="$ROOT/scripts/first-boot-deploy.sh"
+SIGNED_METADATA_MANIFEST="$ROOT/signed-metadata-manifest-testnet.json"
+SIGNED_METADATA_KEYPAIR_DEFAULT="$ROOT/keypairs/release-signing-key.json"
 
 export LICHEN_LOCAL_DEV=1
 
@@ -13,6 +17,7 @@ RESET_MATRIX_STATE="${RESET_MATRIX_STATE:-0}"
 MATRIX_BUILD_FIRST="${MATRIX_BUILD_FIRST:-0}"
 MATRIX_STAGGER_SECS="${MATRIX_STAGGER_SECS:-15}"
 MATRIX_MIN_VALIDATORS="${MATRIX_MIN_VALIDATORS:-3}"
+MATRIX_EXTERNAL_CLUSTER_ONLY="${MATRIX_EXTERNAL_CLUSTER_ONLY:-0}"
 
 DATA1="$ROOT/data/state-7001"
 DATA2="$ROOT/data/state-7002"
@@ -25,6 +30,11 @@ MODE_FILE="$ARTIFACT_DIR/mode.txt"
 LOG1="$ARTIFACT_DIR/v1.log"
 LOG2="$ARTIFACT_DIR/v2.log"
 LOG3="$ARTIFACT_DIR/v3.log"
+BOOTSTRAP_LOG="$ARTIFACT_DIR/bootstrap.log"
+FAUCET_LOG="$ARTIFACT_DIR/faucet.log"
+FAUCET_PID_FILE="$ARTIFACT_DIR/faucet.pid"
+FAUCET_AIRDROPS_FILE="$ARTIFACT_DIR/airdrops.json"
+FAUCET_PORT=9100
 
 mkdir -p "$ARTIFACT_DIR"
 
@@ -45,12 +55,36 @@ rpc_ok() {
     -d '{"jsonrpc":"2.0","id":1,"method":"getSlot"}' >/dev/null 2>&1
 }
 
+faucet_ok() {
+  curl -sf --connect-timeout 2 --max-time 5 "http://127.0.0.1:${FAUCET_PORT}/health" >/dev/null 2>&1
+}
+
 validator_count() {
   curl -sf --connect-timeout 1 --max-time 2 "http://127.0.0.1:8899" \
     -X POST -H 'Content-Type: application/json' \
     -d '{"jsonrpc":"2.0","id":1,"method":"getValidators","params":[]}' \
     | python3 -c 'import sys,json; d=json.load(sys.stdin).get("result",[]); v=d.get("validators", d) if isinstance(d, dict) else d; print(len(v) if isinstance(v, list) else 0)' 2>/dev/null \
     || echo 0
+}
+
+external_cluster_healthy() {
+  local require_faucet="${1:-0}"
+
+  if ! rpc_ok 8899 || ! rpc_ok 8901 || ! rpc_ok 8903; then
+    return 1
+  fi
+
+  local vcount
+  vcount="$(validator_count)"
+  if [[ "$vcount" -lt "$MATRIX_MIN_VALIDATORS" ]]; then
+    return 1
+  fi
+
+  if [[ "$require_faucet" == "1" ]] && ! faucet_ok; then
+    return 1
+  fi
+
+  return 0
 }
 
 wait_cluster_ready() {
@@ -100,6 +134,100 @@ kill_port_listener() {
   fi
 }
 
+wait_faucet() {
+  local attempts="${1:-40}"
+  local delay="${2:-1}"
+  for _ in $(seq 1 "$attempts"); do
+    if faucet_ok; then
+      return 0
+    fi
+    sleep "$delay"
+  done
+  return 1
+}
+
+refresh_bootstrap_artifacts() {
+  local signed_metadata_keypair="${SIGNED_METADATA_KEYPAIR:-$SIGNED_METADATA_KEYPAIR_DEFAULT}"
+
+  if [[ ! -x "$FIRST_BOOT_DEPLOY" ]]; then
+    echo "[matrix-sdk-cluster] ERROR: bootstrap helper not found or not executable: $FIRST_BOOT_DEPLOY"
+    return 1
+  fi
+
+  if [[ ! -f "$signed_metadata_keypair" ]]; then
+    echo "[matrix-sdk-cluster] ERROR: signing keypair not found: $signed_metadata_keypair"
+    return 1
+  fi
+
+  echo "[matrix-sdk-cluster] refreshing bootstrap artifacts via first-boot-deploy.sh"
+  if ! \
+    RPC_URL="http://127.0.0.1:8899" \
+    DEPLOY_NETWORK="testnet" \
+    SIGNED_METADATA_KEYPAIR="$signed_metadata_keypair" \
+    SIGNED_METADATA_NETWORK="local-testnet" \
+    SIGNED_METADATA_MANIFEST="$SIGNED_METADATA_MANIFEST" \
+    LICHEN_SIGNED_METADATA_MANIFEST_FILE="$SIGNED_METADATA_MANIFEST" \
+    "$FIRST_BOOT_DEPLOY" --rpc http://127.0.0.1:8899 --skip-build >"$BOOTSTRAP_LOG" 2>&1; then
+    echo "[matrix-sdk-cluster] ERROR: bootstrap artifact refresh failed"
+    tail -40 "$BOOTSTRAP_LOG" 2>/dev/null || true
+    return 1
+  fi
+
+  if [[ ! -f "$SIGNED_METADATA_MANIFEST" ]]; then
+    echo "[matrix-sdk-cluster] ERROR: signed metadata manifest missing after bootstrap refresh: $SIGNED_METADATA_MANIFEST"
+    return 1
+  fi
+
+  return 0
+}
+
+stop_managed_faucet() {
+  if [[ -f "$FAUCET_PID_FILE" ]]; then
+    local faucet_pid
+    faucet_pid="$(cat "$FAUCET_PID_FILE" 2>/dev/null || true)"
+    if [[ -n "$faucet_pid" ]]; then
+      kill "$faucet_pid" 2>/dev/null || true
+      sleep 1
+      kill -9 "$faucet_pid" 2>/dev/null || true
+    fi
+    rm -f "$FAUCET_PID_FILE"
+  fi
+
+  kill_port_listener "$FAUCET_PORT"
+}
+
+start_managed_faucet() {
+  if faucet_ok; then
+    return 0
+  fi
+
+  if [[ ! -x "$FAUCET_BIN" ]]; then
+    echo "[matrix-sdk-cluster] ERROR: faucet binary not found: $FAUCET_BIN"
+    return 1
+  fi
+
+  stop_managed_faucet
+
+  echo "[matrix-sdk-cluster] starting faucet on :$FAUCET_PORT"
+  DEV_CORS=1 \
+  RPC_URL="http://127.0.0.1:8899" \
+  NETWORK="testnet" \
+  PORT="$FAUCET_PORT" \
+  TRUSTED_PROXY="127.0.0.1,::1" \
+  AIRDROPS_FILE="$FAUCET_AIRDROPS_FILE" \
+    "$FAUCET_BIN" >"$FAUCET_LOG" 2>&1 &
+  local faucet_pid=$!
+  echo "$faucet_pid" > "$FAUCET_PID_FILE"
+
+  if ! wait_faucet 40 1; then
+    echo "[matrix-sdk-cluster] ERROR: faucet did not become healthy on :$FAUCET_PORT"
+    tail -20 "$FAUCET_LOG" 2>/dev/null || true
+    return 1
+  fi
+
+  echo "[matrix-sdk-cluster] faucet ready pid=$faucet_pid"
+}
+
 read_pids() {
   if [[ -f "$PID_FILE" ]]; then
     cat "$PID_FILE"
@@ -117,6 +245,10 @@ stop_cluster() {
     rm -f "$PID_FILE" "$MODE_FILE"
     return 0
   fi
+  if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]] && external_cluster_healthy 0; then
+    rm -f "$PID_FILE" "$MODE_FILE"
+    return 0
+  fi
 
   if read_pids >/dev/null 2>&1; then
     local pids
@@ -131,8 +263,10 @@ stop_cluster() {
     rm -f "$PID_FILE"
   fi
 
+  stop_managed_faucet
+
   kill_stale_validator_supervisors
-  for port in 8899 8901 8903 8000 8001 8002 9201 9202 9203; do
+  for port in 8899 8901 8903 8000 8001 8002 9100 9201 9202 9203; do
     kill_port_listener "$port"
   done
 
@@ -149,6 +283,18 @@ purge_legacy_matrix_dirs() {
   fi
 }
 
+count_alive_pids() {
+  local pids alive
+  pids="$(read_pids || true)"
+  alive=0
+  for pid in $pids; do
+    if kill -0 "$pid" 2>/dev/null; then
+      alive=$((alive + 1))
+    fi
+  done
+  echo "$alive"
+}
+
 managed_cluster_healthy() {
   if [[ ! -f "$PID_FILE" ]]; then
     return 1
@@ -159,19 +305,6 @@ managed_cluster_healthy() {
     mode="$(cat "$MODE_FILE" 2>/dev/null || echo managed)"
   fi
   if [[ "$mode" == "external" ]]; then
-    return 1
-  fi
-
-  local pids alive
-  pids="$(read_pids || true)"
-  alive=0
-  for pid in $pids; do
-    if kill -0 "$pid" 2>/dev/null; then
-      alive=$((alive + 1))
-    fi
-  done
-
-  if [[ "$alive" -ne 3 ]]; then
     return 1
   fi
 
@@ -188,14 +321,26 @@ start_cluster() {
   purge_legacy_matrix_dirs
 
   if [[ "$FORCE_MANAGED_MATRIX_CLUSTER" != "1" && "$RESET_MATRIX_STATE" != "1" ]] && managed_cluster_healthy; then
+    if ! refresh_bootstrap_artifacts; then
+      return 1
+    fi
+    if ! start_managed_faucet; then
+      return 1
+    fi
     echo "[matrix-sdk-cluster] reusing existing managed cluster (already healthy)"
     return 0
   fi
 
-  if [[ "$FORCE_MANAGED_MATRIX_CLUSTER" != "1" ]] && wait_cluster_ready 20 1; then
+  if [[ "$FORCE_MANAGED_MATRIX_CLUSTER" != "1" ]] && external_cluster_healthy "$MATRIX_EXTERNAL_CLUSTER_ONLY"; then
     echo "external" > "$MODE_FILE"
+    rm -f "$PID_FILE"
     echo "[matrix-sdk-cluster] reusing existing external cluster on :8899 (validators>=$MATRIX_MIN_VALIDATORS)"
     return 0
+  fi
+
+  if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+    echo "[matrix-sdk-cluster] ERROR: external-only mode requested but relay-backed cluster is not healthy"
+    return 1
   fi
 
   stop_cluster
@@ -218,11 +363,12 @@ start_cluster() {
   if [[ "$RESET_MATRIX_STATE" == "1" ]]; then
     echo "[matrix-sdk-cluster] resetting canonical testnet state via reset-blockchain.sh"
     bash "$ROOT/reset-blockchain.sh" testnet >/dev/null
+    rm -f "$FAUCET_AIRDROPS_FILE"
   fi
 
-  if [[ "$MATRIX_BUILD_FIRST" == "1" || ! -x "$BIN" ]]; then
-    echo "[matrix-sdk-cluster] building validator binary..."
-    cargo build --release --bin lichen-validator >/dev/null
+  if [[ "$MATRIX_BUILD_FIRST" == "1" || ! -x "$BIN" || ! -x "$FAUCET_BIN" ]]; then
+    echo "[matrix-sdk-cluster] building validator/faucet binaries..."
+    cargo build --release --bin lichen-validator --bin lichen-faucet >/dev/null
   fi
 
   if [[ ! -x "$LAUNCHER" ]]; then
@@ -273,19 +419,43 @@ start_cluster() {
     fi
   fi
 
+  if ! refresh_bootstrap_artifacts; then
+    stop_cluster
+    exit 1
+  fi
+
+  if ! start_managed_faucet; then
+    stop_cluster
+    exit 1
+  fi
+
   echo "[matrix-sdk-cluster] ready pids=$V1PID,$V2PID,$V3PID"
 }
 
 status_cluster() {
   if ! read_pids >/dev/null 2>&1; then
-    if rpc_ok 8899; then
+    if external_cluster_healthy "$MATRIX_EXTERNAL_CLUSTER_ONLY"; then
       local vcount
       vcount="$(validator_count)"
-      if [[ "$vcount" -ge "$MATRIX_MIN_VALIDATORS" ]]; then
+      if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+        echo "[matrix-sdk-cluster] status=up mode=external validators=$vcount faucet=up"
+      else
         echo "[matrix-sdk-cluster] status=up mode=external validators=$vcount"
-        return 0
       fi
-      echo "[matrix-sdk-cluster] status=degraded mode=external validators=$vcount/<$MATRIX_MIN_VALIDATORS"
+      return 0
+    fi
+    if rpc_ok 8899 || rpc_ok 8901 || rpc_ok 8903; then
+      local vcount
+      vcount="$(validator_count)"
+      if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+        local faucet_state="down"
+        if faucet_ok; then
+          faucet_state="up"
+        fi
+        echo "[matrix-sdk-cluster] status=degraded mode=external validators=$vcount min_validators=$MATRIX_MIN_VALIDATORS faucet=$faucet_state"
+      else
+        echo "[matrix-sdk-cluster] status=degraded mode=external validators=$vcount/<$MATRIX_MIN_VALIDATORS"
+      fi
       return 1
     fi
     echo "[matrix-sdk-cluster] status=down (no pid file)"
@@ -296,14 +466,28 @@ status_cluster() {
     mode="$(cat "$MODE_FILE" 2>/dev/null || echo managed)"
   fi
   if [[ "$mode" == "external" ]]; then
-    if rpc_ok 8899; then
+    if external_cluster_healthy "$MATRIX_EXTERNAL_CLUSTER_ONLY"; then
       local vcount
       vcount="$(validator_count)"
-      if [[ "$vcount" -ge "$MATRIX_MIN_VALIDATORS" ]]; then
+      if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+        echo "[matrix-sdk-cluster] status=up mode=external validators=$vcount faucet=up"
+      else
         echo "[matrix-sdk-cluster] status=up mode=external validators=$vcount"
-        return 0
       fi
-      echo "[matrix-sdk-cluster] status=degraded mode=external validators=$vcount/<$MATRIX_MIN_VALIDATORS"
+      return 0
+    fi
+    if rpc_ok 8899 || rpc_ok 8901 || rpc_ok 8903; then
+      local vcount
+      vcount="$(validator_count)"
+      if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+        local faucet_state="down"
+        if faucet_ok; then
+          faucet_state="up"
+        fi
+        echo "[matrix-sdk-cluster] status=degraded mode=external validators=$vcount min_validators=$MATRIX_MIN_VALIDATORS faucet=$faucet_state"
+      else
+        echo "[matrix-sdk-cluster] status=degraded mode=external validators=$vcount/<$MATRIX_MIN_VALIDATORS"
+      fi
       return 1
     fi
     echo "[matrix-sdk-cluster] status=down mode=external"
@@ -312,20 +496,25 @@ status_cluster() {
   local pids
   pids="$(read_pids || true)"
   local alive=0
-  for pid in $pids; do
-    if kill -0 "$pid" 2>/dev/null; then
-      alive=$((alive + 1))
-    fi
-  done
+  local faucet_state="down"
+  alive="$(count_alive_pids)"
+
+  if faucet_ok; then
+    faucet_state="up"
+  fi
 
   local vcount
   vcount="$(validator_count)"
-  if [[ "$alive" -eq 3 ]] && rpc_ok 8899 && [[ "$vcount" -ge "$MATRIX_MIN_VALIDATORS" ]]; then
-    echo "[matrix-sdk-cluster] status=up pids=$pids validators=$vcount"
+  if rpc_ok 8899 && rpc_ok 8901 && rpc_ok 8903 && [[ "$vcount" -ge "$MATRIX_MIN_VALIDATORS" ]] && [[ "$faucet_state" == "up" ]]; then
+    local launcher_state="alive=$alive/3"
+    if [[ "$alive" -ne 3 ]]; then
+      launcher_state="stale_pids=$alive/3"
+    fi
+    echo "[matrix-sdk-cluster] status=up pids=$pids validators=$vcount faucet=$faucet_state $launcher_state"
     return 0
   fi
 
-  echo "[matrix-sdk-cluster] status=degraded alive=$alive pids=$pids validators=$vcount/<$MATRIX_MIN_VALIDATORS"
+  echo "[matrix-sdk-cluster] status=degraded alive=$alive pids=$pids validators=$vcount min_validators=$MATRIX_MIN_VALIDATORS faucet=$faucet_state"
   return 1
 }
 

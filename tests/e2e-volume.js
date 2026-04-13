@@ -377,6 +377,13 @@ async function placeOrder(wallet, pairId, side, price, qty, label = '') {
 // Helper: Fund wallet with airdrop
 // ═══════════════════════════════════════════════════════════════════════════════
 async function fundWallet(wallet, amount, label) {
+    const existing = await rpc('getBalance', [wallet.address]);
+    const existingSpendable = Number(existing?.spendable || existing?.spores || 0);
+    if (existingSpendable >= 50 * PRICE_SCALE) {
+        assert(true, `${label} funded via genesis balance (${(existingSpendable / PRICE_SCALE).toFixed(2)} LICN)`);
+        return;
+    }
+
     try {
         const r = await rpc('requestAirdrop', [wallet.address, amount]);
         assert(r.success === true, `${label} airdrop: ${amount} LICN`);
@@ -396,6 +403,30 @@ async function fundWallet(wallet, amount, label) {
             assert(false, `${label} airdrop failed: ${msg}`);
         }
     }
+}
+
+async function selectRichestFundedWallets(limit) {
+    const funded = loadFundedWallets(Math.max(limit * 3, limit));
+    const ranked = [];
+
+    for (const wallet of funded) {
+        try {
+            const balance = await rpc('getBalance', [wallet.address]);
+            ranked.push({
+                ...wallet,
+                _initialSpendable: Number(balance?.spendable || balance?.spores || 0),
+            });
+        } catch {
+            ranked.push({ ...wallet, _initialSpendable: 0 });
+        }
+    }
+
+    ranked.sort((left, right) => (
+        right._initialSpendable - left._initialSpendable
+        || left.address.localeCompare(right.address)
+    ));
+
+    return ranked.slice(0, limit);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -421,7 +452,7 @@ async function runTests() {
     section('Phase 0: Setup — 5 Trader Wallets');
     const wallets = [];
     const names = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve'];
-    const funded = loadFundedWallets(5);
+    const funded = await selectRichestFundedWallets(5);
     for (let i = 0; i < 5; i++) {
         const w = funded[i] || genKeypair();
         w.name = names[i];
@@ -429,7 +460,7 @@ async function runTests() {
         console.log(`  ${names[i]}: ${w.address.slice(0, 12)}...`);
     }
     if (funded.length >= 5) {
-        assert(true, 'Loaded funded genesis wallets (airdrop not required)');
+        assert(true, 'Loaded richest funded genesis wallets');
     }
 
     // Fund all wallets (stagger airdrops with unique amounts to avoid rate limits)
@@ -443,10 +474,12 @@ async function runTests() {
     // Verify all balances
     section('Phase 0: Verify Balances');
     let fundedWalletCount = 0;
+    const writeEligibleWallets = new Set();
     for (const w of wallets) {
         const b = await rpc('getBalance', [w.address]);
         if (b.spendable >= 50 * PRICE_SCALE) {
             fundedWalletCount++;
+            writeEligibleWallets.add(w.address);
             assert(true, `${w.name} has ≥50 LICN (${b.spendable_licn})`);
         } else {
             skip(`${w.name} funding below write-path threshold (${b.spendable_licn})`);
@@ -1065,10 +1098,10 @@ async function runTests() {
     section('Phase 13: Final Balance Check');
     for (const w of wallets) {
         const b = await rpc('getBalance', [w.address]);
-        if (writePathEnabled) {
+        if (writeEligibleWallets.has(w.address)) {
             assert(b.spendable > 0, `${w.name} balance > 0 (${b.spendable_licn})`);
         } else {
-            skip(`${w.name} final balance check skipped (unfunded write-path environment)`);
+            skip(`${w.name} final balance check skipped (below initial write-path threshold)`);
         }
     }
 

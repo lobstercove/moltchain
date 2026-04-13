@@ -118,11 +118,59 @@ async function rest(path) {
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+async function fetchTransactionDetails(signature, timeoutMs = 5000) {
+    const started = Date.now();
+    while (Date.now() - started < timeoutMs) {
+        try {
+            const tx = await rpc('getTransaction', [signature]);
+            if (tx) return tx;
+        } catch { }
+        await sleep(250);
+    }
+    return null;
+}
+
+function extractReturnCode(payload) {
+    if (!payload || typeof payload !== 'object') return null;
+    const candidates = [
+        payload.return_code,
+        payload.returnCode,
+        payload?.result?.return_code,
+        payload?.result?.returnCode,
+        payload?.simulation?.return_code,
+        payload?.simulation?.returnCode,
+    ];
+    for (const value of candidates) {
+        if (value === undefined || value === null) continue;
+        const numeric = Number(value);
+        if (Number.isFinite(numeric)) return numeric;
+    }
+    return null;
+}
+
+function extractContractLogs(payload) {
+    if (!payload || typeof payload !== 'object') return '';
+    const candidates = [
+        payload.contract_logs,
+        payload.logs,
+        payload?.result?.contract_logs,
+        payload?.result?.logs,
+        payload?.simulation?.contract_logs,
+        payload?.simulation?.logs,
+    ];
+    for (const value of candidates) {
+        if (Array.isArray(value) && value.length > 0) {
+            return value.join(' | ');
+        }
+    }
+    return '';
+}
+
 async function waitForTransaction(signature, timeoutMs = 30000) {
     // Try WS-based confirmation first
     if (WebSocket) {
         try {
-            return await new Promise((resolve, reject) => {
+            const confirmation = await new Promise((resolve, reject) => {
                 const ws = new WebSocket(WS_URL);
                 const timer = setTimeout(() => { try { ws.close(); } catch { } reject(new Error('ws timeout')); }, timeoutMs);
                 ws.on('error', () => { clearTimeout(timer); reject(new Error('ws error')); });
@@ -139,6 +187,8 @@ async function waitForTransaction(signature, timeoutMs = 30000) {
                     } catch { }
                 });
             });
+            const tx = await fetchTransactionDetails(signature, Math.min(timeoutMs, 5000));
+            return tx || confirmation;
         } catch { /* fall through to RPC polling */ }
     }
     // Fallback: RPC polling
@@ -229,8 +279,16 @@ async function sendTx(keypair, instructions, computeBudget = null) {
     const b64 = Buffer.from(JSON.stringify(payload)).toString('base64');
     const signature = await rpc('sendTransaction', [b64]);
     const tx = await waitForTransaction(signature);
-    if (Object.prototype.hasOwnProperty.call(tx, 'return_code') && Number(tx.return_code) === 0) {
-        const logs = Array.isArray(tx.contract_logs) ? tx.contract_logs.join(' | ') : '';
+    let returnCode = extractReturnCode(tx);
+    let logs = extractContractLogs(tx);
+    if (returnCode === null) {
+        try {
+            const simulation = await rpc('simulateTransaction', [b64]);
+            returnCode = extractReturnCode(simulation);
+            if (!logs) logs = extractContractLogs(simulation);
+        } catch { }
+    }
+    if (returnCode === 0) {
         throw new Error(logs || 'contract returned failure code 0');
     }
     return signature;

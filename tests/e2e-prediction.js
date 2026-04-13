@@ -30,6 +30,7 @@
 
 const pq = require('./helpers/pq-node');
 const crypto = require('crypto');
+const path = require('path');
 const { loadFundedWallets, findGenesisAdminKeypair } = require('./helpers/funded-wallets');
 
 const RPC_URL = process.env.LICHEN_RPC || 'http://127.0.0.1:8899';
@@ -39,6 +40,8 @@ const SPORES_PER_LICN = 1e9;     // 1 LICN = 10^9 spores
 const FUND_AMOUNT = 10;  // 10 LICN per airdrop (RPC expects LICN, max 10)
 const PREDICT_CREATE_FEE = 10_000_000; // 10 lUSD, must match contract MARKET_CREATION_FEE
 const MULTI_OUTCOME_ONLY = process.env.PREDICTION_MULTI_OUTCOME_ONLY === '1';
+const MIN_TRADER_SPENDABLE_SPORES = 2 * SPORES_PER_LICN;
+const FUNDING_FEE_BUFFER_SPORES = 2_000_000;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Test harness
@@ -119,6 +122,73 @@ async function restPost(path, body) {
     } catch { return null; }
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function extractSpendableSporeBalance(balance) {
+    if (typeof balance === 'number') return balance;
+    if (balance && typeof balance === 'object') {
+        const spendable = Number(balance.spendable ?? balance.spores ?? balance.value ?? 0);
+        if (Number.isFinite(spendable)) {
+            return spendable;
+        }
+    }
+    return 0;
+}
+
+async function getSpendableSporeBalance(address) {
+    return extractSpendableSporeBalance(await rpc('getBalance', [address]));
+}
+
+async function waitForSpendableBalance(address, minSporeBalance, timeoutMs = 15000) {
+    const deadline = Date.now() + timeoutMs;
+    let current = await getSpendableSporeBalance(address);
+    while (Date.now() < deadline) {
+        if (current >= minSporeBalance) {
+            return current;
+        }
+        await sleep(500);
+        current = await getSpendableSporeBalance(address);
+    }
+    return current;
+}
+
+function walletSourceName(wallet) {
+    return path.basename(wallet?.source || '');
+}
+
+function donorPriority(wallet) {
+    const sourceName = walletSourceName(wallet);
+    if (sourceName.startsWith('genesis-primary')) return 0;
+    if (sourceName.startsWith('genesis-signer')) return 1;
+    if (sourceName === 'deployer.json') return 2;
+    return 3;
+}
+
+async function rankFundedWallets(limit) {
+    const candidates = loadFundedWallets(Math.max(limit * 3, limit + 4));
+    const ranked = [];
+    const seen = new Set();
+
+    for (const wallet of candidates) {
+        if (!wallet?.address || seen.has(wallet.address)) {
+            continue;
+        }
+        seen.add(wallet.address);
+        let spendable = 0;
+        try {
+            spendable = await getSpendableSporeBalance(wallet.address);
+        } catch {
+            spendable = 0;
+        }
+        ranked.push({ ...wallet, _spendable: spendable });
+    }
+
+    ranked.sort((left, right) => (
+        right._spendable - left._spendable
+        || donorPriority(left) - donorPriority(right)
+        || left.address.localeCompare(right.address)
+    ));
+    return ranked;
+}
 
 async function resolveMarketIdByQuestion(question, creator, expectedCloseSlot = null, retries = 8) {
     for (let attempt = 0; attempt < retries; attempt++) {
@@ -231,6 +301,65 @@ function contractIx(callerAddr, contractAddr, argsBytes, value = 0) {
 function namedCallIx(callerAddr, contractAddr, funcName, argsBytes, value = 0) {
     const data = JSON.stringify({ Call: { function: funcName, args: Array.from(argsBytes), value } });
     return { program_id: CONTRACT_PID, accounts: [callerAddr, contractAddr], data };
+}
+
+const SYSTEM_PROGRAM_ID = bs58encode(new Uint8Array(32));
+
+function buildTransferIx(from, to, amountSpores) {
+    const data = new Uint8Array(9);
+    const view = new DataView(data.buffer);
+    data[0] = 0;
+    view.setBigUint64(1, BigInt(Math.round(amountSpores)), true);
+    return { program_id: SYSTEM_PROGRAM_ID, accounts: [from, to], data: Array.from(data) };
+}
+
+async function ensureWalletHasSpendable(wallet, donorWallets, minSporeBalance = MIN_TRADER_SPENDABLE_SPORES) {
+    let current = await getSpendableSporeBalance(wallet.address);
+    if (current >= minSporeBalance) {
+        return current;
+    }
+
+    const rankedDonors = [...donorWallets]
+        .filter((donor) => donor?.address && donor.address !== wallet.address)
+        .sort((left, right) => (
+            donorPriority(left) - donorPriority(right)
+            || ((right._spendable || 0) - (left._spendable || 0))
+            || left.address.localeCompare(right.address)
+        ));
+
+    for (const donor of rankedDonors) {
+        let donorSpendable = 0;
+        try {
+            donorSpendable = await getSpendableSporeBalance(donor.address);
+        } catch {
+            donorSpendable = 0;
+        }
+        const needed = minSporeBalance - current;
+        if (needed <= 0) {
+            return current;
+        }
+        if (donorSpendable <= needed + FUNDING_FEE_BUFFER_SPORES) {
+            continue;
+        }
+        try {
+            await sendTx(donor, [buildTransferIx(donor.address, wallet.address, needed)]);
+            current = await waitForSpendableBalance(wallet.address, minSporeBalance, 15000);
+            if (current >= minSporeBalance) {
+                return current;
+            }
+        } catch (e) {
+            console.log(`    Funding note ${wallet.address.slice(0, 12)}... via ${walletSourceName(donor) || donor.address.slice(0, 12)}: ${e.message.slice(0, 80)}`);
+        }
+    }
+
+    const neededLicn = Math.max(1, Math.ceil((minSporeBalance - current) / SPORES_PER_LICN));
+    try {
+        await rpc('requestAirdrop', [wallet.address, Math.min(FUND_AMOUNT, neededLicn)]);
+    } catch {
+        return current;
+    }
+
+    return waitForSpendableBalance(wallet.address, minSporeBalance, 5000);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -457,7 +586,9 @@ async function main() {
     // P2. Multi-Wallet Funding (6 wallets)
     // ══════════════════════════════════════════════════════════════════════
     section('P2: Wallet Funding');
-    const funded = loadFundedWallets(6);
+    const rankedFunded = await rankFundedWallets(12);
+    const funded = rankedFunded.slice(0, 6);
+    const admin = loadGenesisAdmin();
     const alice = funded[0] || genKeypair();
     const bob = funded[1] || genKeypair();
     const carol = funded[2] || genKeypair();
@@ -473,20 +604,22 @@ async function main() {
         { name: 'Frank', kp: frank },
     ];
 
-    for (const w of wallets) {
-        try {
-            await rpc('requestAirdrop', [w.kp.address, FUND_AMOUNT]);
-            assert(true, `${w.name} funded: ${w.kp.address.slice(0, 12)}...`);
-        } catch (e) {
-            // Airdrop may fail due to rate limit or multi-validator mode — fall back to genesis balance
-            const bal = await rpc('getBalance', [w.kp.address]);
-            const spendable = Number(bal?.spendable || bal?.spores || 0);
-            if (spendable > 0) {
-                assert(true, `${w.name} funded via genesis balance (${(spendable / 1e9).toFixed(2)} LICN)`);
-            } else {
-                assert(false, `${w.name} has no balance and airdrop failed: ${e.message.slice(0, 60)}`);
-            }
+    const fundingHelpers = [];
+    const fundingSeen = new Set();
+    for (const helper of [...rankedFunded, admin].filter(Boolean)) {
+        if (!helper?.address || fundingSeen.has(helper.address)) {
+            continue;
         }
+        fundingSeen.add(helper.address);
+        fundingHelpers.push(helper);
+    }
+
+    for (const w of wallets) {
+        const spendable = await ensureWalletHasSpendable(w.kp, fundingHelpers, MIN_TRADER_SPENDABLE_SPORES);
+        assert(
+            spendable >= MIN_TRADER_SPENDABLE_SPORES,
+            `${w.name} spendable funding ready (${(spendable / SPORES_PER_LICN).toFixed(2)} LICN)`
+        );
     }
     await sleep(2000);
 
@@ -494,7 +627,6 @@ async function main() {
     // P3. LichenID Identity Registration (reputation >= 500 for market creation)
     // ══════════════════════════════════════════════════════════════════════
     section('P3: LichenID Identity Registration');
-    const admin = loadGenesisAdmin();
     let identitiesRegistered = false;
 
     if (admin && hasLichenID) {

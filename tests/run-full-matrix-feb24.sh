@@ -11,9 +11,11 @@ CLUSTER_RESET_STATE="${RESET_MATRIX_STATE:-1}"
 CLUSTER_BUILD_FIRST="${MATRIX_BUILD_FIRST:-1}"
 CLUSTER_STAGGER_SECS="${MATRIX_STAGGER_SECS:-15}"
 CLUSTER_MIN_VALIDATORS="${MATRIX_MIN_VALIDATORS:-3}"
+MATRIX_EXTERNAL_CLUSTER_ONLY="${MATRIX_EXTERNAL_CLUSTER_ONLY:-0}"
 MATRIX_REUSE_HEALTHY_CLUSTER="${MATRIX_REUSE_HEALTHY_CLUSTER:-1}"
 MATRIX_CUSTODY_URL="${CUSTODY_URL:-http://127.0.0.1:9105}"
 MATRIX_RUN_CUSTODY_WITHDRAWAL_E2E="${MATRIX_RUN_CUSTODY_WITHDRAWAL_E2E:-1}"
+MATRIX_START_INDEX="${MATRIX_START_INDEX:-1}"
 
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   echo "[full-matrix] another matrix run is already active (lock: $LOCK_DIR)" >&2
@@ -57,7 +59,7 @@ cluster_has_quorum_now() {
 }
 
 faucet_ok_now() {
-  curl -sf --connect-timeout 1 --max-time 2 http://127.0.0.1:9100/health >/dev/null 2>&1
+  curl -sf --connect-timeout 2 --max-time 5 http://127.0.0.1:9100/health >/dev/null 2>&1
 }
 
 ensure_cluster_ready() {
@@ -72,7 +74,32 @@ ensure_cluster_ready() {
     fi
   done
   if [[ "$all_alive" == "1" ]] && wait_cluster_ready 5 1; then
-    return 0
+    if faucet_ok_now; then
+      return 0
+    fi
+
+    if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+      local retry
+      for retry in 1 2 3 4 5; do
+        sleep 1
+        if faucet_ok_now; then
+          return 0
+        fi
+      done
+      echo "[full-matrix] ERROR: external cluster relay/faucet unavailable on :9100; refusing managed fallback" | tee -a "$LOG"
+      return 1
+    fi
+
+    echo "[full-matrix] faucet missing; re-ensuring managed cluster services" | tee -a "$LOG"
+    bash tests/matrix-sdk-cluster.sh start >> "$LOG" 2>&1 || true
+    if faucet_ok_now; then
+      return 0
+    fi
+  fi
+
+  if [[ "$MATRIX_EXTERNAL_CLUSTER_ONLY" == "1" ]]; then
+    echo "[full-matrix] ERROR: external cluster relay/RPC unavailable; refusing managed fallback" | tee -a "$LOG"
+    return 1
   fi
 
   echo "[full-matrix] cluster health degraded; restarting managed cluster with full reset" | tee -a "$LOG"
@@ -81,6 +108,11 @@ ensure_cluster_ready() {
 
   if ! wait_cluster_ready 90 1; then
     echo "[full-matrix] ERROR: cluster did not become ready" | tee -a "$LOG"
+    return 1
+  fi
+
+  if ! faucet_ok_now; then
+    echo "[full-matrix] ERROR: faucet did not become ready" | tee -a "$LOG"
     return 1
   fi
   return 0
@@ -161,8 +193,109 @@ except Exception:
 PY
 }
 
+fund_signer_from_agent() {
+  local sender_path="$1"
+  local recipient_path="$2"
+  local target_spores="$3"
+
+  python3 - "$sender_path" "$recipient_path" "$target_spores" <<'PY'
+import asyncio, os, sys
+from pathlib import Path
+
+ROOT = os.getcwd()
+sys.path.insert(0, os.path.join(ROOT, "sdk", "python"))
+
+from lichen import Connection, Keypair, TransactionBuilder  # type: ignore
+
+
+def load_keypair(path: str):
+  password = os.getenv("LICHEN_KEYPAIR_PASSWORD")
+  path_obj = Path(path)
+  if password:
+    try:
+      return Keypair.load(path_obj, password=password)
+    except TypeError:
+      pass
+  return Keypair.load(path_obj)
+
+
+def extract_spores(balance):
+  if isinstance(balance, (int, float)):
+    return int(balance)
+  if isinstance(balance, dict):
+    for key in ("spendable", "spores", "balance", "lamports", "amount", "value"):
+      value = balance.get(key)
+      if isinstance(value, (int, float)):
+        return int(value)
+  return 0
+
+
+async def main() -> None:
+  sender_path, recipient_path, target_raw = sys.argv[1:4]
+  target_spores = int(target_raw)
+  conn = Connection("http://127.0.0.1:8899")
+  sender = load_keypair(sender_path)
+  recipient = load_keypair(recipient_path)
+
+  sender_balance = extract_spores(await conn.get_balance(sender.pubkey()))
+  recipient_balance = extract_spores(await conn.get_balance(recipient.pubkey()))
+  needed = target_spores - recipient_balance
+  fee_buffer = 2_000_000
+
+  if needed <= 0:
+    print("")
+    return
+  if sender_balance <= needed + fee_buffer:
+    raise RuntimeError(
+      f"insufficient sender balance for matrix funding transfer (sender={sender_balance}, needed={needed})"
+    )
+
+  blockhash = await conn.get_recent_blockhash()
+  ix = TransactionBuilder.transfer(sender.pubkey(), recipient.pubkey(), needed)
+  tx = TransactionBuilder().add(ix).set_recent_blockhash(blockhash).build_and_sign(sender)
+  sig = await conn.send_transaction(tx)
+
+  try:
+    confirmation = await conn.confirm_transaction(sig, timeout=30.0)
+    if confirmation:
+      print(sig)
+      return
+  except Exception:
+    pass
+
+  for _ in range(30):
+    current_balance = extract_spores(await conn.get_balance(recipient.pubkey()))
+    if current_balance >= target_spores:
+      print(sig)
+      return
+    await asyncio.sleep(1.0)
+
+  raise RuntimeError(f"matrix funding transfer not confirmed and balance did not update: {sig}")
+
+
+asyncio.run(main())
+PY
+}
+
+request_airdrop_until_min() {
+  local pubkey="$1"
+  local min_spores="$2"
+  local current_spores="$3"
+  local attempts=0
+
+  while [[ -n "$pubkey" && "$current_spores" -lt "$min_spores" && "$attempts" -lt 4 ]]; do
+    curl -s -X POST http://127.0.0.1:8899 -H 'Content-Type: application/json' \
+      -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"requestAirdrop\",\"params\":[\"$pubkey\",10]}" >/dev/null 2>&1 || true
+    attempts=$((attempts + 1))
+    sleep 2
+    current_spores="$(get_spendable_spores "$pubkey")"
+  done
+
+  echo "$current_spores"
+}
+
 ensure_funded_signers() {
-  local min_spores="${MIN_FUNDED_SPORES:-20000000000}"
+  local min_spores="${MIN_FUNDED_SPORES:-10000000000}"
   local agent_pub human_pub agent_spores human_spores
   agent_pub="$(keypair_pubkey "$MATRIX_AGENT_KEYPAIR" 2>/dev/null || true)"
   human_pub="$(keypair_pubkey "$MATRIX_HUMAN_KEYPAIR" 2>/dev/null || true)"
@@ -183,13 +316,34 @@ ensure_funded_signers() {
 
   if [[ "$agent_spores" -lt "$min_spores" || "$human_spores" -lt "$min_spores" ]]; then
     echo "[full-matrix] signer funding below minimum; attempting requestAirdrop fallback" | tee -a "$LOG"
-    if [[ -n "$agent_pub" ]]; then
-      curl -s -X POST http://127.0.0.1:8899 -H 'Content-Type: application/json' -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"requestAirdrop\",\"params\":[\"$agent_pub\",100]}" >/dev/null 2>&1 || true
+    if [[ -n "$agent_pub" && "$agent_spores" -lt "$min_spores" ]]; then
+      agent_spores="$(request_airdrop_until_min "$agent_pub" "$min_spores" "$agent_spores")"
     fi
-    if [[ -n "$human_pub" ]]; then
-      curl -s -X POST http://127.0.0.1:8899 -H 'Content-Type: application/json' -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"requestAirdrop\",\"params\":[\"$human_pub\",100]}" >/dev/null 2>&1 || true
+    if [[ -n "$human_pub" && "$human_spores" -lt "$min_spores" ]]; then
+      human_spores="$(request_airdrop_until_min "$human_pub" "$min_spores" "$human_spores")"
     fi
-    sleep 2
+  fi
+
+  if [[ "$agent_spores" -lt "$min_spores" && "$human_spores" -gt "$min_spores" && "$MATRIX_AGENT_KEYPAIR" != "$MATRIX_HUMAN_KEYPAIR" ]]; then
+    echo "[full-matrix] signer funding still below minimum; attempting human->agent transfer fallback" | tee -a "$LOG"
+    if funding_sig="$(fund_signer_from_agent "$MATRIX_HUMAN_KEYPAIR" "$MATRIX_AGENT_KEYPAIR" "$min_spores" 2>>"$LOG")"; then
+      if [[ -n "$funding_sig" ]]; then
+        echo "[full-matrix] signer funding transfer confirmed sig=$funding_sig" | tee -a "$LOG"
+      fi
+    else
+      echo "[full-matrix] signer funding transfer fallback failed" | tee -a "$LOG"
+    fi
+  fi
+
+  if [[ "$human_spores" -lt "$min_spores" && "$agent_spores" -gt "$min_spores" && "$MATRIX_AGENT_KEYPAIR" != "$MATRIX_HUMAN_KEYPAIR" ]]; then
+    echo "[full-matrix] signer funding still below minimum; attempting agent->human transfer fallback" | tee -a "$LOG"
+    if funding_sig="$(fund_signer_from_agent "$MATRIX_AGENT_KEYPAIR" "$MATRIX_HUMAN_KEYPAIR" "$min_spores" 2>>"$LOG")"; then
+      if [[ -n "$funding_sig" ]]; then
+        echo "[full-matrix] signer funding transfer confirmed sig=$funding_sig" | tee -a "$LOG"
+      fi
+    else
+      echo "[full-matrix] signer funding transfer fallback failed" | tee -a "$LOG"
+    fi
   fi
 
   if [[ -n "$agent_pub" ]]; then
@@ -262,7 +416,7 @@ if ! wait_cluster_ready 90 1; then
 fi
 
 resolve_signers
-if [[ "$MATRIX_SIGNER_COUNT" -eq 0 ]]; then
+if [[ ( -z "$MATRIX_AGENT_KEYPAIR" || ! -f "$MATRIX_AGENT_KEYPAIR" || -z "$MATRIX_HUMAN_KEYPAIR" || ! -f "$MATRIX_HUMAN_KEYPAIR" ) && "$MATRIX_SIGNER_COUNT" -eq 0 ]]; then
   for _fb_dir in "$PWD/data/state-7001" "$PWD/data/state-8000"; do
     fallback_agent="$_fb_dir/genesis-keys/genesis-primary-lichen-testnet-1.json"
     fallback_human="$_fb_dir/genesis-keys/builder_grants-lichen-testnet-1.json"
@@ -289,7 +443,7 @@ if ! ensure_funded_signers; then
   fi
 
   resolve_signers
-  if [[ "$MATRIX_SIGNER_COUNT" -eq 0 ]]; then
+  if [[ ( -z "$MATRIX_AGENT_KEYPAIR" || ! -f "$MATRIX_AGENT_KEYPAIR" || -z "$MATRIX_HUMAN_KEYPAIR" || ! -f "$MATRIX_HUMAN_KEYPAIR" ) && "$MATRIX_SIGNER_COUNT" -eq 0 ]]; then
     for _fb_dir in "$PWD/data/state-7001" "$PWD/data/state-8000"; do
       fallback_agent="$_fb_dir/genesis-keys/genesis-primary-lichen-testnet-1.json"
       fallback_human="$_fb_dir/genesis-keys/builder_grants-lichen-testnet-1.json"
@@ -393,9 +547,19 @@ total=${#commands[@]}
 pass=0
 fail=0
 
-echo "[full-matrix] start total=$total" | tee -a "$LOG"
+if ! [[ "$MATRIX_START_INDEX" =~ ^[0-9]+$ ]] || (( MATRIX_START_INDEX < 1 || MATRIX_START_INDEX > total )); then
+  echo "[full-matrix] ERROR: MATRIX_START_INDEX must be an integer between 1 and $total (got '$MATRIX_START_INDEX')" | tee -a "$LOG"
+  echo "TOTAL=$total PASS=0 FAIL=1" | tee -a "$REPORT"
+  echo "LOG=$LOG" | tee -a "$REPORT"
+  exit 1
+fi
 
-for i in "${!commands[@]}"; do
+echo "[full-matrix] start total=$total" | tee -a "$LOG"
+if (( MATRIX_START_INDEX > 1 )); then
+  echo "[full-matrix] resume stage=$MATRIX_START_INDEX/$total" | tee -a "$LOG"
+fi
+
+for ((i=MATRIX_START_INDEX-1; i<${#commands[@]}; i++)); do
   n=$((i+1))
   cmd="${commands[$i]}"
 
@@ -414,7 +578,7 @@ for i in "${!commands[@]}"; do
   attempt=1
   while [[ "$attempt" -le "$attempts" ]]; do
     set +e
-    bash -lc "PATH=\"$PWD/.venv/bin:\$PATH\" $cmd" >> "$LOG" 2>&1
+    bash -lc "PYTHONUNBUFFERED=1 PATH=\"$PWD/.venv/bin:\$PATH\" $cmd" >> "$LOG" 2>&1
     code=$?
     set -e
     if [[ "$code" -eq 0 ]]; then

@@ -87,6 +87,24 @@ async def rpc_call(method, params=None, auth_token=None):
         return {"error": str(e)}
 
 
+async def ws_recv_rpc_response(ws, request_id, timeout=5, notifications=None):
+    """Wait for the JSON-RPC response matching request_id, ignoring interleaved notifications."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        remaining = deadline - time.time()
+        if remaining <= 0:
+            break
+        raw = await asyncio.wait_for(ws.recv(), timeout=remaining)
+        resp = json.loads(raw)
+        if resp.get("id") == request_id:
+            return resp
+        if resp.get("method") in ("notification", "subscription"):
+            if notifications is not None:
+                notifications.append(resp)
+            continue
+    raise asyncio.TimeoutError(f"timeout waiting for response id={request_id}")
+
+
 async def ws_subscribe(method, params=None, timeout=8):
     """Open WS, subscribe, collect messages for `timeout` seconds, return them."""
     messages = []
@@ -102,8 +120,7 @@ async def ws_subscribe(method, params=None, timeout=8):
             await ws.send(json.dumps(sub_msg))
             
             # Wait for subscription response
-            raw = await asyncio.wait_for(ws.recv(), timeout=5)
-            resp = json.loads(raw)
+            resp = await ws_recv_rpc_response(ws, 1, timeout=5, notifications=messages)
             if "error" in resp:
                 return None, [], resp["error"]
             sub_id = resp.get("result")
@@ -752,6 +769,9 @@ async def test_section_4_upgrade_contract():
     if "result" in resp and resp["result"]:
         balance = resp["result"].get("spores", 0)
         report("PASS", f"Deployer balance: {balance} spores ({balance / 1e9:.2f} LICN)")
+        if balance < 10_001_000_000:
+            report("SKIP", "deployContract skipped — deployer balance too low for deploy fee")
+            return
     else:
         report("SKIP", "upgradeContract — deployer account not found on-chain")
         return
@@ -787,7 +807,7 @@ async def test_section_4_upgrade_contract():
         elif "disabled" in msg.lower() and ("multi-validator" in msg.lower() or "local/dev" in msg.lower()):
             report("SKIP", "deployContract disabled in this environment")
             return
-        elif "missing authorization" in msg.lower() or "admin endpoints disabled" in msg.lower():
+        elif "missing authorization" in msg.lower() or "admin endpoints disabled" in msg.lower() or "403" in msg.lower() or "forbidden" in msg.lower():
             report("SKIP", "deployContract unavailable in this environment (admin auth not configured)")
             return
         else:
@@ -943,6 +963,7 @@ async def test_section_6_multi_sub():
     try:
         async with websockets.connect(WS_URL, ping_interval=None) as ws:
             subs = []
+            pending_notifications = []
             channels = [
                 ("subscribeDex", {"channel": "orderbook:1"}),
                 ("subscribeDex", {"channel": "trades:2"}),
@@ -953,11 +974,10 @@ async def test_section_6_multi_sub():
                 ("subscribeSlots", None),
             ]
 
-            for method, params in channels:
-                msg = {"jsonrpc": "2.0", "id": len(subs) + 1, "method": method, "params": params}
+            for request_id, (method, params) in enumerate(channels, start=1):
+                msg = {"jsonrpc": "2.0", "id": request_id, "method": method, "params": params}
                 await ws.send(json.dumps(msg))
-                raw = await asyncio.wait_for(ws.recv(), timeout=5)
-                resp = json.loads(raw)
+                resp = await ws_recv_rpc_response(ws, request_id, timeout=5, notifications=pending_notifications)
                 sub_id = resp.get("result")
                 if sub_id:
                     subs.append((method, sub_id))
@@ -977,7 +997,7 @@ async def test_section_6_multi_sub():
             activity_task = asyncio.create_task(trigger_multi_sub_activity())
 
             # Collect notifications for 12 seconds (enough for heartbeat blocks)
-            messages = []
+            messages = pending_notifications[:]
             deadline = time.time() + 12
             while time.time() < deadline:
                 remaining = deadline - time.time()

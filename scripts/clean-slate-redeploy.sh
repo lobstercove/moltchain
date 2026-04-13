@@ -123,6 +123,12 @@ for VPS in "${ALL_VPSES[@]}"; do
     sudo systemctl stop lichen-custody 2>/dev/null || true
     sudo systemctl stop lichen-custody-mainnet 2>/dev/null || true
     sudo systemctl stop $SERVICE 2>/dev/null || true
+    sudo systemctl reset-failed $SERVICE 2>/dev/null || true
+    if sudo pgrep -f '/usr/local/bin/[l]ichen-validator .*state-${NETWORK}' >/dev/null 2>&1; then
+      sudo pkill -TERM -f '/usr/local/bin/[l]ichen-validator .*state-${NETWORK}' 2>/dev/null || true
+      sleep 1
+      sudo pkill -KILL -f '/usr/local/bin/[l]ichen-validator .*state-${NETWORK}' 2>/dev/null || true
+    fi
     # Ensure RPC port is open between VPSes (needed for genesis sync)
     sudo ufw allow ${RPC_PORT}/tcp comment 'Lichen RPC' 2>/dev/null || true
   "
@@ -402,6 +408,7 @@ ssh_run "$GENESIS_VPS" "
 # Restart genesis validator immediately
 echo "  Restarting genesis validator..."
 ssh_run "$GENESIS_VPS" "sudo systemctl start $SERVICE"
+ssh_run "$GENESIS_VPS" "sudo systemctl start lichen-custody lichen-faucet"
 
 for VPS in "${JOINING_VPSES[@]}"; do
   echo "  Distributing state + secrets to $VPS..."
@@ -519,6 +526,23 @@ for VPS in "${ALL_VPSES[@]}"; do
     ALL_GOOD=false
   else
     echo -e "  ${GREEN}✓${NC} Treasury: loaded"
+  fi
+
+  # Custody/Faucet on genesis VPS remain required after the snapshot restart.
+  if [ "$VPS" = "$GENESIS_VPS" ]; then
+    if ssh_run "$VPS" "curl -sf http://127.0.0.1:9105/health" >/dev/null 2>&1; then
+      echo -e "  ${GREEN}✓${NC} Custody: healthy"
+    else
+      echo -e "  ${RED}✗${NC} Custody: unavailable"
+      ALL_GOOD=false
+    fi
+
+    if ssh_run "$VPS" "curl -sf http://127.0.0.1:9100/health" >/dev/null 2>&1; then
+      echo -e "  ${GREEN}✓${NC} Faucet: healthy"
+    else
+      echo -e "  ${RED}✗${NC} Faucet: unavailable"
+      ALL_GOOD=false
+    fi
   fi
 
   # Manifest

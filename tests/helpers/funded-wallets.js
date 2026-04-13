@@ -227,6 +227,13 @@ function loadFirstMatchingKeypair(keysDir, predicate, options = {}) {
 function findGenesisAdminKeypair(options = {}) {
   const roots = options.roots || [process.cwd(), path.resolve(process.cwd(), '..')];
   for (const root of roots) {
+    const artifactKeypair = loadFirstMatchingKeypair(
+      path.join(root, 'artifacts', 'testnet', 'genesis-keys'),
+      (file) => file.startsWith('genesis-primary'),
+      options,
+    );
+    if (artifactKeypair) return artifactKeypair;
+
     const dataDir = path.join(root, 'data');
     if (fs.existsSync(dataDir)) {
       const stateDirs = fs.readdirSync(dataDir)
@@ -256,15 +263,15 @@ function loadKeysFromDir(keysDir, wallets, seen, limit) {
     .filter((file) => file.endsWith('.json'))
     .sort((left, right) => {
       const priority = (name) => {
-        if (name.startsWith('builder_grants')) return 0;
-        if (name.startsWith('community_treasury')) return 1;
-        if (name.startsWith('ecosystem_partnerships')) return 2;
-        if (name.startsWith('reserve_pool')) return 3;
-        if (name.startsWith('validator_rewards')) return 4;
-        if (name.startsWith('founding_symbionts')) return 5;
-        if (name.startsWith('treasury')) return 6;
-        if (name.startsWith('genesis-primary')) return 7;
-        if (name.startsWith('genesis-signer')) return 8;
+        if (name.startsWith('genesis-primary')) return 0;
+        if (name.startsWith('genesis-signer')) return 1;
+        if (name.startsWith('builder_grants')) return 2;
+        if (name.startsWith('community_treasury')) return 3;
+        if (name.startsWith('ecosystem_partnerships')) return 4;
+        if (name.startsWith('reserve_pool')) return 5;
+        if (name.startsWith('validator_rewards')) return 6;
+        if (name.startsWith('founding_symbionts')) return 7;
+        if (name.startsWith('treasury')) return 8;
         return 9;
       };
       return priority(left) - priority(right) || left.localeCompare(right);
@@ -301,6 +308,17 @@ function loadFundedWallets(limit = 2) {
         if (wallets.length >= limit) break;
         loadKeysFromDir(path.join(dataDir, stateDir, 'blockchain.db', 'genesis-keys'), wallets, seen, limit);
         loadKeysFromDir(path.join(dataDir, stateDir, 'genesis-keys'), wallets, seen, limit);
+      }
+    } catch (_) { }
+  }
+
+  for (const root of roots) {
+    if (wallets.length >= limit) return wallets;
+    try {
+      const deployer = loadKeypairFile(path.join(root, 'keypairs', 'deployer.json'));
+      if (!seen.has(deployer.address)) {
+        seen.add(deployer.address);
+        wallets.push(deployer);
       }
     } catch (_) { }
   }

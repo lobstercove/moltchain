@@ -26,6 +26,8 @@ catch { WebSocket = null; }
 const RPC_URL = process.argv[2] || 'http://localhost:8899';
 const WS_URL = process.env.LICHEN_WS || RPC_URL.replace('https://', 'wss://').replace('http://', 'ws://').replace(':8899', ':8900');
 const SPORES_PER_LICN = 1_000_000_000;
+const SPOREPUMP_CREATE_FEE_SPORES = 10 * SPORES_PER_LICN;
+const MIN_DEPLOYER_SPORES = SPOREPUMP_CREATE_FEE_SPORES + (1 * SPORES_PER_LICN);
 
 // ============================================================================
 // Base58 encoding/decoding
@@ -300,6 +302,33 @@ async function waitForConfirmation(signature, timeoutMs = 30000, intervalMs = 50
     return lastConfirmation;
 }
 
+async function selectRichestWallet(candidates) {
+    let richestWallet = null;
+    let richestBalance = null;
+    const seen = new Set();
+
+    for (const candidate of candidates) {
+        if (!candidate?.address || seen.has(candidate.address)) {
+            continue;
+        }
+        seen.add(candidate.address);
+
+        let balance;
+        try {
+            balance = await getBalance(candidate.address);
+        } catch (_) {
+            continue;
+        }
+
+        if (!richestBalance || balance.spores > richestBalance.spores) {
+            richestWallet = candidate;
+            richestBalance = balance;
+        }
+    }
+
+    return { wallet: richestWallet, balance: richestBalance };
+}
+
 // ============================================================================
 // Test runner
 // ============================================================================
@@ -363,17 +392,31 @@ async function main() {
     ok('Deployer loaded', !!deployer.address,
         `${deployer.address.slice(0, 8)}...`);
 
-    // Check deployer balance
+    // Prefer a signer that already has enough balance to cover the SporePump
+    // create fee plus transaction fees on the relay-backed remote cluster.
     let deployerBal = await getBalance(deployer.address);
-    if (deployerBal.spores === 0) {
-        await tryTest('Fund deployer', async () => {
-            const funded = await fundAccount(deployer.address, 20, RPC_URL);
-            ok('Deployer funding requested', funded, '20 LICN via airdrop/faucet');
-        });
-        await sleep(2000);
-        deployerBal = await getBalance(deployer.address);
+    if (deployerBal.spores < MIN_DEPLOYER_SPORES) {
+        const richest = await selectRichestWallet([deployer, ...loadFundedWallets(8)]);
+        if (richest.wallet && richest.wallet.address !== deployer.address) {
+            deployer = richest.wallet;
+            deployerBal = richest.balance;
+            console.log(`  ℹ️  Using richer funded signer: ${deployer.address.slice(0, 8)}...`);
+        }
     }
-    ok('Deployer has funds', deployerBal.spores > 0,
+
+    if (deployerBal.spores < MIN_DEPLOYER_SPORES) {
+        const neededLicn = Math.max(1, Math.ceil((MIN_DEPLOYER_SPORES - deployerBal.spores) / SPORES_PER_LICN));
+        await tryTest('Fund deployer', async () => {
+            const funded = await fundAccount(deployer.address, neededLicn, RPC_URL);
+            ok('Deployer funding requested', funded, `${neededLicn} LICN via airdrop/faucet`);
+        });
+        deployerBal = await waitForBalance(
+            deployer.address,
+            (balance) => balance.spores >= MIN_DEPLOYER_SPORES,
+            15000,
+        );
+    }
+    ok('Deployer has funds', deployerBal.spores >= MIN_DEPLOYER_SPORES,
         `${deployerBal.licn} LICN`);
 
     // ── Create test wallets ──
@@ -438,14 +481,14 @@ async function main() {
         const buf = new Uint8Array(40);
         buf.set(creatorBytes, 0);
         const view = new DataView(buf.buffer);
-        view.setBigUint64(32, BigInt(10 * SPORES_PER_LICN), true); // 10 LICN creation fee
+        view.setBigUint64(32, BigInt(SPOREPUMP_CREATE_FEE_SPORES), true);
 
         const ix = buildContractCallIx(
             deployer.address,
             SPOREPUMP_ADDR,
             'create_token',
             buf,
-            10 * SPORES_PER_LICN // value attached
+            SPOREPUMP_CREATE_FEE_SPORES
         );
 
         const result = await buildSignSend(deployer, [ix]);
@@ -537,16 +580,38 @@ async function main() {
         });
     }
 
-    // ── Transfer from deployer to wallet A (using native system transfer) ──
+    // ── Transfer from wallet B to wallet A to verify a second native transfer on
+    // the live relay-backed path with a wallet that already exercised normal sends.
     console.log('\n8️⃣  Multi-Transfer Verification');
-    await tryTest('Deployer → A (2 LICN)', async () => {
-        const ix = buildTransferIx(deployer.address, walletA.address, 2 * SPORES_PER_LICN);
-        const result = await buildSignSend(deployer, [ix]);
-        ok('Transfer sent', result, 'deployer → A');
+    let followupTransferSig = null;
+    await tryTest('Wallet B → A (2 LICN)', async () => {
+        const ix = buildTransferIx(walletB.address, walletA.address, 2 * SPORES_PER_LICN);
+        const result = await buildSignSend(walletB, [ix]);
+        followupTransferSig = result?.signature || result;
+        ok('Transfer sent', !!followupTransferSig,
+            `sig: ${String(followupTransferSig).slice(0, 16)}...`);
+
+        if (followupTransferSig) {
+            const confirmation = await waitForConfirmation(String(followupTransferSig), 30000);
+            const confirmationValue = confirmation?.value || null;
+            if (confirmationValue) {
+                ok(
+                    'Transfer confirmed',
+                    !confirmationValue.err,
+                    `slot ${confirmationValue.slot}, status: ${confirmationValue.confirmation_status}`,
+                );
+            } else {
+                console.log('  ℹ️  follow-up transfer confirmation still pending');
+            }
+        }
     });
 
     // Check A received it
-    const balA3 = await waitForBalance(walletA.address, balance => balance.spores > balA2.spores);
+    const balA3 = await waitForBalance(
+        walletA.address,
+        balance => balance.spores > balA2.spores,
+        30000,
+    );
     ok('A balance updated', balA3.spores > balA2.spores,
         `${balA2.licn} → ${balA3.licn} LICN`);
 

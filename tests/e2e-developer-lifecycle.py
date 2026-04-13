@@ -359,7 +359,13 @@ async def deploy_contract(conn: Connection, deployer: Keypair, wasm_bytes: bytes
         return program_pubkey, result
     except Exception as exc:
         msg = str(exc).lower()
-        if "disabled" not in msg and "missing authorization" not in msg and "admin endpoints disabled" not in msg:
+        if (
+            "disabled" not in msg
+            and "missing authorization" not in msg
+            and "admin endpoints disabled" not in msg
+            and "403" not in msg
+            and "forbidden" not in msg
+        ):
             raise
 
     init_bytes = (init_data or "").encode("utf-8")
