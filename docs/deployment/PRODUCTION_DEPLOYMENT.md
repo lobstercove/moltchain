@@ -102,6 +102,31 @@ Operational consequence:
 - Treat `scripts/start-local-stack.sh` as the required local gate for production-like E2E and matrix work.
 - Treat VPS or staging deployment as the final gate for systemd, ingress, firewall, and long-lived-state behavior.
 
+Workflow parity rule:
+
+- The parity model is seed-first, not "three equivalent local validators".
+- Validator 1 or seed-01 creates genesis and owns the first post-genesis bootstrap.
+- Validators 2 and 3 are joiners against that already-created chain.
+- Local parity work is only considered valid when it follows that same logical sequence before tests run.
+
+Phase-by-phase equivalence:
+
+| Phase | Local full stack | VPS clean-slate redeploy |
+| --- | --- | --- |
+| Reset state | Reset repo-local `data/state-*` paths before launch when a fresh chain is required | Stop services and wipe `/var/lib/lichen/*` before redeploy |
+| Seed genesis | Validator 1 creates or refreshes local genesis state and emits the genesis key material used by the stack | `seed-01` creates the new genesis state and writes the canonical genesis key material |
+| Joiners come online | Validators 2 and 3 start against the already-created chain and join over the local network | `seed-02` and `seed-03` start after seed genesis and join the canonical chain |
+| Post-genesis bootstrap | `scripts/start-local-stack.sh` waits for the genesis artifacts and then runs `scripts/first-boot-deploy.sh` | `scripts/clean-slate-redeploy.sh` runs `scripts/first-boot-deploy.sh` on `seed-01` after genesis |
+| Auxiliary services | Custody and faucet start from the genesis-derived local key material | Custody and faucet start from the seed host's provisioned key material |
+| Validation gate | Run E2E and matrix workloads against the local stack, then rerun without reset | Run final staging or VPS verification for systemd, ingress, firewall, and long-lived state |
+
+Current implementation note:
+
+- The logical workflow is the same, but the joiner bring-up mechanism is not identical yet.
+- The local parity path starts all three validators on the same host and lets validators 2 and 3 join over loopback.
+- The VPS clean-slate redeploy currently snapshots post-genesis state from `seed-01` before bringing up the other VPSes.
+- That difference is an operator automation optimization, not a different genesis or bootstrap model, and it does not replace the VPS gate for service-orchestration behavior.
+
 ## Network selection and public ingress
 
 - Local browser workflows default to `local-testnet`.
@@ -229,6 +254,13 @@ Use this when you want the closest supported local analog to the VPS deployment 
 
 This is the local production-parity path for E2E and matrix validation.
 
+The required local interpretation is:
+
+- validator 1 creates genesis
+- validators 2 and 3 join that chain
+- custody and faucet come up against that chain
+- `scripts/first-boot-deploy.sh` performs the same post-genesis bootstrap that the seed VPS performs before production-like tests run
+
 Start:
 
 ```bash
@@ -248,12 +280,14 @@ Stop:
 ./scripts/stop-local-stack.sh testnet
 ```
 
-What the full-stack launcher starts:
+What the full-stack launcher does, in order:
 
-- 3 local validators
-- custody service
-- faucet service on testnet
-- `scripts/first-boot-deploy.sh` after validator health
+- starts validator 1 and establishes genesis state
+- starts validators 2 and 3 as joiners
+- waits for the genesis treasury and deployer key material to appear
+- starts custody service
+- starts faucet service on testnet
+- runs `scripts/first-boot-deploy.sh` against the healthy chain
 
 What still differs from VPS deployment:
 
@@ -261,6 +295,7 @@ What still differs from VPS deployment:
 - state lives under repo-local `data/state-*` paths rather than `/var/lib/lichen/*`
 - ingress is loopback-only and does not include Caddy or Cloudflare
 - SSH, firewall, service-user, and origin-edge behavior are not part of the local stack
+- VPS joiners are currently brought up from distributed post-genesis state, while local joiners attach over the already-running local network
 
 What must not differ for production-like testing:
 
