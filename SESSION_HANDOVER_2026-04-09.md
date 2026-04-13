@@ -1,5 +1,7 @@
 # Session Handover - 2026-04-09
 
+> Note: this handover references the local-private `tests/` harness. Those paths are no longer tracked in the public repository and only apply when the private local harness is present.
+
 ## Objective
 
 Restore `tests/contracts-write-e2e.py` on the fresh local 3-validator stack, then rerun `tests/production-e2e-gate.sh` only after the contract-write suite is materially green.

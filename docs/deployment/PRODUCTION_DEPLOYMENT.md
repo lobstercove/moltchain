@@ -318,16 +318,23 @@ ls /tmp/lichen-local-testnet
 After starting either local flow, verify the chain before moving on:
 
 ```bash
-bash tests/local-multi-validator-test.sh
+for port in 8899 8901 8903; do
+  curl -s "http://127.0.0.1:${port}" -X POST -H 'Content-Type: application/json' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"getHealth","params":[]}' | python3 -m json.tool
+done
+curl -s http://127.0.0.1:9105/health | python3 -m json.tool
 curl -s http://127.0.0.1:8899/api/v1/pairs | python3 -m json.tool
 ls -l signed-metadata-manifest-testnet.json
 ```
 
-If you want to reuse an already-running cluster in the validator test harness:
+If your local-private harness is present, you can additionally run the old validator smoke test, but treat it as destructive:
 
 ```bash
-LICHEN_REUSE_EXISTING_CLUSTER=1 bash tests/local-multi-validator-test.sh
+bash scripts/run-local-private-check.sh tests/local-multi-validator-test.sh -- \
+  bash tests/local-multi-validator-test.sh
 ```
+
+That legacy harness flushes `data/state-*` and boots its own validator sequence. Use it only as a standalone disposable validator smoke test, not as an in-place verifier for an already-running production-parity local stack.
 
 Keep `LICHEN_KEYPAIR_PASSWORD` exported while running Python or SDK-driven E2Es against that cluster. The helper files under `keypairs/` and `data/state-*/genesis-keys/` may now be encrypted canonical keypair JSON, and the SDK loader uses the same password to open them.
 

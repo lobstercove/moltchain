@@ -2205,6 +2205,8 @@ bash scripts/build-all-contracts.sh                       # All 28 contracts
 
 ### Test Suites
 
+The `tests/` harness referenced below is local-private operator tooling and is intentionally not present in the public clone. Public automation skips those commands when the private harness is absent.
+
 | Suite | Command | Tests |
 |-------|---------|-------|
 | Core unit | `cargo test -p lichen-core` | Rust unit tests |
