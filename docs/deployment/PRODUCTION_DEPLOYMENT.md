@@ -115,17 +115,16 @@ Phase-by-phase equivalence:
 | --- | --- | --- |
 | Reset state | Reset repo-local `data/state-*` paths before launch when a fresh chain is required | Stop services and wipe `/var/lib/lichen/*` before redeploy |
 | Seed genesis | Validator 1 creates or refreshes local genesis state and emits the genesis key material used by the stack | `seed-01` creates the new genesis state and writes the canonical genesis key material |
-| Joiners come online | Validators 2 and 3 start against the already-created chain and join over the local network | `seed-02` and `seed-03` start after seed genesis and join the canonical chain |
-| Post-genesis bootstrap | `scripts/start-local-stack.sh` waits for the genesis artifacts and then runs `scripts/first-boot-deploy.sh` | `scripts/clean-slate-redeploy.sh` runs `scripts/first-boot-deploy.sh` on `seed-01` after genesis |
+| Post-genesis bootstrap | `scripts/start-local-stack.sh` waits for the genesis artifacts and then runs `scripts/first-boot-deploy.sh` on validator 1 | `scripts/clean-slate-redeploy.sh` runs `scripts/first-boot-deploy.sh` on `seed-01` after genesis |
+| Joiners come online | Validators 2 and 3 are provisioned from validator 1's post-genesis state snapshot and then started locally | `seed-02` and `seed-03` are provisioned from the `seed-01` post-genesis bundle and then started |
 | Auxiliary services | Custody and faucet start from the genesis-derived local key material | Custody and faucet start from the seed host's provisioned key material |
 | Validation gate | Run E2E and matrix workloads against the local stack, then rerun without reset | Run final staging or VPS verification for systemd, ingress, firewall, and long-lived state |
 
 Current implementation note:
 
-- The logical workflow is the same, but the joiner bring-up mechanism is not identical yet.
-- The local parity path starts all three validators on the same host and lets validators 2 and 3 join over loopback.
-- The VPS clean-slate redeploy currently snapshots post-genesis state from `seed-01` before bringing up the other VPSes.
-- That difference is an operator automation optimization, not a different genesis or bootstrap model, and it does not replace the VPS gate for service-orchestration behavior.
+- The logical workflow is now the same: seed genesis, post-genesis bootstrap on the seed, then snapshot-provisioned joiners.
+- The remaining difference is host orchestration: local does the snapshot copy on one machine with shell-managed processes, while VPS does it across hosts with tarball distribution and systemd.
+- That infrastructure difference does not replace the VPS gate for service-orchestration, ingress, or long-lived-state behavior.
 
 ## Network selection and public ingress
 
@@ -268,6 +267,8 @@ export LICHEN_KEYPAIR_PASSWORD='local-e2e-secret'
 ./scripts/start-local-stack.sh testnet
 ```
 
+By default this launcher resets the local validator state first so the stack comes up from fresh genesis. Set `LICHEN_LOCAL_RESET_CLUSTER=0` only when you intentionally want to reuse the existing local chain.
+
 Status:
 
 ```bash
@@ -283,11 +284,12 @@ Stop:
 What the full-stack launcher does, in order:
 
 - starts validator 1 and establishes genesis state
-- starts validators 2 and 3 as joiners
 - waits for the genesis treasury and deployer key material to appear
 - starts custody service
 - starts faucet service on testnet
-- runs `scripts/first-boot-deploy.sh` against the healthy chain
+- runs `scripts/first-boot-deploy.sh` against validator 1
+- snapshots validator 1 post-genesis state into validators 2 and 3
+- starts validators 2 and 3 from that local seed snapshot
 
 What still differs from VPS deployment:
 
@@ -295,7 +297,7 @@ What still differs from VPS deployment:
 - state lives under repo-local `data/state-*` paths rather than `/var/lib/lichen/*`
 - ingress is loopback-only and does not include Caddy or Cloudflare
 - SSH, firewall, service-user, and origin-edge behavior are not part of the local stack
-- VPS joiners are currently brought up from distributed post-genesis state, while local joiners attach over the already-running local network
+- the local snapshot is copied directly on one host, while VPS distributes the bundle across multiple hosts
 
 What must not differ for production-like testing:
 
