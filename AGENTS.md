@@ -31,7 +31,7 @@ custody and faucet services, SDKs, frontends, deployment automation, and protoco
 - `contracts/` currently has 29 contract directories, but `genesis/src/lib.rs` deploys 28 contracts at genesis.
   `mt20_token` exists in-tree but is not in `GENESIS_CONTRACT_CATALOG`.
 - Frontend portals live in `wallet`, `explorer`, `dex`, `marketplace`, `developers`, `programs`, `monitoring`, `faucet`, and `website`.
-- Release/status docs currently center on `v0.5.6`, but some checked-in deployment docs lag newer handovers.
+- Release/status docs currently center on `v0.5.7`, but some checked-in deployment docs lag newer handovers.
   Always compare document dates before assuming "current" means the same thing across files.
 
 ## Repo Map
