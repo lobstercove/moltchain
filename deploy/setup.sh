@@ -776,9 +776,15 @@ CUSTEOF
     ensure_ufw_allow_rule "443/tcp" "Caddy HTTPS"
     ensure_ufw_allow_rule "${P2P_PORT}/tcp" "${NETWORK_LABEL} P2P"
     ensure_ufw_allow_rule "${P2P_PORT}/udp" "${NETWORK_LABEL} P2P QUIC"
+    if [ "$net" = "testnet" ]; then
+        # The authoritative service-fleet probe runs from the US testnet RPC and
+        # reaches remote faucet /health endpoints directly on port 9100.
+        ensure_ufw_allow_rule "9100/tcp" "Testnet Faucet API / health"
+    else
+        ensure_ufw_remove_allow_rule "9100/tcp"
+    fi
     ensure_ufw_remove_allow_rule "${RPC_PORT}/tcp"
     ensure_ufw_remove_allow_rule "${WS_PORT}/tcp"
-    ensure_ufw_remove_allow_rule "9100/tcp"
     ensure_ufw_remove_allow_rule "9105/tcp"
     ensure_ufw_remove_allow_rule "9106/tcp"
 
@@ -806,6 +812,7 @@ for net in "${NETWORKS[@]}"; do
         testnet)
             echo "  sudo ufw allow 7001/tcp  # testnet P2P"
             echo "  sudo ufw allow 7001/udp  # testnet P2P QUIC"
+            echo "  sudo ufw allow 9100/tcp  # testnet faucet API / health"
             ;;
         mainnet)
             echo "  sudo ufw allow 8001/tcp  # mainnet P2P"
